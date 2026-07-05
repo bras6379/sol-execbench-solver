@@ -1,9 +1,15 @@
 # Orchestrator Engine Design
 
 Concrete engine on top of the [orchestration loop](orchestration.md). Goal:
-**select problems → optimize each until it wins the bench → accumulate and
-transfer knowledge across problems.** Most of this is buildable now with the
-GPU abstracted behind an interface (stub today, real transport later).
+**select problems → optimize each to the best kernel we can find → accumulate
+and transfer knowledge across problems.** Most of this is buildable now with
+the GPU abstracted behind an interface (stub today, real transport later).
+
+**Scope:** the engine *finds* the best solution per problem. It does **not**
+submit to the SOL-ExecBench website/leaderboard — no submission code. The
+deliverable per problem is `best_solution.json` + its measured `sol_score`.
+The public leaderboard is used, if at all, only as a read-only reference to
+gauge how competitive our best is.
 
 ## Component map
 
@@ -130,19 +136,23 @@ Mechanisms, cheapest first:
 Net effect: the first problem in a family is expensive (real search); the rest
 are cheap (template + tune). That is where the GPU-budget savings live.
 
-## 6. "Win the bench" / termination (per problem)
+## 6. Termination (per problem)
 
-Stop a ProblemSolver when any holds:
-- **Target reached** — `sol_score ≥ TARGET`. Options for TARGET (decision
-  needed): beat the current leaderboard rank-1 (requires fetching the public
-  leaderboard per problem), or a fixed threshold (e.g. 0.90), or "best-effort,
-  maximize within budget."
-- **Budget exhausted** — GPU-evaluation cap for this problem.
-- **Plateau** — K consecutive accepted-or-not iterations with no frontier
-  improvement.
+Objective: **maximize `sol_score`** (find the best correct kernel). No
+submission — we stop when we've found the best we can within limits, not when
+we clear a submission bar. Stop a ProblemSolver when any holds:
+- **Budget exhausted** — GPU-evaluation cap for this problem (the scarce
+  resource).
+- **Plateau** — K consecutive iterations with no frontier improvement.
+- **Target reached (optional)** — a `sol_score` target if set, either a fixed
+  threshold (e.g. 0.90) or the current leaderboard rank-1 as a read-only
+  reference to stop early once we're clearly competitive. Off by default;
+  budget + plateau are the primary stops.
 
 Best correct candidate (or merged per-shape dispatch) becomes
-`runs/<id>/best_solution.json`.
+`runs/<id>/best_solution.json`, with its `sol_score` and per-workload
+latencies recorded. What happens to it afterward (submit or not) is outside
+the engine.
 
 ## 7. State & CLI
 
@@ -185,9 +195,10 @@ Picked to unblock the foundation; revisit before the agent layer is built.
    the Claude Code runtime; tmux-of-CLIs is an equivalent-but-messier fallback.
 2. **Search driver** → **custom lightweight loop**. Small, full control over
    the GPU lock / per-shape Pareto / cross-problem transfer; no library to bend.
-3. **"Win" definition** → **beat leaderboard rank-1** (fetch the public
-   leaderboard per problem), with **budget** and **plateau(K)** as fallbacks.
-   Configurable to a fixed threshold or best-effort.
+3. **Termination** → **maximize `sol_score`; stop on budget or plateau(K)**.
+   No submission (out of scope). Optional read-only `sol_score` target
+   (fixed threshold or leaderboard rank-1 reference) can stop early, off by
+   default.
 
 Foundation (Phase A: Executor interface + StubExecutor + result model) is
 decision-independent and is built first. The contentious layer (agents /
