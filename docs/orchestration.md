@@ -97,6 +97,18 @@ per-problem crash: the fleet suspends cleanly (`suspended: credit exhausted`
 journaled once), and `solver solve` resumes it later — never twenty
 `solver_error`s from one shared cause.
 
+**Agent swapping across sessions.** The agent is a per-session construct;
+run state is model-agnostic (Solutions, reflections, scores). So a run can
+be stopped and **resumed with a different agent/model** — e.g. grind with a
+cheap model, resume the hard tail with an expensive one, or stop an
+expensive run and continue cheaper. Mechanics: every generative journal
+entry records the **agent identity** (model/config); each candidate's
+`meta.json` (and its Solution `author` field — deliberately outside
+`Solution.hash()`) records the producing model, so wins and credit spend are
+attributable per model; on resume with a different agent an `agent_changed`
+event is journaled and the **plateau counter resets** (a no-improvement
+streak under model A is not evidence about model B).
+
 Rules that make this work:
 
 - **Async throughout.** Agent calls and `evaluate` are awaited; blocking work
