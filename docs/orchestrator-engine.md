@@ -129,10 +129,18 @@ All ProblemSolvers share **one** Executor instance → the lock is structural.
 
 ## 2. ProblemSolver — per-question GEPA loop
 
-Optimizes one problem to a win (or budget). Holds a **Pareto frontier of
-candidate Solutions over the problem's ~16 workload shapes** (a kernel best on
-big shapes and one best on small shapes can both survive → later merged into a
-per-shape dispatch submission).
+Optimizes one problem to the best kernel (or budget). Holds a **Pareto
+frontier of candidate Solutions over the problem's ~16 workload shapes**.
+
+GEPA selection, precisely: the frontier keeps every candidate that is best on
+**at least one individual workload shape** — *not* the top-k by aggregate
+score. A kernel that wins only the smallest shape survives even with a poor
+average, because it preserves a *specialist* worth keeping or merging. This
+avoids the local optimum that mutating-from-the-single-best falls into, and it
+enables **system-aware merge**: a small-shape winner + a large-shape winner →
+one per-shape dispatch kernel that beats both. Parent selection samples from
+this frontier; the Reflect node supplies the reflective "text gradient" for
+the next mutation.
 
 ```
 seed  = scaffold(id) (correct PyTorch DPS baseline)  ∪  transferred templates
