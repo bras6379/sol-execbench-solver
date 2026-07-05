@@ -142,6 +142,16 @@ one per-shape dispatch kernel that beats both. Parent selection samples from
 this frontier; the Reflect node supplies the reflective "text gradient" for
 the next mutation.
 
+**Exact frontier rule (Accept node contract):** score each candidate as a
+vector — its `sol_score` (or latency) on each of the ~16 shapes; incorrect
+shapes score 0. Candidate A **dominates** B iff A ≥ B on *every* shape and A >
+B on *at least one*. After each evaluation: add the new candidate, then drop
+any candidate that is dominated by another. The survivors are the frontier —
+equivalently, the set of candidates each of which is the (co-)best on at least
+one shape. **Select** samples a parent from this set (e.g. weighted by how
+many shapes it wins). This is per-shape non-domination, deliberately *not*
+top-k by aggregate.
+
 ```
 seed  = scaffold(id) (correct PyTorch DPS baseline)  ∪  transferred templates
 loop until win or budget or plateau(K):
