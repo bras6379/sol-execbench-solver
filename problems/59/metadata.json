@@ -1,0 +1,217 @@
+{
+  "task_id": 59,
+  "subset": "L1",
+  "collection_index": 59,
+  "name": "059_moe_group_score_aggregation_and_masking",
+  "hf_id": "inclusionAI/Ling-mini-2.0",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:26.193306Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.000738,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 1163
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.020304
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 8192
+        },
+        "sol_ms": 0.0015,
+        "baseline_latency_ms": 0.023648
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 2521
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.0223845
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 997
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0159995
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 64
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0155685
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 2048
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.0167035
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 1024
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.017104
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 256
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.016768
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 4096
+        },
+        "sol_ms": 0.001,
+        "baseline_latency_ms": 0.019264
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 1973
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.0205279999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 1087
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0219359999999999
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 128
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.016672
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 773
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.017408
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 512
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0174245
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 16384
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.02816
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_experts": 256,
+          "n_group": 8,
+          "topk_group": 4,
+          "experts_per_group": 32,
+          "num_tokens": 32768
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.0420155
+      }
+    ]
+  }
+}

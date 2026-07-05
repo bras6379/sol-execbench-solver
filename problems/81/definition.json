@@ -1,0 +1,81 @@
+{
+    "name": "081_joint_attention_context_projection",
+    "hf_id": "stabilityai/stable-diffusion-3.5-large",
+    "description": "Joint attention context projection that concatenates image and context attention outputs along the feature dimension (duplicating the concatenated sequence) and projects through a linear layer, then splits back into image and context streams. This is a fused operation combining concatenation, linear projection, and sequence splitting.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "image_seq_len": {
+            "type": "var"
+        },
+        "context_seq_len": {
+            "type": "var"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 2432
+        },
+        "proj_input_dim": {
+            "type": "expr",
+            "expression": "inner_dim * 2"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "image_attention_output": {
+            "shape": [
+                "batch_size",
+                "image_seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Attention output for image stream"
+        },
+        "context_attention_output": {
+            "shape": [
+                "batch_size",
+                "context_seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Attention output for context stream"
+        },
+        "to_out_weight": {
+            "shape": [
+                "inner_dim",
+                "proj_input_dim"
+            ],
+            "dtype": "float32",
+            "description": "Weight matrix for output projection"
+        },
+        "to_out_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Bias for output projection"
+        }
+    },
+    "outputs": {
+        "projected_image": {
+            "shape": [
+                "batch_size",
+                "image_seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Projected output for image stream"
+        },
+        "projected_context": {
+            "shape": [
+                "batch_size",
+                "context_seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Projected output for context stream"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    image_attention_output: torch.Tensor,\n    context_attention_output: torch.Tensor,\n    to_out_weight: torch.Tensor,\n    to_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Joint attention context projection.\n    \n    1. Concatenate image and context attention outputs along sequence dimension\n    2. Duplicate along feature dimension (creating [features, features] pattern)\n    3. Project through linear layer\n    4. Split back into image and context streams\n    \n    Args:\n        image_attention_output: (batch_size, image_seq_len, inner_dim)\n        context_attention_output: (batch_size, context_seq_len, inner_dim)\n        to_out_weight: (inner_dim, 2*inner_dim)\n        to_out_bias: (inner_dim,)\n    \n    Returns:\n        projected_image: (batch_size, image_seq_len, inner_dim)\n        projected_context: (batch_size, context_seq_len, inner_dim)\n    \"\"\"\n    batch_size = image_attention_output.shape[0]\n    image_seq_len = image_attention_output.shape[1]\n    context_seq_len = context_attention_output.shape[1]\n    \n    # Concatenate image and context attention outputs along sequence dimension\n    # Shape: (batch_size, image_seq_len + context_seq_len, inner_dim)\n    combined_attention = torch.cat(\n        [image_attention_output, context_attention_output],\n        dim=1\n    )\n    \n    # Duplicate along feature dimension for joint processing\n    # Shape: (batch_size, image_seq_len + context_seq_len, 2 * inner_dim)\n    combined_features = torch.cat(\n        [combined_attention, combined_attention],\n        dim=-1\n    )\n    \n    # Project through output layer: linear(x) = x @ W^T + b\n    # Shape: (batch_size, image_seq_len + context_seq_len, inner_dim)\n    projected_output = torch.matmul(combined_features, to_out_weight.t()) + to_out_bias\n    \n    # Split back into image and context streams\n    projected_image = projected_output[:, :image_seq_len, :]\n    projected_context = projected_output[:, image_seq_len:, :]\n    \n    return projected_image, projected_context\n"
+}

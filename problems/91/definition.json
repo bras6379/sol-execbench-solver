@@ -1,0 +1,229 @@
+{
+    "name": "091_fused_gqa_qkv_rope_qk_norm_backward",
+    "hf_id": "tencent/HunyuanImage-3.0",
+    "description": "Backward pass for fused GQA QKV projection with RoPE and QK normalization. Computes gradients through RMS normalization, rotary position embedding, reshape/transpose operations, and linear projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096,
+            "description": "Hidden dimension size"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of query heads"
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key-value heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per head"
+        },
+        "num_kv_groups": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of KV groups (num_heads // num_kv_heads)"
+        },
+        "qkv_size": {
+            "type": "const",
+            "value": 6144,
+            "description": "Total QKV projection size (num_heads * head_dim + 2 * num_kv_heads * head_dim)"
+        },
+        "rstd_dim": {
+            "type": "const",
+            "value": 1,
+            "description": "Dimension for rstd keepdim"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_query": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query output"
+        },
+        "grad_key": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key output"
+        },
+        "grad_value": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. value output"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input hidden states"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine values for RoPE"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine values for RoPE"
+        },
+        "qkv_weight": {
+            "shape": [
+                "qkv_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "QKV projection weight matrix"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query RMS normalization weight"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key RMS normalization weight"
+        },
+        "query_pre_norm": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query states after RoPE, before normalization (saved from forward)"
+        },
+        "key_pre_norm": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key states after RoPE, before normalization (saved from forward)"
+        },
+        "q_rstd": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "rstd_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query reciprocal standard deviation (saved from forward)"
+        },
+        "k_rstd": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "rstd_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key reciprocal standard deviation (saved from forward)"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability in RMS norm"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input hidden states"
+        },
+        "grad_cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. cosine values"
+        },
+        "grad_sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. sine values"
+        },
+        "grad_qkv_weight": {
+            "shape": [
+                "qkv_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. QKV weight matrix"
+        },
+        "grad_q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query normalization weight"
+        },
+        "grad_k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key normalization weight"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nfrom typing import Tuple\n\n\ndef _rms_norm_backward(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    weight: torch.Tensor,\n    rstd: torch.Tensor,\n    num_heads: int\n) -> Tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"Backward pass for RMS normalization.\"\"\"\n    input_dtype = grad_output.dtype\n    grad_output_float = grad_output.to(torch.float32)\n    x_float = x.to(torch.float32)\n    weight_float = weight.to(torch.float32)\n    rstd_float = rstd.to(torch.float32)\n    \n    # Normalized input\n    x_normed = x_float * rstd_float\n    \n    # Gradient w.r.t. weight: sum over batch, heads, and sequence dimensions\n    grad_weight = (grad_output_float * x_normed).sum(dim=(0, 1, 2))\n    \n    # Gradient w.r.t. input\n    # Step 1: grad from direct path (weight * grad_output * rstd)\n    grad_x_direct = grad_output_float * weight_float * rstd_float\n    \n    # Step 2: grad from rstd path\n    grad_rstd = (grad_output_float * weight_float * x_float).sum(\n        dim=-1, keepdim=True\n    )\n    \n    # d(rstd)/d(x) = -rstd^3 * x / D\n    D = x.shape[-1]\n    grad_x_from_rstd = grad_rstd * (-rstd_float.pow(3) * x_float / D)\n    \n    grad_x = grad_x_direct + grad_x_from_rstd\n    \n    return grad_x.to(input_dtype), grad_weight.to(input_dtype)\n\n\ndef _rope_backward(\n    grad_output: torch.Tensor,\n    x_rotated: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    num_heads: int\n) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:\n    \"\"\"Backward pass for RoPE.\"\"\"\n    # Split grad_output into two halves\n    half_dim = grad_output.shape[-1] // 2\n    grad_1 = grad_output[..., :half_dim]\n    grad_2 = grad_output[..., half_dim:]\n    \n    # Gradient w.r.t. input x (inverse rotation)\n    grad_rotated_inv = torch.cat((grad_2, -grad_1), dim=-1)\n    grad_x = grad_output * cos + grad_rotated_inv * sin\n    \n    # Recover original x from rotated x\n    x_rotated_1 = x_rotated[..., :half_dim]\n    x_rotated_2 = x_rotated[..., half_dim:]\n    x_rotated_inv = torch.cat((-x_rotated_2, x_rotated_1), dim=-1)\n\n    x_original = x_rotated * cos + x_rotated_inv * sin\n    \n    # Gradient w.r.t. cos - sum over heads dimension (dim=1)\n    grad_cos = (grad_output * x_original).sum(dim=1)\n    \n    # Gradient w.r.t. sin\n    x_original_1 = x_original[..., :half_dim]\n    x_original_2 = x_original[..., half_dim:]\n    x_original_rotated = torch.cat((-x_original_2, x_original_1), dim=-1)\n    \n    # Sum over heads dimension (dim=1)\n    grad_sin = (grad_output * x_original_rotated).sum(dim=1)\n    \n    return grad_x, grad_cos, grad_sin\n\n\n@torch.no_grad()\ndef run(\n    grad_query: torch.Tensor,\n    grad_key: torch.Tensor,\n    grad_value: torch.Tensor,\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    query_pre_norm: torch.Tensor,\n    key_pre_norm: torch.Tensor,\n    q_rstd: torch.Tensor,\n    k_rstd: torch.Tensor,\n    eps: float\n):\n    \"\"\"Backward pass for fused GQA QKV projection with RoPE and QK normalization.\"\"\"\n    # Constants\n    num_heads = 32\n    num_kv_heads = 8\n    head_dim = 128\n    num_kv_groups = 4\n    \n    bsz, seq_len, hidden_size = hidden_states.shape\n    qkv_size = num_heads * head_dim + 2 * num_kv_heads * head_dim\n    \n    # Step 6 backward: RMS normalization gradients\n    grad_query_pre_norm, grad_q_norm_weight = _rms_norm_backward(\n        grad_query, query_pre_norm, q_norm_weight, q_rstd, num_heads\n    )\n    \n    grad_key_pre_norm, grad_k_norm_weight = _rms_norm_backward(\n        grad_key, key_pre_norm, k_norm_weight, k_rstd, num_kv_heads\n    )\n    \n    # Step 5 backward: RoPE gradients\n    # Expand cos/sin to match query/key shapes\n    # cos, sin: [bsz, seq_len, head_dim] -> [bsz, 1, seq_len, head_dim]\n    cos_expanded_q = cos.unsqueeze(1)  # [bsz, 1, seq_len, head_dim]\n    sin_expanded_q = sin.unsqueeze(1)\n    cos_expanded_k = cos.unsqueeze(1)\n    sin_expanded_k = sin.unsqueeze(1)\n    \n    grad_query_pre_rope, grad_cos_q, grad_sin_q = _rope_backward(\n        grad_query_pre_norm, query_pre_norm, cos_expanded_q, sin_expanded_q, num_heads\n    )\n    \n    grad_key_pre_rope, grad_cos_k, grad_sin_k = _rope_backward(\n        grad_key_pre_norm, key_pre_norm, cos_expanded_k, sin_expanded_k, num_kv_heads\n    )\n    \n    # Combine cos/sin gradients from query and key paths\n    # grad_cos_q: [bsz, seq_len, head_dim], grad_cos_k: [bsz, seq_len, head_dim]\n    grad_cos = grad_cos_q + grad_cos_k\n    grad_sin = grad_sin_q + grad_sin_k\n    \n    # Step 4 backward: Transpose and reshape gradients\n    # grad_query_pre_rope: [bsz, num_heads, seq_len, head_dim] -> [bsz, seq_len, num_heads, head_dim]\n    grad_query_reshaped = grad_query_pre_rope.transpose(1, 2)\n    # grad_key_pre_rope: [bsz, num_kv_heads, seq_len, head_dim] -> [bsz, seq_len, num_kv_heads, head_dim]\n    grad_key_reshaped = grad_key_pre_rope.transpose(1, 2)\n    # grad_value: [bsz, num_kv_heads, seq_len, head_dim] -> [bsz, seq_len, num_kv_heads, head_dim]\n    grad_value_reshaped = grad_value.transpose(1, 2)\n    \n    # Step 3+2 backward: Flatten Q, K, V and concatenate in standard [Q_all | K_all | V_all] layout\n    grad_query_flat = grad_query_reshaped.reshape(bsz, seq_len, num_heads * head_dim)\n    grad_key_flat = grad_key_reshaped.reshape(bsz, seq_len, num_kv_heads * head_dim)\n    grad_value_flat = grad_value_reshaped.reshape(bsz, seq_len, num_kv_heads * head_dim)\n    grad_qkv_states = torch.cat([grad_query_flat, grad_key_flat, grad_value_flat], dim=-1)\n    \n    # Step 1 backward: Linear projection gradients\n    grad_qkv_flat = grad_qkv_states.reshape(-1, qkv_size)\n    hidden_flat = hidden_states.reshape(-1, hidden_size)\n    \n    # Gradient w.r.t. hidden_states: [bsz*seq_len, qkv_size] @ [qkv_size, hidden_size] -> [bsz*seq_len, hidden_size]\n    grad_hidden_states = F.linear(grad_qkv_flat, qkv_weight.t())\n    grad_hidden_states = grad_hidden_states.reshape(bsz, seq_len, hidden_size)\n    \n    # Gradient w.r.t. qkv_weight: [qkv_size, bsz*seq_len] @ [bsz*seq_len, hidden_size] -> [qkv_size, hidden_size]\n    grad_qkv_weight = torch.matmul(grad_qkv_flat.t(), hidden_flat)\n    \n    return (\n        grad_hidden_states.to(torch.bfloat16),\n        grad_cos.to(torch.bfloat16),\n        grad_sin.to(torch.bfloat16),\n        grad_qkv_weight.to(torch.bfloat16),\n        grad_q_norm_weight.to(torch.bfloat16),\n        grad_k_norm_weight.to(torch.bfloat16)\n    )\n"
+}

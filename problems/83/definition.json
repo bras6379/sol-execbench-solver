@@ -1,0 +1,69 @@
+{
+    "name": "083_attention_score_value_matmul",
+    "hf_id": "stabilityai/stable-diffusion-xl-base-1.0",
+    "description": "Fused attention score-value matrix multiplication that computes attention_weights @ V followed by transpose and reshape. This is the second major matmul in attention (after QK^T softmax) and appears in every self-attention and cross-attention layer throughout SDXL UNet.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 20,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per attention head"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1280,
+            "description": "Hidden size (num_heads * head_dim)"
+        },
+        "seq_len_q": {
+            "type": "var",
+            "description": "Query sequence length (spatial resolution H*W)"
+        },
+        "seq_len_kv": {
+            "type": "var",
+            "description": "Key/Value sequence length (same as seq_len_q for self-attn, 77 for cross-attn)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "attention_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "seq_len_kv"
+            ],
+            "dtype": "bfloat16",
+            "description": "Softmax-normalized attention scores [B, H, Q, K]"
+        },
+        "value": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_kv",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value matrix [B, H, K, D]"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len_q",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output [B, Q, H*D] ready for output projection"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    attention_weights: torch.Tensor,\n    value: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Compute fused attention output: attention_weights @ value with transpose and reshape.\n    \n    Args:\n        attention_weights: Softmax-normalized attention scores [B, H, Q, K]\n        value: Value matrix [B, H, K, D]\n        \n    Returns:\n        output: Attention output [B, Q, H*D] ready for output projection\n    \"\"\"\n    batch_size = attention_weights.shape[0]\n    seq_len_q = attention_weights.shape[2]\n    num_heads = 20\n    head_dim = 64\n    hidden_size = num_heads * head_dim\n    \n    # Core attention matmul: [B, H, Q, K] @ [B, H, K, D] -> [B, H, Q, D]\n    attn_output = torch.matmul(attention_weights, value)\n    \n    # Transpose: [B, H, Q, D] -> [B, Q, H, D]\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    \n    # Reshape: [B, Q, H, D] -> [B, Q, H*D]\n    attn_output = attn_output.reshape(batch_size, seq_len_q, hidden_size)\n    \n    return attn_output\n"
+}

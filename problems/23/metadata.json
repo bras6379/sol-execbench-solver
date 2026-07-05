@@ -1,0 +1,281 @@
+{
+  "task_id": 23,
+  "subset": "L1",
+  "collection_index": 23,
+  "name": "023_multimodal_rope_position_computation_with_grid_based_indexing",
+  "hf_id": "Qwen/Qwen3-VL-235B-A22B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:16.469197Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.001133,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 4,
+          "total_tokens": 64
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.214368
+      },
+      {
+        "index": 1,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 3,
+          "total_tokens": 768
+        },
+        "sol_ms": 0.0014,
+        "baseline_latency_ms": 0.2143835
+      },
+      {
+        "index": 2,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 5,
+          "total_tokens": 320
+        },
+        "sol_ms": 0.0008,
+        "baseline_latency_ms": 0.2126725
+      },
+      {
+        "index": 3,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 10,
+          "total_tokens": 640
+        },
+        "sol_ms": 0.001,
+        "baseline_latency_ms": 0.212448
+      },
+      {
+        "index": 4,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 4,
+          "total_tokens": 256
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.21256
+      },
+      {
+        "index": 5,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 7,
+          "total_tokens": 448
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.2127359999999999
+      },
+      {
+        "index": 6,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 4,
+          "total_tokens": 1024
+        },
+        "sol_ms": 0.0016,
+        "baseline_latency_ms": 0.2132
+      },
+      {
+        "index": 7,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 2,
+          "total_tokens": 2048
+        },
+        "sol_ms": 0.0037,
+        "baseline_latency_ms": 0.22808
+      },
+      {
+        "index": 8,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 16,
+          "total_tokens": 4096
+        },
+        "sol_ms": 0.0043,
+        "baseline_latency_ms": 0.26112
+      },
+      {
+        "index": 9,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 1,
+          "total_tokens": 1024
+        },
+        "sol_ms": 0.0025,
+        "baseline_latency_ms": 0.26104
+      },
+      {
+        "index": 10,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 6,
+          "total_tokens": 96
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.212496
+      },
+      {
+        "index": 11,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 2,
+          "total_tokens": 512
+        },
+        "sol_ms": 0.0012,
+        "baseline_latency_ms": 0.2090725
+      },
+      {
+        "index": 12,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 2,
+          "total_tokens": 128
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.211008
+      },
+      {
+        "index": 13,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 1,
+          "total_tokens": 256
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.207552
+      },
+      {
+        "index": 14,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 16,
+          "total_tokens": 1024
+        },
+        "sol_ms": 0.0014,
+        "baseline_latency_ms": 0.210944
+      },
+      {
+        "index": 15,
+        "axes": {
+          "spatial_merge_size": 2,
+          "num_position_embeddings": 1225,
+          "num_grid_per_side": 35,
+          "hidden_size": 1536,
+          "num_heads": 12,
+          "head_dim": 128,
+          "quarter_head_dim": 32,
+          "num_images": 7,
+          "total_tokens": 112
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.211696
+      }
+    ]
+  }
+}

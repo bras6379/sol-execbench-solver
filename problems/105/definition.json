@@ -1,0 +1,118 @@
+{
+    "name": "011_moe_sparse_routing_and_dispatch_backward",
+    "hf_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+    "description": "Backward pass for MoE sparse routing and dispatch. Computes gradients through softmax, top-k selection (straight-through estimator), normalization, and router linear projection.",
+    "axes": {
+        "num_tokens": {
+            "type": "var",
+            "description": "Total number of tokens (batch_size * seq_len)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 128
+        },
+        "top_k": {
+            "type": "const",
+            "value": 8
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input hidden states"
+        },
+        "gate_weight": {
+            "shape": [
+                "num_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router gate weight matrix"
+        },
+        "router_logits": {
+            "shape": [
+                "num_tokens",
+                "num_experts"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router logits from forward pass"
+        },
+        "routing_probs": {
+            "shape": [
+                "num_tokens",
+                "num_experts"
+            ],
+            "dtype": "float32",
+            "description": "Softmax routing probabilities from forward pass"
+        },
+        "selected_experts": {
+            "shape": [
+                "num_tokens",
+                "top_k"
+            ],
+            "dtype": "int64",
+            "description": "Selected expert indices from forward pass"
+        },
+        "routing_weights_sum": {
+            "shape": [
+                "num_tokens",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Sum of routing weights before normalization"
+        },
+        "grad_routing_weights": {
+            "shape": [
+                "num_tokens",
+                "top_k"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. routing weights"
+        },
+        "grad_expert_mask": {
+            "shape": [
+                "num_experts",
+                "top_k",
+                "num_tokens"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. expert mask"
+        },
+        "grad_router_logits": {
+            "shape": [
+                "num_tokens",
+                "num_experts"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. router logits"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. hidden states"
+        },
+        "grad_gate_weight": {
+            "shape": [
+                "num_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. gate weight"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, int], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs for MoE routing backward pass.\"\"\"\n    num_tokens = axes_and_scalars[\"num_tokens\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    num_experts = axes_and_scalars[\"num_experts\"]\n    top_k = axes_and_scalars[\"top_k\"]\n    \n    # Hidden states from forward pass\n    hidden_states = torch.randn(num_tokens, hidden_size, dtype=torch.bfloat16, device=device)\n    \n    # Gate weight\n    gate_weight = torch.randn(num_experts, hidden_size, dtype=torch.bfloat16, device=device) * 0.02\n    \n    # Router logits from forward pass\n    router_logits = torch.randn(num_tokens, num_experts, dtype=torch.bfloat16, device=device)\n    \n    # Routing probs (softmax of router_logits)\n    routing_probs = torch.softmax(router_logits.float(), dim=1)\n    \n    # Selected experts (top-k indices)\n    _, selected_experts = torch.topk(routing_probs, top_k, dim=-1)\n    \n    # Routing weights sum (for normalization backward)\n    routing_weights, _ = torch.topk(routing_probs, top_k, dim=-1)\n    routing_weights_sum = routing_weights.sum(dim=-1, keepdim=True)\n    \n    # Gradients\n    grad_routing_weights = torch.randn(num_tokens, top_k, dtype=torch.bfloat16, device=device) * 0.1\n    grad_expert_mask = torch.randn(num_experts, top_k, num_tokens, dtype=torch.bfloat16, device=device) * 0.01\n    grad_router_logits = torch.randn(num_tokens, num_experts, dtype=torch.bfloat16, device=device) * 0.1\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"gate_weight\": gate_weight,\n        \"router_logits\": router_logits,\n        \"routing_probs\": routing_probs,\n        \"selected_experts\": selected_experts,\n        \"routing_weights_sum\": routing_weights_sum,\n        \"grad_routing_weights\": grad_routing_weights,\n        \"grad_expert_mask\": grad_expert_mask,\n        \"grad_router_logits\": grad_router_logits,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    gate_weight: torch.Tensor,\n    router_logits: torch.Tensor,\n    routing_probs: torch.Tensor,\n    selected_experts: torch.Tensor,\n    routing_weights_sum: torch.Tensor,\n    grad_routing_weights: torch.Tensor,\n    grad_expert_mask: torch.Tensor,\n    grad_router_logits: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward pass for MoE sparse routing.\n    \n    Computes gradients through:\n    1. Normalization (quotient rule)\n    2. Top-k selection (straight-through estimator)\n    3. Softmax\n    4. Linear projection\n    \"\"\"\n    num_tokens = hidden_states.shape[0]\n    num_experts = gate_weight.shape[0]\n    top_k = selected_experts.shape[1]\n    input_dtype = hidden_states.dtype\n    \n    # Initialize gradient accumulator for routing probabilities\n    grad_routing_probs = torch.zeros_like(routing_probs)  # float32\n    \n    # Process grad_routing_weights through normalization backward\n    grad_routing_weights_f32 = grad_routing_weights.float()\n    \n    # Gradient through normalization: d(w_i / sum(w)) / d(w_i)\n    # Gather the routing weights before normalization\n    routing_weights_unnorm = torch.gather(routing_probs, dim=1, index=selected_experts)  # [num_tokens, top_k]\n    \n    # Compute gradient w.r.t. unnormalized weights using quotient rule\n    grad_sum = (grad_routing_weights_f32 * routing_weights_unnorm / routing_weights_sum).sum(\n        dim=-1, keepdim=True\n    )\n    grad_routing_weights_unnorm = (\n        grad_routing_weights_f32 / routing_weights_sum - \n        grad_sum / routing_weights_sum\n    )\n    \n    # Gradient through top-k selection (straight-through estimator)\n    # Scatter gradients back to selected expert positions\n    grad_routing_probs.scatter_(\n        dim=1,\n        index=selected_experts,\n        src=grad_routing_weights_unnorm\n    )\n    \n    # Process grad_expert_mask (auxiliary gradient path)\n    # grad_expert_mask shape: (num_experts, top_k, num_tokens)\n    # Permute: (num_experts, top_k, num_tokens) -> (num_tokens, top_k, num_experts)\n    grad_expert_mask_permuted = grad_expert_mask.permute(2, 1, 0).float()\n    \n    # Gather gradients for selected experts\n    grad_from_mask = torch.gather(\n        grad_expert_mask_permuted,\n        dim=2,\n        index=selected_experts.unsqueeze(2)\n    ).squeeze(2)\n    \n    # Scatter back to routing_probs space\n    grad_routing_probs.scatter_add_(\n        dim=1,\n        index=selected_experts,\n        src=grad_from_mask\n    )\n    \n    # Process grad_router_logits (direct gradient path)\n    grad_routing_probs = grad_routing_probs + grad_router_logits.float()\n    \n    # Gradient through softmax\n    # d(softmax)/d(logits) = softmax * (grad - sum(grad * softmax))\n    dot_product = (grad_routing_probs * routing_probs).sum(dim=1, keepdim=True)\n    grad_router_logits_computed = routing_probs * (grad_routing_probs - dot_product)\n    \n    # Convert back to input dtype\n    grad_router_logits_computed = grad_router_logits_computed.to(input_dtype)\n    \n    # Gradient through linear projection\n    # grad_hidden_states = grad_router_logits @ gate_weight\n    # Shape: (num_tokens, num_experts) @ (num_experts, hidden_size)\n    grad_hidden_states = torch.matmul(\n        grad_router_logits_computed,\n        gate_weight\n    )\n    \n    # grad_gate_weight = grad_router_logits.T @ hidden_states\n    # Shape: (num_experts, num_tokens) @ (num_tokens, hidden_size)\n    grad_gate_weight = torch.matmul(\n        grad_router_logits_computed.t(),\n        hidden_states\n    )\n    \n    return grad_hidden_states, grad_gate_weight\n"
+}

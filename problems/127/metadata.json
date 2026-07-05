@@ -1,0 +1,281 @@
+{
+  "task_id": 127,
+  "subset": "L2",
+  "collection_index": 33,
+  "name": "033_multi_scale_feature_pyramid",
+  "hf_id": "chuxiaojie/NAFNet",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:42.234237Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.018987,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 16,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.007,
+        "baseline_latency_ms": 0.409424
+      },
+      {
+        "index": 1,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 8,
+          "height": 256,
+          "width": 256
+        },
+        "sol_ms": 0.0536,
+        "baseline_latency_ms": 1.527616
+      },
+      {
+        "index": 2,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 1,
+          "height": 512,
+          "width": 512
+        },
+        "sol_ms": 0.027,
+        "baseline_latency_ms": 0.8439045000000001
+      },
+      {
+        "index": 3,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 1,
+          "height": 132,
+          "width": 132
+        },
+        "sol_ms": 0.0022,
+        "baseline_latency_ms": 0.270608
+      },
+      {
+        "index": 4,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 32,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.0536,
+        "baseline_latency_ms": 1.4825925
+      },
+      {
+        "index": 5,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 8,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.0037,
+        "baseline_latency_ms": 0.3162085
+      },
+      {
+        "index": 6,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 1,
+          "height": 1024,
+          "width": 1024
+        },
+        "sol_ms": 0.1067,
+        "baseline_latency_ms": 2.8640165
+      },
+      {
+        "index": 7,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 8,
+          "height": 372,
+          "width": 372
+        },
+        "sol_ms": 0.1127,
+        "baseline_latency_ms": 3.1288965
+      },
+      {
+        "index": 8,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 4,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.0021,
+        "baseline_latency_ms": 0.2626245
+      },
+      {
+        "index": 9,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 1,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.0021,
+        "baseline_latency_ms": 0.2602879999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 2,
+          "height": 256,
+          "width": 256
+        },
+        "sol_ms": 0.0137,
+        "baseline_latency_ms": 0.594544
+      },
+      {
+        "index": 11,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 1,
+          "height": 448,
+          "width": 448
+        },
+        "sol_ms": 0.0208,
+        "baseline_latency_ms": 0.7136480000000001
+      },
+      {
+        "index": 12,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 2,
+          "height": 512,
+          "width": 512
+        },
+        "sol_ms": 0.0536,
+        "baseline_latency_ms": 1.53776
+      },
+      {
+        "index": 13,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 4,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.007,
+        "baseline_latency_ms": 0.4098565
+      },
+      {
+        "index": 14,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 64,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.1067,
+        "baseline_latency_ms": 2.7193125
+      },
+      {
+        "index": 15,
+        "axes": {
+          "input_channels": 3,
+          "base_channels": 32,
+          "num_scales": 3,
+          "scale1_channels": 32,
+          "scale2_channels": 64,
+          "scale3_channels": 128,
+          "batch_size": 16,
+          "height": 256,
+          "width": 256
+        },
+        "sol_ms": 0.1067,
+        "baseline_latency_ms": 2.927681
+      }
+    ]
+  }
+}

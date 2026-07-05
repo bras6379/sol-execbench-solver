@@ -1,0 +1,113 @@
+{
+    "name": "068_gelu_approximate_feedforward_backward",
+    "hf_id": "stabilityai/stable-diffusion-3.5-medium",
+    "description": "Backward pass for GELU approximate feedforward network. Computes gradients through Linear2 -> GELU_approx -> Linear1 chain. The forward pass is: hidden_states -> Linear1 (expansion to 4x) -> GELU_approx -> Linear2 (contraction) -> output.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "dim": {
+            "type": "const",
+            "value": 1536
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 6144
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output from upstream"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Original input to forward pass"
+        },
+        "weight1": {
+            "shape": [
+                "hidden_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "First linear layer weight (expansion)"
+        },
+        "weight2": {
+            "shape": [
+                "dim",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second linear layer weight (contraction)"
+        },
+        "linear1_out": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output of first linear layer (saved from forward)"
+        },
+        "tanh_inner": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "tanh(inner) values saved from forward pass"
+        },
+        "gelu_out": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output of GELU activation (saved from forward)"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input hidden states"
+        },
+        "grad_weight1": {
+            "shape": [
+                "hidden_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. first linear weight"
+        },
+        "grad_weight2": {
+            "shape": [
+                "dim",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. second linear weight"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs with properly constrained tanh_inner values.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    dim = axes_and_scalars[\"dim\"]\n    hidden_dim = axes_and_scalars[\"hidden_dim\"]\n\n    grad_output = torch.randn(batch_size, seq_len, dim, device=device)\n    hidden_states = torch.randn(batch_size, seq_len, dim, device=device)\n    weight1 = torch.randn(hidden_dim, dim, device=device) * 0.02\n    weight2 = torch.randn(dim, hidden_dim, device=device) * 0.02\n\n    # Compute linear1_out from forward pass\n    linear1_out = hidden_states.matmul(weight1.t())\n\n    # Compute tanh_inner from forward pass (must be in [-1, 1])\n    inner = 0.7978845608028654 * (linear1_out + 0.044715 * linear1_out.pow(3))\n    tanh_inner = torch.tanh(inner)\n\n    # Compute gelu_out from forward pass\n    gelu_out = 0.5 * linear1_out * (1.0 + tanh_inner)\n\n    return {\n        \"grad_output\": grad_output,\n        \"hidden_states\": hidden_states,\n        \"weight1\": weight1,\n        \"weight2\": weight2,\n        \"linear1_out\": linear1_out,\n        \"tanh_inner\": tanh_inner,\n        \"gelu_out\": gelu_out,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    weight1: torch.Tensor,\n    weight2: torch.Tensor,\n    linear1_out: torch.Tensor,\n    tanh_inner: torch.Tensor,\n    gelu_out: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for GELU approximate feedforward.\n\n    Gradient flow:\n    grad_output -> grad_linear2 -> grad_gelu -> grad_linear1 -> grad_input\n\n    GELU(x) = 0.5 * x * (1 + tanh(inner))\n    where inner = sqrt(2/pi) * (x + 0.044715 * x^3)\n\n    d(GELU)/dx = 0.5 * (1 + tanh(inner)) +\n                 0.5 * x * sech^2(inner) * d(inner)/dx\n\n    d(inner)/dx = sqrt(2/pi) * (1 + 0.134145 * x^2)\n    \"\"\"\n    # ============================================================\n    # Backward through Linear2: output = gelu_out @ weight2.T\n    # ============================================================\n\n    # Gradient w.r.t. gelu_out\n    grad_gelu_out = grad_output.matmul(weight2)\n\n    # Gradient w.r.t. weight2\n    grad_output_2d = grad_output.reshape(-1, grad_output.shape[-1])\n    gelu_out_2d = gelu_out.reshape(-1, gelu_out.shape[-1])\n    grad_weight2 = grad_output_2d.t().matmul(gelu_out_2d)\n\n    # ============================================================\n    # Backward through GELU approximate activation\n    # ============================================================\n\n    # Part 1: 0.5 * (1 + tanh(inner))\n    gelu_grad_part1 = 0.5 * (1.0 + tanh_inner)\n\n    # Part 2: 0.5 * x * sech^2(inner) * d(inner)/dx\n    sech_squared = 1.0 - tanh_inner * tanh_inner\n    d_inner_dx = 0.7978845608028654 * (1.0 + 0.134145 * linear1_out * linear1_out)\n    gelu_grad_part2 = 0.5 * linear1_out * sech_squared * d_inner_dx\n\n    # Total GELU gradient\n    gelu_grad = gelu_grad_part1 + gelu_grad_part2\n\n    # Apply chain rule\n    grad_linear1_out = grad_gelu_out * gelu_grad\n\n    # ============================================================\n    # Backward through Linear1: linear1_out = hidden_states @ weight1.T\n    # ============================================================\n\n    # Gradient w.r.t. hidden_states\n    grad_hidden_states = grad_linear1_out.matmul(weight1)\n\n    # Gradient w.r.t. weight1\n    grad_linear1_out_2d = grad_linear1_out.reshape(-1, grad_linear1_out.shape[-1])\n    hidden_states_2d = hidden_states.reshape(-1, hidden_states.shape[-1])\n    grad_weight1 = grad_linear1_out_2d.t().matmul(hidden_states_2d)\n\n    return grad_hidden_states, grad_weight1, grad_weight2\n"
+}

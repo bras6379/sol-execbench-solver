@@ -1,0 +1,297 @@
+{
+  "task_id": 116,
+  "subset": "L2",
+  "collection_index": 22,
+  "name": "022_video_latent_denoising_unet_block",
+  "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:39.280729Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.280924,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 64,
+          "num_frames": 4,
+          "num_spatial_tokens": 64,
+          "text_seq_len": 77
+        },
+        "sol_ms": 0.3586,
+        "baseline_latency_ms": 2.147591
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 2,
+          "num_frames": 16,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 131
+        },
+        "sol_ms": 0.1792,
+        "baseline_latency_ms": 0.965699
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 4,
+          "num_frames": 32,
+          "num_spatial_tokens": 128,
+          "text_seq_len": 128
+        },
+        "sol_ms": 0.3537,
+        "baseline_latency_ms": 1.426644
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 4,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 77
+        },
+        "sol_ms": 0.0227,
+        "baseline_latency_ms": 0.5699535
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 2,
+          "num_frames": 8,
+          "num_spatial_tokens": 1024,
+          "text_seq_len": 256
+        },
+        "sol_ms": 0.3908,
+        "baseline_latency_ms": 1.691973
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 4,
+          "num_frames": 8,
+          "num_spatial_tokens": 512,
+          "text_seq_len": 541
+        },
+        "sol_ms": 0.3862,
+        "baseline_latency_ms": 1.804949
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 64,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 773
+        },
+        "sol_ms": 0.3841,
+        "baseline_latency_ms": 1.287284
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 8,
+          "num_frames": 8,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 128
+        },
+        "sol_ms": 0.3588,
+        "baseline_latency_ms": 1.730085
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 2,
+          "num_frames": 32,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 77
+        },
+        "sol_ms": 0.3557,
+        "baseline_latency_ms": 1.420756
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 4,
+          "num_frames": 8,
+          "num_spatial_tokens": 1024,
+          "text_seq_len": 77
+        },
+        "sol_ms": 0.7662,
+        "baseline_latency_ms": 3.2621375
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 32,
+          "num_frames": 4,
+          "num_spatial_tokens": 128,
+          "text_seq_len": 77
+        },
+        "sol_ms": 0.3553,
+        "baseline_latency_ms": 2.2476705
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 8,
+          "num_frames": 4,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 853
+        },
+        "sol_ms": 0.2076,
+        "baseline_latency_ms": 1.3718285
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 8,
+          "num_spatial_tokens": 1024,
+          "text_seq_len": 256
+        },
+        "sol_ms": 0.1956,
+        "baseline_latency_ms": 1.0316195
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 48,
+          "num_spatial_tokens": 256,
+          "text_seq_len": 613
+        },
+        "sol_ms": 0.2834,
+        "baseline_latency_ms": 1.100291
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 8,
+          "num_spatial_tokens": 2048,
+          "text_seq_len": 691
+        },
+        "sol_ms": 0.4452,
+        "baseline_latency_ms": 1.86143
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 1024,
+          "num_attention_heads": 16,
+          "intermediate_size": 4096,
+          "head_dim": 64,
+          "hidden_size_x3": 3072,
+          "hidden_size_x2": 2048,
+          "batch_size": 1,
+          "num_frames": 24,
+          "num_spatial_tokens": 512,
+          "text_seq_len": 373
+        },
+        "sol_ms": 0.2826,
+        "baseline_latency_ms": 1.109523
+      }
+    ]
+  }
+}

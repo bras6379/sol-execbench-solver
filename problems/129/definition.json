@@ -1,0 +1,153 @@
+{
+    "name": "035_convnextv2_block_with_grn",
+    "hf_id": "facebook/convnextv2-base-22k-224",
+    "description": "ConvNextV2 block with Global Response Normalization (GRN). Combines depthwise 7x7 convolution, LayerNorm, pointwise expansion, GELU activation, GRN layer, pointwise projection, and residual connection. GRN computes L2 norm across spatial dimensions and normalizes by channel-wise mean.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "dim": {
+            "type": "var",
+            "description": "Number of input/output channels"
+        },
+        "height": {
+            "type": "var",
+            "description": "Spatial height"
+        },
+        "width": {
+            "type": "var",
+            "description": "Spatial width"
+        },
+        "expansion_dim": {
+            "type": "expr",
+            "expression": "dim * 4",
+            "description": "Expanded dimension (4x expansion)"
+        },
+        "kernel_size": {
+            "type": "const",
+            "value": 7
+        },
+        "padding": {
+            "type": "const",
+            "value": 3
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "dim",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input tensor in NCHW format"
+        },
+        "dwconv_weight": {
+            "shape": [
+                "dim",
+                "1",
+                "kernel_size",
+                "kernel_size"
+            ],
+            "dtype": "float32",
+            "description": "Depthwise conv weight (groups=dim)"
+        },
+        "dwconv_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Depthwise conv bias"
+        },
+        "layernorm_weight": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm weight"
+        },
+        "layernorm_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm bias"
+        },
+        "pwconv1_weight": {
+            "shape": [
+                "expansion_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "First pointwise conv weight"
+        },
+        "pwconv1_bias": {
+            "shape": [
+                "expansion_dim"
+            ],
+            "dtype": "float32",
+            "description": "First pointwise conv bias"
+        },
+        "grn_weight": {
+            "shape": [
+                "1",
+                "1",
+                "1",
+                "expansion_dim"
+            ],
+            "dtype": "float32",
+            "description": "GRN learnable weight"
+        },
+        "grn_bias": {
+            "shape": [
+                "1",
+                "1",
+                "1",
+                "expansion_dim"
+            ],
+            "dtype": "float32",
+            "description": "GRN learnable bias"
+        },
+        "pwconv2_weight": {
+            "shape": [
+                "dim",
+                "expansion_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second pointwise conv weight"
+        },
+        "pwconv2_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Second pointwise conv bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability in GRN"
+        },
+        "layer_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for LayerNorm"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "dim",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Output tensor with residual connection"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    dwconv_weight: torch.Tensor,\n    dwconv_bias: torch.Tensor,\n    layernorm_weight: torch.Tensor,\n    layernorm_bias: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n    layer_norm_eps: float,\n):\n    residual = x\n    B, C, H, W = x.shape\n    \n    # Depthwise convolution: (B, C, H, W) -> (B, C, H, W)\n    # groups=C for depthwise\n    out = F.conv2d(x, dwconv_weight, dwconv_bias, padding=3, groups=C)\n    \n    # Permute to channels_last: (B, C, H, W) -> (B, H, W, C)\n    out = out.permute(0, 2, 3, 1)\n    \n    # LayerNorm: (B, H, W, C) -> (B, H, W, C)\n    out = F.layer_norm(out, (C,), layernorm_weight, layernorm_bias, eps=layer_norm_eps)\n    \n    # Pointwise expansion: (B, H, W, C) -> (B, H, W, 4C)\n    # Using matmul: out @ pwconv1_weight.T + pwconv1_bias\n    out = torch.matmul(out, pwconv1_weight.T) + pwconv1_bias\n    \n    # GELU activation: (B, H, W, 4C) -> (B, H, W, 4C)\n    out = F.gelu(out)\n    \n    # Global Response Normalization (GRN)\n    # Compute L2 norm across spatial dimensions (H, W)\n    # Shape: (B, H, W, 4C) -> (B, 1, 1, 4C)\n    global_features = torch.linalg.vector_norm(out, ord=2, dim=(1, 2), keepdim=True)\n    \n    # Normalize by channel-wise mean\n    # Shape: (B, 1, 1, 4C) -> (B, 1, 1, 4C)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    \n    # Apply GRN transformation with learnable parameters\n    # x_grn = weight * (x * norm_features) + bias + x\n    out = grn_weight * (out * norm_features) + grn_bias + out\n    \n    # Pointwise projection: (B, H, W, 4C) -> (B, H, W, C)\n    out = torch.matmul(out, pwconv2_weight.T) + pwconv2_bias\n    \n    # Permute back to channels_first: (B, H, W, C) -> (B, C, H, W)\n    out = out.permute(0, 3, 1, 2)\n    \n    # Residual connection (no drop path in inference)\n    out = residual + out\n    \n    return out\n"
+}

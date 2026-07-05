@@ -1,0 +1,109 @@
+{
+    "name": "060_chunk_gated_delta_rule_linear_attention",
+    "hf_id": "nvidia/Qwen3-Next-80B-A3B-Thinking-NVFP4",
+    "description": "Chunk-based Gated Delta Rule linear attention computation that processes sequences in chunks of 64 tokens. Implements delta rule update with exponential decay gating, chunk-wise attention with intra-chunk causal masking, inter-chunk recurrent state propagation, and cumulative decay tracking.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_k_heads": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of key heads"
+        },
+        "num_v_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of value heads"
+        },
+        "head_k_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Key head dimension"
+        },
+        "head_v_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Value head dimension"
+        },
+        "chunk_size": {
+            "type": "const",
+            "value": 64,
+            "description": "Chunk size for processing"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "query": {
+            "shape": [
+                "batch_size",
+                "num_k_heads",
+                "seq_len",
+                "head_k_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query tensor"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "num_k_heads",
+                "seq_len",
+                "head_k_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key tensor"
+        },
+        "value": {
+            "shape": [
+                "batch_size",
+                "num_v_heads",
+                "seq_len",
+                "head_v_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value tensor"
+        },
+        "g": {
+            "shape": [
+                "batch_size",
+                "num_v_heads",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Decay gate tensor"
+        },
+        "beta": {
+            "shape": [
+                "batch_size",
+                "num_v_heads",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Update gate tensor"
+        },
+        "scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scale factor (1/sqrt(head_k_dim))"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_v_heads",
+                "head_v_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    g: torch.Tensor,\n    beta: torch.Tensor,\n    scale: float,\n):\n    \"\"\"\n    Chunk-based Gated Delta Rule linear attention.\n    \n    Args:\n        query: [batch, num_k_heads, seq_len, head_k_dim]\n        key: [batch, num_k_heads, seq_len, head_k_dim]\n        value: [batch, num_v_heads, seq_len, head_v_dim]\n        g: [batch, num_v_heads, seq_len] - decay gates\n        beta: [batch, num_v_heads, seq_len] - update gates\n        scale: attention scale factor\n    \"\"\"\n    initial_dtype = query.dtype\n    batch_size, num_k_heads, sequence_length, k_head_dim = key.shape\n    num_v_heads = value.shape[1]\n    v_head_dim = value.shape[-1]\n    chunk_size = 64\n    \n    # L2 normalization\n    def l2norm(x, dim=-1, eps=1e-6):\n        inv_norm = torch.rsqrt((x * x).sum(dim=dim, keepdim=True) + eps)\n        return x * inv_norm\n    \n    query = l2norm(query, dim=-1, eps=1e-6)\n    key = l2norm(key, dim=-1, eps=1e-6)\n    \n    # Convert to float32 for numerical stability\n    query = query.to(torch.float32)\n    key = key.to(torch.float32)\n    value = value.to(torch.float32)\n    beta = beta.to(torch.float32)\n    g = g.to(torch.float32)\n    \n    # Apply scaling to queries\n    query = query * scale\n    \n    # Pad sequence to multiple of chunk_size\n    pad_size = (chunk_size - sequence_length % chunk_size) % chunk_size\n    if pad_size > 0:\n        query = F.pad(query, (0, 0, 0, pad_size))\n        key = F.pad(key, (0, 0, 0, pad_size))\n        value = F.pad(value, (0, 0, 0, pad_size))\n        beta = F.pad(beta, (0, pad_size))\n        g = F.pad(g, (0, pad_size))\n    \n    total_sequence_length = sequence_length + pad_size\n    num_chunks = total_sequence_length // chunk_size\n    \n    # Compute beta-weighted values and keys\n    v_beta = value * beta.unsqueeze(-1)\n    k_beta = key.unsqueeze(1).expand(-1, num_v_heads // num_k_heads, -1, -1, -1)\n    k_beta = k_beta.reshape(batch_size, num_v_heads, total_sequence_length, k_head_dim)\n    k_beta = k_beta * beta.unsqueeze(-1)\n    \n    # Reshape to chunks\n    query_chunks = query.unsqueeze(1).expand(-1, num_v_heads // num_k_heads, -1, -1, -1)\n    query_chunks = query_chunks.reshape(batch_size, num_v_heads, total_sequence_length, k_head_dim)\n    query_chunks = query_chunks.reshape(batch_size, num_v_heads, num_chunks, chunk_size, k_head_dim)\n    \n    key_chunks = key.unsqueeze(1).expand(-1, num_v_heads // num_k_heads, -1, -1, -1)\n    key_chunks = key_chunks.reshape(batch_size, num_v_heads, total_sequence_length, k_head_dim)\n    key_chunks = key_chunks.reshape(batch_size, num_v_heads, num_chunks, chunk_size, k_head_dim)\n    \n    value_chunks = value.reshape(batch_size, num_v_heads, num_chunks, chunk_size, v_head_dim)\n    k_beta_chunks = k_beta.reshape(batch_size, num_v_heads, num_chunks, chunk_size, k_head_dim)\n    v_beta_chunks = v_beta.reshape(batch_size, num_v_heads, num_chunks, chunk_size, v_head_dim)\n    g_chunks = g.reshape(batch_size, num_v_heads, num_chunks, chunk_size)\n    \n    # Compute cumulative decay within chunks\n    g_cumsum = g_chunks.cumsum(dim=-1)\n    \n    # Create decay mask\n    decay_mask = (g_cumsum.unsqueeze(-1) - g_cumsum.unsqueeze(-2)).exp()\n    decay_mask = decay_mask.tril()\n    \n    # Create causal mask for attention\n    causal_mask = torch.triu(\n        torch.ones(chunk_size, chunk_size, dtype=torch.bool, device=query.device),\n        diagonal=0\n    )\n    \n    # Compute intra-chunk attention\n    attn = -(k_beta_chunks @ key_chunks.transpose(-1, -2)) * decay_mask\n    attn = attn.masked_fill(causal_mask, 0)\n    \n    # Compute cumulative attention through iterative updates\n    for i in range(1, chunk_size):\n        row = attn[..., i, :i].clone()\n        sub = attn[..., :i, :i].clone()\n        attn[..., i, :i] = row + (row.unsqueeze(-1) * sub).sum(-2)\n    \n    # Add identity\n    attn = attn + torch.eye(chunk_size, dtype=attn.dtype, device=attn.device)\n    \n    # Transform values and compute cumulative decay for keys\n    value_transformed = attn @ v_beta_chunks\n    k_cumdecay = attn @ (k_beta_chunks * g_chunks.exp().unsqueeze(-1))\n    \n    # Initialize recurrent state\n    recurrent_state = torch.zeros(\n        batch_size, num_v_heads, k_head_dim, v_head_dim,\n        dtype=torch.float32, device=value.device\n    )\n    \n    # Output tensor\n    output = torch.zeros(\n        batch_size, num_v_heads, num_chunks, chunk_size, v_head_dim,\n        dtype=torch.float32, device=value.device\n    )\n    \n    # Create upper triangular mask\n    upper_mask = torch.triu(\n        torch.ones(chunk_size, chunk_size, dtype=torch.bool, device=query.device),\n        diagonal=1\n    )\n    \n    # Process each chunk\n    for chunk_idx in range(num_chunks):\n        q_chunk = query_chunks[:, :, chunk_idx]\n        k_chunk = key_chunks[:, :, chunk_idx]\n        v_transformed_chunk = value_transformed[:, :, chunk_idx]\n        k_cumdecay_chunk = k_cumdecay[:, :, chunk_idx]\n        g_chunk = g_chunks[:, :, chunk_idx]\n        decay_mask_chunk = decay_mask[:, :, chunk_idx]\n        \n        # Intra-chunk attention\n        attn_intra = (q_chunk @ k_chunk.transpose(-1, -2)) * decay_mask_chunk\n        attn_intra = attn_intra.masked_fill_(upper_mask, 0)\n        \n        # Value correction from recurrent state\n        v_prime = k_cumdecay_chunk @ recurrent_state\n        v_new = v_transformed_chunk - v_prime\n        \n        # Inter-chunk attention\n        attn_inter = (q_chunk * g_chunk.exp().unsqueeze(-1)) @ recurrent_state\n        \n        # Combine\n        output[:, :, chunk_idx] = attn_inter + attn_intra @ v_new\n        \n        # Update recurrent state\n        chunk_decay = g_chunk[:, :, -1].exp().unsqueeze(-1).unsqueeze(-1)\n        recurrent_state = recurrent_state * chunk_decay\n        \n        token_decay = (g_chunk[:, :, -1].unsqueeze(-1) - g_chunk).exp().unsqueeze(-1)\n        recurrent_state = recurrent_state + (k_chunk * token_decay).transpose(-1, -2) @ v_new\n    \n    # Reshape output and remove padding\n    output = output.reshape(batch_size, num_v_heads, total_sequence_length, v_head_dim)\n    output = output[:, :, :sequence_length]\n    \n    # Transpose to [batch, seq_len, num_v_heads, head_v_dim]\n    output = output.transpose(1, 2).contiguous().to(initial_dtype)\n    \n    return output\n"
+}

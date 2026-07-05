@@ -1,0 +1,49 @@
+{
+    "name": "085_geglu_activation",
+    "hf_id": "stabilityai/stable-diffusion-xl-refiner-1.0",
+    "description": "GEGLU (Gated GLU with GELU) activation function. Splits input along last dimension into two halves, applies approximate GELU (tanh-based) to the first half, and multiplies element-wise with the second half. Used in transformer feed-forward networks.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 5120,
+            "description": "Inner dimension (output dimension after GEGLU)"
+        },
+        "input_dim": {
+            "type": "expr",
+            "expression": "inner_dim * 2",
+            "description": "Input dimension (2x inner_dim for GEGLU split)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "input_dim"
+            ],
+            "dtype": "float32",
+            "description": "Input tensor to be split and processed by GEGLU"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output after GEGLU activation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(x: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    GEGLU activation: GELU(x_gate) * x_linear\n    \n    Args:\n        x: Input tensor of shape (batch_size, seq_len, inner_dim * 2)\n        \n    Returns:\n        Output tensor of shape (batch_size, seq_len, inner_dim)\n    \"\"\"\n    # Split input into two halves along last dimension\n    # x_gate and x_linear each have shape (batch_size, seq_len, inner_dim)\n    x_gate, x_linear = x.chunk(2, dim=-1)\n    \n    # Apply approximate GELU (tanh-based) to gate and multiply with linear part\n    # GELU_approx(x) = 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n    output = F.gelu(x_gate, approximate='tanh') * x_linear\n    \n    return output\n"
+}

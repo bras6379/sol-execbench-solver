@@ -1,0 +1,81 @@
+{
+  "task_id": 26,
+  "subset": "L1",
+  "collection_index": 26,
+  "name": "026_video_patch_embedding_projection",
+  "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+  "num_workloads": 4,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:17.726997Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.618261,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_frames": 81,
+          "in_channels": 16,
+          "hidden_size": 5120,
+          "patch_size": 2,
+          "batch_size": 1,
+          "height": 224,
+          "width": 224
+        },
+        "sol_ms": 1.3911,
+        "baseline_latency_ms": 12.3104
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_frames": 81,
+          "in_channels": 16,
+          "hidden_size": 5120,
+          "patch_size": 2,
+          "batch_size": 1,
+          "height": 192,
+          "width": 192
+        },
+        "sol_ms": 1.0221,
+        "baseline_latency_ms": 9.067864
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_frames": 81,
+          "in_channels": 16,
+          "hidden_size": 5120,
+          "patch_size": 2,
+          "batch_size": 1,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.4545,
+        "baseline_latency_ms": 3.698826
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_frames": 81,
+          "in_channels": 16,
+          "hidden_size": 5120,
+          "patch_size": 2,
+          "batch_size": 2,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.2261,
+        "baseline_latency_ms": 2.042006
+      }
+    ]
+  }
+}

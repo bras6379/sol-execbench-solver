@@ -1,0 +1,292 @@
+{
+    "name": "022_video_latent_denoising_unet_block",
+    "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+    "description": "Complete U-Net style denoising block for video latent diffusion combining temporal self-attention, spatial self-attention, cross-attention with text conditioning, and feedforward network. Processes video latents at each denoising timestep with different attention patterns across temporal and spatial dimensions.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_frames": {
+            "type": "var",
+            "description": "Number of video frames"
+        },
+        "num_spatial_tokens": {
+            "type": "var",
+            "description": "Number of spatial tokens per frame (height * width)"
+        },
+        "text_seq_len": {
+            "type": "var",
+            "description": "Text sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024,
+            "description": "Hidden dimension size"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "expr",
+            "expression": "hidden_size // num_attention_heads",
+            "description": "Per-head dimension"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 4096,
+            "description": "FFN intermediate dimension"
+        },
+        "video_seq_len": {
+            "type": "expr",
+            "expression": "num_frames * num_spatial_tokens",
+            "description": "Total video sequence length"
+        },
+        "hidden_size_x3": {
+            "type": "expr",
+            "expression": "hidden_size * 3",
+            "description": "QKV projection output size"
+        },
+        "hidden_size_x2": {
+            "type": "expr",
+            "expression": "hidden_size * 2",
+            "description": "KV projection output size"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "video_latents": {
+            "shape": [
+                "batch_size",
+                "video_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Video latent tensor"
+        },
+        "text_embeddings": {
+            "shape": [
+                "batch_size",
+                "text_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Text conditioning embeddings"
+        },
+        "temporal_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Temporal layer norm weight"
+        },
+        "temporal_norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Temporal layer norm bias"
+        },
+        "temporal_qkv_weight": {
+            "shape": [
+                "hidden_size_x3",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Temporal QKV projection weight"
+        },
+        "temporal_qkv_bias": {
+            "shape": [
+                "hidden_size_x3"
+            ],
+            "dtype": "float32",
+            "description": "Temporal QKV projection bias"
+        },
+        "temporal_out_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Temporal output projection weight"
+        },
+        "temporal_out_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Temporal output projection bias"
+        },
+        "spatial_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Spatial layer norm weight"
+        },
+        "spatial_norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Spatial layer norm bias"
+        },
+        "spatial_qkv_weight": {
+            "shape": [
+                "hidden_size_x3",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Spatial QKV projection weight"
+        },
+        "spatial_qkv_bias": {
+            "shape": [
+                "hidden_size_x3"
+            ],
+            "dtype": "float32",
+            "description": "Spatial QKV projection bias"
+        },
+        "spatial_out_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Spatial output projection weight"
+        },
+        "spatial_out_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Spatial output projection bias"
+        },
+        "cross_attn_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention layer norm weight"
+        },
+        "cross_attn_norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention layer norm bias"
+        },
+        "cross_attn_q_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention query projection weight"
+        },
+        "cross_attn_q_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention query projection bias"
+        },
+        "cross_attn_kv_weight": {
+            "shape": [
+                "hidden_size_x2",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention KV projection weight"
+        },
+        "cross_attn_kv_bias": {
+            "shape": [
+                "hidden_size_x2"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention KV projection bias"
+        },
+        "cross_attn_out_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention output projection weight"
+        },
+        "cross_attn_out_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention output projection bias"
+        },
+        "ffn_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN layer norm weight"
+        },
+        "ffn_norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN layer norm bias"
+        },
+        "ffn_fc1_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN first linear weight"
+        },
+        "ffn_fc1_bias": {
+            "shape": [
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN first linear bias"
+        },
+        "ffn_fc2_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN second linear weight"
+        },
+        "ffn_fc2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "FFN second linear bias"
+        },
+        "num_frames_scalar": {
+            "shape": null,
+            "dtype": "int32",
+            "description": "Number of frames as scalar input"
+        },
+        "num_spatial_tokens_scalar": {
+            "shape": null,
+            "dtype": "int32",
+            "description": "Number of spatial tokens as scalar input"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "video_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Processed video latents"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n@torch.no_grad()\ndef run(\n    video_latents: torch.Tensor,\n    text_embeddings: torch.Tensor,\n    temporal_norm_weight: torch.Tensor,\n    temporal_norm_bias: torch.Tensor,\n    temporal_qkv_weight: torch.Tensor,\n    temporal_qkv_bias: torch.Tensor,\n    temporal_out_proj_weight: torch.Tensor,\n    temporal_out_proj_bias: torch.Tensor,\n    spatial_norm_weight: torch.Tensor,\n    spatial_norm_bias: torch.Tensor,\n    spatial_qkv_weight: torch.Tensor,\n    spatial_qkv_bias: torch.Tensor,\n    spatial_out_proj_weight: torch.Tensor,\n    spatial_out_proj_bias: torch.Tensor,\n    cross_attn_norm_weight: torch.Tensor,\n    cross_attn_norm_bias: torch.Tensor,\n    cross_attn_q_weight: torch.Tensor,\n    cross_attn_q_bias: torch.Tensor,\n    cross_attn_kv_weight: torch.Tensor,\n    cross_attn_kv_bias: torch.Tensor,\n    cross_attn_out_proj_weight: torch.Tensor,\n    cross_attn_out_proj_bias: torch.Tensor,\n    ffn_norm_weight: torch.Tensor,\n    ffn_norm_bias: torch.Tensor,\n    ffn_fc1_weight: torch.Tensor,\n    ffn_fc1_bias: torch.Tensor,\n    ffn_fc2_weight: torch.Tensor,\n    ffn_fc2_bias: torch.Tensor,\n    num_frames_scalar: int,\n    num_spatial_tokens_scalar: int,\n):\n    # Constants\n    hidden_size = 1024\n    num_attention_heads = 16\n    head_dim = hidden_size // num_attention_heads\n    scale = 1.0 / math.sqrt(head_dim)\n    eps = 1e-5\n    \n    batch_size = video_latents.shape[0]\n    video_seq_len = video_latents.shape[1]\n    text_seq_len = text_embeddings.shape[1]\n    \n    num_frames = int(num_frames_scalar)\n    num_spatial_tokens = int(num_spatial_tokens_scalar)\n    \n    x = video_latents\n    \n    # ============ 1. Temporal Self-Attention ============\n    residual = x\n    \n    # Layer norm\n    x_norm = F.layer_norm(x, (hidden_size,), temporal_norm_weight, temporal_norm_bias, eps)\n    \n    # QKV projection: (B, F*S, 3*H)\n    qkv = F.linear(x_norm, temporal_qkv_weight, temporal_qkv_bias)\n    qkv = qkv.view(batch_size, num_frames, num_spatial_tokens, 3, hidden_size)\n    \n    # Rearrange for temporal attention: (B, S, F, 3, H)\n    qkv = qkv.permute(0, 2, 1, 3, 4)\n    q, k, v = qkv.chunk(3, dim=3)\n    q, k, v = q.squeeze(3), k.squeeze(3), v.squeeze(3)  # (B, S, F, H)\n    \n    # Reshape for multi-head attention: (B*S, NH, F, HD)\n    q = q.reshape(batch_size * num_spatial_tokens, num_frames, hidden_size)\n    k = k.reshape(batch_size * num_spatial_tokens, num_frames, hidden_size)\n    v = v.reshape(batch_size * num_spatial_tokens, num_frames, hidden_size)\n    \n    q = q.view(batch_size * num_spatial_tokens, num_frames, num_attention_heads, head_dim).transpose(1, 2)\n    k = k.view(batch_size * num_spatial_tokens, num_frames, num_attention_heads, head_dim).transpose(1, 2)\n    v = v.view(batch_size * num_spatial_tokens, num_frames, num_attention_heads, head_dim).transpose(1, 2)\n    \n    # Compute attention\n    attn_scores = torch.matmul(q, k.transpose(-2, -1)) * scale\n    attn_probs = F.softmax(attn_scores, dim=-1)\n    attn_output = torch.matmul(attn_probs, v)\n    \n    # Reshape back: (B*S, NH, F, HD) -> (B, F*S, H)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.view(batch_size * num_spatial_tokens, num_frames, hidden_size)\n    attn_output = attn_output.view(batch_size, num_spatial_tokens, num_frames, hidden_size)\n    attn_output = attn_output.permute(0, 2, 1, 3).contiguous()\n    attn_output = attn_output.view(batch_size, num_frames * num_spatial_tokens, hidden_size)\n    \n    # Output projection and residual\n    output = F.linear(attn_output, temporal_out_proj_weight, temporal_out_proj_bias)\n    x = output + residual\n    \n    # ============ 2. Spatial Self-Attention ============\n    residual = x\n    \n    # Layer norm\n    x_norm = F.layer_norm(x, (hidden_size,), spatial_norm_weight, spatial_norm_bias, eps)\n    \n    # Reshape to separate frames: (B, F, S, H)\n    x_reshaped = x_norm.view(batch_size, num_frames, num_spatial_tokens, hidden_size)\n    \n    # QKV projection: (B*F, S, 3*H)\n    qkv = F.linear(x_reshaped.view(batch_size * num_frames, num_spatial_tokens, hidden_size), \n                   spatial_qkv_weight, spatial_qkv_bias)\n    qkv = qkv.view(batch_size * num_frames, num_spatial_tokens, 3, hidden_size)\n    q, k, v = qkv.chunk(3, dim=2)\n    q, k, v = q.squeeze(2), k.squeeze(2), v.squeeze(2)\n    \n    # Reshape for multi-head attention: (B*F, NH, S, HD)\n    q = q.view(batch_size * num_frames, num_spatial_tokens, num_attention_heads, head_dim).transpose(1, 2)\n    k = k.view(batch_size * num_frames, num_spatial_tokens, num_attention_heads, head_dim).transpose(1, 2)\n    v = v.view(batch_size * num_frames, num_spatial_tokens, num_attention_heads, head_dim).transpose(1, 2)\n    \n    # Compute attention\n    attn_scores = torch.matmul(q, k.transpose(-2, -1)) * scale\n    attn_probs = F.softmax(attn_scores, dim=-1)\n    attn_output = torch.matmul(attn_probs, v)\n    \n    # Reshape back: (B*F, NH, S, HD) -> (B, F*S, H)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.view(batch_size * num_frames, num_spatial_tokens, hidden_size)\n    attn_output = attn_output.view(batch_size, num_frames * num_spatial_tokens, hidden_size)\n    \n    # Output projection and residual\n    output = F.linear(attn_output, spatial_out_proj_weight, spatial_out_proj_bias)\n    x = output + residual\n    \n    # ============ 3. Cross-Attention with Text ============\n    residual = x\n    \n    # Layer norm\n    x_norm = F.layer_norm(x, (hidden_size,), cross_attn_norm_weight, cross_attn_norm_bias, eps)\n    \n    # Query from video latents: (B, F*S, H)\n    q = F.linear(x_norm, cross_attn_q_weight, cross_attn_q_bias)\n    \n    # Key and Value from text embeddings: (B, T, 2*H)\n    kv = F.linear(text_embeddings, cross_attn_kv_weight, cross_attn_kv_bias)\n    kv = kv.view(batch_size, text_seq_len, 2, hidden_size)\n    k, v = kv.chunk(2, dim=2)\n    k, v = k.squeeze(2), v.squeeze(2)\n    \n    # Reshape for multi-head attention\n    q = q.view(batch_size, video_seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    k = k.view(batch_size, text_seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    v = v.view(batch_size, text_seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    \n    # Compute cross-attention\n    attn_scores = torch.matmul(q, k.transpose(-2, -1)) * scale\n    attn_probs = F.softmax(attn_scores, dim=-1)\n    attn_output = torch.matmul(attn_probs, v)\n    \n    # Reshape back: (B, NH, F*S, HD) -> (B, F*S, H)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.view(batch_size, video_seq_len, hidden_size)\n    \n    # Output projection and residual\n    output = F.linear(attn_output, cross_attn_out_proj_weight, cross_attn_out_proj_bias)\n    x = output + residual\n    \n    # ============ 4. Feedforward Network ============\n    residual = x\n    \n    # Layer norm\n    x_norm = F.layer_norm(x, (hidden_size,), ffn_norm_weight, ffn_norm_bias, eps)\n    \n    # FFN: H -> I -> H with GELU\n    x_ffn = F.linear(x_norm, ffn_fc1_weight, ffn_fc1_bias)\n    x_ffn = F.gelu(x_ffn)\n    x_ffn = F.linear(x_ffn, ffn_fc2_weight, ffn_fc2_bias)\n    \n    # Residual connection\n    output = x_ffn + residual\n    \n    return output\n"
+}

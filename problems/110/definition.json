@@ -1,0 +1,100 @@
+{
+    "name": "016_moe_expert_mlp_with_load_balancing",
+    "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "description": "Complete MoE expert computation including gate routing, top-k selection, expert MLPs with SwiGLU activation, and weighted aggregation. Processes tokens through 64 experts with top-8 selection. Each expert is a 3-layer MLP (gate_proj, up_proj, down_proj) with SwiGLU activation.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096
+        },
+        "moe_intermediate_size": {
+            "type": "const",
+            "value": 2560
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 64
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 8
+        },
+        "total_tokens": {
+            "type": "expr",
+            "expression": "batch_size * seq_len"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "gate_weight": {
+            "shape": [
+                "num_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate routing weight matrix"
+        },
+        "expert_gate_proj_weights": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weights for all experts"
+        },
+        "expert_up_proj_weights": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weights for all experts"
+        },
+        "expert_down_proj_weights": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "moe_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weights for all experts"
+        }
+    },
+    "outputs": {
+        "final_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output hidden states after MoE processing"
+        },
+        "router_logits": {
+            "shape": [
+                "total_tokens",
+                "num_experts"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router logits for load balancing loss computation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    gate_weight: torch.Tensor,\n    expert_gate_proj_weights: torch.Tensor,\n    expert_up_proj_weights: torch.Tensor,\n    expert_down_proj_weights: torch.Tensor,\n):\n    \"\"\"\n    Complete MoE expert computation with routing and expert MLPs.\n    \n    Args:\n        hidden_states: (batch_size, seq_len, 4096)\n        gate_weight: (64, 4096) - gate routing weights\n        expert_gate_proj_weights: (64, 2560, 4096) - gate proj for all experts\n        expert_up_proj_weights: (64, 2560, 4096) - up proj for all experts\n        expert_down_proj_weights: (64, 4096, 2560) - down proj for all experts\n    \n    Returns:\n        final_hidden_states: (batch_size, seq_len, 4096)\n        router_logits: (batch_size * seq_len, 64)\n    \"\"\"\n    batch_size, sequence_length, hidden_dim = hidden_states.shape\n    num_experts = 64\n    top_k = 8\n    \n    # Flatten for routing: (batch_size * sequence_length, 4096)\n    hidden_states_flat = hidden_states.view(-1, hidden_dim)\n    \n    # Gate routing: (batch_size * sequence_length, 64)\n    router_logits = F.linear(hidden_states_flat, gate_weight)\n    \n    # Softmax routing weights: (batch_size * sequence_length, 64)\n    routing_weights = F.softmax(router_logits.float(), dim=1, dtype=torch.float32)\n    \n    # Top-k expert selection: (batch_size * sequence_length, 8)\n    routing_weights_topk, selected_experts = torch.topk(routing_weights, top_k, dim=-1)\n    \n    # Normalize top-k probabilities\n    routing_weights_topk = routing_weights_topk / routing_weights_topk.sum(dim=-1, keepdim=True)\n    \n    # Cast back to input dtype\n    routing_weights_topk = routing_weights_topk.to(hidden_states.dtype)\n    \n    # Initialize output accumulator\n    final_hidden_states = torch.zeros(\n        (batch_size * sequence_length, hidden_dim),\n        dtype=hidden_states.dtype,\n        device=hidden_states.device\n    )\n    \n    # One-hot encode selected experts: (64, 8, batch_size * sequence_length)\n    expert_mask = F.one_hot(selected_experts, num_classes=num_experts).permute(2, 1, 0)\n    \n    # Process each expert (sparse computation)\n    for expert_idx in range(num_experts):\n        # Find tokens routed to this expert\n        expert_mask_flat = expert_mask[expert_idx]  # (8, batch_size * sequence_length)\n        idx, top_x = torch.where(expert_mask_flat)\n        \n        if top_x.numel() == 0:\n            continue  # Skip unused experts\n        \n        # Get expert weights\n        gate_proj_w = expert_gate_proj_weights[expert_idx]  # (2560, 4096)\n        up_proj_w = expert_up_proj_weights[expert_idx]  # (2560, 4096)\n        down_proj_w = expert_down_proj_weights[expert_idx]  # (4096, 2560)\n        \n        # Index tokens for this expert\n        current_state = hidden_states_flat[top_x]  # (num_tokens_for_expert, 4096)\n        \n        # SwiGLU: gate_proj(x) * silu(up_proj(x)) -> down_proj\n        gate_out = F.linear(current_state, gate_proj_w)  # (num_tokens, 2560)\n        up_out = F.linear(current_state, up_proj_w)  # (num_tokens, 2560)\n        \n        # SiLU activation on gate output, multiply with up output\n        silu_gate = gate_out / (1.0 + torch.exp(-gate_out.float())).to(gate_out.dtype)\n        intermediate = silu_gate * up_out  # (num_tokens, 2560)\n        \n        # Down projection\n        current_hidden_states = F.linear(intermediate, down_proj_w)  # (num_tokens, 4096)\n        \n        # Weight by routing probabilities\n        current_hidden_states = current_hidden_states * routing_weights_topk[top_x, idx, None]\n        \n        # Accumulate into output (in-place addition)\n        final_hidden_states.index_add_(0, top_x, current_hidden_states.to(hidden_states.dtype))\n    \n    # Reshape back to original shape\n    final_hidden_states = final_hidden_states.reshape(batch_size, sequence_length, hidden_dim)\n    \n    return final_hidden_states, router_logits.to(hidden_states.dtype)\n"
+}

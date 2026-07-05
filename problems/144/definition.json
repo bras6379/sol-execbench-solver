@@ -1,0 +1,311 @@
+{
+    "name": "050_vae_decoder_mid_block_attention_resnet",
+    "hf_id": "kaiyuyue/FLUX.2-dev-vae",
+    "description": "VAE decoder mid-block combining ResNet blocks with self-attention at the bottleneck. Processes compressed latent representation through: ResNet -> Attention -> ResNet. The attention operates on spatial features with GroupNorm, QKV projections, multi-head self-attention, and residual connections. Uses 512 channels at the bottleneck with 4 groups for GroupNorm.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "height": {
+            "type": "var",
+            "description": "Spatial height of feature map"
+        },
+        "width": {
+            "type": "var",
+            "description": "Spatial width of feature map"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 512,
+            "description": "Number of input/output channels at bottleneck"
+        },
+        "temb_channels": {
+            "type": "const",
+            "value": 512,
+            "description": "Time embedding channels"
+        },
+        "num_groups": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of groups for GroupNorm"
+        },
+        "attention_head_dim": {
+            "type": "const",
+            "value": 1,
+            "description": "Dimension per attention head"
+        },
+        "num_heads": {
+            "type": "expr",
+            "expression": "in_channels // attention_head_dim",
+            "description": "Number of attention heads"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input feature map [B, C, H, W]"
+        },
+        "temb": {
+            "shape": [
+                "batch_size",
+                "temb_channels"
+            ],
+            "dtype": "float32",
+            "description": "Time embedding [B, temb_channels]"
+        },
+        "resnet1_norm1_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 first GroupNorm weight"
+        },
+        "resnet1_norm1_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 first GroupNorm bias"
+        },
+        "resnet1_conv1_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 first conv weight"
+        },
+        "resnet1_conv1_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 first conv bias"
+        },
+        "resnet1_time_emb_proj_weight": {
+            "shape": [
+                "in_channels",
+                "temb_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 time embedding projection weight"
+        },
+        "resnet1_time_emb_proj_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 time embedding projection bias"
+        },
+        "resnet1_norm2_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 second GroupNorm weight"
+        },
+        "resnet1_norm2_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 second GroupNorm bias"
+        },
+        "resnet1_conv2_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 second conv weight"
+        },
+        "resnet1_conv2_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet1 second conv bias"
+        },
+        "attn_group_norm_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention GroupNorm weight"
+        },
+        "attn_group_norm_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention GroupNorm bias"
+        },
+        "attn_to_q_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention query projection weight"
+        },
+        "attn_to_q_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention query projection bias"
+        },
+        "attn_to_k_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention key projection weight"
+        },
+        "attn_to_k_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention key projection bias"
+        },
+        "attn_to_v_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention value projection weight"
+        },
+        "attn_to_v_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention value projection bias"
+        },
+        "attn_to_out_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention output projection weight"
+        },
+        "attn_to_out_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "Attention output projection bias"
+        },
+        "resnet2_norm1_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 first GroupNorm weight"
+        },
+        "resnet2_norm1_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 first GroupNorm bias"
+        },
+        "resnet2_conv1_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 first conv weight"
+        },
+        "resnet2_conv1_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 first conv bias"
+        },
+        "resnet2_time_emb_proj_weight": {
+            "shape": [
+                "in_channels",
+                "temb_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 time embedding projection weight"
+        },
+        "resnet2_time_emb_proj_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 time embedding projection bias"
+        },
+        "resnet2_norm2_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 second GroupNorm weight"
+        },
+        "resnet2_norm2_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 second GroupNorm bias"
+        },
+        "resnet2_conv2_weight": {
+            "shape": [
+                "in_channels",
+                "in_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 second conv weight"
+        },
+        "resnet2_conv2_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "ResNet2 second conv bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for GroupNorm"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Output feature map [B, C, H, W]"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    temb: torch.Tensor,\n    resnet1_norm1_weight: torch.Tensor,\n    resnet1_norm1_bias: torch.Tensor,\n    resnet1_conv1_weight: torch.Tensor,\n    resnet1_conv1_bias: torch.Tensor,\n    resnet1_time_emb_proj_weight: torch.Tensor,\n    resnet1_time_emb_proj_bias: torch.Tensor,\n    resnet1_norm2_weight: torch.Tensor,\n    resnet1_norm2_bias: torch.Tensor,\n    resnet1_conv2_weight: torch.Tensor,\n    resnet1_conv2_bias: torch.Tensor,\n    attn_group_norm_weight: torch.Tensor,\n    attn_group_norm_bias: torch.Tensor,\n    attn_to_q_weight: torch.Tensor,\n    attn_to_q_bias: torch.Tensor,\n    attn_to_k_weight: torch.Tensor,\n    attn_to_k_bias: torch.Tensor,\n    attn_to_v_weight: torch.Tensor,\n    attn_to_v_bias: torch.Tensor,\n    attn_to_out_weight: torch.Tensor,\n    attn_to_out_bias: torch.Tensor,\n    resnet2_norm1_weight: torch.Tensor,\n    resnet2_norm1_bias: torch.Tensor,\n    resnet2_conv1_weight: torch.Tensor,\n    resnet2_conv1_bias: torch.Tensor,\n    resnet2_time_emb_proj_weight: torch.Tensor,\n    resnet2_time_emb_proj_bias: torch.Tensor,\n    resnet2_norm2_weight: torch.Tensor,\n    resnet2_norm2_bias: torch.Tensor,\n    resnet2_conv2_weight: torch.Tensor,\n    resnet2_conv2_bias: torch.Tensor,\n    eps: float,\n):\n    batch, channels, height, width = hidden_states.shape\n    num_groups = 32\n    num_heads = 1  # Single-head attention at VAE bottleneck\n    head_dim = channels  # head_dim equals channels when num_heads=1\n    scale = head_dim ** -0.5\n    \n    # ============ ResNet Block 1 ============\n    residual1 = hidden_states\n    \n    # GroupNorm1 + SiLU + Conv1\n    h = F.group_norm(hidden_states, num_groups, resnet1_norm1_weight, resnet1_norm1_bias, eps)\n    h = F.silu(h)\n    h = F.conv2d(h, resnet1_conv1_weight, resnet1_conv1_bias, padding=1)\n    \n    # Add time embedding\n    temb_proj = F.silu(temb)\n    temb_proj = F.linear(temb_proj, resnet1_time_emb_proj_weight, resnet1_time_emb_proj_bias)\n    h = h + temb_proj[:, :, None, None]\n    \n    # GroupNorm2 + SiLU + Conv2\n    h = F.group_norm(h, num_groups, resnet1_norm2_weight, resnet1_norm2_bias, eps)\n    h = F.silu(h)\n    h = F.conv2d(h, resnet1_conv2_weight, resnet1_conv2_bias, padding=1)\n    \n    # Residual connection\n    hidden_states = h + residual1\n    \n    # ============ Attention Block ============\n    attn_residual = hidden_states\n    \n    # GroupNorm\n    h = F.group_norm(hidden_states, num_groups, attn_group_norm_weight, attn_group_norm_bias, eps)\n    \n    # Reshape to [B, H*W, C]\n    h = h.view(batch, channels, height * width).transpose(1, 2)\n    \n    # QKV projections\n    query = F.linear(h, attn_to_q_weight, attn_to_q_bias)\n    key = F.linear(h, attn_to_k_weight, attn_to_k_bias)\n    value = F.linear(h, attn_to_v_weight, attn_to_v_bias)\n    \n    # Reshape for multi-head attention [B, num_heads, H*W, head_dim]\n    seq_len = height * width\n    query = query.view(batch, seq_len, num_heads, head_dim).transpose(1, 2)\n    key = key.view(batch, seq_len, num_heads, head_dim).transpose(1, 2)\n    value = value.view(batch, seq_len, num_heads, head_dim).transpose(1, 2)\n    \n    # Attention scores [B, num_heads, H*W, H*W]\n    attention_scores = torch.matmul(query, key.transpose(-2, -1)) * scale\n    attention_probs = F.softmax(attention_scores, dim=-1)\n    \n    # Apply attention to values [B, num_heads, H*W, head_dim]\n    h = torch.matmul(attention_probs, value)\n    \n    # Reshape back [B, H*W, C]\n    h = h.transpose(1, 2).reshape(batch, seq_len, channels)\n    \n    # Output projection\n    h = F.linear(h, attn_to_out_weight, attn_to_out_bias)\n    \n    # Reshape to [B, C, H, W]\n    h = h.transpose(1, 2).view(batch, channels, height, width)\n    \n    # Residual connection\n    hidden_states = h + attn_residual\n    \n    # ============ ResNet Block 2 ============\n    residual2 = hidden_states\n    \n    # GroupNorm1 + SiLU + Conv1\n    h = F.group_norm(hidden_states, num_groups, resnet2_norm1_weight, resnet2_norm1_bias, eps)\n    h = F.silu(h)\n    h = F.conv2d(h, resnet2_conv1_weight, resnet2_conv1_bias, padding=1)\n    \n    # Add time embedding\n    temb_proj = F.silu(temb)\n    temb_proj = F.linear(temb_proj, resnet2_time_emb_proj_weight, resnet2_time_emb_proj_bias)\n    h = h + temb_proj[:, :, None, None]\n    \n    # GroupNorm2 + SiLU + Conv2\n    h = F.group_norm(h, num_groups, resnet2_norm2_weight, resnet2_norm2_bias, eps)\n    h = F.silu(h)\n    h = F.conv2d(h, resnet2_conv2_weight, resnet2_conv2_bias, padding=1)\n    \n    # Residual connection\n    output = h + residual2\n    \n    return output\n"
+}

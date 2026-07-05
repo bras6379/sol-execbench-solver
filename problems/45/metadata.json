@@ -1,0 +1,193 @@
+{
+  "task_id": 45,
+  "subset": "L1",
+  "collection_index": 45,
+  "name": "045_fused_linear_gelu_grn_linear",
+  "hf_id": "facebook/convnextv2-base-22k-224",
+  "num_workloads": 14,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:23.066660Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.00489,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 4,
+          "height": 28,
+          "width": 28
+        },
+        "sol_ms": 0.0014,
+        "baseline_latency_ms": 0.064608
+      },
+      {
+        "index": 1,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 16,
+          "height": 14,
+          "width": 14
+        },
+        "sol_ms": 0.0014,
+        "baseline_latency_ms": 0.067888
+      },
+      {
+        "index": 2,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 64,
+          "height": 14,
+          "width": 14
+        },
+        "sol_ms": 0.0046,
+        "baseline_latency_ms": 0.104208
+      },
+      {
+        "index": 3,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 2,
+          "height": 56,
+          "width": 56
+        },
+        "sol_ms": 0.0025,
+        "baseline_latency_ms": 0.104192
+      },
+      {
+        "index": 4,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 64,
+          "height": 56,
+          "width": 56
+        },
+        "sol_ms": 0.0674,
+        "baseline_latency_ms": 0.573457
+      },
+      {
+        "index": 5,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 32,
+          "height": 28,
+          "width": 28
+        },
+        "sol_ms": 0.0088,
+        "baseline_latency_ms": 0.144432
+      },
+      {
+        "index": 6,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 64,
+          "height": 28,
+          "width": 28
+        },
+        "sol_ms": 0.0172,
+        "baseline_latency_ms": 0.176352
+      },
+      {
+        "index": 7,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 4,
+          "height": 56,
+          "width": 56
+        },
+        "sol_ms": 0.0046,
+        "baseline_latency_ms": 0.1221599999999999
+      },
+      {
+        "index": 8,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 8,
+          "height": 14,
+          "width": 14
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.0599839999999999
+      },
+      {
+        "index": 9,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 32,
+          "height": 14,
+          "width": 14
+        },
+        "sol_ms": 0.0025,
+        "baseline_latency_ms": 0.078064
+      },
+      {
+        "index": 10,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 16,
+          "height": 28,
+          "width": 28
+        },
+        "sol_ms": 0.0046,
+        "baseline_latency_ms": 0.10152
+      },
+      {
+        "index": 11,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 32,
+          "height": 56,
+          "width": 56
+        },
+        "sol_ms": 0.0339,
+        "baseline_latency_ms": 0.3117919999999999
+      },
+      {
+        "index": 12,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 1,
+          "height": 28,
+          "width": 28
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.0575525
+      },
+      {
+        "index": 13,
+        "axes": {
+          "dim": 128,
+          "hidden_dim": 512,
+          "batch_size": 16,
+          "height": 56,
+          "width": 56
+        },
+        "sol_ms": 0.0172,
+        "baseline_latency_ms": 0.180176
+      }
+    ]
+  }
+}

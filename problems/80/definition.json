@@ -1,0 +1,77 @@
+{
+    "name": "080_adaptive_layernorm_continuous_with_modulation",
+    "hf_id": "stabilityai/stable-diffusion-3.5-large",
+    "description": "AdaLayerNormContinuous normalization with adaptive scale and shift modulation conditioned on timestep embeddings. Computes layer normalization, projects temb through a linear layer to get scale/shift, then modulates: normalized * (1 + scale) + shift.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 2432,
+            "description": "Inner dimension (num_attention_heads * attention_head_dim = 38 * 64)"
+        },
+        "inner_dim_x2": {
+            "type": "expr",
+            "expression": "inner_dim * 2",
+            "description": "Double inner_dim for scale and shift projection"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Input features to normalize"
+        },
+        "temb": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep conditioning embeddings"
+        },
+        "linear_weight": {
+            "shape": [
+                "inner_dim_x2",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Weight matrix for temb projection"
+        },
+        "linear_bias": {
+            "shape": [
+                "inner_dim_x2"
+            ],
+            "dtype": "float32",
+            "description": "Bias for temb projection"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability in normalization"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized and modulated features"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    temb: torch.Tensor,\n    linear_weight: torch.Tensor,\n    linear_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Adaptive Layer Normalization with continuous modulation.\n    \n    1. Compute mean and variance across the feature dimension\n    2. Normalize: (x - mean) / sqrt(variance + eps)\n    3. Apply learned linear projection to temb to get scale and shift\n    4. Modulate: normalized * (1 + scale) + shift\n    \n    Args:\n        hidden_states: (batch, seq_len, inner_dim) - Input features to normalize\n        temb: (batch, inner_dim) - Timestep conditioning embeddings\n        linear_weight: (inner_dim*2, inner_dim) - Weight for temb projection\n        linear_bias: (inner_dim*2,) - Bias for temb projection\n        eps: Epsilon for numerical stability\n    \n    Returns:\n        (batch, seq_len, inner_dim) - Normalized and modulated features\n    \"\"\"\n    # Layer normalization: compute mean and variance\n    # Shape: (batch, seq_len, inner_dim)\n    mean = hidden_states.mean(dim=-1, keepdim=True)  # (batch, seq_len, 1)\n    variance = hidden_states.var(dim=-1, keepdim=True, unbiased=False)  # (batch, seq_len, 1)\n    \n    # Normalize\n    normalized = (hidden_states - mean) / torch.sqrt(variance + eps)\n    \n    # Generate scale and shift from temb via linear projection\n    # temb: (batch, inner_dim) @ linear_weight.T: (inner_dim, inner_dim*2) -> (batch, inner_dim*2)\n    modulation = torch.nn.functional.linear(temb, linear_weight, linear_bias)\n    \n    # Split into scale and shift\n    # Each is (batch, inner_dim)\n    inner_dim = hidden_states.shape[-1]\n    scale = modulation[:, :inner_dim]\n    shift = modulation[:, inner_dim:]\n    \n    # Apply modulation: normalized * (1 + scale) + shift\n    # Unsqueeze scale and shift to broadcast over seq_len dimension\n    # (batch, inner_dim) -> (batch, 1, inner_dim)\n    scale = scale.unsqueeze(1)\n    shift = shift.unsqueeze(1)\n    \n    # Final modulated output\n    output = normalized * (1.0 + scale) + shift\n    \n    return output\n"
+}

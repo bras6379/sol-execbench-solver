@@ -1,0 +1,129 @@
+{
+    "name": "005_swiglu_mlp_backward",
+    "hf_id": "NousResearch/Hermes-4-405B",
+    "description": "Backward pass for SwiGLU MLP: computes gradients for input, gate_weight, up_weight, and down_weight through the chain output = down_proj(silu(gate_proj(x)) * up_proj(x))",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 16384
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 53248
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output from next layer"
+        },
+        "x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input to MLP (saved from forward)"
+        },
+        "gate_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output of gate projection before activation (saved from forward)"
+        },
+        "up_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output of up projection (saved from forward)"
+        },
+        "activated_gate": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "SiLU(gate_output) (saved from forward)"
+        },
+        "gate_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weight matrix"
+        },
+        "up_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weight matrix"
+        },
+        "down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weight matrix"
+        }
+    },
+    "outputs": {
+        "grad_x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input x"
+        },
+        "grad_gate_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. gate projection weight"
+        },
+        "grad_up_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. up projection weight"
+        },
+        "grad_down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. down projection weight"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    activated_gate: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for SwiGLU MLP.\n    \n    Gradient flow:\n    1. grad_output -> through down_proj\n    2. grad_gated_output -> through element-wise multiply\n    3. grad_activated_gate -> through SiLU\n    4. grad_gate_output -> through gate_proj\n    5. grad_up_output -> through up_proj\n    6. Accumulate grad_x from both gate and up paths\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    intermediate_size = gate_output.shape[-1]\n    \n    # Step 1: Gradient through down_proj\n    # output = gated_output @ down_weight.T\n    # grad_gated_output = grad_output @ down_weight\n    grad_gated_output = grad_output.matmul(down_weight)  # [B, S, I]\n    \n    # grad_down_weight = grad_output.T @ gated_output\n    grad_output_2d = grad_output.reshape(-1, hidden_size)  # [B*S, H]\n    gated_output = activated_gate * up_output  # Recompute\n    gated_output_2d = gated_output.reshape(-1, intermediate_size)  # [B*S, I]\n    grad_down_weight = grad_output_2d.t().matmul(gated_output_2d)  # [H, I]\n    \n    # Step 2: Gradient through element-wise multiply\n    # gated_output = activated_gate * up_output\n    grad_activated_gate = grad_gated_output * up_output  # [B, S, I]\n    grad_up_output = grad_gated_output * activated_gate  # [B, S, I]\n    \n    # Step 3: Gradient through SiLU activation\n    # activated_gate = silu(gate_output) = gate_output * sigmoid(gate_output)\n    # d/dx[silu(x)] = sigmoid(x) * (1 + x * (1 - sigmoid(x)))\n    sigmoid_gate = torch.sigmoid(gate_output.to(torch.float32))  # [B, S, I]\n    gate_output_f32 = gate_output.to(torch.float32)\n    silu_grad = sigmoid_gate * (1.0 + gate_output_f32 * (1.0 - sigmoid_gate))\n    grad_gate_output = (grad_activated_gate.to(torch.float32) * silu_grad).to(grad_output.dtype)  # [B, S, I]\n    \n    # Step 4: Gradient through gate_proj\n    # gate_output = x @ gate_weight.T\n    # grad_x_gate = grad_gate_output @ gate_weight\n    grad_x_gate = grad_gate_output.matmul(gate_weight)  # [B, S, H]\n    \n    # grad_gate_weight = grad_gate_output.T @ x\n    grad_gate_output_2d = grad_gate_output.reshape(-1, intermediate_size)  # [B*S, I]\n    x_2d = x.reshape(-1, hidden_size)  # [B*S, H]\n    grad_gate_weight = grad_gate_output_2d.t().matmul(x_2d)  # [I, H]\n    \n    # Step 5: Gradient through up_proj\n    # up_output = x @ up_weight.T\n    # grad_x_up = grad_up_output @ up_weight\n    grad_x_up = grad_up_output.matmul(up_weight)  # [B, S, H]\n    \n    # grad_up_weight = grad_up_output.T @ x\n    grad_up_output_2d = grad_up_output.reshape(-1, intermediate_size)  # [B*S, I]\n    grad_up_weight = grad_up_output_2d.t().matmul(x_2d)  # [I, H]\n    \n    # Step 6: Accumulate input gradients from both paths\n    grad_x = grad_x_gate + grad_x_up  # [B, S, H]\n    \n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n"
+}

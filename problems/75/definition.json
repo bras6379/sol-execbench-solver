@@ -1,0 +1,127 @@
+{
+    "name": "075_grouped_query_self_attention_with_rope",
+    "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+    "description": "Grouped Query Self-Attention with integrated RoPE position embeddings. Supports both encoder (non-causal, 16 heads, 4 KV heads) and decoder (causal, 24 heads, 8 KV heads) configurations. Fuses Q/K/V projections, RoPE application, GQA computation, and output projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 4
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64
+        },
+        "num_key_value_groups": {
+            "type": "expr",
+            "expression": "num_heads // num_key_value_heads"
+        },
+        "q_proj_size": {
+            "type": "expr",
+            "expression": "num_heads * head_dim"
+        },
+        "kv_proj_size": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "position_ids": {
+            "shape": [
+                "batch_size",
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for RoPE"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "q_proj_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_proj_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_proj_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "q_proj_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "inv_freq": {
+            "shape": [
+                "32"
+            ],
+            "dtype": "float32",
+            "description": "RoPE inverse frequencies (head_dim // 2 = 32)"
+        },
+        "is_causal": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether to apply causal masking"
+        }
+    },
+    "outputs": {
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Attention output"
+        },
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Attention weights"
+        }
+    },
+    "reference": "import torch\nimport math\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    batch_size = axes_and_scalars['batch_size']\n    seq_len = axes_and_scalars['seq_len']\n    hidden_size = 1024\n    num_heads = 16\n    num_key_value_heads = 4\n    head_dim = 64\n    rope_theta = 10000.0\n    \n    q_proj_size = num_heads * head_dim\n    kv_proj_size = num_key_value_heads * head_dim\n    \n    hidden_states = torch.randn(batch_size, seq_len, hidden_size, device=device, dtype=torch.float32)\n    position_ids = torch.arange(seq_len, device=device, dtype=torch.int64).unsqueeze(0).expand(batch_size, -1)\n    \n    q_proj_weight = torch.randn(q_proj_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    k_proj_weight = torch.randn(kv_proj_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    v_proj_weight = torch.randn(kv_proj_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    o_proj_weight = torch.randn(hidden_size, q_proj_size, device=device, dtype=torch.float32) * 0.02\n    \n    inv_freq = 1.0 / (rope_theta ** (torch.arange(0, head_dim, 2, dtype=torch.float32, device=device) / head_dim))\n    \n    is_causal = False\n    \n    return {\n        'hidden_states': hidden_states,\n        'position_ids': position_ids,\n        'q_proj_weight': q_proj_weight,\n        'k_proj_weight': k_proj_weight,\n        'v_proj_weight': v_proj_weight,\n        'o_proj_weight': o_proj_weight,\n        'inv_freq': inv_freq,\n        'is_causal': is_causal\n    }\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    position_ids: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    is_causal: bool\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_heads = 16\n    num_key_value_heads = 4\n    head_dim = 64\n    num_key_value_groups = num_heads // num_key_value_heads\n    scaling = 1.0\n    \n    # Q/K/V projections\n    query_states = torch.matmul(hidden_states, q_proj_weight.t())\n    key_states = torch.matmul(hidden_states, k_proj_weight.t())\n    value_states = torch.matmul(hidden_states, v_proj_weight.t())\n    \n    # Reshape to [batch, seq, heads, head_dim] then transpose to [batch, heads, seq, head_dim]\n    query_states = query_states.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    # Compute RoPE embeddings\n    inv_freq_expanded = inv_freq[None, :, None].float().expand(batch_size, -1, 1)\n    position_ids_expanded = position_ids[:, None, :].float()\n    freqs = torch.matmul(inv_freq_expanded, position_ids_expanded).transpose(1, 2)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    cos = emb.cos() * scaling\n    sin = emb.sin() * scaling\n    \n    # Apply RoPE\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    \n    q_half1 = query_states[..., :head_dim // 2]\n    q_half2 = query_states[..., head_dim // 2:]\n    q_rotated = torch.cat((-q_half2, q_half1), dim=-1)\n    query_states = (query_states * cos) + (q_rotated * sin)\n    \n    k_half1 = key_states[..., :head_dim // 2]\n    k_half2 = key_states[..., head_dim // 2:]\n    k_rotated = torch.cat((-k_half2, k_half1), dim=-1)\n    key_states = (key_states * cos) + (k_rotated * sin)\n    \n    # Repeat K/V for GQA\n    if num_key_value_groups > 1:\n        key_states = key_states[:, :, None, :, :].expand(\n            batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n        ).reshape(batch_size, num_heads, seq_len, head_dim)\n        value_states = value_states[:, :, None, :, :].expand(\n            batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n        ).reshape(batch_size, num_heads, seq_len, head_dim)\n    \n    # Attention scores\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    \n    # Apply causal mask if needed\n    if is_causal:\n        causal_mask = torch.triu(torch.ones(seq_len, seq_len, device=hidden_states.device, dtype=torch.bool), diagonal=1)\n        attn_weights = attn_weights.masked_fill(causal_mask.unsqueeze(0).unsqueeze(0), float('-inf'))\n    \n    # Softmax\n    attn_weights = torch.softmax(attn_weights, dim=-1, dtype=torch.float32)\n    \n    # Attention output\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, seq_len, -1)\n    \n    # Output projection\n    attn_output = torch.matmul(attn_output, o_proj_weight.t())\n    \n    return attn_output, attn_weights\n"
+}

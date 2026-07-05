@@ -1,0 +1,340 @@
+{
+    "name": "075_sam_hq_mask_decoder_two_way_transformer",
+    "hf_id": "syscv-community/sam-hq-vit-base",
+    "description": "Two-way transformer block for SAM-HQ mask decoder performing bidirectional cross-attention between sparse prompt tokens and dense image embeddings. Includes: (1) self-attention on sparse tokens, (2) cross-attention from tokens to image, (3) MLP on tokens, (4) cross-attention from image to tokens. Uses downsampled internal dimensions (256->128) for cross-attention efficiency.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "point_batch_size": {
+            "type": "var",
+            "description": "Point batch size for multiple prompts per image"
+        },
+        "n_query_tokens": {
+            "type": "var",
+            "description": "Number of sparse prompt tokens (typically 4-8)"
+        },
+        "n_key_tokens": {
+            "type": "var",
+            "description": "Number of dense image tokens (typically 4096)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 256
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 8
+        },
+        "internal_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "mlp_dim": {
+            "type": "const",
+            "value": 2048
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "queries": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_query_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Sparse prompt token embeddings"
+        },
+        "keys": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_key_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Dense image embeddings"
+        },
+        "query_point_embedding": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_query_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Positional embeddings for queries"
+        },
+        "key_point_embedding": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_key_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Positional embeddings for keys"
+        },
+        "self_attn_q_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_q_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_k_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_k_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_v_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_v_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_out_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "self_attn_out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm1_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm1_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_q_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_q_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_k_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_k_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_v_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_v_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_out_weight": {
+            "shape": [
+                "hidden_size",
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_t2i_out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm2_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "mlp_lin1_weight": {
+            "shape": [
+                "mlp_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "mlp_lin1_bias": {
+            "shape": [
+                "mlp_dim"
+            ],
+            "dtype": "float32"
+        },
+        "mlp_lin2_weight": {
+            "shape": [
+                "hidden_size",
+                "mlp_dim"
+            ],
+            "dtype": "float32"
+        },
+        "mlp_lin2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm3_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm3_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_q_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_q_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_k_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_k_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_v_weight": {
+            "shape": [
+                "internal_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_v_bias": {
+            "shape": [
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_out_weight": {
+            "shape": [
+                "hidden_size",
+                "internal_dim"
+            ],
+            "dtype": "float32"
+        },
+        "cross_i2t_out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm4_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "layer_norm4_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32"
+        },
+        "skip_first_layer_pe": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether to skip positional embedding in first self-attention"
+        }
+    },
+    "outputs": {
+        "output_queries": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_query_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Updated sparse prompt token embeddings"
+        },
+        "output_keys": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "n_key_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Updated dense image embeddings"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    queries: torch.Tensor,\n    keys: torch.Tensor,\n    query_point_embedding: torch.Tensor,\n    key_point_embedding: torch.Tensor,\n    self_attn_q_weight: torch.Tensor,\n    self_attn_q_bias: torch.Tensor,\n    self_attn_k_weight: torch.Tensor,\n    self_attn_k_bias: torch.Tensor,\n    self_attn_v_weight: torch.Tensor,\n    self_attn_v_bias: torch.Tensor,\n    self_attn_out_weight: torch.Tensor,\n    self_attn_out_bias: torch.Tensor,\n    layer_norm1_weight: torch.Tensor,\n    layer_norm1_bias: torch.Tensor,\n    cross_t2i_q_weight: torch.Tensor,\n    cross_t2i_q_bias: torch.Tensor,\n    cross_t2i_k_weight: torch.Tensor,\n    cross_t2i_k_bias: torch.Tensor,\n    cross_t2i_v_weight: torch.Tensor,\n    cross_t2i_v_bias: torch.Tensor,\n    cross_t2i_out_weight: torch.Tensor,\n    cross_t2i_out_bias: torch.Tensor,\n    layer_norm2_weight: torch.Tensor,\n    layer_norm2_bias: torch.Tensor,\n    mlp_lin1_weight: torch.Tensor,\n    mlp_lin1_bias: torch.Tensor,\n    mlp_lin2_weight: torch.Tensor,\n    mlp_lin2_bias: torch.Tensor,\n    layer_norm3_weight: torch.Tensor,\n    layer_norm3_bias: torch.Tensor,\n    cross_i2t_q_weight: torch.Tensor,\n    cross_i2t_q_bias: torch.Tensor,\n    cross_i2t_k_weight: torch.Tensor,\n    cross_i2t_k_bias: torch.Tensor,\n    cross_i2t_v_weight: torch.Tensor,\n    cross_i2t_v_bias: torch.Tensor,\n    cross_i2t_out_weight: torch.Tensor,\n    cross_i2t_out_bias: torch.Tensor,\n    layer_norm4_weight: torch.Tensor,\n    layer_norm4_bias: torch.Tensor,\n    skip_first_layer_pe: bool,\n):\n    batch_size, point_batch_size, n_query_tokens, hidden_size = queries.shape\n    _, _, n_key_tokens, _ = keys.shape\n    num_heads = 8\n    head_dim_self = hidden_size // num_heads  # 32 for self-attention\n    internal_dim = 128\n    head_dim_cross = internal_dim // num_heads  # 16 for cross-attention\n    eps = 1e-6\n    \n    def separate_heads(x, num_heads, head_dim):\n        # x: (batch, point_batch, n_tokens, channel)\n        b, pb, n, c = x.shape\n        x = x.reshape(b * pb, n, num_heads, head_dim)\n        return x.transpose(1, 2)  # (b*pb, num_heads, n, head_dim)\n    \n    def recombine_heads(x, point_batch_size):\n        # x: (b*pb, num_heads, n, head_dim)\n        bpb, nh, n, hd = x.shape\n        b = bpb // point_batch_size\n        return x.transpose(1, 2).reshape(b, point_batch_size, n, nh * hd)\n    \n    def attention(q, k, v, num_heads, head_dim, point_batch_size):\n        scaling = head_dim ** -0.5\n        q = separate_heads(q, num_heads, head_dim)\n        k = separate_heads(k, num_heads, head_dim)\n        v = separate_heads(v, num_heads, head_dim)\n        attn_weights = torch.matmul(q, k.transpose(-2, -1)) * scaling\n        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(q.dtype)\n        attn_output = torch.matmul(attn_weights, v)\n        return recombine_heads(attn_output, point_batch_size)\n    \n    def layer_norm(x, weight, bias):\n        mean = x.mean(dim=-1, keepdim=True)\n        var = ((x - mean) ** 2).mean(dim=-1, keepdim=True)\n        return (x - mean) / torch.sqrt(var + eps) * weight + bias\n    \n    # 1. Self-attention on queries\n    if skip_first_layer_pe:\n        q_input = queries\n    else:\n        q_input = queries + query_point_embedding\n    \n    q_proj = F.linear(q_input, self_attn_q_weight, self_attn_q_bias)\n    k_proj = F.linear(q_input, self_attn_k_weight, self_attn_k_bias)\n    v_proj = F.linear(queries, self_attn_v_weight, self_attn_v_bias)\n    \n    attn_out = attention(q_proj, k_proj, v_proj, num_heads, head_dim_self, point_batch_size)\n    attn_out = F.linear(attn_out, self_attn_out_weight, self_attn_out_bias)\n    queries = queries + attn_out\n    queries = layer_norm(queries, layer_norm1_weight, layer_norm1_bias)\n    \n    # 2. Cross-attention: tokens -> image\n    q_input = queries + query_point_embedding\n    k_input = keys + key_point_embedding\n    \n    q_proj = F.linear(q_input, cross_t2i_q_weight, cross_t2i_q_bias)\n    k_proj = F.linear(k_input, cross_t2i_k_weight, cross_t2i_k_bias)\n    v_proj = F.linear(keys, cross_t2i_v_weight, cross_t2i_v_bias)\n    \n    attn_out = attention(q_proj, k_proj, v_proj, num_heads, head_dim_cross, point_batch_size)\n    attn_out = F.linear(attn_out, cross_t2i_out_weight, cross_t2i_out_bias)\n    queries = queries + attn_out\n    queries = layer_norm(queries, layer_norm2_weight, layer_norm2_bias)\n    \n    # 3. MLP block\n    mlp_out = F.linear(queries, mlp_lin1_weight, mlp_lin1_bias)\n    mlp_out = F.relu(mlp_out)\n    mlp_out = F.linear(mlp_out, mlp_lin2_weight, mlp_lin2_bias)\n    queries = queries + mlp_out\n    queries = layer_norm(queries, layer_norm3_weight, layer_norm3_bias)\n    \n    # 4. Cross-attention: image -> tokens\n    q_input = queries + query_point_embedding\n    k_input = keys + key_point_embedding\n    \n    # Note: q is from keys (image), k is from queries (tokens)\n    q_proj = F.linear(k_input, cross_i2t_q_weight, cross_i2t_q_bias)\n    k_proj = F.linear(q_input, cross_i2t_k_weight, cross_i2t_k_bias)\n    v_proj = F.linear(queries, cross_i2t_v_weight, cross_i2t_v_bias)\n    \n    attn_out = attention(q_proj, k_proj, v_proj, num_heads, head_dim_cross, point_batch_size)\n    attn_out = F.linear(attn_out, cross_i2t_out_weight, cross_i2t_out_bias)\n    keys = keys + attn_out\n    keys = layer_norm(keys, layer_norm4_weight, layer_norm4_bias)\n    \n    return queries, keys\n"
+}

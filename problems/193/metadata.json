@@ -1,0 +1,233 @@
+{
+  "task_id": 193,
+  "subset": "Quant",
+  "collection_index": 17,
+  "name": "017_fp8_shared_expert_mlp",
+  "hf_id": "deepseek-ai/DeepSeek-V3",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:57.273139Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.043493,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 1280
+        },
+        "sol_ms": 0.06847049,
+        "baseline_latency_ms": 0.8580805
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 3072
+        },
+        "sol_ms": 0.09336885,
+        "baseline_latency_ms": 1.2236325
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 2176
+        },
+        "sol_ms": 0.01556148,
+        "baseline_latency_ms": 1.00496
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 3712
+        },
+        "sol_ms": 0.0653582,
+        "baseline_latency_ms": 1.376513
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 2816
+        },
+        "sol_ms": 0.08091967,
+        "baseline_latency_ms": 1.189216
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 1920
+        },
+        "sol_ms": 0.09959344,
+        "baseline_latency_ms": 0.9666885
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 3456
+        },
+        "sol_ms": 0.05913361,
+        "baseline_latency_ms": 1.357232
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 384
+        },
+        "sol_ms": 0.01220562,
+        "baseline_latency_ms": 0.681153
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 512
+        },
+        "sol_ms": 0.03423525,
+        "baseline_latency_ms": 0.688096
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 3584
+        },
+        "sol_ms": 0.01867377,
+        "baseline_latency_ms": 1.3549605
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 128
+        },
+        "sol_ms": 0.0622459,
+        "baseline_latency_ms": 0.6351519999999999
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 3200
+        },
+        "sol_ms": 0.09648115,
+        "baseline_latency_ms": 1.230496
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 2432
+        },
+        "sol_ms": 0.0129236,
+        "baseline_latency_ms": 1.121729
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 1408
+        },
+        "sol_ms": 0.07158279,
+        "baseline_latency_ms": 0.8902565
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 1792
+        },
+        "sol_ms": 0.05602131,
+        "baseline_latency_ms": 0.935297
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "block_size": 128,
+          "hidden_blocks": 56,
+          "intermediate_blocks": 16,
+          "num_tokens": 2304
+        },
+        "sol_ms": 0.02178607,
+        "baseline_latency_ms": 1.01928
+      }
+    ]
+  }
+}

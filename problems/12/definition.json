@@ -1,0 +1,63 @@
+{
+    "name": "012_fused_cos_sin_embedding_generation",
+    "hf_id": "NousResearch/Hermes-4-405B",
+    "description": "Fused cos/sin embedding generation from frequencies for RoPE. Takes frequency tensor (result of inv_freq @ position_ids) and generates cos/sin embeddings with attention scaling. Concatenates frequencies with themselves, computes cos and sin with scaling in a single pass.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Head dimension"
+        },
+        "half_head_dim": {
+            "type": "expr",
+            "expression": "head_dim // 2",
+            "description": "Half of head dimension for input frequencies"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "freqs": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "half_head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Frequency tensor from inv_freq @ position_ids"
+        },
+        "attention_scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scaling factor"
+        }
+    },
+    "outputs": {
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine embeddings with scaling"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine embeddings with scaling"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    \"\"\"\n    Fused cos/sin embedding generation from frequencies for RoPE.\n    \n    Args:\n        freqs: Frequency tensor of shape [batch_size, seq_len, head_dim // 2]\n               Result of (inv_freq @ position_ids).transpose(1, 2)\n        attention_scaling: Scaling factor for attention\n    \n    Returns:\n        Tuple of (cos, sin) embeddings, each of shape [batch_size, seq_len, head_dim]\n    \"\"\"\n    # Concatenate frequencies with themselves along last dimension\n    # This doubles the head_dim dimension: [batch, seq, head_dim//2] -> [batch, seq, head_dim]\n    emb = torch.cat((freqs, freqs), dim=-1)\n    \n    # Compute cos and sin with scaling\n    cos = emb.cos() * attention_scaling\n    sin = emb.sin() * attention_scaling\n    \n    # Cast to target dtype (bfloat16)\n    cos = cos.to(torch.bfloat16)\n    sin = sin.to(torch.bfloat16)\n    \n    return cos, sin\n"
+}

@@ -1,0 +1,104 @@
+{
+    "name": "040_conv2d_residual_block",
+    "hf_id": "chuxiaojie/NAFNet",
+    "description": "Convolutional residual block that combines input convolution (3->32 channels), output convolution (32->3 channels), and residual skip connection. This is the atomic building block for image restoration networks like NAFNet.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "height": {
+            "type": "var",
+            "description": "Image height"
+        },
+        "width": {
+            "type": "var",
+            "description": "Image width"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 3,
+            "description": "Number of input channels (RGB)"
+        },
+        "hidden_channels": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of intermediate feature channels"
+        },
+        "out_channels": {
+            "type": "const",
+            "value": 3,
+            "description": "Number of output channels (RGB)"
+        },
+        "kernel_size": {
+            "type": "const",
+            "value": 3,
+            "description": "Convolution kernel size"
+        },
+        "padding": {
+            "type": "const",
+            "value": 1,
+            "description": "Padding for convolutions"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input image tensor"
+        },
+        "conv_in_weight": {
+            "shape": [
+                "hidden_channels",
+                "in_channels",
+                "kernel_size",
+                "kernel_size"
+            ],
+            "dtype": "float32",
+            "description": "Input convolution weight"
+        },
+        "conv_in_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "float32",
+            "description": "Input convolution bias"
+        },
+        "conv_out_weight": {
+            "shape": [
+                "out_channels",
+                "hidden_channels",
+                "kernel_size",
+                "kernel_size"
+            ],
+            "dtype": "float32",
+            "description": "Output convolution weight"
+        },
+        "conv_out_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "Output convolution bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "out_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Output tensor with residual connection"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    conv_in_weight: torch.Tensor,\n    conv_in_bias: torch.Tensor,\n    conv_out_weight: torch.Tensor,\n    conv_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Convolutional residual block:\n    1. conv_in: (B, 3, H, W) -> (B, 32, H, W)\n    2. conv_out: (B, 32, H, W) -> (B, 3, H, W)\n    3. residual add: output + input\n    \"\"\"\n    # Store input for residual connection\n    identity = x\n    \n    # Feature extraction convolution: (B, 3, H, W) -> (B, 32, H, W)\n    out = F.conv2d(x, conv_in_weight, conv_in_bias, padding=1)\n    \n    # Feature reconstruction convolution: (B, 32, H, W) -> (B, 3, H, W)\n    out = F.conv2d(out, conv_out_weight, conv_out_bias, padding=1)\n    \n    # Residual connection: element-wise addition\n    out = out + identity\n    \n    return out\n"
+}

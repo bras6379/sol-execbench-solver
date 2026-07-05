@@ -1,0 +1,62 @@
+{
+    "name": "090_batched_2d_rope_position_encoding_backward",
+    "hf_id": "tencent/HunyuanImage-3.0",
+    "description": "Backward pass for batched 2D RoPE position encoding. Computes gradients through cos/sin operations for mixed text-image sequences. Since positions and theta are non-differentiable, no gradients propagate further.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Number of samples in batch"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Total sequence length"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension of attention head"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. cosine output"
+        },
+        "grad_sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. sine output"
+        },
+        "idx_theta": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved intermediate: position * theta angles"
+        }
+    },
+    "outputs": {
+        "grad_idx_theta": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. idx_theta (computed but not propagated further)"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    idx_theta: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Backward pass for batched 2D RoPE position encoding.\n    \n    Computes gradient w.r.t. idx_theta using chain rule:\n    - d(cos(x))/dx = -sin(x)\n    - d(sin(x))/dx = cos(x)\n    \n    Therefore:\n    grad_idx_theta = -grad_cos * sin(idx_theta) + grad_sin * cos(idx_theta)\n    \n    Note: In practice, this gradient doesn't propagate further since:\n    - idx_theta = position * theta\n    - position: discrete indices (non-differentiable)\n    - theta: derived from configuration constants (non-differentiable)\n    \n    Args:\n        grad_cos: Gradient w.r.t. cos output [batch_size, seq_len, head_dim]\n        grad_sin: Gradient w.r.t. sin output [batch_size, seq_len, head_dim]\n        idx_theta: Saved angles from forward pass [batch_size, seq_len, head_dim]\n        \n    Returns:\n        grad_idx_theta: Gradient w.r.t. idx_theta [batch_size, seq_len, head_dim]\n    \"\"\"\n    # Compute sin and cos of saved angles\n    sin_theta = torch.sin(idx_theta)  # [batch_size, seq_len, head_dim]\n    cos_theta = torch.cos(idx_theta)  # [batch_size, seq_len, head_dim]\n    \n    # Convert gradients to float32 for computation\n    grad_cos_f32 = grad_cos.to(torch.float32)\n    grad_sin_f32 = grad_sin.to(torch.float32)\n    \n    # Apply chain rule:\n    # d(loss)/d(idx_theta) = d(loss)/d(cos) * d(cos)/d(idx_theta) + d(loss)/d(sin) * d(sin)/d(idx_theta)\n    # d(cos)/d(idx_theta) = -sin(idx_theta)\n    # d(sin)/d(idx_theta) = cos(idx_theta)\n    grad_idx_theta = -grad_cos_f32 * sin_theta + grad_sin_f32 * cos_theta\n    \n    return grad_idx_theta\n"
+}

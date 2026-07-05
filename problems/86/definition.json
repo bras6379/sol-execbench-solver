@@ -1,0 +1,304 @@
+{
+    "name": "086_sam_hq_mask_decoder_iou_hypernetwork_fusion",
+    "hf_id": "syscv-community/sam-hq-vit-base",
+    "description": "SAM-HQ's fused IoU prediction and hypernetwork weight generation from transformer output tokens. Processes transformer outputs to simultaneously generate IoU quality scores via a 3-layer MLP (256->1024->1024->4) and dynamic convolution weights for mask generation via 4 parallel 3-layer MLPs (256->256->256->32).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "point_batch_size": {
+            "type": "var",
+            "description": "Point batch size for multi-point prompts"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 256,
+            "description": "Token embedding dimension"
+        },
+        "iou_head_hidden_dim": {
+            "type": "const",
+            "value": 1024,
+            "description": "IoU head hidden dimension"
+        },
+        "num_mask_tokens": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of mask tokens (3 multimask + 1 HQ)"
+        },
+        "output_channels": {
+            "type": "const",
+            "value": 32,
+            "description": "Output channels for hypernetwork weights"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "iou_token_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "IoU token embeddings from transformer"
+        },
+        "mask_tokens_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Mask token embeddings from transformer"
+        },
+        "iou_proj_in_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "IoU head first layer weight"
+        },
+        "iou_proj_in_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU head first layer bias"
+        },
+        "iou_hidden_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU head second layer weight"
+        },
+        "iou_hidden_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU head second layer bias"
+        },
+        "iou_proj_out_weight": {
+            "shape": [
+                "num_mask_tokens",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU head output layer weight"
+        },
+        "iou_proj_out_bias": {
+            "shape": [
+                "num_mask_tokens"
+            ],
+            "dtype": "float32",
+            "description": "IoU head output layer bias"
+        },
+        "hyper0_proj_in_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 first layer weight"
+        },
+        "hyper0_proj_in_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 first layer bias"
+        },
+        "hyper0_hidden_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 second layer weight"
+        },
+        "hyper0_hidden_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 second layer bias"
+        },
+        "hyper0_proj_out_weight": {
+            "shape": [
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 output layer weight"
+        },
+        "hyper0_proj_out_bias": {
+            "shape": [
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 output layer bias"
+        },
+        "hyper1_proj_in_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 first layer weight"
+        },
+        "hyper1_proj_in_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 first layer bias"
+        },
+        "hyper1_hidden_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 second layer weight"
+        },
+        "hyper1_hidden_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 second layer bias"
+        },
+        "hyper1_proj_out_weight": {
+            "shape": [
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 output layer weight"
+        },
+        "hyper1_proj_out_bias": {
+            "shape": [
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 output layer bias"
+        },
+        "hyper2_proj_in_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 first layer weight"
+        },
+        "hyper2_proj_in_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 first layer bias"
+        },
+        "hyper2_hidden_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 second layer weight"
+        },
+        "hyper2_hidden_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 second layer bias"
+        },
+        "hyper2_proj_out_weight": {
+            "shape": [
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 output layer weight"
+        },
+        "hyper2_proj_out_bias": {
+            "shape": [
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 output layer bias"
+        },
+        "hyper3_proj_in_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 first layer weight"
+        },
+        "hyper3_proj_in_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 first layer bias"
+        },
+        "hyper3_hidden_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 second layer weight"
+        },
+        "hyper3_hidden_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 second layer bias"
+        },
+        "hyper3_proj_out_weight": {
+            "shape": [
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 output layer weight"
+        },
+        "hyper3_proj_out_bias": {
+            "shape": [
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 output layer bias"
+        }
+    },
+    "outputs": {
+        "iou_scores": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens"
+            ],
+            "dtype": "float32",
+            "description": "Predicted IoU quality scores for each mask"
+        },
+        "hyper_weights": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens",
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Dynamic convolution weights for mask generation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    iou_token_out: torch.Tensor,\n    mask_tokens_out: torch.Tensor,\n    iou_proj_in_weight: torch.Tensor,\n    iou_proj_in_bias: torch.Tensor,\n    iou_hidden_weight: torch.Tensor,\n    iou_hidden_bias: torch.Tensor,\n    iou_proj_out_weight: torch.Tensor,\n    iou_proj_out_bias: torch.Tensor,\n    hyper0_proj_in_weight: torch.Tensor,\n    hyper0_proj_in_bias: torch.Tensor,\n    hyper0_hidden_weight: torch.Tensor,\n    hyper0_hidden_bias: torch.Tensor,\n    hyper0_proj_out_weight: torch.Tensor,\n    hyper0_proj_out_bias: torch.Tensor,\n    hyper1_proj_in_weight: torch.Tensor,\n    hyper1_proj_in_bias: torch.Tensor,\n    hyper1_hidden_weight: torch.Tensor,\n    hyper1_hidden_bias: torch.Tensor,\n    hyper1_proj_out_weight: torch.Tensor,\n    hyper1_proj_out_bias: torch.Tensor,\n    hyper2_proj_in_weight: torch.Tensor,\n    hyper2_proj_in_bias: torch.Tensor,\n    hyper2_hidden_weight: torch.Tensor,\n    hyper2_hidden_bias: torch.Tensor,\n    hyper2_proj_out_weight: torch.Tensor,\n    hyper2_proj_out_bias: torch.Tensor,\n    hyper3_proj_in_weight: torch.Tensor,\n    hyper3_proj_in_bias: torch.Tensor,\n    hyper3_hidden_weight: torch.Tensor,\n    hyper3_hidden_bias: torch.Tensor,\n    hyper3_proj_out_weight: torch.Tensor,\n    hyper3_proj_out_bias: torch.Tensor,\n):\n    \"\"\"Fused IoU prediction and hypernetwork weight generation for SAM-HQ.\n    \n    Args:\n        iou_token_out: (batch_size, point_batch_size, 256) - IoU token embeddings\n        mask_tokens_out: (batch_size, point_batch_size, 4, 256) - Mask token embeddings\n        Various weight and bias tensors for IoU head and 4 hypernetwork MLPs\n    \n    Returns:\n        iou_scores: (batch_size, point_batch_size, 4) - Predicted IoU scores\n        hyper_weights: (batch_size, point_batch_size, 4, 32) - Dynamic convolution weights\n    \"\"\"\n    # IoU prediction path (3-layer MLP with ReLU)\n    # Layer 1: 256 -> 1024\n    iou_h1 = F.linear(iou_token_out, iou_proj_in_weight, iou_proj_in_bias)\n    iou_h1 = F.relu(iou_h1)\n    \n    # Layer 2: 1024 -> 1024\n    iou_h2 = F.linear(iou_h1, iou_hidden_weight, iou_hidden_bias)\n    iou_h2 = F.relu(iou_h2)\n    \n    # Layer 3: 1024 -> 4\n    iou_scores = F.linear(iou_h2, iou_proj_out_weight, iou_proj_out_bias)\n    \n    # Hypernetwork weight generation (4 parallel MLPs with ReLU)\n    hyper_weights_list = []\n    \n    # Hypernetwork 0\n    token0 = mask_tokens_out[:, :, 0, :]\n    h0_1 = F.relu(F.linear(token0, hyper0_proj_in_weight, hyper0_proj_in_bias))\n    h0_2 = F.relu(F.linear(h0_1, hyper0_hidden_weight, hyper0_hidden_bias))\n    w0 = F.linear(h0_2, hyper0_proj_out_weight, hyper0_proj_out_bias)\n    hyper_weights_list.append(w0)\n    \n    # Hypernetwork 1\n    token1 = mask_tokens_out[:, :, 1, :]\n    h1_1 = F.relu(F.linear(token1, hyper1_proj_in_weight, hyper1_proj_in_bias))\n    h1_2 = F.relu(F.linear(h1_1, hyper1_hidden_weight, hyper1_hidden_bias))\n    w1 = F.linear(h1_2, hyper1_proj_out_weight, hyper1_proj_out_bias)\n    hyper_weights_list.append(w1)\n    \n    # Hypernetwork 2\n    token2 = mask_tokens_out[:, :, 2, :]\n    h2_1 = F.relu(F.linear(token2, hyper2_proj_in_weight, hyper2_proj_in_bias))\n    h2_2 = F.relu(F.linear(h2_1, hyper2_hidden_weight, hyper2_hidden_bias))\n    w2 = F.linear(h2_2, hyper2_proj_out_weight, hyper2_proj_out_bias)\n    hyper_weights_list.append(w2)\n    \n    # Hypernetwork 3\n    token3 = mask_tokens_out[:, :, 3, :]\n    h3_1 = F.relu(F.linear(token3, hyper3_proj_in_weight, hyper3_proj_in_bias))\n    h3_2 = F.relu(F.linear(h3_1, hyper3_hidden_weight, hyper3_hidden_bias))\n    w3 = F.linear(h3_2, hyper3_proj_out_weight, hyper3_proj_out_bias)\n    hyper_weights_list.append(w3)\n    \n    # Stack all hypernetwork weights: (batch_size, point_batch_size, 4, 32)\n    hyper_weights = torch.stack(hyper_weights_list, dim=2)\n    \n    return iou_scores, hyper_weights\n"
+}

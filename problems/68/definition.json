@@ -1,0 +1,135 @@
+{
+    "name": "068_fused_rope_application_backward",
+    "hf_id": "nvidia/Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct",
+    "description": "Backward pass for fused rotary position embedding (RoPE) application. Computes gradients w.r.t. query, key, cosine, and sine tensors. The gradient computation mirrors the forward pass structure: grad_x = (grad_output * cos) + (rotate_half(grad_output) * sin).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_heads": {
+            "type": "var",
+            "description": "Number of query/output attention heads"
+        },
+        "num_kv_heads": {
+            "type": "var",
+            "description": "Number of key/value attention heads"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension of each attention head"
+        },
+        "half_head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Half of head dimension for rotation"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_q_embed": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query output from upstream"
+        },
+        "grad_k_embed": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key output from upstream"
+        },
+        "q": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query tensor saved from forward pass"
+        },
+        "k": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key tensor saved from forward pass"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine embeddings"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine embeddings"
+        }
+    },
+    "outputs": {
+        "grad_q": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query input"
+        },
+        "grad_k": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key input"
+        },
+        "grad_cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. cosine embeddings"
+        },
+        "grad_sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. sine embeddings"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for fused RoPE application.\n    \n    Mathematical derivation:\n    Given forward: output = (x * cos) + (rotate_half(x) * sin)\n    Where: rotate_half(x) = [-x2, x1] for x = [x1, x2]\n    \n    Gradient w.r.t. x:\n        grad_x = grad_output * cos - rotate_half(grad_output) * sin\n    \n    Gradient w.r.t. cos:\n        grad_cos = sum over heads of (grad_output * x)\n    \n    Gradient w.r.t. sin:\n        grad_sin = sum over heads of (grad_output * rotate_half(x))\n    \"\"\"\n    half_head_dim = 64\n    unsqueeze_dim = 1\n    \n    # Unsqueeze cos and sin for broadcasting with q and k\n    # cos, sin: [batch, seq_len, head_dim] -> [batch, 1, seq_len, head_dim]\n    cos_unsqueezed = cos.unsqueeze(unsqueeze_dim)\n    sin_unsqueezed = sin.unsqueeze(unsqueeze_dim)\n    \n    # Helper function to rotate half\n    def rotate_half(x: torch.Tensor) -> torch.Tensor:\n        x1 = x[..., :half_head_dim]\n        x2 = x[..., half_head_dim:]\n        return torch.cat((-x2, x1), dim=-1)\n    \n    # Compute gradient w.r.t. q\n    # grad_q = grad_q_embed * cos - rotate_half(grad_q_embed) * sin\n    grad_q = (grad_q_embed * cos_unsqueezed) - (rotate_half(grad_q_embed) * sin_unsqueezed)\n\n    # Compute gradient w.r.t. k\n    # grad_k = grad_k_embed * cos - rotate_half(grad_k_embed) * sin\n    grad_k = (grad_k_embed * cos_unsqueezed) - (rotate_half(grad_k_embed) * sin_unsqueezed)\n    \n    # Compute gradient w.r.t. cos\n    # grad_cos = (grad_q_embed * q) + (grad_k_embed * k), summed over heads\n    grad_cos_from_q = grad_q_embed * q\n    grad_cos_from_k = grad_k_embed * k\n    # Sum over the head dimension (dim=1) to match original cos shape\n    grad_cos = grad_cos_from_q.sum(dim=unsqueeze_dim) + grad_cos_from_k.sum(dim=unsqueeze_dim)\n    \n    # Compute gradient w.r.t. sin\n    # grad_sin = (grad_q_embed * rotate_half(q)) + (grad_k_embed * rotate_half(k)), summed over heads\n    q_rotated = rotate_half(q)\n    k_rotated = rotate_half(k)\n    grad_sin_from_q = grad_q_embed * q_rotated\n    grad_sin_from_k = grad_k_embed * k_rotated\n    # Sum over the head dimension (dim=1) to match original sin shape\n    grad_sin = grad_sin_from_q.sum(dim=unsqueeze_dim) + grad_sin_from_k.sum(dim=unsqueeze_dim)\n    \n    return grad_q, grad_k, grad_cos, grad_sin\n"
+}

@@ -1,0 +1,475 @@
+{
+  "task_id": 223,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 14,
+  "name": "014_gqa_paged_prefill_causal_h32_kv4_d128_ps1",
+  "hf_id": "",
+  "num_workloads": 30,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:03.804245Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.005133,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 1,
+          "num_kv_indices": 33,
+          "num_pages": 50
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1648955
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 29,
+          "total_q": 12383,
+          "num_kv_indices": 1,
+          "num_pages": 85
+        },
+        "sol_ms": 0.027,
+        "baseline_latency_ms": 0.1830545
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 16,
+          "num_kv_indices": 2,
+          "num_pages": 86
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.175599
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 4,
+          "total_q": 80,
+          "num_kv_indices": 4,
+          "num_pages": 15898
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.293855
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 29,
+          "total_q": 15783,
+          "num_kv_indices": 25,
+          "num_pages": 62875
+        },
+        "sol_ms": 0.0343,
+        "baseline_latency_ms": 1.750166
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 36,
+          "total_q": 9145,
+          "num_kv_indices": 39,
+          "num_pages": 114143
+        },
+        "sol_ms": 0.02,
+        "baseline_latency_ms": 2.7291675
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 64,
+          "total_q": 13108,
+          "num_kv_indices": 94,
+          "num_pages": 139067
+        },
+        "sol_ms": 0.0285,
+        "baseline_latency_ms": 4.9434115
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 64,
+          "total_q": 8342,
+          "num_kv_indices": 88,
+          "num_pages": 181724
+        },
+        "sol_ms": 0.0183,
+        "baseline_latency_ms": 5.078515
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 178,
+          "num_kv_indices": 2,
+          "num_pages": 61699
+        },
+        "sol_ms": 0.0008,
+        "baseline_latency_ms": 0.173871
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 43,
+          "total_q": 15910,
+          "num_kv_indices": 55,
+          "num_pages": 224323
+        },
+        "sol_ms": 0.0345,
+        "baseline_latency_ms": 3.3382685
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 16384,
+          "num_kv_indices": 2,
+          "num_pages": 27915
+        },
+        "sol_ms": 0.0356,
+        "baseline_latency_ms": 0.318927
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 19,
+          "total_q": 7938,
+          "num_kv_indices": 16403,
+          "num_pages": 291614
+        },
+        "sol_ms": 0.0218,
+        "baseline_latency_ms": 4.128041
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 42,
+          "num_kv_indices": 2,
+          "num_pages": 15898
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.174399
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 52,
+          "total_q": 16189,
+          "num_kv_indices": 57,
+          "num_pages": 274149
+        },
+        "sol_ms": 0.0351,
+        "baseline_latency_ms": 3.229102
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 398,
+          "num_kv_indices": 2,
+          "num_pages": 16732
+        },
+        "sol_ms": 0.0013,
+        "baseline_latency_ms": 0.174511
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 3,
+          "total_q": 14,
+          "num_kv_indices": 2,
+          "num_pages": 184865
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1774069999999999
+      },
+      {
+        "index": 16,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 23,
+          "total_q": 5404,
+          "num_kv_indices": 28,
+          "num_pages": 224501
+        },
+        "sol_ms": 0.012,
+        "baseline_latency_ms": 1.716391
+      },
+      {
+        "index": 17,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 2,
+          "num_kv_indices": 2,
+          "num_pages": 15615
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.171791
+      },
+      {
+        "index": 18,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 62,
+          "total_q": 9823,
+          "num_kv_indices": 133,
+          "num_pages": 403995
+        },
+        "sol_ms": 0.0215,
+        "baseline_latency_ms": 5.178803
+      },
+      {
+        "index": 19,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 5,
+          "total_q": 126,
+          "num_kv_indices": 11,
+          "num_pages": 138584
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.4972125
+      },
+      {
+        "index": 20,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 27,
+          "total_q": 4061,
+          "num_kv_indices": 47,
+          "num_pages": 401913
+        },
+        "sol_ms": 0.0091,
+        "baseline_latency_ms": 2.7059045
+      },
+      {
+        "index": 21,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 64,
+          "total_q": 9277,
+          "num_kv_indices": 117,
+          "num_pages": 514213
+        },
+        "sol_ms": 0.0203,
+        "baseline_latency_ms": 4.693542000000001
+      },
+      {
+        "index": 22,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 9,
+          "total_q": 10143,
+          "num_kv_indices": 37,
+          "num_pages": 553157
+        },
+        "sol_ms": 0.0222,
+        "baseline_latency_ms": 0.987786
+      },
+      {
+        "index": 23,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 28,
+          "total_q": 15344,
+          "num_kv_indices": 48,
+          "num_pages": 556622
+        },
+        "sol_ms": 0.0333,
+        "baseline_latency_ms": 2.4176185
+      },
+      {
+        "index": 24,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 1210,
+          "num_kv_indices": 1,
+          "num_pages": 176707
+        },
+        "sol_ms": 0.003,
+        "baseline_latency_ms": 0.151359
+      },
+      {
+        "index": 25,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 1200,
+          "num_kv_indices": 3,
+          "num_pages": 444449
+        },
+        "sol_ms": 0.003,
+        "baseline_latency_ms": 0.1807504999999999
+      },
+      {
+        "index": 26,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 64,
+          "total_q": 14263,
+          "num_kv_indices": 142,
+          "num_pages": 626709
+        },
+        "sol_ms": 0.031,
+        "baseline_latency_ms": 5.8802225
+      },
+      {
+        "index": 27,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 5,
+          "num_kv_indices": 1,
+          "num_pages": 683
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1468465
+      },
+      {
+        "index": 28,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 63,
+          "total_q": 11763,
+          "num_kv_indices": 148,
+          "num_pages": 612942
+        },
+        "sol_ms": 0.0257,
+        "baseline_latency_ms": 5.7567505
+      },
+      {
+        "index": 29,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 4,
+          "head_dim": 128,
+          "page_size": 1,
+          "len_indptr": 2,
+          "total_q": 13,
+          "num_kv_indices": 2,
+          "num_pages": 62875
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.174047
+      }
+    ]
+  }
+}

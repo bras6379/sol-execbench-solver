@@ -1,0 +1,101 @@
+{
+    "name": "048_moe_expert_inference_batched_dispatch",
+    "hf_id": "inclusionAI/Ling-flash-2.0",
+    "description": "Optimized MoE expert inference dispatch that batches tokens by expert assignment, processes them through experts sequentially with SwiGLU activation, and reconstructs the output with weighted combinations. This is the critical inference path for a 256-expert MoE system that processes 8 experts per token.",
+    "axes": {
+        "num_tokens": {
+            "type": "var",
+            "description": "Number of input tokens (batch_size * seq_len)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096,
+            "description": "Model hidden dimension"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 1024,
+            "description": "Expert intermediate dimension"
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 256,
+            "description": "Total number of experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of experts selected per token"
+        },
+        "num_selected_tokens": {
+            "type": "expr",
+            "expression": "num_tokens * num_experts_per_tok",
+            "description": "Total number of token-expert pairs"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "topk_idx": {
+            "shape": [
+                "num_tokens",
+                "num_experts_per_tok"
+            ],
+            "dtype": "int64",
+            "description": "Selected expert indices per token"
+        },
+        "topk_weight": {
+            "shape": [
+                "num_tokens",
+                "num_experts_per_tok"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert weights per token"
+        },
+        "gate_weights": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weights for all experts"
+        },
+        "up_weights": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weights for all experts"
+        },
+        "down_weights": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weights for all experts"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Weighted sum of expert outputs"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs including non-random topk indices.\"\"\"\n    num_tokens = axes_and_scalars[\"num_tokens\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    intermediate_size = axes_and_scalars[\"intermediate_size\"]\n    num_experts = axes_and_scalars[\"num_experts\"]\n    num_experts_per_tok = axes_and_scalars[\"num_experts_per_tok\"]\n    \n    # Random hidden states\n    hidden_states = torch.randn(\n        num_tokens, hidden_size, dtype=torch.bfloat16, device=device\n    )\n    \n    # Generate valid topk indices - each token selects num_experts_per_tok unique experts\n    topk_idx = torch.stack([\n        torch.randperm(num_experts, device=device)[:num_experts_per_tok]\n        for _ in range(num_tokens)\n    ]).to(torch.int64)\n    \n    # Random weights that sum to 1 per token (softmax-like)\n    topk_weight_raw = torch.rand(num_tokens, num_experts_per_tok, device=device)\n    topk_weight = (topk_weight_raw / topk_weight_raw.sum(dim=1, keepdim=True)).to(torch.bfloat16)\n    \n    # Expert weights\n    gate_weights = torch.randn(\n        num_experts, intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    up_weights = torch.randn(\n        num_experts, intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    down_weights = torch.randn(\n        num_experts, hidden_size, intermediate_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"topk_idx\": topk_idx,\n        \"topk_weight\": topk_weight,\n        \"gate_weights\": gate_weights,\n        \"up_weights\": up_weights,\n        \"down_weights\": down_weights,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    topk_idx: torch.Tensor,\n    topk_weight: torch.Tensor,\n    gate_weights: torch.Tensor,\n    up_weights: torch.Tensor,\n    down_weights: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    MoE expert inference with batched token dispatch.\n    \n    Args:\n        hidden_states: Input tokens [num_tokens, hidden_size]\n        topk_idx: Selected expert indices [num_tokens, num_experts_per_tok]\n        topk_weight: Expert weights [num_tokens, num_experts_per_tok]\n        gate_weights: Gate projection weights [num_experts, intermediate_size, hidden_size]\n        up_weights: Up projection weights [num_experts, intermediate_size, hidden_size]\n        down_weights: Down projection weights [num_experts, hidden_size, intermediate_size]\n        \n    Returns:\n        output: Weighted expert outputs [num_tokens, hidden_size]\n    \"\"\"\n    num_tokens = hidden_states.shape[0]\n    hidden_size = hidden_states.shape[1]\n    num_experts = gate_weights.shape[0]\n    num_experts_per_tok = topk_idx.shape[1]\n    \n    # Convert to float32 for numerical stability\n    hidden_states_f32 = hidden_states.to(torch.float32)\n    topk_weight_f32 = topk_weight.to(torch.float32)\n    gate_weights_f32 = gate_weights.to(torch.float32)\n    up_weights_f32 = up_weights.to(torch.float32)\n    down_weights_f32 = down_weights.to(torch.float32)\n    \n    # Step 1: Count tokens per expert using scatter\n    cnts = torch.zeros(\n        (num_tokens, num_experts),\n        dtype=torch.int32,\n        device=topk_idx.device\n    )\n    cnts.scatter_(1, topk_idx, 1)\n    tokens_per_expert = cnts.sum(dim=0)  # [num_experts]\n    \n    # Step 2: Sort tokens by expert assignment\n    flat_topk_idx = topk_idx.view(-1)  # [num_tokens * num_experts_per_tok]\n    idxs = flat_topk_idx.argsort()  # Sort by expert ID\n    \n    # Gather tokens in sorted order\n    token_indices = idxs // num_experts_per_tok\n    sorted_tokens = hidden_states_f32[token_indices]  # [num_tokens * num_experts_per_tok, hidden_size]\n    \n    # Step 3: Process tokens through experts in batches\n    outputs = []\n    start_idx = 0\n    tokens_per_expert_cpu = tokens_per_expert.cpu().numpy()\n    \n    for expert_id in range(num_experts):\n        num_tokens_for_expert = int(tokens_per_expert_cpu[expert_id])\n        \n        if num_tokens_for_expert == 0:\n            continue\n            \n        end_idx = start_idx + num_tokens_for_expert\n        \n        # Get tokens for this expert\n        expert_input = sorted_tokens[start_idx:end_idx]  # [num_tokens_for_expert, hidden_size]\n        \n        # Expert computation: SwiGLU MLP\n        # gate_proj: [num_tokens_for_expert, hidden_size] @ [hidden_size, intermediate_size]\n        gate_out = torch.matmul(expert_input, gate_weights_f32[expert_id].t())\n        \n        # up_proj\n        up_out = torch.matmul(expert_input, up_weights_f32[expert_id].t())\n        \n        # SwiGLU activation: silu(gate) * up\n        # silu(x) = x * sigmoid(x)\n        activated = (gate_out * torch.sigmoid(gate_out)) * up_out\n        \n        # down_proj\n        expert_output = torch.matmul(activated, down_weights_f32[expert_id].t())\n        \n        outputs.append(expert_output)\n        start_idx = end_idx\n    \n    # Step 4: Concatenate all expert outputs\n    if len(outputs) == 0:\n        return torch.zeros_like(hidden_states)\n        \n    all_outputs = torch.cat(outputs, dim=0)  # [num_tokens * num_experts_per_tok, hidden_size]\n    \n    # Step 5: Scatter back to original token positions\n    new_x = torch.zeros_like(all_outputs)\n    new_x[idxs] = all_outputs\n    \n    # Step 6: Reshape and apply expert weights\n    new_x = new_x.view(num_tokens, num_experts_per_tok, hidden_size)\n    \n    # Apply weights and sum across experts\n    weighted_output = new_x * topk_weight_f32.unsqueeze(-1)\n    final_output = weighted_output.sum(dim=1)  # [num_tokens, hidden_size]\n    \n    return final_output.to(torch.bfloat16)\n"
+}

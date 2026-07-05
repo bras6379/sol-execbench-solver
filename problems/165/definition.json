@@ -1,0 +1,219 @@
+{
+    "name": "071_edit_consistency_loss_with_perceptual_weighting",
+    "hf_id": "stepfun-ai/Step1X-Edit-v1p2",
+    "description": "Edit consistency loss combining pixel reconstruction, perceptual features, and edit-region-aware spatial weighting for image editing models. Computes multi-scale perceptual features, applies spatial weighting based on edit masks, and combines pixel loss, perceptual loss, and preservation loss.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "height": {
+            "type": "var",
+            "description": "Image height"
+        },
+        "width": {
+            "type": "var",
+            "description": "Image width"
+        },
+        "channels": {
+            "type": "const",
+            "value": 3,
+            "description": "Image channels (RGB)"
+        },
+        "feat_dim_0": {
+            "type": "const",
+            "value": 64,
+            "description": "First perceptual feature dimension"
+        },
+        "feat_dim_1": {
+            "type": "const",
+            "value": 128,
+            "description": "Second perceptual feature dimension"
+        },
+        "feat_dim_2": {
+            "type": "const",
+            "value": 256,
+            "description": "Third perceptual feature dimension"
+        },
+        "num_scales": {
+            "type": "const",
+            "value": 3,
+            "description": "Number of perceptual scales"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "predicted": {
+            "shape": [
+                "batch_size",
+                "channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Predicted edited image"
+        },
+        "target": {
+            "shape": [
+                "batch_size",
+                "channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Target edited image"
+        },
+        "source": {
+            "shape": [
+                "batch_size",
+                "channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Source image before editing"
+        },
+        "edit_mask": {
+            "shape": [
+                "batch_size",
+                "1",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Binary mask indicating edit regions (1.0=edited, 0.0=preserved)"
+        },
+        "extractor0_conv1_weight": {
+            "shape": [
+                "feat_dim_0",
+                "channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "First extractor conv1 weight"
+        },
+        "extractor0_conv1_bias": {
+            "shape": [
+                "feat_dim_0"
+            ],
+            "dtype": "float32",
+            "description": "First extractor conv1 bias"
+        },
+        "extractor0_conv2_weight": {
+            "shape": [
+                "feat_dim_0",
+                "feat_dim_0",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "First extractor conv2 weight"
+        },
+        "extractor0_conv2_bias": {
+            "shape": [
+                "feat_dim_0"
+            ],
+            "dtype": "float32",
+            "description": "First extractor conv2 bias"
+        },
+        "extractor1_conv1_weight": {
+            "shape": [
+                "feat_dim_1",
+                "feat_dim_0",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Second extractor conv1 weight"
+        },
+        "extractor1_conv1_bias": {
+            "shape": [
+                "feat_dim_1"
+            ],
+            "dtype": "float32",
+            "description": "Second extractor conv1 bias"
+        },
+        "extractor1_conv2_weight": {
+            "shape": [
+                "feat_dim_1",
+                "feat_dim_1",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Second extractor conv2 weight"
+        },
+        "extractor1_conv2_bias": {
+            "shape": [
+                "feat_dim_1"
+            ],
+            "dtype": "float32",
+            "description": "Second extractor conv2 bias"
+        },
+        "extractor2_conv1_weight": {
+            "shape": [
+                "feat_dim_2",
+                "feat_dim_1",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Third extractor conv1 weight"
+        },
+        "extractor2_conv1_bias": {
+            "shape": [
+                "feat_dim_2"
+            ],
+            "dtype": "float32",
+            "description": "Third extractor conv1 bias"
+        },
+        "extractor2_conv2_weight": {
+            "shape": [
+                "feat_dim_2",
+                "feat_dim_2",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Third extractor conv2 weight"
+        },
+        "extractor2_conv2_bias": {
+            "shape": [
+                "feat_dim_2"
+            ],
+            "dtype": "float32",
+            "description": "Third extractor conv2 bias"
+        },
+        "scale_weights": {
+            "shape": [
+                "num_scales"
+            ],
+            "dtype": "float32",
+            "description": "Learnable per-scale perceptual loss weights"
+        },
+        "pixel_loss_weight": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Weight for pixel loss term"
+        },
+        "perceptual_loss_weight": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Weight for perceptual loss term"
+        },
+        "edit_region_weight_multiplier": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Multiplier for edit region weights"
+        }
+    },
+    "outputs": {
+        "total_loss": {
+            "shape": [],
+            "dtype": "float32",
+            "description": "Total weighted loss value"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(\n    axes_and_scalars: dict, device: torch.device\n) -> dict:\n    \"\"\"Generate inputs for the edit consistency loss.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    height = axes_and_scalars[\"height\"]\n    width = axes_and_scalars[\"width\"]\n    channels = 3\n    feat_dim_0 = 64\n    feat_dim_1 = 128\n    feat_dim_2 = 256\n    num_scales = 3\n    \n    # Image tensors\n    predicted = torch.randn(batch_size, channels, height, width, dtype=torch.float32, device=device)\n    target = torch.randn(batch_size, channels, height, width, dtype=torch.float32, device=device)\n    source = torch.randn(batch_size, channels, height, width, dtype=torch.float32, device=device)\n    \n    # Edit mask - binary values\n    edit_mask = (torch.rand(batch_size, 1, height, width, device=device) > 0.5).float()\n    \n    # Extractor weights with proper initialization\n    extractor0_conv1_weight = torch.randn(feat_dim_0, channels, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor0_conv1_bias = torch.zeros(feat_dim_0, dtype=torch.float32, device=device)\n    extractor0_conv2_weight = torch.randn(feat_dim_0, feat_dim_0, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor0_conv2_bias = torch.zeros(feat_dim_0, dtype=torch.float32, device=device)\n    \n    extractor1_conv1_weight = torch.randn(feat_dim_1, feat_dim_0, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor1_conv1_bias = torch.zeros(feat_dim_1, dtype=torch.float32, device=device)\n    extractor1_conv2_weight = torch.randn(feat_dim_1, feat_dim_1, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor1_conv2_bias = torch.zeros(feat_dim_1, dtype=torch.float32, device=device)\n    \n    extractor2_conv1_weight = torch.randn(feat_dim_2, feat_dim_1, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor2_conv1_bias = torch.zeros(feat_dim_2, dtype=torch.float32, device=device)\n    extractor2_conv2_weight = torch.randn(feat_dim_2, feat_dim_2, 3, 3, dtype=torch.float32, device=device) * 0.1\n    extractor2_conv2_bias = torch.zeros(feat_dim_2, dtype=torch.float32, device=device)\n    \n    # Scale weights\n    scale_weights = torch.ones(num_scales, dtype=torch.float32, device=device) / num_scales\n    \n    # Scalar values\n    pixel_loss_weight = 1.0\n    perceptual_loss_weight = 0.5\n    edit_region_weight_multiplier = 2.0\n    \n    return {\n        \"predicted\": predicted,\n        \"target\": target,\n        \"source\": source,\n        \"edit_mask\": edit_mask,\n        \"extractor0_conv1_weight\": extractor0_conv1_weight,\n        \"extractor0_conv1_bias\": extractor0_conv1_bias,\n        \"extractor0_conv2_weight\": extractor0_conv2_weight,\n        \"extractor0_conv2_bias\": extractor0_conv2_bias,\n        \"extractor1_conv1_weight\": extractor1_conv1_weight,\n        \"extractor1_conv1_bias\": extractor1_conv1_bias,\n        \"extractor1_conv2_weight\": extractor1_conv2_weight,\n        \"extractor1_conv2_bias\": extractor1_conv2_bias,\n        \"extractor2_conv1_weight\": extractor2_conv1_weight,\n        \"extractor2_conv1_bias\": extractor2_conv1_bias,\n        \"extractor2_conv2_weight\": extractor2_conv2_weight,\n        \"extractor2_conv2_bias\": extractor2_conv2_bias,\n        \"scale_weights\": scale_weights,\n        \"pixel_loss_weight\": pixel_loss_weight,\n        \"perceptual_loss_weight\": perceptual_loss_weight,\n        \"edit_region_weight_multiplier\": edit_region_weight_multiplier,\n    }\n\n\n@torch.no_grad()\ndef run(\n    predicted: torch.Tensor,\n    target: torch.Tensor,\n    source: torch.Tensor,\n    edit_mask: torch.Tensor,\n    extractor0_conv1_weight: torch.Tensor,\n    extractor0_conv1_bias: torch.Tensor,\n    extractor0_conv2_weight: torch.Tensor,\n    extractor0_conv2_bias: torch.Tensor,\n    extractor1_conv1_weight: torch.Tensor,\n    extractor1_conv1_bias: torch.Tensor,\n    extractor1_conv2_weight: torch.Tensor,\n    extractor1_conv2_bias: torch.Tensor,\n    extractor2_conv1_weight: torch.Tensor,\n    extractor2_conv1_bias: torch.Tensor,\n    extractor2_conv2_weight: torch.Tensor,\n    extractor2_conv2_bias: torch.Tensor,\n    scale_weights: torch.Tensor,\n    pixel_loss_weight: float,\n    perceptual_loss_weight: float,\n    edit_region_weight_multiplier: float,\n):\n    # Sobel kernels for edge detection\n    sobel_x = torch.tensor([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], dtype=torch.float32, device=edit_mask.device).view(1, 1, 3, 3)\n    sobel_y = torch.tensor([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], dtype=torch.float32, device=edit_mask.device).view(1, 1, 3, 3)\n    \n    # Compute edge map from edit mask\n    edges_x = F.conv2d(edit_mask, sobel_x, padding=1)\n    edges_y = F.conv2d(edit_mask, sobel_y, padding=1)\n    edge_magnitude = torch.sqrt(edges_x ** 2 + edges_y ** 2 + 1e-8)\n    \n    # Compute spatial weights\n    spatial_weights = torch.ones_like(edit_mask)\n    spatial_weights = spatial_weights + (edit_region_weight_multiplier - 1.0) * edit_mask\n    spatial_weights = spatial_weights + 0.5 * edge_magnitude\n    \n    # 1. Pixel-level reconstruction loss (L1)\n    pixel_diff = torch.abs(predicted - target)\n    weighted_pixel_loss = pixel_diff * spatial_weights\n    pixel_loss = weighted_pixel_loss.mean()\n    \n    # 2. Extract perceptual features for predicted and target\n    def extract_features(x, conv1_w, conv1_b, conv2_w, conv2_b):\n        x = F.conv2d(x, conv1_w, conv1_b, padding=1)\n        x = F.relu(x)\n        x = F.conv2d(x, conv2_w, conv2_b, padding=1)\n        x = F.relu(x)\n        x = F.max_pool2d(x, kernel_size=2, stride=2)\n        return x\n    \n    # Scale 0\n    pred_feat0 = extract_features(predicted, extractor0_conv1_weight, extractor0_conv1_bias, extractor0_conv2_weight, extractor0_conv2_bias)\n    target_feat0 = extract_features(target, extractor0_conv1_weight, extractor0_conv1_bias, extractor0_conv2_weight, extractor0_conv2_bias)\n    \n    # Scale 1\n    pred_feat1 = extract_features(pred_feat0, extractor1_conv1_weight, extractor1_conv1_bias, extractor1_conv2_weight, extractor1_conv2_bias)\n    target_feat1 = extract_features(target_feat0, extractor1_conv1_weight, extractor1_conv1_bias, extractor1_conv2_weight, extractor1_conv2_bias)\n    \n    # Scale 2\n    pred_feat2 = extract_features(pred_feat1, extractor2_conv1_weight, extractor2_conv1_bias, extractor2_conv2_weight, extractor2_conv2_bias)\n    target_feat2 = extract_features(target_feat1, extractor2_conv1_weight, extractor2_conv1_bias, extractor2_conv2_weight, extractor2_conv2_bias)\n    \n    pred_features = [pred_feat0, pred_feat1, pred_feat2]\n    target_features = [target_feat0, target_feat1, target_feat2]\n    \n    # Compute perceptual loss across scales\n    perceptual_loss = torch.tensor(0.0, dtype=torch.float32, device=predicted.device)\n    \n    for scale_idx in range(3):\n        pred_feat = pred_features[scale_idx]\n        target_feat = target_features[scale_idx]\n        \n        # Downsample spatial weights to match feature resolution\n        downsampled_weights = F.interpolate(\n            spatial_weights,\n            size=(pred_feat.shape[2], pred_feat.shape[3]),\n            mode='bilinear',\n            align_corners=False\n        )\n        \n        # Compute weighted perceptual difference\n        feat_diff = torch.abs(pred_feat - target_feat)\n        weighted_feat_diff = feat_diff * downsampled_weights\n        scale_loss = weighted_feat_diff.mean()\n        \n        # Apply learnable scale weight\n        scale_loss = scale_loss * torch.abs(scale_weights[scale_idx])\n        perceptual_loss = perceptual_loss + scale_loss\n    \n    # 3. Preservation loss for non-edited regions\n    inverse_mask = 1.0 - edit_mask\n    preservation_diff = torch.abs(predicted - source) * inverse_mask\n    preservation_loss = preservation_diff.mean()\n    \n    # Combine all losses\n    total_loss = (\n        pixel_loss_weight * pixel_loss +\n        perceptual_loss_weight * perceptual_loss +\n        0.3 * preservation_loss\n    )\n    \n    return total_loss\n"
+}

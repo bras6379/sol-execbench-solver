@@ -1,0 +1,217 @@
+{
+  "task_id": 93,
+  "subset": "L1",
+  "collection_index": 93,
+  "name": "093_grouped_topk_moe_routing_backward",
+  "hf_id": "zai-org/GLM-4.7",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:33.748095Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.004395,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1321
+        },
+        "sol_ms": 0.00278987,
+        "baseline_latency_ms": 0.0740165
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 2048
+        },
+        "sol_ms": 0.00410511,
+        "baseline_latency_ms": 0.0781915
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1280
+        },
+        "sol_ms": 0.00271569,
+        "baseline_latency_ms": 0.073936
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 3557
+        },
+        "sol_ms": 0.00683509,
+        "baseline_latency_ms": 0.091055
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 6144
+        },
+        "sol_ms": 0.01151533,
+        "baseline_latency_ms": 0.114288
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1312
+        },
+        "sol_ms": 0.00277359,
+        "baseline_latency_ms": 0.074112
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1344
+        },
+        "sol_ms": 0.00283148,
+        "baseline_latency_ms": 0.073104
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 8192
+        },
+        "sol_ms": 0.01522044,
+        "baseline_latency_ms": 0.1233915
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 3072
+        },
+        "sol_ms": 0.00595766,
+        "baseline_latency_ms": 0.0888955
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1376
+        },
+        "sol_ms": 0.00288937,
+        "baseline_latency_ms": 0.074832
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 2521
+        },
+        "sol_ms": 0.00496083,
+        "baseline_latency_ms": 0.083328
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1721
+        },
+        "sol_ms": 0.00351352,
+        "baseline_latency_ms": 0.0754235
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 2131
+        },
+        "sol_ms": 0.00425527,
+        "baseline_latency_ms": 0.079391
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1408
+        },
+        "sol_ms": 0.00294726,
+        "baseline_latency_ms": 0.074432
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 3011
+        },
+        "sol_ms": 0.00584731,
+        "baseline_latency_ms": 0.084576
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 5120,
+          "n_routed_experts": 160,
+          "top_k": 8,
+          "one": 1,
+          "N": 1440
+        },
+        "sol_ms": 0.00300515,
+        "baseline_latency_ms": 0.0745919999999999
+      }
+    ]
+  }
+}

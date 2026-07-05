@@ -1,0 +1,220 @@
+{
+    "name": "028_nvfp4_attention_qkv_projection_with_rope",
+    "hf_id": "nvidia/Qwen3-8B-NVFP4",
+    "description": "FP4-quantized attention QKV projection with RMSNorm, RoPE application, and KV cache update. Fuses Q/K/V projections (FP4 block-scaled), per-head RMSNorm on Q and K, rotary position embeddings, for GQA attention with 32 query heads and 8 KV heads.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096,
+            "description": "Model hidden dimension"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of query attention heads"
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key/value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per attention head"
+        },
+        "q_size": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim",
+            "description": "Total query projection size"
+        },
+        "kv_size": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim",
+            "description": "Total key/value projection size"
+        },
+        "hidden_size_half": {
+            "type": "expr",
+            "expression": "hidden_size // 2",
+            "description": "Half hidden size for FP4 packing"
+        },
+        "q_size_half": {
+            "type": "expr",
+            "expression": "q_size // 2",
+            "description": "Half q_size for FP4 packing"
+        },
+        "kv_size_half": {
+            "type": "expr",
+            "expression": "kv_size // 2",
+            "description": "Half kv_size for FP4 packing"
+        },
+        "hidden_blocks": {
+            "type": "expr",
+            "expression": "hidden_size // 16",
+            "description": "Number of scale blocks for hidden dim"
+        },
+        "q_blocks": {
+            "type": "expr",
+            "expression": "q_size // 16",
+            "description": "Number of scale blocks for q_size"
+        },
+        "kv_blocks": {
+            "type": "expr",
+            "expression": "kv_size // 16",
+            "description": "Number of scale blocks for kv_size"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "RoPE cosine component"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "RoPE sine component"
+        },
+        "q_proj_weight_fp4": {
+            "shape": [
+                "q_size",
+                "hidden_size_half"
+            ],
+            "dtype": "float4_e2m1fn_x2",
+            "description": "FP4-quantized Q projection weights"
+        },
+        "q_proj_scale": {
+            "shape": [
+                "q_size",
+                "hidden_blocks"
+            ],
+            "dtype": "float8_e4m3fn",
+            "description": "Block scale factors for Q projection"
+        },
+        "q_proj_global_decode_scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Global decode scale for Q projection"
+        },
+        "k_proj_weight_fp4": {
+            "shape": [
+                "kv_size",
+                "hidden_size_half"
+            ],
+            "dtype": "float4_e2m1fn_x2",
+            "description": "FP4-quantized K projection weights"
+        },
+        "k_proj_scale": {
+            "shape": [
+                "kv_size",
+                "hidden_blocks"
+            ],
+            "dtype": "float8_e4m3fn",
+            "description": "Block scale factors for K projection"
+        },
+        "k_proj_global_decode_scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Global decode scale for K projection"
+        },
+        "v_proj_weight_fp4": {
+            "shape": [
+                "kv_size",
+                "hidden_size_half"
+            ],
+            "dtype": "float4_e2m1fn_x2",
+            "description": "FP4-quantized V projection weights"
+        },
+        "v_proj_scale": {
+            "shape": [
+                "kv_size",
+                "hidden_blocks"
+            ],
+            "dtype": "float8_e4m3fn",
+            "description": "Block scale factors for V projection"
+        },
+        "v_proj_global_decode_scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Global decode scale for V projection"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "RMSNorm weight for Q"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "RMSNorm weight for K"
+        },
+        "rms_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for RMSNorm"
+        }
+    },
+    "outputs": {
+        "query_states": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query states after projection, norm, and RoPE"
+        },
+        "key_states": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key states after projection, norm, and RoPE"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value states after projection"
+        }
+    },
+    "reference": "import torch\n# --- inlined nvfp4_reference ---\nimport math\nfrom enum import StrEnum\n\nimport torch\n\n\nclass ScalingType(StrEnum):\n    \"\"\"\n    Enum for different FP8 scaling strategies.\n\n    Scaling types:\n    - BlockWise1x16: 1x16 blocks (per-tensor in M, 16-sized blocks in K).\n    \"\"\"\n\n    BlockWise1x16 = \"BlockWise1x16\"\n\n\nclass BlockWiseScalerNVFP4:\n    def __init__(self, scaling_type: ScalingType = ScalingType.BlockWise1x16):\n        self.scaling_type = scaling_type\n        self.sf_vec_size = 16\n        self.E2M1FN_MAX = 6.0\n\n        # for clamping to nonzero values\n        self.E4M3FN_MIN_POS = 2 ** (-9)\n\n    def quantize(self, tensor: torch.Tensor):\n        \"\"\"\n        Quantize a high precision tensor to FP4 E2M1 with 1x16 block-wise scaling.\n\n        Args:\n            tensor: Input tensor of shape (b, rows, cols) with dtype >= 16 bits (fp16, bf16, fp32)\n\n        Returns:\n            Tuple of (quantized_data, scale_factors, global_decode_scale):\n            - quantized_data: float4_e2m1fn_x2 tensor of shape (b, rows, cols//2) (2 FP4 values per uint8 byte)\n            - scale_factors: FP8 E4M3FN tensor of shape (b, rows, cols//16) with decode scales\n            - global_decode_scale: Scalar tensor for global dequantization scaling\n        \"\"\"\n        # Compute global amax for the entire tensor\n        global_amax = torch.max(torch.abs(tensor)).to(torch.float32)\n\n        # Create scale factors using the helper method (with global scaling)\n        decode_scale, global_decode_scale = self._create_scale_factors(\n            tensor, global_amax\n        )\n        # decode_scale shape: (b, rows, cols//16)\n\n        # Now compute encode scale for quantization\n        encode_scale = torch.clamp(\n            torch.div(1.0, decode_scale.to(torch.float32) * global_decode_scale),\n            max=torch.tensor(\n                torch.finfo(torch.float32).max,\n                device=tensor.device,\n                dtype=torch.float32,\n            ),\n        )\n        # encode_scale shape: (b, rows, cols//16)\n\n        # Get tensor dimensions\n        b, rows, cols = tensor.shape\n\n        # Reshape to blocks:\n        # Scale and quantize\n        scaled_x = tensor.view(b, rows, cols // self.sf_vec_size, self.sf_vec_size).to(\n            torch.float32\n        ) * encode_scale.unsqueeze(-1)\n        clipped_x = torch.clamp(scaled_x, -self.E2M1FN_MAX, self.E2M1FN_MAX)\n\n        # Cast to FP4 (packed format): (b, rows, cols//2)\n        quantized_data = self._cast_to_fp4x2(clipped_x.reshape(b, rows, cols))\n\n        return quantized_data, decode_scale, global_decode_scale\n\n    def _cast_to_fp4x2(self, x: torch.Tensor) -> torch.Tensor:\n        \"\"\"Quantize a tensor to FP4 E2M1 and pack into uint8 (2 FP4 values per byte).\n\n        Args:\n            x: Input tensor of shape (b, rows, cols) with values in range [-6, 6]\n\n        Returns:\n            uint8 tensor of shape (b, rows, cols//2) with packed FP4 values\n        \"\"\"\n        # FP4 E2M1 encoding\n        result = torch.zeros_like(x, dtype=torch.uint8)\n\n        # Positive values\n        result[(x >= 0.0) & (x <= 0.25)] = 0\n        result[(x > 0.25) & (x < 0.75)] = 1\n        result[(x >= 0.75) & (x <= 1.25)] = 2\n        result[(x > 1.25) & (x < 1.75)] = 3\n        result[(x >= 1.75) & (x <= 2.5)] = 4\n        result[(x > 2.5) & (x < 3.5)] = 5\n        result[(x >= 3.5) & (x <= 5.0)] = 6\n        result[x > 5.0] = 7\n\n        # Negative values\n        result[(x >= -0.25) & (x < 0.0)] = 8\n        result[(x < -0.25) & (x > -0.75)] = 9\n        result[(x <= -0.75) & (x >= -1.25)] = 10\n        result[(x < -1.25) & (x > -1.75)] = 11\n        result[(x <= -1.75) & (x >= -2.5)] = 12\n        result[(x < -2.5) & (x > -3.5)] = 13\n        result[(x <= -3.5) & (x >= -5.0)] = 14\n        result[x < -5.0] = 15\n\n        # Pack two FP4 values into one byte along cols dimension (dim 1)\n        # Input shape: (b, rows, colls)\n        # first value (even cols) in low nibble, second value (odd cols) in high nibble\n        packed = result[..., ::2] + result[..., 1::2] * 16\n        return packed.view(torch.float4_e2m1fn_x2)\n\n    def _create_scale_factors(self, tensor: torch.Tensor, global_amax: torch.Tensor):\n        \"\"\"\n        Create scale factors for a given tensor with optional global scaling.\n\n        Args:\n            tensor: Input tensor of shape (b, rows, cols)\n            global_amax: Optional global max absolute value for global scaling\n\n        Returns:\n            Tuple of (decode_scales, global_decode_scale):\n            - decode_scales: FP8 E4M3FN tensor of shape (b, rows, cols // 16)\n            - global_decode_scale: Scalar tensor (1.0 if no global scaling applied)\n        \"\"\"\n        if tensor.dim() != 3:\n            raise ValueError(f\"Input tensor must have 3 dimensions, got {tensor.dim()}\")\n        b, rows, cols = tensor.shape\n\n        if cols % self.sf_vec_size != 0:\n            raise ValueError(\n                f\"Cols must be a multiple of {self.sf_vec_size}, got {cols}\"\n            )\n\n        # Compute max over the block dimensions\n        blocked = tensor.view(b, rows, cols // self.sf_vec_size, self.sf_vec_size)\n        block_max = blocked.abs().amax(dim=-1)  # (b, rows, cols//16)\n\n        # Compute decode scale: block_max / E2M1_MAX\n        decode_scale = block_max / self.E2M1FN_MAX\n        decode_scale = decode_scale.to(torch.float32)\n\n        # Apply global scaling (matches nvfp4_tekit.py logic)\n        FLOAT8_E4M3_MAX = torch.tensor(448.0, device=tensor.device, dtype=torch.float32)\n\n        # Global encode scale to fit decode scales into FP8 range\n        global_encode_scale = torch.div(FLOAT8_E4M3_MAX * self.E2M1FN_MAX, global_amax)\n        global_encode_scale = torch.clamp(\n            global_encode_scale,\n            max=torch.tensor(\n                torch.finfo(torch.float32).max,\n                device=tensor.device,\n                dtype=torch.float32,\n            ),\n        )\n\n        # Avoid division by zero\n        if global_encode_scale == 0.0:\n            global_encode_scale = torch.tensor(\n                1.0, device=tensor.device, dtype=torch.float32\n            )\n\n        global_decode_scale = torch.div(1.0, global_encode_scale)\n\n        # Scale decode_scale to fit in FP8 E4M3FN range\n        decode_scale = decode_scale * global_encode_scale\n        decode_scale = torch.clamp(\n            decode_scale, min=-FLOAT8_E4M3_MAX, max=FLOAT8_E4M3_MAX\n        )\n\n        # Convert to FP8 E4M3FN - keep batch-first format (b, rows, cols//16)\n        decode_scale = decode_scale.to(dtype=torch.float8_e4m3fn)\n\n        return decode_scale, global_decode_scale\n\n    def convert_to_blocked_format_for_pytorch_scaled_mm(\n        self, scale_factors: torch.Tensor\n    ) -> torch.Tensor:\n        \"\"\"\n        Convert scale factor tensor to the \"blocked\" layout expected by torch._scaled_mm.\n\n        Args:\n            scale_factors: FP8_E4M3FN Tensor of shape (k//16, m_or_n, b) with strides ((k//16)*m_or_n, m_or_n, 1).\n\n        NOTE: This assumes `rows` is a multiple of 128 and `cols` is a multiple of 4.\n        \"\"\"\n        if scale_factors.dim() != 2:\n            raise ValueError(\n                f\"Scale factors must have 2 dimensions, got {scale_factors.dim()}\"\n            )\n        rows, cols = scale_factors.shape\n        if rows % 128 != 0:\n            raise ValueError(f\"Rows must be a multiple of 128, got {rows}\")\n        if cols % 4 != 0:\n            raise ValueError(f\"Cols must be a multiple of 4, got {cols}\")\n        n_row_blocks = math.ceil(rows / 128)\n        n_col_blocks = math.ceil(cols / 4)\n\n        blocks = scale_factors.view(n_row_blocks, 128, n_col_blocks, 4).permute(\n            0, 2, 1, 3\n        )\n        rearranged = blocks.reshape(-1, 4, 32, 4).transpose(1, 2).reshape(-1, 32, 16)\n        return rearranged.flatten()\n\n\n\nclass CuBLASRefBlockwiseGemm:\n    def __init__(self, b: int, m: int, n: int, k: int):\n        self.b = b\n        self.m = m\n        self.n = n\n        self.k = k\n        self.sf_vec_size = 16\n        self.sf_k = k // self.sf_vec_size\n        self.scaler = BlockWiseScalerNVFP4()\n\n        if self.k % self.sf_vec_size != 0:\n            raise ValueError(\n                f\"K must be a multiple of {self.sf_vec_size}, got {self.k}\"\n            )\n        if self.m % 128 != 0:\n            raise ValueError(f\"M must be a multiple of 128, got {self.m}\")\n        if self.n % 128 != 0:\n            raise ValueError(f\"N must be a multiple of 128, got {self.n}\")\n\n    def _validate_shapes(self, mat_a: torch.Tensor, mat_b: torch.Tensor):\n        if mat_a.dim() != 3:\n            raise ValueError(\n                f\"mat_a must have 3 dimensions (batch, m, k), got {mat_a.dim()}\"\n            )\n        if mat_b.dim() != 3:\n            raise ValueError(\n                f\"mat_b must have 3 dimensions (batch, n, k), got {mat_b.dim()}\"\n            )\n\n        # the e2m1 tensor has 2 fp4 values per byte, so the shape is (b, m, k//2)\n        if mat_a.shape != (self.b, self.m, self.k // 2):\n            raise ValueError(\n                f\"mat_a must have shape (B, M, K//2) = ({self.b}, {self.m}, {self.k // 2}), got {mat_a.shape}\"\n            )\n        if mat_b.shape != (self.b, self.n, self.k // 2):\n            raise ValueError(\n                f\"mat_b must have shape (B, N, K//2) = ({self.b}, {self.n}, {self.k // 2}), got {mat_b.shape}\"\n            )\n\n    def scaled_mm(\n        self,\n        mat_a: torch.Tensor,\n        mat_b: torch.Tensor,\n        scale_a: torch.Tensor,\n        global_decode_a: torch.Tensor,\n        scale_recipe_a: ScalingType,\n        scale_b: torch.Tensor,\n        global_decode_b: torch.Tensor,\n        scale_recipe_b: ScalingType,\n        bias: torch.Tensor | None = None,\n        output_dtype: torch.dtype = torch.float32,\n    ):\n        \"\"\"\n        Perform scaled matrix multiplication: C = (A * scale_a * global_decode_a) @ (B * scale_b * global_decode_b)\n\n        Args:\n            mat_a: Quantized matrix A of shape (b, m, k//2)\n            mat_b: Quantized matrix B of shape (b, n, k//2)\n            scale_a: FP8 E4M3FN scale factors for A of shape (b, m, k//16)\n            scale_recipe_a: Scaling type for A (must be BlockWise1x16)\n            scale_b: FP8 E4M3FN scale factors for B of shape (b, n, k//16)\n            scale_recipe_b: Scaling type for B (must be BlockWise1x16)\n            global_decode_a: Optional global decode scale for A (scalar tensor)\n            global_decode_b: Optional global decode scale for B (scalar tensor)\n            bias: Optional bias tensor (not supported yet)\n            output_dtype: Output data type (default: float32)\n\n        Returns:\n            Output tensor of shape (b, m, n)\n        \"\"\"\n        self._validate_shapes(mat_a, mat_b)\n\n        if (\n            scale_recipe_a != ScalingType.BlockWise1x16\n            or scale_recipe_b != ScalingType.BlockWise1x16\n        ):\n            raise ValueError(\n                f\"Only BlockWise1x16 is supported for scale_recipe, but got {scale_recipe_a} and {scale_recipe_b}\"\n            )\n        if bias is not None:\n            raise ValueError(\"Bias is not supported yet.\")\n\n        # Compute combined global scale: global_decode_a * global_decode_b\n        global_scale = global_decode_a * global_decode_b\n\n        out = torch.empty(\n            (self.m, self.n, self.b), device=mat_a.device, dtype=output_dtype\n        )\n\n        mat_a = mat_a.permute(1, 2, 0)\n        mat_b = mat_b.permute(1, 2, 0)\n        scale_a = scale_a.permute(1, 2, 0)\n        scale_b = scale_b.permute(1, 2, 0)\n\n        for b in range(self.b):\n            # Extract scales for current batch: (m, k//16, b) -> (m, k//16)\n            scale_a_blocked = (\n                self.scaler.convert_to_blocked_format_for_pytorch_scaled_mm(\n                    scale_a[:, :, b]\n                )\n            )\n            scale_b_blocked = (\n                self.scaler.convert_to_blocked_format_for_pytorch_scaled_mm(\n                    scale_b[:, :, b]\n                )\n            )\n\n            # Perform scaled matmul with block-wise scales\n            result = torch._scaled_mm(\n                mat_a[:, :, b],\n                mat_b[:, :, b].transpose(0, 1),  # (n, k) -> (k, n) without moving data\n                scale_a_blocked,\n                scale_b_blocked,\n                bias=None,\n                out_dtype=output_dtype,\n            )\n\n            # Apply global decode scale: result * global_decode_a * global_decode_b\n            out[:, :, b] = result * global_scale\n\n        return out.permute(2, 0, 1)\n\n# --- end inlined nvfp4_reference ---\n\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs for FP4-quantized QKV projection with RoPE.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = 4096\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 128\n    q_size = num_attention_heads * head_dim  # 4096\n    kv_size = num_key_value_heads * head_dim  # 1024\n    sf_vec_size = 16\n    \n    scaler = BlockWiseScalerNVFP4()\n    \n    # Input hidden states\n    hidden_states = torch.randn(batch_size, seq_len, hidden_size, dtype=torch.bfloat16, device=device)\n    \n    # RoPE cos/sin\n    cos = torch.randn(batch_size, seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    sin = torch.randn(batch_size, seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    \n    # Q projection weights (quantized)\n    q_weight_fp32 = torch.randn(1, q_size, hidden_size, dtype=torch.float32, device=device) * 0.02\n    q_fp4, q_scale, q_global = scaler.quantize(q_weight_fp32)\n    q_proj_weight_fp4 = q_fp4.squeeze(0)\n    q_proj_scale = q_scale.squeeze(0)\n    q_proj_global_decode_scale = q_global.item()\n    \n    # K projection weights (quantized) - pad to 1024 (multiple of 128)\n    k_weight_fp32 = torch.randn(1, kv_size, hidden_size, dtype=torch.float32, device=device) * 0.02\n    k_fp4, k_scale, k_global = scaler.quantize(k_weight_fp32)\n    k_proj_weight_fp4 = k_fp4.squeeze(0)\n    k_proj_scale = k_scale.squeeze(0)\n    k_proj_global_decode_scale = k_global.item()\n    \n    # V projection weights (quantized) - pad to 1024 (multiple of 128)\n    v_weight_fp32 = torch.randn(1, kv_size, hidden_size, dtype=torch.float32, device=device) * 0.02\n    v_fp4, v_scale, v_global = scaler.quantize(v_weight_fp32)\n    v_proj_weight_fp4 = v_fp4.squeeze(0)\n    v_proj_scale = v_scale.squeeze(0)\n    v_proj_global_decode_scale = v_global.item()\n    \n    # RMSNorm weights\n    q_norm_weight = torch.ones(head_dim, dtype=torch.bfloat16, device=device)\n    k_norm_weight = torch.ones(head_dim, dtype=torch.bfloat16, device=device)\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"cos\": cos,\n        \"sin\": sin,\n        \"q_proj_weight_fp4\": q_proj_weight_fp4,\n        \"q_proj_scale\": q_proj_scale,\n        \"q_proj_global_decode_scale\": q_proj_global_decode_scale,\n        \"k_proj_weight_fp4\": k_proj_weight_fp4,\n        \"k_proj_scale\": k_proj_scale,\n        \"k_proj_global_decode_scale\": k_proj_global_decode_scale,\n        \"v_proj_weight_fp4\": v_proj_weight_fp4,\n        \"v_proj_scale\": v_proj_scale,\n        \"v_proj_global_decode_scale\": v_proj_global_decode_scale,\n        \"q_norm_weight\": q_norm_weight,\n        \"k_norm_weight\": k_norm_weight,\n        \"rms_norm_eps\": 1e-6,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    q_proj_weight_fp4: torch.Tensor,\n    q_proj_scale: torch.Tensor,\n    q_proj_global_decode_scale: float,\n    k_proj_weight_fp4: torch.Tensor,\n    k_proj_scale: torch.Tensor,\n    k_proj_global_decode_scale: float,\n    v_proj_weight_fp4: torch.Tensor,\n    v_proj_scale: torch.Tensor,\n    v_proj_global_decode_scale: float,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    rms_norm_eps: float,\n):\n    \"\"\"FP4-quantized QKV projection with RMSNorm and RoPE.\"\"\"\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 128\n    q_size = num_attention_heads * head_dim\n    kv_size = num_key_value_heads * head_dim\n    sf_vec_size = 16\n    \n    scaler = BlockWiseScalerNVFP4()\n    dtype = torch.bfloat16\n    \n    # Flatten hidden states for GEMM: [batch*seq_len, hidden_size]\n    hidden_flat = hidden_states.view(1, batch_size * seq_len, hidden_size)\n    \n    # Quantize input activations\n    act_fp4, act_scale, act_global = scaler.quantize(hidden_flat.to(torch.float32))\n    \n    # Convert global decode scales to tensors\n    q_global_tensor = torch.tensor(q_proj_global_decode_scale, dtype=torch.float32, device=hidden_states.device)\n    k_global_tensor = torch.tensor(k_proj_global_decode_scale, dtype=torch.float32, device=hidden_states.device)\n    v_global_tensor = torch.tensor(v_proj_global_decode_scale, dtype=torch.float32, device=hidden_states.device)\n    \n    # Q projection GEMM\n    q_gemm = CuBLASRefBlockwiseGemm(b=1, m=batch_size * seq_len, n=q_size, k=hidden_size)\n    query_states = q_gemm.scaled_mm(\n        mat_a=act_fp4,\n        mat_b=q_proj_weight_fp4.unsqueeze(0),\n        scale_a=act_scale,\n        global_decode_a=act_global,\n        scale_recipe_a=ScalingType.BlockWise1x16,\n        scale_b=q_proj_scale.unsqueeze(0),\n        global_decode_b=q_global_tensor,\n        scale_recipe_b=ScalingType.BlockWise1x16,\n        output_dtype=dtype,\n    ).squeeze(0)  # [batch*seq_len, q_size]\n    \n    # K projection GEMM\n    k_gemm = CuBLASRefBlockwiseGemm(b=1, m=batch_size * seq_len, n=kv_size, k=hidden_size)\n    key_states = k_gemm.scaled_mm(\n        mat_a=act_fp4,\n        mat_b=k_proj_weight_fp4.unsqueeze(0),\n        scale_a=act_scale,\n        global_decode_a=act_global,\n        scale_recipe_a=ScalingType.BlockWise1x16,\n        scale_b=k_proj_scale.unsqueeze(0),\n        global_decode_b=k_global_tensor,\n        scale_recipe_b=ScalingType.BlockWise1x16,\n        output_dtype=dtype,\n    ).squeeze(0)  # [batch*seq_len, kv_size]\n    \n    # V projection GEMM\n    v_gemm = CuBLASRefBlockwiseGemm(b=1, m=batch_size * seq_len, n=kv_size, k=hidden_size)\n    value_states = v_gemm.scaled_mm(\n        mat_a=act_fp4,\n        mat_b=v_proj_weight_fp4.unsqueeze(0),\n        scale_a=act_scale,\n        global_decode_a=act_global,\n        scale_recipe_a=ScalingType.BlockWise1x16,\n        scale_b=v_proj_scale.unsqueeze(0),\n        global_decode_b=v_global_tensor,\n        scale_recipe_b=ScalingType.BlockWise1x16,\n        output_dtype=dtype,\n    ).squeeze(0)  # [batch*seq_len, kv_size]\n    \n    # Reshape to [batch, seq_len, num_heads, head_dim]\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim)\n    \n    # Apply per-head RMSNorm to Q and K\n    def rms_norm(x, weight, eps):\n        x_fp32 = x.to(torch.float32)\n        variance = x_fp32.pow(2).mean(-1, keepdim=True)\n        x_normed = x_fp32 * torch.rsqrt(variance + eps)\n        return (weight * x_normed).to(x.dtype)\n    \n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n    \n    # Transpose to [batch, num_heads, seq_len, head_dim]\n    query_states = query_states.transpose(1, 2)\n    key_states = key_states.transpose(1, 2)\n    value_states = value_states.transpose(1, 2)\n    \n    # Apply RoPE\n    def rotate_half(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((-x2, x1), dim=-1)\n    \n    cos_expanded = cos.unsqueeze(1)  # [batch, 1, seq_len, head_dim]\n    sin_expanded = sin.unsqueeze(1)\n    query_states = (query_states * cos_expanded) + (rotate_half(query_states) * sin_expanded)\n    key_states = (key_states * cos_expanded) + (rotate_half(key_states) * sin_expanded)\n    \n    return query_states, key_states, value_states\n\n\nif __name__ == \"__main__\":\n    inputs = get_inputs(\n        axes_and_scalars={\"batch_size\": 2, \"seq_len\": 128},\n        device=torch.device(\"cuda:0\")\n    )\n    q, k, v = run(**inputs)\n    print(f\"Q shape: {q.shape}, K shape: {k.shape}, V shape: {v.shape}\")\n"
+}

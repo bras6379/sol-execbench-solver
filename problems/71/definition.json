@@ -1,0 +1,120 @@
+{
+    "name": "071_kv_cache_update_with_rope",
+    "hf_id": "nvidia/Phi-4-reasoning-plus-NVFP4",
+    "description": "Fused KV cache update with RoPE application. Applies rotary position embeddings to incoming key states and updates both key and value caches in a single operation. Critical for autoregressive generation performance.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 10,
+            "description": "Number of key-value heads"
+        },
+        "new_seq_len": {
+            "type": "var",
+            "description": "Number of new tokens to add (typically 1 for decode)"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per head"
+        },
+        "current_seq_len": {
+            "type": "var",
+            "description": "Current sequence length in cache before update"
+        },
+        "updated_seq_len": {
+            "type": "expr",
+            "expression": "current_seq_len + new_seq_len",
+            "description": "Sequence length after cache update"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "key_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "New key states to add to cache"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "New value states to add to cache"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "1",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine position embeddings for RoPE"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "1",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine position embeddings for RoPE"
+        },
+        "key_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "current_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Existing key cache"
+        },
+        "value_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "current_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Existing value cache"
+        }
+    },
+    "outputs": {
+        "updated_key_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "updated_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Updated key cache with RoPE-transformed new keys"
+        },
+        "updated_value_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "updated_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Updated value cache with new values"
+        }
+    },
+    "reference": "import torch\n\n\n@torch.no_grad()\ndef run(\n    key_states: torch.Tensor,\n    value_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    key_cache: torch.Tensor,\n    value_cache: torch.Tensor,\n):\n    \"\"\"\n    Fused KV cache update with RoPE application.\n    \n    Applies rotary position embeddings to incoming key states and concatenates\n    with existing cache to produce updated key and value caches.\n    \n    Args:\n        key_states: New key states (batch, num_kv_heads, new_seq_len, head_dim)\n        value_states: New value states (batch, num_kv_heads, new_seq_len, head_dim)\n        cos: Cosine position embeddings (batch, 1, new_seq_len, head_dim)\n        sin: Sine position embeddings (batch, 1, new_seq_len, head_dim)\n        key_cache: Existing key cache (batch, num_kv_heads, current_seq_len, head_dim)\n        value_cache: Existing value cache (batch, num_kv_heads, current_seq_len, head_dim)\n        \n    Returns:\n        Tuple of (updated_key_cache, updated_value_cache)\n    \"\"\"\n    # Apply RoPE to incoming key states\n    # rotate_half: split in half along last dim, negate second half, swap\n    head_dim = key_states.shape[-1]\n    half_dim = head_dim // 2\n    \n    k1 = key_states[..., :half_dim]\n    k2 = key_states[..., half_dim:]\n    k_rotated = torch.cat((-k2, k1), dim=-1)\n    \n    # Apply rotation: (k * cos) + (rotate_half(k) * sin)\n    key_states_rotated = (key_states * cos) + (k_rotated * sin)\n    \n    # Concatenate with existing cache along sequence dimension\n    updated_key_cache = torch.cat([key_cache, key_states_rotated], dim=2)\n    updated_value_cache = torch.cat([value_cache, value_states], dim=2)\n    \n    return updated_key_cache, updated_value_cache\n"
+}

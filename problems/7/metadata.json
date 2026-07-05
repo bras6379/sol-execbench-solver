@@ -1,0 +1,185 @@
+{
+  "task_id": 7,
+  "subset": "L1",
+  "collection_index": 7,
+  "name": "007_hyena_fft_size_padding_rfft",
+  "hf_id": "LongSafari/hyenadna-small-32k-seqlen-hf",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:13.061122Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.003481,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 8,
+          "seqlen": 1024
+        },
+        "sol_ms": 0.002,
+        "baseline_latency_ms": 0.058896
+      },
+      {
+        "index": 1,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 16,
+          "seqlen": 1423
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.1931365
+      },
+      {
+        "index": 2,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 2,
+          "seqlen": 773
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.046032
+      },
+      {
+        "index": 3,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 64,
+          "seqlen": 1571
+        },
+        "sol_ms": 0.0206,
+        "baseline_latency_ms": 0.7203525
+      },
+      {
+        "index": 4,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 8,
+          "seqlen": 1321
+        },
+        "sol_ms": 0.0025,
+        "baseline_latency_ms": 0.117824
+      },
+      {
+        "index": 5,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 2,
+          "seqlen": 256
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0269605
+      },
+      {
+        "index": 6,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 64,
+          "seqlen": 8192
+        },
+        "sol_ms": 0.1054,
+        "baseline_latency_ms": 1.785873
+      },
+      {
+        "index": 7,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 1,
+          "seqlen": 131
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0409285
+      },
+      {
+        "index": 8,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 32,
+          "seqlen": 4096
+        },
+        "sol_ms": 0.0267,
+        "baseline_latency_ms": 0.4451199999999999
+      },
+      {
+        "index": 9,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 8,
+          "seqlen": 1879
+        },
+        "sol_ms": 0.0034,
+        "baseline_latency_ms": 0.1556
+      },
+      {
+        "index": 10,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 32,
+          "seqlen": 1489
+        },
+        "sol_ms": 0.0099,
+        "baseline_latency_ms": 0.3725279999999999
+      },
+      {
+        "index": 11,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 16,
+          "seqlen": 2048
+        },
+        "sol_ms": 0.007,
+        "baseline_latency_ms": 0.1251515
+      },
+      {
+        "index": 12,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 4,
+          "seqlen": 1801
+        },
+        "sol_ms": 0.0018,
+        "baseline_latency_ms": 0.0931205
+      },
+      {
+        "index": 13,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 4,
+          "seqlen": 512
+        },
+        "sol_ms": 0.0008,
+        "baseline_latency_ms": 0.032032
+      },
+      {
+        "index": 14,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 2,
+          "seqlen": 32768
+        },
+        "sol_ms": 0.0135,
+        "baseline_latency_ms": 0.320385
+      },
+      {
+        "index": 15,
+        "axes": {
+          "d_model": 256,
+          "batch_size": 2,
+          "seqlen": 211
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.032896
+      }
+    ]
+  }
+}

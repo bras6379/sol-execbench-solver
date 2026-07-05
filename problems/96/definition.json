@@ -1,0 +1,176 @@
+{
+    "name": "002_decoder_layer_full_block",
+    "hf_id": "NousResearch/DeepHermes-3-Llama-3-8B-Preview",
+    "description": "Complete LLaMA decoder layer block fusing: input RMSNorm, multi-head GQA attention with RoPE, attention residual, post-attention RMSNorm, SwiGLU MLP, and MLP residual. This represents the atomic computational unit repeated across all layers.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 14336
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 32
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "qkv_head_dim": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim"
+        },
+        "kv_head_dim": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        },
+        "num_key_value_groups": {
+            "type": "expr",
+            "expression": "num_attention_heads // num_key_value_heads"
+        },
+        "one": {
+            "type": "const",
+            "value": 1
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine of RoPE positional embeddings"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine of RoPE positional embeddings"
+        },
+        "attention_mask": {
+            "shape": [
+                "batch_size",
+                "one",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Causal attention mask"
+        },
+        "input_layernorm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input RMSNorm weight"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "qkv_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "qkv_head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "post_attention_layernorm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Post-attention RMSNorm weight"
+        },
+        "gate_proj_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP gate projection weight"
+        },
+        "up_proj_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP up projection weight"
+        },
+        "down_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP down projection weight"
+        },
+        "rms_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for RMSNorm stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states after full decoder layer"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    input_layernorm_weight: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    post_attention_layernorm_weight: torch.Tensor,\n    gate_proj_weight: torch.Tensor,\n    up_proj_weight: torch.Tensor,\n    down_proj_weight: torch.Tensor,\n    rms_norm_eps: float,\n):\n    # Constants\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n    \n    batch_size, seq_len, _ = hidden_states.shape\n    residual = hidden_states\n    \n    # === ATTENTION BLOCK ===\n    # 1. Input RMSNorm\n    x = hidden_states.to(torch.float32)\n    variance = x.pow(2).mean(-1, keepdim=True)\n    x = x * torch.rsqrt(variance + rms_norm_eps)\n    hidden_states = input_layernorm_weight * x.to(hidden_states.dtype)\n    \n    # 2. QKV projections\n    query_states = F.linear(hidden_states, q_proj_weight)\n    key_states = F.linear(hidden_states, k_proj_weight)\n    value_states = F.linear(hidden_states, v_proj_weight)\n    \n    # Reshape for attention\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    # 3. Apply RoPE\n    cos_expanded = cos.unsqueeze(1)  # [batch, 1, seq_len, head_dim]\n    sin_expanded = sin.unsqueeze(1)\n    \n    # Rotate half for query\n    q1 = query_states[..., : head_dim // 2]\n    q2 = query_states[..., head_dim // 2 :]\n    q_rotated = torch.cat((-q2, q1), dim=-1)\n    query_states = (query_states * cos_expanded) + (q_rotated * sin_expanded)\n    \n    # Rotate half for key\n    k1 = key_states[..., : head_dim // 2]\n    k2 = key_states[..., head_dim // 2 :]\n    k_rotated = torch.cat((-k2, k1), dim=-1)\n    key_states = (key_states * cos_expanded) + (k_rotated * sin_expanded)\n    \n    # 4. Repeat KV for GQA\n    # key_states: [batch, num_kv_heads, seq_len, head_dim]\n    key_states = key_states[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    value_states = value_states[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    # 5. Attention computation\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    attn_weights = attn_weights + attention_mask\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    \n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous().view(\n        batch_size, seq_len, num_attention_heads * head_dim\n    )\n    \n    # 6. Output projection and residual\n    attn_output = F.linear(attn_output, o_proj_weight)\n    hidden_states = residual + attn_output\n    \n    # === MLP BLOCK ===\n    residual = hidden_states\n    \n    # 7. Post-attention RMSNorm\n    x = hidden_states.to(torch.float32)\n    variance = x.pow(2).mean(-1, keepdim=True)\n    x = x * torch.rsqrt(variance + rms_norm_eps)\n    hidden_states = post_attention_layernorm_weight * x.to(hidden_states.dtype)\n    \n    # 8. SwiGLU MLP\n    gate = F.silu(F.linear(hidden_states, gate_proj_weight))\n    up = F.linear(hidden_states, up_proj_weight)\n    mlp_output = F.linear(gate * up, down_proj_weight)\n    \n    # 9. MLP residual\n    output = residual + mlp_output\n    \n    return output\n"
+}

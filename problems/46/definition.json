@@ -1,0 +1,55 @@
+{
+    "name": "046_attention_softmax_with_softcapping_and_dropout",
+    "hf_id": "google/gemma-3-1b-it",
+    "description": "Attention softmax with logit softcapping (tanh-based clamping to \u00b130.0) applied before softmax, as used in Gemma-2 models. This operation applies: tanh(logits / 30.0) * 30.0 to stabilize attention scores, then softmax normalization.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of attention heads"
+        },
+        "seq_len_q": {
+            "type": "var",
+            "description": "Query sequence length"
+        },
+        "seq_len_k": {
+            "type": "var",
+            "description": "Key sequence length"
+        },
+        "attn_logit_softcapping": {
+            "type": "const",
+            "value": 30,
+            "description": "Softcapping value for attention logits"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "seq_len_k"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention logits before softcapping and softmax"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "seq_len_k"
+            ],
+            "dtype": "bfloat16",
+            "description": "Normalized attention weights after softcapping and softmax"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(attn_weights: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Apply Gemma3's softcapping transformation followed by softmax.\n    \n    Softcapping: tanh(logits / 30.0) * 30.0\n    This clamps effective logit range to approximately [-30, +30]\n    \n    Args:\n        attn_weights: Attention logits of shape (batch_size, num_heads, seq_len_q, seq_len_k)\n        \n    Returns:\n        Normalized attention weights of shape (batch_size, num_heads, seq_len_q, seq_len_k)\n    \"\"\"\n    SOFTCAP = 30.0\n    \n    # Apply softcapping transformation\n    # Step 1: Divide by softcap\n    scaled = attn_weights / SOFTCAP\n    \n    # Step 2: Apply tanh to clamp to [-1, 1]\n    clamped = torch.tanh(scaled)\n    \n    # Step 3: Multiply by softcap to restore scale (now in [-30, 30])\n    softcapped = clamped * SOFTCAP\n    \n    # Apply softmax normalization along the key dimension\n    # Upcast to float32 for numerical stability, then cast back\n    output = F.softmax(softcapped, dim=-1, dtype=torch.float32).to(attn_weights.dtype)\n    \n    return output\n"
+}

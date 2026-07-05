@@ -1,0 +1,185 @@
+{
+  "task_id": 19,
+  "subset": "L1",
+  "collection_index": 19,
+  "name": "019_vision_3d_rotary_embedding_with_spatial_merge_indexing_backward",
+  "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:15.628673Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.004564,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 2851
+        },
+        "sol_ms": 0.0129,
+        "baseline_latency_ms": 0.0702885
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 211
+        },
+        "sol_ms": 0.0013,
+        "baseline_latency_ms": 0.0168955
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 449
+        },
+        "sol_ms": 0.0024,
+        "baseline_latency_ms": 0.02496
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 128
+        },
+        "sol_ms": 0.001,
+        "baseline_latency_ms": 0.014896
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 2521
+        },
+        "sol_ms": 0.0114,
+        "baseline_latency_ms": 0.072129
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 3803
+        },
+        "sol_ms": 0.017,
+        "baseline_latency_ms": 0.102176
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 131
+        },
+        "sol_ms": 0.001,
+        "baseline_latency_ms": 0.01504
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 1423
+        },
+        "sol_ms": 0.0066,
+        "baseline_latency_ms": 0.046449
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 4096
+        },
+        "sol_ms": 0.0183,
+        "baseline_latency_ms": 0.1085765
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0015,
+        "baseline_latency_ms": 0.0189599999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 2213
+        },
+        "sol_ms": 0.0101,
+        "baseline_latency_ms": 0.0635999999999999
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 919
+        },
+        "sol_ms": 0.0044,
+        "baseline_latency_ms": 0.0356314999999999
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.0251845
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 613
+        },
+        "sol_ms": 0.0031,
+        "baseline_latency_ms": 0.027296
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.035856
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_heads": 16,
+          "head_dim": 128,
+          "seq_len": 3169
+        },
+        "sol_ms": 0.0143,
+        "baseline_latency_ms": 0.0872805
+      }
+    ]
+  }
+}

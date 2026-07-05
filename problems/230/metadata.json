@@ -1,0 +1,151 @@
+{
+  "task_id": 230,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 21,
+  "name": "021_rmsnorm_h128",
+  "hf_id": "",
+  "num_workloads": 14,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:05.825923Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.001105,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 192
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.003712
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 24
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.003712
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 32
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.003712
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 4
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.00368
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 1088
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0041285
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 136
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0038395
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 2528
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.0061275
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 316
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.003648
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 520128
+        },
+        "sol_ms": 0.0351,
+        "baseline_latency_ms": 0.0956965
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 65016
+        },
+        "sol_ms": 0.0047,
+        "baseline_latency_ms": 0.024864
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 396256
+        },
+        "sol_ms": 0.0269,
+        "baseline_latency_ms": 0.032736
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 49532
+        },
+        "sol_ms": 0.0037,
+        "baseline_latency_ms": 0.024064
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 2048
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0049765
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 128,
+          "batch_size": 256
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.003648
+      }
+    ]
+  }
+}

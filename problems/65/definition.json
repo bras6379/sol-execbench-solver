@@ -1,0 +1,84 @@
+{
+    "name": "065_fused_statistics_projection_and_split",
+    "hf_id": "myshell-ai/OpenVoice",
+    "description": "Fused Conv1d projection to 2x channels followed by channel-wise split into mean and log-variance statistics. Performs a single Conv1d with output channels = 2*out_channels, then splits the result along the channel dimension into separate mean and logs tensors.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "time": {
+            "type": "var",
+            "description": "Temporal/sequence dimension"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 192,
+            "description": "Number of input channels"
+        },
+        "out_channels": {
+            "type": "const",
+            "value": 192,
+            "description": "Number of output channels for each of mean and logs"
+        },
+        "kernel_size": {
+            "type": "const",
+            "value": 1,
+            "description": "Convolution kernel size"
+        },
+        "out_channels_2": {
+            "type": "expr",
+            "expression": "out_channels * 2",
+            "description": "Total output channels before split"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "time"
+            ],
+            "dtype": "float32",
+            "description": "Input tensor"
+        },
+        "weight": {
+            "shape": [
+                "out_channels_2",
+                "in_channels",
+                "kernel_size"
+            ],
+            "dtype": "float32",
+            "description": "Conv1d weight tensor projecting to 2x channels"
+        },
+        "bias": {
+            "shape": [
+                "out_channels_2"
+            ],
+            "dtype": "float32",
+            "description": "Conv1d bias tensor"
+        }
+    },
+    "outputs": {
+        "mean": {
+            "shape": [
+                "batch_size",
+                "out_channels",
+                "time"
+            ],
+            "dtype": "float32",
+            "description": "Mean statistics"
+        },
+        "logs": {
+            "shape": [
+                "batch_size",
+                "out_channels",
+                "time"
+            ],
+            "dtype": "float32",
+            "description": "Log-variance statistics"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor):\n    \"\"\"\n    Fused Conv1d projection and split.\n    \n    Args:\n        x: Input tensor of shape [batch_size, in_channels, time]\n        weight: Conv1d weight of shape [out_channels*2, in_channels, kernel_size]\n        bias: Conv1d bias of shape [out_channels*2]\n    \n    Returns:\n        mean: Mean statistics of shape [batch_size, out_channels, time]\n        logs: Log-variance statistics of shape [batch_size, out_channels, time]\n    \"\"\"\n    # Perform Conv1d projection to 2x channels\n    # For kernel_size=1, no padding needed\n    # Shape: [batch_size, out_channels*2, time]\n    stats = F.conv1d(x, weight, bias, padding=0)\n    \n    # Split along channel dimension into mean and logs\n    out_channels = weight.shape[0] // 2\n    mean, logs = torch.split(stats, out_channels, dim=1)\n    \n    return mean, logs\n"
+}

@@ -1,0 +1,361 @@
+{
+  "task_id": 192,
+  "subset": "Quant",
+  "collection_index": 16,
+  "name": "016_fp8_multi_latent_attention_qkv_projection",
+  "hf_id": "deepseek-ai/DeepSeek-V3",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:57.046510Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.097516,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 2,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.15857885,
+        "baseline_latency_ms": 2.484189
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 1,
+          "seq_len": 512
+        },
+        "sol_ms": 0.01982236,
+        "baseline_latency_ms": 0.8495345000000001
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 4,
+          "seq_len": 128
+        },
+        "sol_ms": 0.01982236,
+        "baseline_latency_ms": 0.8423665
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 8,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.63431539,
+        "baseline_latency_ms": 8.309222
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 16,
+          "seq_len": 512
+        },
+        "sol_ms": 0.3171577,
+        "baseline_latency_ms": 4.453386999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 0.07928942,
+        "baseline_latency_ms": 1.483709
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 32,
+          "seq_len": 128
+        },
+        "sol_ms": 0.15857885,
+        "baseline_latency_ms": 2.482302
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 1,
+          "seq_len": 4096
+        },
+        "sol_ms": 0.15857885,
+        "baseline_latency_ms": 2.4836455
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 0.03964471,
+        "baseline_latency_ms": 0.996879
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 1,
+          "seq_len": 256
+        },
+        "sol_ms": 0.01836006,
+        "baseline_latency_ms": 0.832447
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 1,
+          "seq_len": 128
+        },
+        "sol_ms": 0.01832583,
+        "baseline_latency_ms": 0.8125595
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 32,
+          "seq_len": 512
+        },
+        "sol_ms": 0.63431539,
+        "baseline_latency_ms": 8.315784
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 16,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.63431539,
+        "baseline_latency_ms": 8.3116405
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 8,
+          "seq_len": 128
+        },
+        "sol_ms": 0.03964471,
+        "baseline_latency_ms": 1.0001265
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 1,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.03964471,
+        "baseline_latency_ms": 0.998527
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 7168,
+          "num_heads": 128,
+          "q_lora_rank": 1536,
+          "kv_lora_rank": 512,
+          "qk_rope_head_dim": 64,
+          "qk_nope_head_dim": 128,
+          "v_head_dim": 128,
+          "q_head_dim": 192,
+          "kv_a_out_dim_padded": 640,
+          "block_size": 128,
+          "q_b_out_dim": 24576,
+          "kv_b_out_dim": 32768,
+          "batch_size": 8,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.3171577,
+        "baseline_latency_ms": 4.4547170000000005
+      }
+    ]
+  }
+}

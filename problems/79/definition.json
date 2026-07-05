@@ -1,0 +1,125 @@
+{
+    "name": "079_ImageNet_83.6_ssm_output_projection_gate_multiply_backward",
+    "hf_id": "saurabhati/VMamba",
+    "description": "Backward pass for SSM output projection with gated multiplication. Computes gradients for: output = out_proj(ssm_output * gate_activated) where gate_activated = silu(gate) if use_silu_gate else gate. Returns gradients for ssm_output, gate, weight, and bias.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "expanded_dim": {
+            "type": "const",
+            "value": 1536
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 768
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient of loss w.r.t. output"
+        },
+        "ssm_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved SSM output from forward pass"
+        },
+        "gate": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved gate values from forward pass"
+        },
+        "weight": {
+            "shape": [
+                "hidden_dim",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Projection weight matrix"
+        },
+        "bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Projection bias"
+        },
+        "gate_activated": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved activated gate from forward pass"
+        },
+        "gated_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved gated output from forward pass"
+        },
+        "use_silu_gate": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether SiLU was applied to gate in forward pass"
+        }
+    },
+    "outputs": {
+        "grad_ssm_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. ssm_output"
+        },
+        "grad_gate": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. gate"
+        },
+        "grad_weight": {
+            "shape": [
+                "hidden_dim",
+                "expanded_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. weight"
+        },
+        "grad_bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. bias"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    ssm_output: torch.Tensor,\n    gate: torch.Tensor,\n    weight: torch.Tensor,\n    bias: torch.Tensor,\n    gate_activated: torch.Tensor,\n    gated_output: torch.Tensor,\n    use_silu_gate: bool,\n):\n    \"\"\"\n    Backward pass for SSM output projection with gated multiplication.\n    \n    Computes gradients for:\n    - ssm_output: input to the gating operation\n    - gate: gate values (before activation)\n    - weight: projection weight matrix\n    - bias: projection bias\n    \"\"\"\n    # Get dimensions\n    batch_size, seq_len, hidden_dim = grad_output.shape\n    expanded_dim = ssm_output.shape[2]\n    \n    # Reshape for batch operations\n    grad_output_2d = grad_output.reshape(-1, hidden_dim)\n    gated_output_2d = gated_output.reshape(-1, expanded_dim)\n    \n    # Gradient w.r.t. weight (projection matrix)\n    # d_loss/d_weight = grad_output.T @ gated_output\n    # Shape: (hidden_dim, expanded_dim)\n    grad_weight = grad_output_2d.t() @ gated_output_2d\n    \n    # Gradient w.r.t. bias\n    # d_loss/d_bias = sum(grad_output, dim=[0, 1])\n    # Shape: (hidden_dim,)\n    grad_bias = grad_output_2d.sum(dim=0)\n    \n    # Gradient w.r.t. gated_output (before projection)\n    # d_loss/d_gated_output = grad_output @ weight\n    # Shape: (batch * seq_len, expanded_dim)\n    grad_gated_output_2d = grad_output_2d @ weight\n    grad_gated_output = grad_gated_output_2d.view(batch_size, seq_len, expanded_dim)\n    \n    # Gradient w.r.t. ssm_output\n    # gated_output = ssm_output * gate_activated\n    # d_loss/d_ssm_output = grad_gated_output * gate_activated\n    grad_ssm_output = grad_gated_output * gate_activated\n    \n    # Gradient w.r.t. gate_activated\n    # d_loss/d_gate_activated = grad_gated_output * ssm_output\n    grad_gate_activated = grad_gated_output * ssm_output\n    \n    # Gradient w.r.t. gate (before activation)\n    if use_silu_gate:\n        # SiLU(x) = x * sigmoid(x)\n        # d_SiLU/dx = sigmoid(x) * (1 + x * (1 - sigmoid(x)))\n        sigmoid_gate = torch.sigmoid(gate)\n        silu_grad = sigmoid_gate * (1.0 + gate * (1.0 - sigmoid_gate))\n        grad_gate = grad_gate_activated * silu_grad\n    else:\n        # No activation, gradient passes through directly\n        grad_gate = grad_gate_activated\n    \n    return grad_ssm_output, grad_gate, grad_weight, grad_bias\n"
+}

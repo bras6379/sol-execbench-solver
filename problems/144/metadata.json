@@ -1,0 +1,190 @@
+{
+  "task_id": 144,
+  "subset": "L2",
+  "collection_index": 50,
+  "name": "050_vae_decoder_mid_block_attention_resnet",
+  "hf_id": "kaiyuyue/FLUX.2-dev-vae",
+  "num_workloads": 11,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:46.405071Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.052411,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 1,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.0134,
+        "baseline_latency_ms": 0.232847
+      },
+      {
+        "index": 1,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 1,
+          "height": 61,
+          "width": 61
+        },
+        "sol_ms": 0.0591,
+        "baseline_latency_ms": 0.658527
+      },
+      {
+        "index": 2,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 2,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.1332,
+        "baseline_latency_ms": 0.9330705
+      },
+      {
+        "index": 3,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 1,
+          "height": 48,
+          "width": 48
+        },
+        "sol_ms": 0.0331,
+        "baseline_latency_ms": 0.4945595
+      },
+      {
+        "index": 4,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 16,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.2091,
+        "baseline_latency_ms": 1.3426065
+      },
+      {
+        "index": 5,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 4,
+          "height": 16,
+          "width": 16
+        },
+        "sol_ms": 0.0126,
+        "baseline_latency_ms": 0.413184
+      },
+      {
+        "index": 6,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 8,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.1047,
+        "baseline_latency_ms": 0.832943
+      },
+      {
+        "index": 7,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 32,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.4178,
+        "baseline_latency_ms": 2.4606685
+      },
+      {
+        "index": 8,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 4,
+          "height": 48,
+          "width": 48
+        },
+        "sol_ms": 0.1311,
+        "baseline_latency_ms": 0.942303
+      },
+      {
+        "index": 9,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 2,
+          "height": 41,
+          "width": 41
+        },
+        "sol_ms": 0.0457,
+        "baseline_latency_ms": 0.7218549999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "in_channels": 512,
+          "temb_channels": 512,
+          "num_groups": 32,
+          "attention_head_dim": 1,
+          "num_heads": 512,
+          "batch_size": 1,
+          "height": 16,
+          "width": 16
+        },
+        "sol_ms": 0.0034,
+        "baseline_latency_ms": 0.340591
+      }
+    ]
+  }
+}

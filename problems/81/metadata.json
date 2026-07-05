@@ -1,0 +1,217 @@
+{
+  "task_id": 81,
+  "subset": "L1",
+  "collection_index": 81,
+  "name": "081_joint_attention_context_projection",
+  "hf_id": "stabilityai/stable-diffusion-3.5-large",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:30.863750Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.03395,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 1,
+          "image_seq_len": 1879,
+          "context_seq_len": 449
+        },
+        "sol_ms": 0.0156,
+        "baseline_latency_ms": 0.8264005000000001
+      },
+      {
+        "index": 1,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 4,
+          "image_seq_len": 2048,
+          "context_seq_len": 512
+        },
+        "sol_ms": 0.0673,
+        "baseline_latency_ms": 3.061347
+      },
+      {
+        "index": 2,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 1,
+          "image_seq_len": 512,
+          "context_seq_len": 128
+        },
+        "sol_ms": 0.0062,
+        "baseline_latency_ms": 0.2636965
+      },
+      {
+        "index": 3,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 4,
+          "image_seq_len": 1024,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0292,
+        "baseline_latency_ms": 1.3611375
+      },
+      {
+        "index": 4,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 8,
+          "image_seq_len": 1024,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0579,
+        "baseline_latency_ms": 2.5628025
+      },
+      {
+        "index": 5,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 8,
+          "image_seq_len": 1571,
+          "context_seq_len": 154
+        },
+        "sol_ms": 0.0905,
+        "baseline_latency_ms": 3.618227
+      },
+      {
+        "index": 6,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 2,
+          "image_seq_len": 4096,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0549,
+        "baseline_latency_ms": 2.5587385
+      },
+      {
+        "index": 7,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 4,
+          "image_seq_len": 2053,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.056,
+        "baseline_latency_ms": 2.561426
+      },
+      {
+        "index": 8,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 2,
+          "image_seq_len": 1024,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0148,
+        "baseline_latency_ms": 0.825361
+      },
+      {
+        "index": 9,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 2,
+          "image_seq_len": 2048,
+          "context_seq_len": 154
+        },
+        "sol_ms": 0.0292,
+        "baseline_latency_ms": 1.3625455
+      },
+      {
+        "index": 10,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 8,
+          "image_seq_len": 512,
+          "context_seq_len": 128
+        },
+        "sol_ms": 0.0338,
+        "baseline_latency_ms": 1.5060975
+      },
+      {
+        "index": 11,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 1,
+          "image_seq_len": 8192,
+          "context_seq_len": 154
+        },
+        "sol_ms": 0.0549,
+        "baseline_latency_ms": 2.5595385
+      },
+      {
+        "index": 12,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 1,
+          "image_seq_len": 1024,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0076,
+        "baseline_latency_ms": 0.4316164999999999
+      },
+      {
+        "index": 13,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 1,
+          "image_seq_len": 4096,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0277,
+        "baseline_latency_ms": 1.355617
+      },
+      {
+        "index": 14,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 64,
+          "image_seq_len": 128,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.0861,
+        "baseline_latency_ms": 3.591667
+      },
+      {
+        "index": 15,
+        "axes": {
+          "inner_dim": 2432,
+          "proj_input_dim": 4864,
+          "batch_size": 32,
+          "image_seq_len": 256,
+          "context_seq_len": 77
+        },
+        "sol_ms": 0.07,
+        "baseline_latency_ms": 3.069939
+      }
+    ]
+  }
+}

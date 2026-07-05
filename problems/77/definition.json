@@ -1,0 +1,57 @@
+{
+    "name": "077_whisper_decoder_output_projection",
+    "hf_id": "openai/whisper-large-v3",
+    "description": "Whisper decoder output projection layer that maps hidden states (d_model=1280) to vocabulary logits (vocab_size=51866). This is a critical bottleneck in autoregressive generation as it runs for every generated token. The operation is C = A @ B.T where A is hidden_states and B is the weight matrix.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "d_model": {
+            "type": "const",
+            "value": 1280,
+            "description": "Model hidden dimension"
+        },
+        "vocab_size": {
+            "type": "const",
+            "value": 51866,
+            "description": "Vocabulary size"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "d_model"
+            ],
+            "dtype": "float16",
+            "description": "Decoder hidden states"
+        },
+        "weight": {
+            "shape": [
+                "vocab_size",
+                "d_model"
+            ],
+            "dtype": "float16",
+            "description": "Output projection weight matrix (vocab_size x d_model)"
+        }
+    },
+    "outputs": {
+        "logits": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "vocab_size"
+            ],
+            "dtype": "float16",
+            "description": "Vocabulary logits"
+        }
+    },
+    "reference": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Whisper decoder output projection: projects hidden states to vocabulary logits.\n    \n    Args:\n        hidden_states: Tensor of shape (batch_size, seq_len, d_model=1280)\n        weight: Tensor of shape (vocab_size=51866, d_model=1280)\n    \n    Returns:\n        logits: Tensor of shape (batch_size, seq_len, vocab_size=51866)\n    \"\"\"\n    # Linear projection without bias: output = input @ weight.T\n    # hidden_states: (batch_size, seq_len, d_model)\n    # weight: (vocab_size, d_model)\n    # logits: (batch_size, seq_len, vocab_size)\n    logits = torch.matmul(hidden_states, weight.t())\n    return logits\n"
+}

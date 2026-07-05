@@ -1,0 +1,249 @@
+{
+  "task_id": 200,
+  "subset": "Quant",
+  "collection_index": 24,
+  "name": "024_nvfp4_attention_output_projection",
+  "hf_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:58.850089Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.008831,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 64,
+          "L": 256
+        },
+        "sol_ms": 0.05216799,
+        "baseline_latency_ms": 0.6685295
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 8,
+          "L": 2048
+        },
+        "sol_ms": 0.05216799,
+        "baseline_latency_ms": 0.668802
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 1,
+          "L": 2048
+        },
+        "sol_ms": 0.006521,
+        "baseline_latency_ms": 0.1575679999999999
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 16,
+          "L": 128
+        },
+        "sol_ms": 0.006521,
+        "baseline_latency_ms": 0.1571205
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 8,
+          "L": 1024
+        },
+        "sol_ms": 0.026084,
+        "baseline_latency_ms": 0.364624
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 1,
+          "L": 8192
+        },
+        "sol_ms": 0.026084,
+        "baseline_latency_ms": 0.364641
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 1,
+          "L": 256
+        },
+        "sol_ms": 0.00081512,
+        "baseline_latency_ms": 0.1262725
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 2,
+          "L": 128
+        },
+        "sol_ms": 0.00081512,
+        "baseline_latency_ms": 0.142576
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 16,
+          "L": 256
+        },
+        "sol_ms": 0.013042,
+        "baseline_latency_ms": 0.2301925
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 8,
+          "L": 256
+        },
+        "sol_ms": 0.006521,
+        "baseline_latency_ms": 0.1593605
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 4,
+          "L": 2048
+        },
+        "sol_ms": 0.026084,
+        "baseline_latency_ms": 0.364817
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 2,
+          "L": 512
+        },
+        "sol_ms": 0.0032605,
+        "baseline_latency_ms": 0.1319525
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 32,
+          "L": 256
+        },
+        "sol_ms": 0.026084,
+        "baseline_latency_ms": 0.364417
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 1,
+          "L": 128
+        },
+        "sol_ms": 0.00040756,
+        "baseline_latency_ms": 0.1272485
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 1,
+          "L": 1024
+        },
+        "sol_ms": 0.0032605,
+        "baseline_latency_ms": 0.1352005
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 2688,
+          "input_dim": 4096,
+          "sf_vec_size": 16,
+          "hidden_size_padded": 2816,
+          "sf_k": 256,
+          "B": 64,
+          "L": 512
+        },
+        "sol_ms": 0.10433599,
+        "baseline_latency_ms": 1.272515
+      }
+    ]
+  }
+}

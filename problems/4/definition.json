@@ -1,0 +1,80 @@
+{
+    "name": "004_attention_output_projection_with_reshape_backward",
+    "hf_id": "LiquidAI/LFM2-1.2B",
+    "description": "Backward pass for attention output projection with reshape. Computes gradients w.r.t. attn_output and weight from grad_output. Forward: transpose (B,H,S,D)->(B,S,H,D), reshape (B,S,H,D)->(B,S,H*D), linear projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per head"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048,
+            "description": "Hidden size (num_heads * head_dim)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output of forward pass"
+        },
+        "reshaped": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved reshaped tensor from forward pass (after transpose+reshape)"
+        },
+        "weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Weight matrix of linear projection"
+        }
+    },
+    "outputs": {
+        "grad_attn_output": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. attention output input"
+        },
+        "grad_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. weight matrix"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward pass for attention output projection with reshape.\n    \n    Forward was:\n        1. Transpose: (B, H, S, D) -> (B, S, H, D)\n        2. Reshape: (B, S, H, D) -> (B, S, H*D)\n        3. Linear: y = x @ W^T\n    \n    Backward computes:\n        - grad_weight = grad_output^T @ reshaped\n        - grad_attn_output = (grad_output @ W^T) reshaped and transposed back\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    head_dim = 64\n    \n    # Convert to float32 for numerical stability\n    grad_output_f32 = grad_output.to(torch.float32)\n    reshaped_f32 = reshaped.to(torch.float32)\n    weight_f32 = weight.to(torch.float32)\n    \n    # Gradient w.r.t. weight\n    # d_loss/d_W = grad_output^T @ reshaped\n    # grad_output: (B, S, H*D), reshaped: (B, S, H*D)\n    # Reshape to 2D: (B*S, H*D)\n    grad_output_2d = grad_output_f32.reshape(-1, hidden_size)  # (B*S, H*D)\n    reshaped_2d = reshaped_f32.reshape(-1, hidden_size)  # (B*S, H*D)\n    \n    # Matrix multiply: (H*D, B*S) @ (B*S, H*D) -> (H*D, H*D)\n    grad_weight = grad_output_2d.t().mm(reshaped_2d)\n    \n    # Gradient w.r.t. input (attn_output)\n    # d_loss/d_reshaped = grad_output @ W\n    # grad_output shape: (B*S, H*D), weight shape: (H*D, H*D)\n    grad_reshaped_2d = grad_output_2d.mm(weight_f32)  # (B*S, H*D)\n    grad_reshaped = grad_reshaped_2d.reshape(batch_size, seq_len, hidden_size)\n    \n    # Backward through reshape: (B, S, H*D) -> (B, S, H, D)\n    grad_transposed = grad_reshaped.reshape(batch_size, seq_len, num_heads, head_dim)\n    \n    # Backward through transpose: (B, S, H, D) -> (B, H, S, D)\n    grad_attn_output = grad_transposed.transpose(1, 2).contiguous()\n    \n    return grad_attn_output.to(torch.bfloat16), grad_weight.to(torch.bfloat16)\n"
+}

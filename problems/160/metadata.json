@@ -1,0 +1,249 @@
+{
+  "task_id": 160,
+  "subset": "L2",
+  "collection_index": 66,
+  "name": "066_resnet_block_with_time_embedding",
+  "hf_id": "runwayml/stable-diffusion-v1-5",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:49.905464Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.015247,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 1,
+          "height": 16,
+          "width": 16
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.083008
+      },
+      {
+        "index": 1,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 4,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.0337,
+        "baseline_latency_ms": 0.2539525
+      },
+      {
+        "index": 2,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 4,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.0087,
+        "baseline_latency_ms": 0.1288805
+      },
+      {
+        "index": 3,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 2,
+          "height": 96,
+          "width": 96
+        },
+        "sol_ms": 0.0379,
+        "baseline_latency_ms": 0.2820325
+      },
+      {
+        "index": 4,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 8,
+          "height": 37,
+          "width": 37
+        },
+        "sol_ms": 0.0227,
+        "baseline_latency_ms": 0.252576
+      },
+      {
+        "index": 5,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 1,
+          "height": 131,
+          "width": 131
+        },
+        "sol_ms": 0.0353,
+        "baseline_latency_ms": 0.261024
+      },
+      {
+        "index": 6,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 1,
+          "height": 48,
+          "width": 48
+        },
+        "sol_ms": 0.0051,
+        "baseline_latency_ms": 0.1129765
+      },
+      {
+        "index": 7,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 4,
+          "height": 48,
+          "width": 48
+        },
+        "sol_ms": 0.0192,
+        "baseline_latency_ms": 0.2377765
+      },
+      {
+        "index": 8,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 2,
+          "height": 67,
+          "width": 67
+        },
+        "sol_ms": 0.0187,
+        "baseline_latency_ms": 0.224673
+      },
+      {
+        "index": 9,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 64,
+          "height": 16,
+          "width": 16
+        },
+        "sol_ms": 0.0338,
+        "baseline_latency_ms": 0.2495365
+      },
+      {
+        "index": 10,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 4,
+          "height": 96,
+          "width": 96
+        },
+        "sol_ms": 0.0754,
+        "baseline_latency_ms": 0.441937
+      },
+      {
+        "index": 11,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 1,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.0337,
+        "baseline_latency_ms": 0.2981924999999999
+      },
+      {
+        "index": 12,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 2,
+          "height": 32,
+          "width": 32
+        },
+        "sol_ms": 0.0046,
+        "baseline_latency_ms": 0.125968
+      },
+      {
+        "index": 13,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 2,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.0171,
+        "baseline_latency_ms": 0.2168805
+      },
+      {
+        "index": 14,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 4,
+          "height": 41,
+          "width": 41
+        },
+        "sol_ms": 0.0141,
+        "baseline_latency_ms": 0.2069445
+      },
+      {
+        "index": 15,
+        "axes": {
+          "in_channels": 320,
+          "out_channels": 320,
+          "time_emb_channels": 1280,
+          "norm_num_groups": 32,
+          "batch_size": 1,
+          "height": 53,
+          "width": 53
+        },
+        "sol_ms": 0.0061,
+        "baseline_latency_ms": 0.123201
+      }
+    ]
+  }
+}

@@ -1,0 +1,269 @@
+{
+    "name": "033_multi_scale_feature_pyramid",
+    "hf_id": "chuxiaojie/NAFNet",
+    "description": "Multi-scale feature pyramid processing for hierarchical image processing with encoder-decoder architecture and skip connections. Implements U-Net style progressive downsampling and upsampling with channel expansion/reduction at each scale level.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "height": {
+            "type": "var"
+        },
+        "width": {
+            "type": "var"
+        },
+        "input_channels": {
+            "type": "const",
+            "value": 3
+        },
+        "base_channels": {
+            "type": "const",
+            "value": 32
+        },
+        "num_scales": {
+            "type": "const",
+            "value": 3
+        },
+        "scale1_channels": {
+            "type": "expr",
+            "expression": "base_channels"
+        },
+        "scale2_channels": {
+            "type": "expr",
+            "expression": "base_channels * 2"
+        },
+        "scale3_channels": {
+            "type": "expr",
+            "expression": "base_channels * 4"
+        },
+        "height_div2": {
+            "type": "expr",
+            "expression": "height // 2"
+        },
+        "width_div2": {
+            "type": "expr",
+            "expression": "width // 2"
+        },
+        "height_div4": {
+            "type": "expr",
+            "expression": "height // 4"
+        },
+        "width_div4": {
+            "type": "expr",
+            "expression": "width // 4"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "input_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input image tensor"
+        },
+        "encoder_conv0_weight": {
+            "shape": [
+                "32",
+                "3",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv0 weight"
+        },
+        "encoder_conv0_bias": {
+            "shape": [
+                "32"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv0 bias"
+        },
+        "downsample_conv0_weight": {
+            "shape": [
+                "64",
+                "32",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Downsample conv0 weight (stride=2)"
+        },
+        "downsample_conv0_bias": {
+            "shape": [
+                "64"
+            ],
+            "dtype": "float32",
+            "description": "Downsample conv0 bias"
+        },
+        "encoder_conv1_weight": {
+            "shape": [
+                "64",
+                "64",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv1 weight"
+        },
+        "encoder_conv1_bias": {
+            "shape": [
+                "64"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv1 bias"
+        },
+        "downsample_conv1_weight": {
+            "shape": [
+                "128",
+                "64",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Downsample conv1 weight (stride=2)"
+        },
+        "downsample_conv1_bias": {
+            "shape": [
+                "128"
+            ],
+            "dtype": "float32",
+            "description": "Downsample conv1 bias"
+        },
+        "encoder_conv2_weight": {
+            "shape": [
+                "128",
+                "128",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv2 weight"
+        },
+        "encoder_conv2_bias": {
+            "shape": [
+                "128"
+            ],
+            "dtype": "float32",
+            "description": "Encoder conv2 bias"
+        },
+        "bottleneck_weight": {
+            "shape": [
+                "128",
+                "128",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Bottleneck conv weight"
+        },
+        "bottleneck_bias": {
+            "shape": [
+                "128"
+            ],
+            "dtype": "float32",
+            "description": "Bottleneck conv bias"
+        },
+        "upsample_conv0_weight": {
+            "shape": [
+                "128",
+                "64",
+                "2",
+                "2"
+            ],
+            "dtype": "float32",
+            "description": "Upsample conv0 weight (transposed, stride=2)"
+        },
+        "upsample_conv0_bias": {
+            "shape": [
+                "64"
+            ],
+            "dtype": "float32",
+            "description": "Upsample conv0 bias"
+        },
+        "decoder_conv0_weight": {
+            "shape": [
+                "64",
+                "128",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Decoder conv0 weight (after skip concat)"
+        },
+        "decoder_conv0_bias": {
+            "shape": [
+                "64"
+            ],
+            "dtype": "float32",
+            "description": "Decoder conv0 bias"
+        },
+        "upsample_conv1_weight": {
+            "shape": [
+                "64",
+                "32",
+                "2",
+                "2"
+            ],
+            "dtype": "float32",
+            "description": "Upsample conv1 weight (transposed, stride=2)"
+        },
+        "upsample_conv1_bias": {
+            "shape": [
+                "32"
+            ],
+            "dtype": "float32",
+            "description": "Upsample conv1 bias"
+        },
+        "decoder_conv1_weight": {
+            "shape": [
+                "32",
+                "64",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Decoder conv1 weight (after skip concat)"
+        },
+        "decoder_conv1_bias": {
+            "shape": [
+                "32"
+            ],
+            "dtype": "float32",
+            "description": "Decoder conv1 bias"
+        },
+        "output_conv_weight": {
+            "shape": [
+                "3",
+                "32",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Output projection conv weight"
+        },
+        "output_conv_bias": {
+            "shape": [
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Output projection conv bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "input_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Output tensor with same shape as input"
+        }
+    },
+    "reference": "import math\n\nimport torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    height = axes_and_scalars[\"height\"]\n    width = axes_and_scalars[\"width\"]\n\n    g = torch.Generator(device=device)\n    g.manual_seed(42)\n\n    def kaiming_conv(out_c, in_c, kh, kw):\n        fan_in = in_c * kh * kw\n        return torch.randn(out_c, in_c, kh, kw, device=device, generator=g) * math.sqrt(2.0 / fan_in)\n\n    return {\n        \"x\": torch.randn(batch_size, 3, height, width, device=device, generator=g),\n        # encoder conv0: 32 out, 3 in, 3x3\n        \"encoder_conv0_weight\": kaiming_conv(32, 3, 3, 3),\n        \"encoder_conv0_bias\": torch.randn(32, device=device, generator=g),\n        # downsample conv0: 64 out, 32 in, 3x3\n        \"downsample_conv0_weight\": kaiming_conv(64, 32, 3, 3),\n        \"downsample_conv0_bias\": torch.randn(64, device=device, generator=g),\n        # encoder conv1: 64 out, 64 in, 3x3\n        \"encoder_conv1_weight\": kaiming_conv(64, 64, 3, 3),\n        \"encoder_conv1_bias\": torch.randn(64, device=device, generator=g),\n        # downsample conv1: 128 out, 64 in, 3x3\n        \"downsample_conv1_weight\": kaiming_conv(128, 64, 3, 3),\n        \"downsample_conv1_bias\": torch.randn(128, device=device, generator=g),\n        # encoder conv2: 128 out, 128 in, 3x3\n        \"encoder_conv2_weight\": kaiming_conv(128, 128, 3, 3),\n        \"encoder_conv2_bias\": torch.randn(128, device=device, generator=g),\n        # bottleneck: 128 out, 128 in, 3x3\n        \"bottleneck_weight\": kaiming_conv(128, 128, 3, 3),\n        \"bottleneck_bias\": torch.randn(128, device=device, generator=g),\n        # upsample conv0 (transposed): 128 in, 64 out, 2x2\n        \"upsample_conv0_weight\": kaiming_conv(128, 64, 2, 2),\n        \"upsample_conv0_bias\": torch.randn(64, device=device, generator=g),\n        # decoder conv0: 64 out, 128 in, 3x3\n        \"decoder_conv0_weight\": kaiming_conv(64, 128, 3, 3),\n        \"decoder_conv0_bias\": torch.randn(64, device=device, generator=g),\n        # upsample conv1 (transposed): 64 in, 32 out, 2x2\n        \"upsample_conv1_weight\": kaiming_conv(64, 32, 2, 2),\n        \"upsample_conv1_bias\": torch.randn(32, device=device, generator=g),\n        # decoder conv1: 32 out, 64 in, 3x3\n        \"decoder_conv1_weight\": kaiming_conv(32, 64, 3, 3),\n        \"decoder_conv1_bias\": torch.randn(32, device=device, generator=g),\n        # output conv: 3 out, 32 in, 3x3\n        \"output_conv_weight\": kaiming_conv(3, 32, 3, 3),\n        \"output_conv_bias\": torch.randn(3, device=device, generator=g),\n    }\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    encoder_conv0_weight: torch.Tensor,\n    encoder_conv0_bias: torch.Tensor,\n    downsample_conv0_weight: torch.Tensor,\n    downsample_conv0_bias: torch.Tensor,\n    encoder_conv1_weight: torch.Tensor,\n    encoder_conv1_bias: torch.Tensor,\n    downsample_conv1_weight: torch.Tensor,\n    downsample_conv1_bias: torch.Tensor,\n    encoder_conv2_weight: torch.Tensor,\n    encoder_conv2_bias: torch.Tensor,\n    bottleneck_weight: torch.Tensor,\n    bottleneck_bias: torch.Tensor,\n    upsample_conv0_weight: torch.Tensor,\n    upsample_conv0_bias: torch.Tensor,\n    decoder_conv0_weight: torch.Tensor,\n    decoder_conv0_bias: torch.Tensor,\n    upsample_conv1_weight: torch.Tensor,\n    upsample_conv1_bias: torch.Tensor,\n    decoder_conv1_weight: torch.Tensor,\n    decoder_conv1_bias: torch.Tensor,\n    output_conv_weight: torch.Tensor,\n    output_conv_bias: torch.Tensor,\n):\n    # Encoder scale 0: input_channels -> base_channels (32)\n    enc0 = F.conv2d(x, encoder_conv0_weight, encoder_conv0_bias, padding=1)\n    \n    # Downsample 0: 32 -> 64, stride=2\n    down0 = F.conv2d(enc0, downsample_conv0_weight, downsample_conv0_bias, stride=2, padding=1)\n    \n    # Encoder scale 1: 64 -> 64\n    enc1 = F.conv2d(down0, encoder_conv1_weight, encoder_conv1_bias, padding=1)\n    \n    # Downsample 1: 64 -> 128, stride=2\n    down1 = F.conv2d(enc1, downsample_conv1_weight, downsample_conv1_bias, stride=2, padding=1)\n    \n    # Encoder scale 2: 128 -> 128\n    enc2 = F.conv2d(down1, encoder_conv2_weight, encoder_conv2_bias, padding=1)\n    \n    # Bottleneck: 128 -> 128\n    feat = F.conv2d(enc2, bottleneck_weight, bottleneck_bias, padding=1)\n    \n    # Decoder path with skip connections\n    # Upsample 0: 128 -> 64, stride=2\n    up0 = F.conv_transpose2d(feat, upsample_conv0_weight, upsample_conv0_bias, stride=2)\n    \n    # Skip connection with enc1 (64 channels)\n    # Concatenate: 64 + 64 = 128 channels\n    skip0 = torch.cat([up0, enc1], dim=1)\n    \n    # Decoder conv 0: 128 -> 64\n    dec0 = F.conv2d(skip0, decoder_conv0_weight, decoder_conv0_bias, padding=1)\n    \n    # Upsample 1: 64 -> 32, stride=2\n    up1 = F.conv_transpose2d(dec0, upsample_conv1_weight, upsample_conv1_bias, stride=2)\n    \n    # Skip connection with enc0 (32 channels)\n    # Concatenate: 32 + 32 = 64 channels\n    skip1 = torch.cat([up1, enc0], dim=1)\n    \n    # Decoder conv 1: 64 -> 32\n    dec1 = F.conv2d(skip1, decoder_conv1_weight, decoder_conv1_bias, padding=1)\n    \n    # Output projection: 32 -> 3\n    output = F.conv2d(dec1, output_conv_weight, output_conv_bias, padding=1)\n    \n    return output\n"
+}

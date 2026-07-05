@@ -1,0 +1,81 @@
+{
+    "name": "061_tanh_gated_residual_add_backward",
+    "hf_id": "meta-llama/Llama-3.2-11B-Vision",
+    "description": "Backward pass for tanh-gated residual addition. Computes gradients for residual, hidden_states, and gate parameter. Forward: output = residual + tanh(gate) * hidden_states * mask. Backward computes: grad_residual = grad_output, grad_hidden_states = grad_output * tanh(gate) * mask, grad_gate = sum(grad_output * hidden_states * mask * sech^2(gate)).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096,
+            "description": "Hidden dimension size"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient of loss w.r.t. output"
+        },
+        "gate": {
+            "shape": [],
+            "dtype": "bfloat16",
+            "description": "Scalar gate parameter"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Hidden states from forward pass"
+        },
+        "mask": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "bfloat16",
+            "description": "Optional mask applied in forward pass"
+        }
+    },
+    "outputs": {
+        "grad_residual": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. residual input"
+        },
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. hidden_states input"
+        },
+        "grad_gate": {
+            "shape": [],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. gate parameter (scalar)"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    gate: torch.Tensor,\n    hidden_states: torch.Tensor,\n    mask: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for tanh-gated residual addition.\n    \n    Forward was: output = residual + tanh(gate) * hidden_states * mask\n    \n    Gradients:\n    - grad_residual = grad_output (identity)\n    - grad_hidden_states = grad_output * tanh(gate) * mask\n    - grad_gate = sum(grad_output * hidden_states * mask * sech^2(gate))\n              = sum(grad_output * hidden_states * mask * (1 - tanh^2(gate)))\n    \"\"\"\n    # Compute tanh(gate) for gradient computation\n    gate_float = gate.to(torch.float32)\n    gate_value = torch.tanh(gate_float)\n    \n    # Gradient w.r.t. residual: dy/d(residual) = 1\n    grad_residual = grad_output.clone()\n    \n    # Gradient w.r.t. hidden_states: dy/d(hidden_states) = tanh(gate) * mask\n    grad_hidden_states = grad_output * gate_value * mask\n    \n    # Gradient w.r.t. gate: dy/d(gate) = sum(hidden_states * mask * sech^2(gate) * grad_output)\n    # Using identity: sech^2(x) = 1 - tanh^2(x)\n    sech_squared = 1.0 - gate_value * gate_value\n    \n    # Apply mask to hidden_states\n    masked_hidden_states = hidden_states * mask\n    \n    # Compute gradient: sum over all elements\n    grad_gate = torch.sum(grad_output.to(torch.float32) * masked_hidden_states.to(torch.float32)) * sech_squared\n    \n    return grad_residual.to(torch.bfloat16), grad_hidden_states.to(torch.bfloat16), grad_gate.to(torch.bfloat16)\n"
+}

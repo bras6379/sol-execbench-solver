@@ -1,0 +1,313 @@
+{
+  "task_id": 109,
+  "subset": "L2",
+  "collection_index": 15,
+  "name": "015_audio_sinusoidal_position_embedding_with_conv_projection",
+  "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:37.398176Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.085597,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 2,
+          "time_dim": 1688,
+          "time_after_conv": 211
+        },
+        "sol_ms": 0.0334,
+        "baseline_latency_ms": 0.465922
+      },
+      {
+        "index": 1,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 32,
+          "time_dim": 4328,
+          "time_after_conv": 541
+        },
+        "sol_ms": 1.3546,
+        "baseline_latency_ms": 14.084605
+      },
+      {
+        "index": 2,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 1,
+          "time_dim": 1048,
+          "time_after_conv": 131
+        },
+        "sol_ms": 0.0106,
+        "baseline_latency_ms": 0.2239209999999999
+      },
+      {
+        "index": 3,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 1,
+          "time_dim": 1808,
+          "time_after_conv": 226
+        },
+        "sol_ms": 0.0181,
+        "baseline_latency_ms": 0.2953135
+      },
+      {
+        "index": 4,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 32,
+          "time_dim": 920,
+          "time_after_conv": 115
+        },
+        "sol_ms": 0.2883,
+        "baseline_latency_ms": 3.1001885
+      },
+      {
+        "index": 5,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 64,
+          "time_dim": 128,
+          "time_after_conv": 16
+        },
+        "sol_ms": 0.0805,
+        "baseline_latency_ms": 0.9349
+      },
+      {
+        "index": 6,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 16,
+          "time_dim": 2048,
+          "time_after_conv": 256
+        },
+        "sol_ms": 0.3208,
+        "baseline_latency_ms": 3.4420795
+      },
+      {
+        "index": 7,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 16,
+          "time_dim": 384,
+          "time_after_conv": 48
+        },
+        "sol_ms": 0.0605,
+        "baseline_latency_ms": 0.739587
+      },
+      {
+        "index": 8,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 4,
+          "time_dim": 2216,
+          "time_after_conv": 277
+        },
+        "sol_ms": 0.0871,
+        "baseline_latency_ms": 1.012932
+      },
+      {
+        "index": 9,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 2,
+          "time_dim": 256,
+          "time_after_conv": 32
+        },
+        "sol_ms": 0.0054,
+        "baseline_latency_ms": 0.180609
+      },
+      {
+        "index": 10,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 2,
+          "time_dim": 2528,
+          "time_after_conv": 316
+        },
+        "sol_ms": 0.0498,
+        "baseline_latency_ms": 0.6381625
+      },
+      {
+        "index": 11,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 8,
+          "time_dim": 1976,
+          "time_after_conv": 247
+        },
+        "sol_ms": 0.155,
+        "baseline_latency_ms": 1.72892
+      },
+      {
+        "index": 12,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 8,
+          "time_dim": 3256,
+          "time_after_conv": 407
+        },
+        "sol_ms": 0.2551,
+        "baseline_latency_ms": 2.7617405
+      },
+      {
+        "index": 13,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 32,
+          "time_dim": 768,
+          "time_after_conv": 96
+        },
+        "sol_ms": 0.2407,
+        "baseline_latency_ms": 2.612827
+      },
+      {
+        "index": 14,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 64,
+          "time_dim": 512,
+          "time_after_conv": 64
+        },
+        "sol_ms": 0.3208,
+        "baseline_latency_ms": 3.4363505
+      },
+      {
+        "index": 15,
+        "axes": {
+          "d_model": 1024,
+          "num_mel_bins": 80,
+          "max_source_positions": 1500,
+          "downsample_hidden_size": 384,
+          "freq_dim_after_conv": 10,
+          "conv_out_dim": 3840,
+          "one": 1,
+          "kernel_size": 3,
+          "batch_size": 1,
+          "time_dim": 3000,
+          "time_after_conv": 375
+        },
+        "sol_ms": 0.0297,
+        "baseline_latency_ms": 0.408354
+      }
+    ]
+  }
+}

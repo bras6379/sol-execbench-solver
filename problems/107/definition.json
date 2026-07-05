@@ -1,0 +1,128 @@
+{
+    "name": "013_expert_weighted_aggregation_with_shared_expert",
+    "hf_id": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+    "description": "Expert computation and weighted aggregation in Sparse MoE with shared expert. Performs parallel expert forward passes (SwiGLU MLPs), applies routing weights, aggregates outputs, and adds gated shared expert contribution.",
+    "axes": {
+        "batch_seq_len": {
+            "type": "var",
+            "description": "Total number of tokens (batch_size * seq_len)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048
+        },
+        "moe_intermediate_size": {
+            "type": "const",
+            "value": 512
+        },
+        "shared_expert_intermediate_size": {
+            "type": "const",
+            "value": 512
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 512
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 10
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "routing_weights": {
+            "shape": [
+                "batch_seq_len",
+                "num_experts_per_tok"
+            ],
+            "dtype": "bfloat16",
+            "description": "Routing weights for selected experts"
+        },
+        "selected_experts": {
+            "shape": [
+                "batch_seq_len",
+                "num_experts_per_tok"
+            ],
+            "dtype": "int64",
+            "description": "Indices of selected experts per token"
+        },
+        "expert_gate_proj_weights": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weights for all experts"
+        },
+        "expert_up_proj_weights": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weights for all experts"
+        },
+        "expert_down_proj_weights": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "moe_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weights for all experts"
+        },
+        "shared_expert_gate_proj_weight": {
+            "shape": [
+                "shared_expert_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert gate projection weight"
+        },
+        "shared_expert_up_proj_weight": {
+            "shape": [
+                "shared_expert_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert up projection weight"
+        },
+        "shared_expert_down_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "shared_expert_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert down projection weight"
+        },
+        "shared_expert_gate_weight": {
+            "shape": [
+                "1",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert gating weight"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final output after expert aggregation and shared expert addition"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs with valid expert indices.\"\"\"\n    batch_seq_len = axes_and_scalars[\"batch_seq_len\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    moe_intermediate_size = axes_and_scalars[\"moe_intermediate_size\"]\n    shared_expert_intermediate_size = axes_and_scalars[\"shared_expert_intermediate_size\"]\n    num_experts = axes_and_scalars[\"num_experts\"]\n    num_experts_per_tok = axes_and_scalars[\"num_experts_per_tok\"]\n    \n    hidden_states = torch.randn(\n        batch_seq_len, hidden_size, dtype=torch.bfloat16, device=device\n    )\n    \n    # Routing weights should be normalized (sum to 1 per token)\n    routing_weights_raw = torch.rand(\n        batch_seq_len, num_experts_per_tok, dtype=torch.bfloat16, device=device\n    )\n    routing_weights = routing_weights_raw / routing_weights_raw.sum(dim=-1, keepdim=True)\n    \n    # Selected experts: each token selects top_k unique experts\n    selected_experts = torch.stack([\n        torch.randperm(num_experts, device=device)[:num_experts_per_tok]\n        for _ in range(batch_seq_len)\n    ], dim=0).to(torch.int64)\n    \n    # Expert weights\n    expert_gate_proj_weights = torch.randn(\n        num_experts, moe_intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    expert_up_proj_weights = torch.randn(\n        num_experts, moe_intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    expert_down_proj_weights = torch.randn(\n        num_experts, hidden_size, moe_intermediate_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    # Shared expert weights\n    shared_expert_gate_proj_weight = torch.randn(\n        shared_expert_intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    shared_expert_up_proj_weight = torch.randn(\n        shared_expert_intermediate_size, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    shared_expert_down_proj_weight = torch.randn(\n        hidden_size, shared_expert_intermediate_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    shared_expert_gate_weight = torch.randn(\n        1, hidden_size, dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"routing_weights\": routing_weights,\n        \"selected_experts\": selected_experts,\n        \"expert_gate_proj_weights\": expert_gate_proj_weights,\n        \"expert_up_proj_weights\": expert_up_proj_weights,\n        \"expert_down_proj_weights\": expert_down_proj_weights,\n        \"shared_expert_gate_proj_weight\": shared_expert_gate_proj_weight,\n        \"shared_expert_up_proj_weight\": shared_expert_up_proj_weight,\n        \"shared_expert_down_proj_weight\": shared_expert_down_proj_weight,\n        \"shared_expert_gate_weight\": shared_expert_gate_weight,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    routing_weights: torch.Tensor,\n    selected_experts: torch.Tensor,\n    expert_gate_proj_weights: torch.Tensor,\n    expert_up_proj_weights: torch.Tensor,\n    expert_down_proj_weights: torch.Tensor,\n    shared_expert_gate_proj_weight: torch.Tensor,\n    shared_expert_up_proj_weight: torch.Tensor,\n    shared_expert_down_proj_weight: torch.Tensor,\n    shared_expert_gate_weight: torch.Tensor,\n):\n    \"\"\"\n    Expert computation and weighted aggregation with shared expert.\n    \n    Args:\n        hidden_states: [batch_seq_len, hidden_size]\n        routing_weights: [batch_seq_len, num_experts_per_tok]\n        selected_experts: [batch_seq_len, num_experts_per_tok]\n        expert_gate_proj_weights: [num_experts, moe_intermediate_size, hidden_size]\n        expert_up_proj_weights: [num_experts, moe_intermediate_size, hidden_size]\n        expert_down_proj_weights: [num_experts, hidden_size, moe_intermediate_size]\n        shared_expert_gate_proj_weight: [shared_expert_intermediate_size, hidden_size]\n        shared_expert_up_proj_weight: [shared_expert_intermediate_size, hidden_size]\n        shared_expert_down_proj_weight: [hidden_size, shared_expert_intermediate_size]\n        shared_expert_gate_weight: [1, hidden_size]\n    \n    Returns:\n        output: [batch_seq_len, hidden_size]\n    \"\"\"\n    batch_seq_len, hidden_dim = hidden_states.shape\n    num_experts = expert_gate_proj_weights.shape[0]\n    num_experts_per_tok = selected_experts.shape[1]\n    \n    device = hidden_states.device\n    dtype = hidden_states.dtype\n    \n    # Initialize output accumulator\n    final_hidden_states = torch.zeros(\n        batch_seq_len, hidden_dim, dtype=dtype, device=device\n    )\n    \n    # Create expert mask for efficient routing\n    # Shape: [num_experts, num_experts_per_tok, batch_seq_len]\n    expert_mask = F.one_hot(\n        selected_experts, num_classes=num_experts\n    ).permute(2, 1, 0)\n    \n    # Process each expert\n    for expert_idx in range(num_experts):\n        # Find which tokens are routed to this expert\n        # expert_mask[expert_idx] has shape [num_experts_per_tok, batch_seq_len]\n        idx, top_x = torch.where(expert_mask[expert_idx])\n        \n        if top_x.numel() == 0:\n            continue\n        \n        # Gather tokens for this expert\n        current_state = hidden_states[top_x]  # [num_tokens_for_expert, hidden_size]\n        \n        # Get expert weights\n        gate_proj_w = expert_gate_proj_weights[expert_idx]  # [intermediate, hidden]\n        up_proj_w = expert_up_proj_weights[expert_idx]  # [intermediate, hidden]\n        down_proj_w = expert_down_proj_weights[expert_idx]  # [hidden, intermediate]\n        \n        # Expert computation: SwiGLU MLP\n        # gate_proj: [num_tokens, hidden] @ [hidden, intermediate] -> [num_tokens, intermediate]\n        gate_out = torch.matmul(current_state, gate_proj_w.t())\n        # up_proj: [num_tokens, hidden] @ [hidden, intermediate] -> [num_tokens, intermediate]\n        up_out = torch.matmul(current_state, up_proj_w.t())\n        # SwiGLU activation\n        silu_gate = gate_out / (1.0 + torch.exp(-gate_out.float())).to(dtype)\n        intermediate = silu_gate * up_out\n        # down_proj: [num_tokens, intermediate] @ [intermediate, hidden] -> [num_tokens, hidden]\n        expert_output = torch.matmul(intermediate, down_proj_w.t())\n        \n        # Weight by routing weights\n        # routing_weights[top_x, idx] gives the weight for each token-expert pair\n        weighted_output = expert_output * routing_weights[top_x, idx].unsqueeze(-1)\n        \n        # Scatter-add to final output\n        final_hidden_states.index_add_(0, top_x, weighted_output)\n    \n    # Shared expert computation (applied to all tokens)\n    # gate_proj: [batch_seq_len, hidden] @ [hidden, shared_intermediate]\n    shared_gate = torch.matmul(hidden_states, shared_expert_gate_proj_weight.t())\n    # SiLU activation\n    shared_gate_silu = shared_gate / (1.0 + torch.exp(-shared_gate.float())).to(dtype)\n    # up_proj: [batch_seq_len, hidden] @ [hidden, shared_intermediate]\n    shared_up = torch.matmul(hidden_states, shared_expert_up_proj_weight.t())\n    # Element-wise multiply\n    shared_intermediate = shared_gate_silu * shared_up\n    # down_proj: [batch_seq_len, shared_intermediate] @ [shared_intermediate, hidden]\n    shared_expert_output = torch.matmul(shared_intermediate, shared_expert_down_proj_weight.t())\n    \n    # Gate the shared expert output\n    # shared_expert_gate_weight: [1, hidden_size]\n    # hidden_states: [batch_seq_len, hidden_size]\n    # Result: [batch_seq_len, 1]\n    gate_logits = torch.matmul(hidden_states, shared_expert_gate_weight.t())\n    shared_gate_weight = torch.sigmoid(gate_logits.float()).to(dtype)\n    shared_expert_output = shared_gate_weight * shared_expert_output\n    \n    # Combine routed experts and shared expert\n    output = final_hidden_states + shared_expert_output\n    \n    return output\n"
+}

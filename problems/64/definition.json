@@ -1,0 +1,95 @@
+{
+    "name": "064_latent_kv_expansion_with_split",
+    "hf_id": "moonshotai/Kimi-K2-Instruct-0905",
+    "description": "DeepSeek-V3 latent KV expansion: RMSNorm on compressed KV (kv_lora_rank=512), linear projection to expanded space (num_heads * (qk_nope_head_dim + v_head_dim) = 128*256 = 32768), reshape, transpose, and split into K_nope and V tensors. Fuses normalization, projection, and memory layout transformations.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "kv_lora_rank": {
+            "type": "const",
+            "value": 512,
+            "description": "Compressed KV dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 128,
+            "description": "Number of attention heads"
+        },
+        "qk_nope_head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Non-positional query/key head dimension"
+        },
+        "v_head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Value head dimension"
+        },
+        "kv_expanded_dim": {
+            "type": "expr",
+            "expression": "num_heads * (qk_nope_head_dim + v_head_dim)",
+            "description": "Expanded KV dimension (128 * 256 = 32768)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "compressed_kv": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "kv_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "Compressed KV tensor from latent attention"
+        },
+        "kv_a_layernorm_weight": {
+            "shape": [
+                "kv_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "RMSNorm weight for compressed KV"
+        },
+        "kv_b_proj_weight": {
+            "shape": [
+                "kv_expanded_dim",
+                "kv_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "Linear projection weight to expand KV"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RMSNorm epsilon"
+        }
+    },
+    "outputs": {
+        "k_nope": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "qk_nope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Non-positional key tensor"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "v_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value tensor"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    compressed_kv: torch.Tensor,\n    kv_a_layernorm_weight: torch.Tensor,\n    kv_b_proj_weight: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    DeepSeek-V3 latent KV expansion with split.\n    \n    1. RMSNorm on compressed KV\n    2. Linear projection to expanded space\n    3. Reshape and transpose\n    4. Split into K_nope and V\n    \n    Args:\n        compressed_kv: [batch_size, seq_len, kv_lora_rank=512]\n        kv_a_layernorm_weight: [kv_lora_rank=512]\n        kv_b_proj_weight: [kv_expanded_dim=32768, kv_lora_rank=512]\n        eps: RMSNorm epsilon\n    \n    Returns:\n        k_nope: [batch_size, num_heads=128, seq_len, qk_nope_head_dim=128]\n        value_states: [batch_size, num_heads=128, seq_len, v_head_dim=128]\n    \"\"\"\n    # Constants\n    num_heads = 128\n    qk_nope_head_dim = 128\n    v_head_dim = 128\n    \n    bsz, seq_len, _ = compressed_kv.shape\n    \n    # Step 1: RMSNorm on compressed KV\n    # Convert to float32 for numerical stability\n    input_dtype = compressed_kv.dtype\n    hidden_states = compressed_kv.to(torch.float32)\n    \n    # Compute variance and normalize\n    variance = hidden_states.pow(2).mean(-1, keepdim=True)\n    hidden_states = hidden_states * torch.rsqrt(variance + eps)\n    \n    # Apply weight and convert back to original dtype\n    normalized_kv = (kv_a_layernorm_weight.to(torch.float32) * hidden_states).to(input_dtype)\n    \n    # Step 2: Linear projection\n    # [batch, seq_len, 512] @ [512, 32768] -> [batch, seq_len, 32768]\n    expanded_kv = torch.matmul(normalized_kv, kv_b_proj_weight.t())\n    \n    # Step 3: Reshape and transpose\n    # [batch, seq_len, 32768] -> [batch, seq_len, 128, 256]\n    kv = expanded_kv.view(bsz, seq_len, num_heads, qk_nope_head_dim + v_head_dim)\n    \n    # [batch, seq_len, 128, 256] -> [batch, 128, seq_len, 256]\n    kv = kv.transpose(1, 2)\n    \n    # Step 4: Split into K_nope and V along the last dimension\n    # k_nope: [batch, 128, seq_len, 128]\n    # value_states: [batch, 128, seq_len, 128]\n    k_nope = kv[:, :, :, :qk_nope_head_dim].contiguous()\n    value_states = kv[:, :, :, qk_nope_head_dim:].contiguous()\n    \n    return k_nope, value_states\n"
+}

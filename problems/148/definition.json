@@ -1,0 +1,168 @@
+{
+    "name": "054_vision_encoder_layer_with_gated_residuals",
+    "hf_id": "meta-llama/Llama-3.2-11B-Vision",
+    "description": "Complete vision encoder layer with self-attention, MLP, layer norms, and tanh-gated residual connections. This is the dominant computational pattern in the vision encoder, appearing in 8 global vision layers with gating. The gated residuals use tanh activation on learnable gate parameters to modulate the contribution of attention and MLP outputs.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length (number of vision tokens, up to 4100)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1280,
+            "description": "Hidden dimension size"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "expr",
+            "expression": "hidden_size // num_heads",
+            "description": "Per-head dimension (80)"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 5120,
+            "description": "MLP intermediate dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_state": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "input_layernorm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input layer norm weight"
+        },
+        "input_layernorm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input layer norm bias"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "post_attention_layernorm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Post-attention layer norm weight"
+        },
+        "post_attention_layernorm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Post-attention layer norm bias"
+        },
+        "fc1_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP first layer weight"
+        },
+        "fc1_bias": {
+            "shape": [
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP first layer bias"
+        },
+        "fc2_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP second layer weight"
+        },
+        "fc2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP second layer bias"
+        },
+        "gate_attn": {
+            "shape": [
+                "1"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention gate parameter"
+        },
+        "gate_ffn": {
+            "shape": [
+                "1"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN gate parameter"
+        },
+        "norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Layer norm epsilon"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output hidden states"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_state: torch.Tensor,\n    input_layernorm_weight: torch.Tensor,\n    input_layernorm_bias: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    post_attention_layernorm_weight: torch.Tensor,\n    post_attention_layernorm_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    gate_attn: torch.Tensor,\n    gate_ffn: torch.Tensor,\n    norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_state.shape\n    num_heads = 16\n    head_dim = hidden_size // num_heads\n    scaling = head_dim ** -0.5\n    \n    # Self-attention block with gated residual\n    residual = hidden_state\n    \n    # Input layer norm\n    hidden_state_fp32 = hidden_state.to(torch.float32)\n    mean = hidden_state_fp32.mean(dim=-1, keepdim=True)\n    var = ((hidden_state_fp32 - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_state_normed = (hidden_state_fp32 - mean) / torch.sqrt(var + norm_eps)\n    hidden_state_normed = hidden_state_normed.to(hidden_state.dtype)\n    hidden_state = hidden_state_normed * input_layernorm_weight + input_layernorm_bias\n    \n    # Compute Q, K, V\n    query = torch.matmul(hidden_state, q_proj_weight.t())\n    key = torch.matmul(hidden_state, k_proj_weight.t())\n    value = torch.matmul(hidden_state, v_proj_weight.t())\n    \n    # Reshape for multi-head attention\n    query = query.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    key = key.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    value = value.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    \n    # Scaled dot-product attention\n    attn_weights = torch.matmul(query, key.transpose(-2, -1)) * scaling\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query.dtype)\n    attn_output = torch.matmul(attn_weights, value)\n    \n    # Reshape and project\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.view(batch_size, seq_len, hidden_size)\n    attn_output = torch.matmul(attn_output, o_proj_weight.t())\n    \n    # Gated residual connection for attention\n    hidden_state = residual + torch.tanh(gate_attn) * attn_output\n    \n    # MLP block with gated residual\n    residual = hidden_state\n    \n    # Post-attention layer norm\n    hidden_state_fp32 = hidden_state.to(torch.float32)\n    mean = hidden_state_fp32.mean(dim=-1, keepdim=True)\n    var = ((hidden_state_fp32 - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_state_normed = (hidden_state_fp32 - mean) / torch.sqrt(var + norm_eps)\n    hidden_state_normed = hidden_state_normed.to(hidden_state.dtype)\n    hidden_state = hidden_state_normed * post_attention_layernorm_weight + post_attention_layernorm_bias\n    \n    # MLP with GELU activation\n    hidden_state = torch.matmul(hidden_state, fc1_weight.t()) + fc1_bias\n    hidden_state = F.gelu(hidden_state)\n    hidden_state = torch.matmul(hidden_state, fc2_weight.t()) + fc2_bias\n    \n    # Gated residual connection for MLP\n    output = residual + torch.tanh(gate_ffn) * hidden_state\n    \n    return output\n"
+}

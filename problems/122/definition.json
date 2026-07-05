@@ -1,0 +1,154 @@
+{
+    "name": "028_gqa_rotary_attention_core_backward",
+    "hf_id": "baidu/ERNIE-4.5-300B-A47B-PT",
+    "description": "Backward pass for Grouped Query Attention with GLM-style Rotary Position Embeddings. Computes gradients for hidden_states and all projection weights (Q, K, V, O) through the complete attention mechanism including RoPE, GQA head expansion, scaled dot-product attention, and output projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 8192,
+            "description": "Hidden dimension"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 64,
+            "description": "Number of query/output attention heads"
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key/value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per attention head"
+        },
+        "kv_hidden_size": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim",
+            "description": "Key/value projection size"
+        },
+        "half_head_dim": {
+            "type": "expr",
+            "expression": "head_dim // 2",
+            "description": "Half of head dimension for RoPE frequencies"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from upstream layer"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input hidden states"
+        },
+        "q_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "o_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "inv_freq": {
+            "shape": [
+                "half_head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Inverse frequencies for RoPE"
+        },
+        "scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scaling factor (1/sqrt(head_dim))"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input hidden states"
+        },
+        "grad_q_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query projection weight"
+        },
+        "grad_k_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key projection weight"
+        },
+        "grad_v_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. value projection weight"
+        },
+        "grad_o_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output projection weight"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    q_weight: torch.Tensor,\n    k_weight: torch.Tensor,\n    v_weight: torch.Tensor,\n    o_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    scaling: float,\n):\n    \"\"\"\n    Backward pass for GQA with RoPE.\n    \n    Computes gradients through:\n    1. Output projection\n    2. Attention mechanism (softmax, matmul)\n    3. GQA head expansion\n    4. RoPE application\n    5. QKV projections\n    \"\"\"\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 64\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = 8\n    device = hidden_states.device\n    original_dtype = hidden_states.dtype\n    \n    # ========== FORWARD RECOMPUTATION ==========\n    # QKV projections\n    query_states = F.linear(hidden_states, q_weight)\n    key_states = F.linear(hidden_states, k_weight)\n    value_states = F.linear(hidden_states, v_weight)\n    \n    # Reshape to multi-head format\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    # Compute RoPE embeddings\n    position_ids = torch.arange(seq_len, device=device, dtype=torch.float32).unsqueeze(0)\n    inv_freq_expanded = inv_freq[None, :, None].float()\n    position_ids_expanded = position_ids[:, None, :].float()\n    freqs = (inv_freq_expanded @ position_ids_expanded).transpose(1, 2)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    cos = emb.cos()\n    sin = emb.sin()\n    \n    # Prepare cos/sin for interleaved pattern\n    cos_unsqueezed = cos.unsqueeze(1)\n    sin_unsqueezed = sin.unsqueeze(1)\n    cos_interleaved = cos_unsqueezed[..., : cos_unsqueezed.shape[-1] // 2].repeat_interleave(2, dim=-1)\n    sin_interleaved = sin_unsqueezed[..., : sin_unsqueezed.shape[-1] // 2].repeat_interleave(2, dim=-1)\n    \n    # Apply rotary position embeddings\n    q_float = query_states.float()\n    k_float = key_states.float()\n    \n    # Rotate half for query and key\n    q1 = q_float[..., 0::2]\n    q2 = q_float[..., 1::2]\n    q_rotated = torch.stack((-q2, q1), dim=-1).flatten(-2)\n    \n    k1 = k_float[..., 0::2]\n    k2 = k_float[..., 1::2]\n    k_rotated = torch.stack((-k2, k1), dim=-1).flatten(-2)\n    \n    query_states_rope = (q_float * cos_interleaved) + (q_rotated * sin_interleaved)\n    key_states_rope = (k_float * cos_interleaved) + (k_rotated * sin_interleaved)\n    \n    query_states_rope = query_states_rope.to(original_dtype)\n    key_states_rope = key_states_rope.to(original_dtype)\n    \n    # Expand key/value heads\n    key_states_expanded = key_states_rope[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    value_states_expanded = value_states[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    # Compute attention scores\n    attn_weights = torch.matmul(query_states_rope, key_states_expanded.transpose(2, 3)) * scaling\n    \n    # Apply causal mask\n    causal_mask = torch.triu(torch.ones(seq_len, seq_len, device=device, dtype=torch.bool), diagonal=1)\n    attn_weights = attn_weights.masked_fill(causal_mask.unsqueeze(0).unsqueeze(0), float('-inf'))\n    \n    # Softmax\n    attn_weights_float = F.softmax(attn_weights.float(), dim=-1)\n    attn_weights_dtype = attn_weights_float.to(original_dtype)\n    \n    # Compute attention output\n    attn_output = torch.matmul(attn_weights_dtype, value_states_expanded)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, hidden_size)\n    \n    # ========== BACKWARD PASS ==========\n    # Gradient through output projection\n    grad_attn_output = F.linear(grad_output, o_weight.t())\n    grad_o_weight = grad_output.reshape(-1, hidden_size).t() @ attn_output.reshape(-1, hidden_size)\n    \n    # Reshape gradient for attention output\n    grad_attn_output = grad_attn_output.view(batch_size, seq_len, num_attention_heads, head_dim)\n    grad_attn_output = grad_attn_output.transpose(1, 2)\n    \n    # Gradient through attention matmul: attn_output = attn_weights @ value_states_expanded\n    grad_attn_weights = torch.matmul(grad_attn_output, value_states_expanded.transpose(2, 3))\n    grad_value_states_expanded = torch.matmul(attn_weights_dtype.transpose(2, 3), grad_attn_output)\n    \n    # Gradient through softmax\n    grad_attn_weights_float = grad_attn_weights.float()\n    attn_weights_float_saved = attn_weights_float\n    grad_attn_scores = attn_weights_float_saved * (grad_attn_weights_float - (grad_attn_weights_float * attn_weights_float_saved).sum(dim=-1, keepdim=True))\n    \n    # Gradient through scaling\n    grad_attn_scores = grad_attn_scores * scaling\n    \n    # Gradient through attention matmul: attn_scores = query_states_rope @ key_states_expanded.T\n    grad_query_states_rope = torch.matmul(grad_attn_scores.to(original_dtype), key_states_expanded)\n    grad_key_states_expanded = torch.matmul(query_states_rope.transpose(2, 3), grad_attn_scores.to(original_dtype)).transpose(2, 3)\n    \n    # Gradient through key-value expansion\n    grad_key_states_rope = grad_key_states_expanded.view(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).sum(dim=2)\n    \n    grad_value_states = grad_value_states_expanded.view(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).sum(dim=2)\n    \n    # Gradient through RoPE for query\n    grad_query_states_rope_float = grad_query_states_rope.float()\n    \n    # Gradient w.r.t. q_float before rotation\n    grad_q_float = grad_query_states_rope_float * cos_interleaved\n    \n    # Gradient w.r.t. q_rotated\n    grad_q_rotated = grad_query_states_rope_float * sin_interleaved\n    \n    # Gradient through rotate_half for query\n    grad_q_rotated_reshaped = grad_q_rotated.view(*grad_q_rotated.shape[:-1], head_dim // 2, 2)\n    grad_q1_from_rotated = grad_q_rotated_reshaped[..., 1]\n    grad_q2_from_rotated = -grad_q_rotated_reshaped[..., 0]\n    \n    # Combine gradients\n    grad_q_float[..., 0::2] = grad_q_float[..., 0::2] + grad_q1_from_rotated\n    grad_q_float[..., 1::2] = grad_q_float[..., 1::2] + grad_q2_from_rotated\n    \n    grad_query_states = grad_q_float.to(original_dtype)\n    \n    # Gradient through RoPE for key\n    grad_key_states_rope_float = grad_key_states_rope.float()\n    \n    # Gradient w.r.t. k_float before rotation\n    grad_k_float = grad_key_states_rope_float * cos_interleaved\n    \n    # Gradient w.r.t. k_rotated\n    grad_k_rotated = grad_key_states_rope_float * sin_interleaved\n    \n    # Gradient through rotate_half for key\n    grad_k_rotated_reshaped = grad_k_rotated.view(*grad_k_rotated.shape[:-1], head_dim // 2, 2)\n    grad_k1_from_rotated = grad_k_rotated_reshaped[..., 1]\n    grad_k2_from_rotated = -grad_k_rotated_reshaped[..., 0]\n    \n    # Combine gradients\n    grad_k_float[..., 0::2] = grad_k_float[..., 0::2] + grad_k1_from_rotated\n    grad_k_float[..., 1::2] = grad_k_float[..., 1::2] + grad_k2_from_rotated\n    \n    grad_key_states = grad_k_float.to(original_dtype)\n    \n    # Gradient through reshape and transpose for Q, K, V\n    grad_query_states = grad_query_states.transpose(1, 2).contiguous()\n    grad_key_states = grad_key_states.transpose(1, 2).contiguous()\n    grad_value_states = grad_value_states.transpose(1, 2).contiguous()\n    \n    grad_query_states = grad_query_states.view(batch_size, seq_len, hidden_size)\n    grad_key_states = grad_key_states.view(batch_size, seq_len, num_key_value_heads * head_dim)\n    grad_value_states = grad_value_states.view(batch_size, seq_len, num_key_value_heads * head_dim)\n    \n    # Gradient through QKV projections\n    grad_hidden_states_q = F.linear(grad_query_states, q_weight.t())\n    grad_hidden_states_k = F.linear(grad_key_states, k_weight.t())\n    grad_hidden_states_v = F.linear(grad_value_states, v_weight.t())\n    \n    grad_hidden_states = grad_hidden_states_q + grad_hidden_states_k + grad_hidden_states_v\n    \n    grad_q_weight = grad_query_states.reshape(-1, hidden_size).t() @ hidden_states.reshape(-1, hidden_size)\n    grad_k_weight = grad_key_states.reshape(-1, num_key_value_heads * head_dim).t() @ hidden_states.reshape(-1, hidden_size)\n    grad_v_weight = grad_value_states.reshape(-1, num_key_value_heads * head_dim).t() @ hidden_states.reshape(-1, hidden_size)\n    \n    return (\n        grad_hidden_states.to(original_dtype),\n        grad_q_weight.to(original_dtype),\n        grad_k_weight.to(original_dtype),\n        grad_v_weight.to(original_dtype),\n        grad_o_weight.to(original_dtype)\n    )\n"
+}

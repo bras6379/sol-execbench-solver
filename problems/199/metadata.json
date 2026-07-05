@@ -1,0 +1,103 @@
+{
+  "task_id": 199,
+  "subset": "Quant",
+  "collection_index": 23,
+  "name": "023_fp8_mamba2_ssm_discretization",
+  "hf_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-FP8",
+  "num_workloads": 6,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:58.650879Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 1.9e-05,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 16,
+          "seq_len": 128
+        },
+        "sol_ms": 3.85e-05,
+        "baseline_latency_ms": 0.085664
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 4,
+          "seq_len": 256
+        },
+        "sol_ms": 2.14e-05,
+        "baseline_latency_ms": 0.062848
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 2.14e-05,
+        "baseline_latency_ms": 0.0601285
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 2,
+          "seq_len": 128
+        },
+        "sol_ms": 8.6e-06,
+        "baseline_latency_ms": 0.049376500000000004
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 4,
+          "seq_len": 128
+        },
+        "sol_ms": 1.29e-05,
+        "baseline_latency_ms": 0.053888
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_heads": 128,
+          "head_dim": 128,
+          "ssm_state_size": 128,
+          "n_groups": 8,
+          "batch_size": 8,
+          "seq_len": 128
+        },
+        "sol_ms": 2.14e-05,
+        "baseline_latency_ms": 0.0668005
+      }
+    ]
+  }
+}

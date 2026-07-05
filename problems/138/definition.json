@@ -1,0 +1,142 @@
+{
+    "name": "044_mamba_discretization_and_segsum",
+    "hf_id": "ibm-granite/granite-4.0-micro",
+    "description": "Mamba SSM parameter discretization and segment sum computation for chunk-based parallel processing. Discretizes continuous-time SSM parameters using timestep dt, computes cumulative sums for decay factors, and performs segment sum operations for intra-chunk attention-like computations.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "num_chunks": {
+            "type": "var"
+        },
+        "chunk_size": {
+            "type": "const",
+            "value": 256
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 160
+        },
+        "n_groups": {
+            "type": "const",
+            "value": 1
+        },
+        "d_state": {
+            "type": "const",
+            "value": 256
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "dt": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Discretization timestep"
+        },
+        "A_log": {
+            "shape": [
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Log-scale state transition parameter"
+        },
+        "B": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "n_groups",
+                "d_state"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input projection"
+        },
+        "C": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "n_groups",
+                "d_state"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection"
+        }
+    },
+    "outputs": {
+        "L": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "num_chunks",
+                "chunk_size",
+                "chunk_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Decay matrix for intra-chunk computation"
+        },
+        "G": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "chunk_size",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention-like weights from B and C contraction"
+        },
+        "M": {
+            "shape": [
+                "batch_size",
+                "num_chunks",
+                "chunk_size",
+                "chunk_size",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Masked attention weights"
+        },
+        "A_cumsum": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "num_chunks",
+                "chunk_size"
+            ],
+            "dtype": "float32",
+            "description": "Cumulative decay factors"
+        },
+        "decay_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "num_chunks",
+                "chunk_size"
+            ],
+            "dtype": "float32",
+            "description": "State decay factors for inter-chunk recurrence"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef segment_sum(input_tensor: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Stable segment sum using cumulative sums and masking.\n    \n    Args:\n        input_tensor: [..., chunk_size] tensor\n    \n    Returns:\n        tensor_segsum: [..., chunk_size, chunk_size] cumulative sum matrix\n    \"\"\"\n    chunk_size = input_tensor.size(-1)\n    device = input_tensor.device\n    \n    # Expand to [..., chunk_size, chunk_size] and create lower triangular structure\n    input_expanded = input_tensor[..., None].expand(*input_tensor.size(), chunk_size)\n    \n    # Create lower triangular mask (diagonal=-1 excludes diagonal)\n    mask = torch.tril(\n        torch.ones(chunk_size, chunk_size, device=device, dtype=torch.bool),\n        diagonal=-1\n    )\n    input_masked = input_expanded.masked_fill(~mask, 0)\n    \n    # Compute cumulative sum along second-to-last dimension\n    tensor_segsum = torch.cumsum(input_masked, dim=-2)\n    \n    # Apply mask to keep only lower triangular part (including diagonal this time)\n    mask_final = torch.tril(\n        torch.ones(chunk_size, chunk_size, device=device, dtype=torch.bool),\n        diagonal=0\n    )\n    tensor_segsum = tensor_segsum.masked_fill(~mask_final, float('-inf'))\n    \n    return tensor_segsum\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    dt: torch.Tensor,\n    A_log: torch.Tensor,\n    B: torch.Tensor,\n    C: torch.Tensor\n):\n    \"\"\"\n    Mamba SSM parameter discretization and segment sum computation.\n    \n    Args:\n        hidden_states: [batch, chunks, chunk_size, num_heads, head_dim]\n        dt: [batch, chunks, chunk_size, num_heads]\n        A_log: [num_heads] - log-scale state transition parameter\n        B: [batch, chunks, chunk_size, n_groups, d_state]\n        C: [batch, chunks, chunk_size, n_groups, d_state]\n    \n    Returns:\n        L: Decay matrix for intra-chunk computation\n        G: Attention-like weights from B and C contraction\n        M: Masked attention weights\n        A_cumsum: Cumulative decay factors\n        decay_states: State decay factors for inter-chunk recurrence\n    \"\"\"\n    batch_size, num_chunks, chunk_size, num_heads, head_dim = hidden_states.shape\n    n_groups = B.shape[3]\n    \n    # 1. Discretize A parameter\n    # A is in log scale, so exp(-A) gives the continuous-time decay\n    A = -torch.exp(A_log.float())  # [num_heads]\n    \n    # Apply softplus to dt for numerical stability\n    dt_soft = F.softplus(dt.float())  # [batch, chunks, chunk_size, num_heads]\n    \n    # Discretize: A_discrete = A * dt\n    # Rearrange dt to [batch, num_heads, chunks, chunk_size]\n    dt_permuted = dt_soft.permute(0, 3, 1, 2)  # [batch, num_heads, chunks, chunk_size]\n    A_discrete = A[None, :, None, None] * dt_permuted  # [batch, num_heads, chunks, chunk_size]\n    \n    # 2. Compute cumulative sum of A (for decay factors)\n    A_cumsum = torch.cumsum(A_discrete, dim=-1)  # [batch, num_heads, chunks, chunk_size]\n    \n    # 3. Compute L matrix (decay matrix for intra-chunk)\n    # L[i,j] = exp(sum(A[j:i])) for i > j (lower triangular)\n    L = torch.exp(segment_sum(A_discrete))  # [batch, num_heads, chunks, chunk_size, chunk_size]\n    \n    # 4. Repeat B and C across head groups\n    # B, C: [batch, chunks, chunk_size, n_groups, d_state]\n    # Need to expand to [batch, chunks, chunk_size, num_heads, d_state]\n    repeats = num_heads // n_groups\n    B_expanded = B.repeat_interleave(repeats, dim=3)  # [batch, chunks, chunk_size, num_heads, d_state]\n    C_expanded = C.repeat_interleave(repeats, dim=3)  # [batch, chunks, chunk_size, num_heads, d_state]\n    \n    # 5. Compute G matrix (contraction of C and B)\n    # G[i,j] = sum_n(C[i,n] * B[j,n])\n    # Shape: [batch, chunks, chunk_size, chunk_size, num_heads]\n    # C_expanded: [batch, chunks, chunk_size, num_heads, d_state]\n    # B_expanded: [batch, chunks, chunk_size, num_heads, d_state]\n    G = torch.einsum('bcihd,bcjhd->bcijh', C_expanded.float(), B_expanded.float())  # [batch, chunks, chunk_size, chunk_size, num_heads]\n    \n    # 6. Compute M matrix (masked attention weights)\n    # M = G * L (element-wise, with proper broadcasting)\n    # L: [batch, num_heads, chunks, chunk_size, chunk_size]\n    # G: [batch, chunks, chunk_size, chunk_size, num_heads]\n    # Need to align dimensions\n    L_permuted = L.permute(0, 2, 3, 4, 1)  # [batch, chunks, chunk_size, chunk_size, num_heads]\n    M = G * L_permuted  # [batch, chunks, chunk_size, chunk_size, num_heads]\n    \n    # 7. Compute decay factors for state updates\n    # decay_states = exp(A_cumsum[:,:,:,-1:] - A_cumsum)\n    decay_states = torch.exp(\n        A_cumsum[:, :, :, -1:] - A_cumsum\n    )  # [batch, num_heads, chunks, chunk_size]\n    \n    return (\n        L.to(torch.bfloat16),\n        G.to(torch.bfloat16),\n        M.to(torch.bfloat16),\n        A_cumsum,\n        decay_states\n    )\n"
+}

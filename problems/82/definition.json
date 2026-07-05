@@ -1,0 +1,122 @@
+{
+    "name": "082_qk_norm_scaled_dot_product_attention",
+    "hf_id": "stabilityai/stable-diffusion-3.5-medium",
+    "description": "Scaled dot-product attention with QK LayerNorm normalization. Query and key tensors are normalized using LayerNorm before computing attention scores. This is used in SD3.5 transformer blocks with 24 heads and 64-dim per head.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "dim": {
+            "type": "const",
+            "value": 1536,
+            "description": "Total model dimension (num_heads * head_dim)"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 24,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per attention head"
+        },
+        "dim_times_3": {
+            "type": "expr",
+            "expression": "dim * 3",
+            "description": "QKV projection output dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "qkv_weight": {
+            "shape": [
+                "dim_times_3",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection weight matrix"
+        },
+        "qkv_bias": {
+            "shape": [
+                "dim_times_3"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection bias"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query LayerNorm weight"
+        },
+        "q_norm_bias": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query LayerNorm bias"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key LayerNorm weight"
+        },
+        "k_norm_bias": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key LayerNorm bias"
+        },
+        "out_proj_weight": {
+            "shape": [
+                "dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight matrix"
+        },
+        "out_proj_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for LayerNorm numerical stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Attention output"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    qkv_bias: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    q_norm_bias: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    k_norm_bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n    eps: float,\n):\n    batch_size, seq_len, dim = hidden_states.shape\n    num_heads = 24\n    head_dim = 64\n    scale = head_dim ** -0.5\n    \n    # QKV projection: (batch, seq_len, dim) -> (batch, seq_len, 3 * dim)\n    qkv = torch.matmul(hidden_states, qkv_weight.t()) + qkv_bias\n    \n    # Reshape and split: (batch, seq_len, 3 * dim) -> 3 x (batch, num_heads, seq_len, head_dim)\n    qkv = qkv.reshape(batch_size, seq_len, 3, num_heads, head_dim)\n    qkv = qkv.permute(2, 0, 3, 1, 4)  # (3, batch, num_heads, seq_len, head_dim)\n    q, k, v = qkv[0], qkv[1], qkv[2]\n    \n    # Apply LayerNorm to Q: normalize across head_dim\n    # LayerNorm: (x - mean) / sqrt(var + eps) * weight + bias\n    q_mean = q.mean(dim=-1, keepdim=True)\n    q_var = q.var(dim=-1, unbiased=False, keepdim=True)\n    q_normalized = (q - q_mean) / torch.sqrt(q_var + eps)\n    q = q_normalized * q_norm_weight + q_norm_bias\n    \n    # Apply LayerNorm to K: normalize across head_dim\n    k_mean = k.mean(dim=-1, keepdim=True)\n    k_var = k.var(dim=-1, unbiased=False, keepdim=True)\n    k_normalized = (k - k_mean) / torch.sqrt(k_var + eps)\n    k = k_normalized * k_norm_weight + k_norm_bias\n    \n    # Scale query\n    q = q * scale\n    \n    # Compute attention scores: (batch, num_heads, seq_len, seq_len)\n    attn_scores = torch.matmul(q, k.transpose(-2, -1))\n    \n    # Softmax over last dimension\n    attn_probs = F.softmax(attn_scores, dim=-1)\n    \n    # Apply attention to values: (batch, num_heads, seq_len, head_dim)\n    attn_output = torch.matmul(attn_probs, v)\n    \n    # Reshape: (batch, num_heads, seq_len, head_dim) -> (batch, seq_len, dim)\n    attn_output = attn_output.transpose(1, 2).reshape(batch_size, seq_len, num_heads * head_dim)\n    \n    # Output projection\n    output = torch.matmul(attn_output, out_proj_weight.t()) + out_proj_bias\n    \n    return output\n"
+}

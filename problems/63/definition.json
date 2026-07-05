@@ -1,0 +1,68 @@
+{
+    "name": "063_attention_output_reshape_and_projection",
+    "hf_id": "moonshotai/Kimi-K2-Instruct-0905",
+    "description": "Fused attention output reshape and projection. Takes multi-head attention output from [batch, num_heads, seq_len, v_head_dim] format, transposes to [batch, seq_len, num_heads, v_head_dim], reshapes to [batch, seq_len, num_heads * v_head_dim] (requires contiguous copy), then projects to [batch, seq_len, hidden_size] via output projection. This is a critical memory bandwidth bottleneck due to non-contiguous transpose, memory reallocation for contiguous, and large intermediate dimension (16384) before projection to hidden_size (7168).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 128,
+            "description": "Number of attention heads"
+        },
+        "v_head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Value head dimension"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 7168,
+            "description": "Hidden size for output projection"
+        },
+        "intermediate_size": {
+            "type": "expr",
+            "expression": "num_heads * v_head_dim",
+            "description": "Intermediate size after reshape (16384)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "v_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output tensor from attention computation"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight matrix"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Projected output tensor"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(attn_output: torch.Tensor, o_proj_weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused attention output reshape and projection.\n    \n    Args:\n        attn_output: [batch_size, num_heads, seq_len, v_head_dim] - attention output\n        o_proj_weight: [hidden_size, intermediate_size] - output projection weight\n        \n    Returns:\n        output: [batch_size, seq_len, hidden_size] - projected output\n    \"\"\"\n    bsz, num_heads, seq_len, v_head_dim = attn_output.shape\n    hidden_size = o_proj_weight.shape[0]\n    intermediate_size = num_heads * v_head_dim\n    \n    # Step 1: Transpose [batch, num_heads, seq_len, v_head_dim] -> [batch, seq_len, num_heads, v_head_dim]\n    # This creates a non-contiguous tensor with strided memory access\n    attn_output_transposed = attn_output.transpose(1, 2)\n    \n    # Step 2: Reshape to [batch, seq_len, num_heads * v_head_dim]\n    # The contiguous() call triggers a full memory copy\n    attn_output_reshaped = attn_output_transposed.reshape(bsz, seq_len, intermediate_size)\n    \n    # Step 3: Output projection via matrix multiplication\n    # [batch, seq_len, intermediate_size] @ [intermediate_size, hidden_size] -> [batch, seq_len, hidden_size]\n    # Using F.linear equivalent: output = input @ weight.T\n    output = torch.matmul(attn_output_reshaped, o_proj_weight.t())\n    \n    return output\n"
+}

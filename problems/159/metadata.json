@@ -1,0 +1,233 @@
+{
+  "task_id": 159,
+  "subset": "L2",
+  "collection_index": 65,
+  "name": "065_sparse_expert_dispatch_and_combine",
+  "hf_id": "openai/gpt-oss-120b",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:49.705744Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.876201,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2048
+        },
+        "sol_ms": 0.83456856,
+        "baseline_latency_ms": 3.5881100000000004
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2080
+        },
+        "sol_ms": 0.83461664,
+        "baseline_latency_ms": 3.597662
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2112
+        },
+        "sol_ms": 0.83466472,
+        "baseline_latency_ms": 3.481934
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2144
+        },
+        "sol_ms": 0.83471279,
+        "baseline_latency_ms": 3.492926
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2176
+        },
+        "sol_ms": 0.83476087,
+        "baseline_latency_ms": 3.684335
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 4096
+        },
+        "sol_ms": 0.83764561,
+        "baseline_latency_ms": 5.190718
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2208
+        },
+        "sol_ms": 0.83480895,
+        "baseline_latency_ms": 3.7178075
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2240
+        },
+        "sol_ms": 0.83485703,
+        "baseline_latency_ms": 3.7132795
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 3011
+        },
+        "sol_ms": 0.83601543,
+        "baseline_latency_ms": 4.1356635
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2293
+        },
+        "sol_ms": 0.83493666,
+        "baseline_latency_ms": 3.7088635
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2272
+        },
+        "sol_ms": 0.83490511,
+        "baseline_latency_ms": 3.6721755
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 16384
+        },
+        "sol_ms": 1.80108306,
+        "baseline_latency_ms": 13.454639
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2304
+        },
+        "sol_ms": 0.83495319,
+        "baseline_latency_ms": 3.733471
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2336
+        },
+        "sol_ms": 0.83500127,
+        "baseline_latency_ms": 3.727455
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2368
+        },
+        "sol_ms": 0.83504935,
+        "baseline_latency_ms": 3.813743
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 2880,
+          "intermediate_size": 2880,
+          "num_local_experts": 128,
+          "num_experts_per_tok": 4,
+          "intermediate_size_x2": 5760,
+          "num_tokens": 2400
+        },
+        "sol_ms": 0.83509743,
+        "baseline_latency_ms": 3.780704
+      }
+    ]
+  }
+}

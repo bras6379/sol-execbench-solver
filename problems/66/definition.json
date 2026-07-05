@@ -1,0 +1,80 @@
+{
+    "name": "066_masked_softmax_with_attention_dropout_backward",
+    "hf_id": "myshell-ai/OpenVoice",
+    "description": "Backward pass for masked softmax with attention dropout. Computes gradients through dropout -> softmax -> masked_fill in reverse order.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "n_heads": {
+            "type": "var",
+            "description": "Number of attention heads"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "n_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output attention probabilities"
+        },
+        "p_attn": {
+            "shape": [
+                "batch_size",
+                "n_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Softmax output (attention probabilities before dropout)"
+        },
+        "mask": {
+            "shape": [
+                "batch_size",
+                "1",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bool",
+            "description": "Attention mask (True=unmasked, False=masked)"
+        },
+        "dropout_mask": {
+            "shape": [
+                "batch_size",
+                "n_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bool",
+            "description": "Dropout mask (True=kept, False=dropped)"
+        },
+        "p_dropout": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Dropout probability"
+        }
+    },
+    "outputs": {
+        "grad_scores": {
+            "shape": [
+                "batch_size",
+                "n_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input attention scores"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    p_attn: torch.Tensor,\n    mask: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    p_dropout: float,\n) -> torch.Tensor:\n    \"\"\"\n    Backward pass for masked softmax with dropout.\n    \n    Computes gradients through three operations in reverse order:\n    1. Dropout backward: scale by dropout mask and inverse probability\n    2. Softmax backward: y * (grad - sum(y * grad))\n    3. Masked fill backward: zero out gradients at masked positions\n    \n    Args:\n        grad_output: Gradient w.r.t. output [B, H, T, T]\n        p_attn: Softmax output (before dropout) [B, H, T, T]\n        mask: Attention mask [B, 1, T, T] (True=unmasked, False=masked)\n        dropout_mask: Dropout mask [B, H, T, T] (True=kept, False=dropped)\n        p_dropout: Dropout probability\n    \n    Returns:\n        grad_scores: Gradient w.r.t. input scores [B, H, T, T]\n    \"\"\"\n    # Step 1: Gradient through dropout\n    # Dropout backward: grad = grad_output * dropout_mask / (1 - p_dropout)\n    if p_dropout > 0.0:\n        # Scale by dropout mask and inverse keep probability\n        grad_softmax_output = grad_output * dropout_mask.float() / (1.0 - p_dropout)\n    else:\n        # No dropout, gradient passes through unchanged\n        grad_softmax_output = grad_output\n    \n    # Step 2: Gradient through softmax\n    # Softmax backward formula: grad_input = y * (grad_output - sum(y * grad_output))\n    # This is derived from the Jacobian of softmax:\n    # J_ij = y_i * (delta_ij - y_j)\n    \n    # Compute sum of (y * grad) along the softmax dimension (dim=-1)\n    # Shape: [B, H, T, T] -> [B, H, T, 1]\n    sum_term = (p_attn * grad_softmax_output).sum(dim=-1, keepdim=True)\n    \n    # Compute softmax gradient: y * (grad - sum_term)\n    # Shape: [B, H, T, T]\n    grad_softmax_input = p_attn * (grad_softmax_output - sum_term)\n    \n    # Step 3: Gradient through masked_fill\n    # Masked positions should have zero gradient\n    # Only unmasked positions (mask == True) receive gradient flow\n    # Zero out gradients at masked positions (mask == False)\n    grad_scores = grad_softmax_input.masked_fill(~mask, 0.0)\n    \n    return grad_scores\n"
+}

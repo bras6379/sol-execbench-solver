@@ -1,0 +1,274 @@
+{
+    "name": "069_joint_transformer_block_residual_path",
+    "hf_id": "stabilityai/stable-diffusion-3.5-medium",
+    "description": "Complete residual path through a JointTransformerBlock including dual-stream attention, adaptive normalization, and feedforward with residual connections for SD3.5.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "context_len": {
+            "type": "var"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 24
+        },
+        "attention_head_dim": {
+            "type": "const",
+            "value": 64
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 1536
+        },
+        "context_dim": {
+            "type": "const",
+            "value": 1152
+        },
+        "ff_inner_dim": {
+            "type": "const",
+            "value": 6144
+        },
+        "mod_dim_6x": {
+            "type": "expr",
+            "expression": "inner_dim * 6"
+        },
+        "context_mod_dim_6x": {
+            "type": "expr",
+            "expression": "context_dim * 6"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Image latent tokens"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "context_len",
+                "context_dim"
+            ],
+            "dtype": "float32",
+            "description": "Text/context tokens"
+        },
+        "temb": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embeddings"
+        },
+        "norm1_weight": {
+            "shape": [
+                "mod_dim_6x",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "norm1_bias": {
+            "shape": [
+                "mod_dim_6x"
+            ],
+            "dtype": "float32"
+        },
+        "norm1_context_weight": {
+            "shape": [
+                "context_mod_dim_6x",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "norm1_context_bias": {
+            "shape": [
+                "context_mod_dim_6x"
+            ],
+            "dtype": "float32"
+        },
+        "to_q_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_q_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_k_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_k_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_v_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_v_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_q_proj_weight": {
+            "shape": [
+                "inner_dim",
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_q_proj_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_k_proj_weight": {
+            "shape": [
+                "inner_dim",
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_k_proj_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_v_proj_weight": {
+            "shape": [
+                "inner_dim",
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "add_v_proj_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_out_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_out_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_add_out_weight": {
+            "shape": [
+                "context_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "to_add_out_bias": {
+            "shape": [
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_linear1_weight": {
+            "shape": [
+                "ff_inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_linear1_bias": {
+            "shape": [
+                "ff_inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_linear2_weight": {
+            "shape": [
+                "inner_dim",
+                "ff_inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_linear2_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_context_linear1_weight": {
+            "shape": [
+                "ff_inner_dim",
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_context_linear1_bias": {
+            "shape": [
+                "ff_inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_context_linear2_weight": {
+            "shape": [
+                "context_dim",
+                "ff_inner_dim"
+            ],
+            "dtype": "float32"
+        },
+        "ff_context_linear2_bias": {
+            "shape": [
+                "context_dim"
+            ],
+            "dtype": "float32"
+        }
+    },
+    "outputs": {
+        "output_encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "context_len",
+                "context_dim"
+            ],
+            "dtype": "float32"
+        },
+        "output_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "inner_dim"
+            ],
+            "dtype": "float32"
+        }
+    },
+    "reference": "import math\n\nimport torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    context_len = axes_and_scalars[\"context_len\"]\n\n    dim = 1536\n    context_dim = 1152\n    ff_inner_dim = 6144\n\n    g = torch.Generator(device=device)\n    g.manual_seed(42)\n\n    def xavier(out_f, in_f):\n        return torch.randn(out_f, in_f, device=device, generator=g) / math.sqrt(in_f)\n\n    return {\n        # Activation tensors\n        \"hidden_states\": torch.randn(batch_size, seq_len, dim, device=device, generator=g),\n        \"encoder_hidden_states\": torch.randn(batch_size, context_len, context_dim, device=device, generator=g),\n        # Time embedding \u2014 small magnitude\n        \"temb\": torch.randn(batch_size, dim, device=device, generator=g) * 0.1,\n        # Modulation projection weights (NOT norm weights \u2014 they project temb to 6*dim)\n        \"norm1_weight\": xavier(6 * dim, dim),\n        \"norm1_bias\": torch.randn(6 * dim, device=device, generator=g),\n        \"norm1_context_weight\": xavier(6 * context_dim, dim),\n        \"norm1_context_bias\": torch.randn(6 * context_dim, device=device, generator=g),\n        # Image stream QKV\n        \"to_q_weight\": xavier(dim, dim),\n        \"to_q_bias\": torch.randn(dim, device=device, generator=g),\n        \"to_k_weight\": xavier(dim, dim),\n        \"to_k_bias\": torch.randn(dim, device=device, generator=g),\n        \"to_v_weight\": xavier(dim, dim),\n        \"to_v_bias\": torch.randn(dim, device=device, generator=g),\n        # Context stream QKV\n        \"add_q_proj_weight\": xavier(dim, context_dim),\n        \"add_q_proj_bias\": torch.randn(dim, device=device, generator=g),\n        \"add_k_proj_weight\": xavier(dim, context_dim),\n        \"add_k_proj_bias\": torch.randn(dim, device=device, generator=g),\n        \"add_v_proj_weight\": xavier(dim, context_dim),\n        \"add_v_proj_bias\": torch.randn(dim, device=device, generator=g),\n        # Output projections\n        \"to_out_weight\": xavier(dim, dim),\n        \"to_out_bias\": torch.randn(dim, device=device, generator=g),\n        \"to_add_out_weight\": xavier(context_dim, dim),\n        \"to_add_out_bias\": torch.randn(context_dim, device=device, generator=g),\n        # FF \u2014 image stream\n        \"ff_linear1_weight\": xavier(ff_inner_dim, dim),\n        \"ff_linear1_bias\": torch.randn(ff_inner_dim, device=device, generator=g),\n        \"ff_linear2_weight\": xavier(dim, ff_inner_dim),\n        \"ff_linear2_bias\": torch.randn(dim, device=device, generator=g),\n        # FF \u2014 context stream\n        \"ff_context_linear1_weight\": xavier(ff_inner_dim, context_dim),\n        \"ff_context_linear1_bias\": torch.randn(ff_inner_dim, device=device, generator=g),\n        \"ff_context_linear2_weight\": xavier(context_dim, ff_inner_dim),\n        \"ff_context_linear2_bias\": torch.randn(context_dim, device=device, generator=g),\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    temb: torch.Tensor,\n    norm1_weight: torch.Tensor,\n    norm1_bias: torch.Tensor,\n    norm1_context_weight: torch.Tensor,\n    norm1_context_bias: torch.Tensor,\n    to_q_weight: torch.Tensor,\n    to_q_bias: torch.Tensor,\n    to_k_weight: torch.Tensor,\n    to_k_bias: torch.Tensor,\n    to_v_weight: torch.Tensor,\n    to_v_bias: torch.Tensor,\n    add_q_proj_weight: torch.Tensor,\n    add_q_proj_bias: torch.Tensor,\n    add_k_proj_weight: torch.Tensor,\n    add_k_proj_bias: torch.Tensor,\n    add_v_proj_weight: torch.Tensor,\n    add_v_proj_bias: torch.Tensor,\n    to_out_weight: torch.Tensor,\n    to_out_bias: torch.Tensor,\n    to_add_out_weight: torch.Tensor,\n    to_add_out_bias: torch.Tensor,\n    ff_linear1_weight: torch.Tensor,\n    ff_linear1_bias: torch.Tensor,\n    ff_linear2_weight: torch.Tensor,\n    ff_linear2_bias: torch.Tensor,\n    ff_context_linear1_weight: torch.Tensor,\n    ff_context_linear1_bias: torch.Tensor,\n    ff_context_linear2_weight: torch.Tensor,\n    ff_context_linear2_bias: torch.Tensor,\n):\n    batch_size = hidden_states.shape[0]\n    image_seq_len = hidden_states.shape[1]\n    context_seq_len = encoder_hidden_states.shape[1]\n    \n    dim = 1536\n    context_dim = 1152\n    num_heads = 24\n    head_dim = 64\n    scale = head_dim ** -0.5\n    \n    # AdaLayerNormZero modulation\n    norm_hidden_states = F.layer_norm(hidden_states, (dim,), eps=1e-6)\n    norm_encoder_hidden_states = F.layer_norm(encoder_hidden_states, (context_dim,), eps=1e-6)\n    \n    # Get modulation parameters from timestep embedding\n    temb_silu = F.silu(temb)\n    mod_params = F.linear(temb_silu, norm1_weight, norm1_bias)\n    shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = mod_params.chunk(6, dim=-1)\n    \n    mod_params_context = F.linear(temb_silu, norm1_context_weight, norm1_context_bias)\n    c_shift_msa, c_scale_msa, c_gate_msa, c_shift_mlp, c_scale_mlp, c_gate_mlp = mod_params_context.chunk(6, dim=-1)\n    \n    # Apply modulation to normalized states\n    norm_hidden_states = norm_hidden_states * (1 + scale_msa.unsqueeze(1)) + shift_msa.unsqueeze(1)\n    norm_encoder_hidden_states = norm_encoder_hidden_states * (1 + c_scale_msa.unsqueeze(1)) + c_shift_msa.unsqueeze(1)\n    \n    # Dual-stream attention\n    # Image stream QKV\n    q = F.linear(norm_hidden_states, to_q_weight, to_q_bias)\n    k = F.linear(norm_hidden_states, to_k_weight, to_k_bias)\n    v = F.linear(norm_hidden_states, to_v_weight, to_v_bias)\n    \n    # Text stream QKV\n    c_q = F.linear(norm_encoder_hidden_states, add_q_proj_weight, add_q_proj_bias)\n    c_k = F.linear(norm_encoder_hidden_states, add_k_proj_weight, add_k_proj_bias)\n    c_v = F.linear(norm_encoder_hidden_states, add_v_proj_weight, add_v_proj_bias)\n    \n    # Concatenate for joint attention\n    q = torch.cat([q, c_q], dim=1)\n    k = torch.cat([k, c_k], dim=1)\n    v = torch.cat([v, c_v], dim=1)\n    \n    # Reshape for multi-head attention\n    total_seq_len = q.shape[1]\n    q = q.view(batch_size, total_seq_len, num_heads, head_dim).transpose(1, 2)\n    k = k.view(batch_size, total_seq_len, num_heads, head_dim).transpose(1, 2)\n    v = v.view(batch_size, total_seq_len, num_heads, head_dim).transpose(1, 2)\n    \n    # Scaled dot-product attention\n    attn_weights = torch.matmul(q, k.transpose(-2, -1)) * scale\n    attn_weights = F.softmax(attn_weights, dim=-1)\n    attn_output = torch.matmul(attn_weights, v)\n    \n    # Reshape back\n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, total_seq_len, -1)\n    \n    # Split back into image and text streams\n    attn_output_img, c_attn_output = attn_output.split([image_seq_len, context_seq_len], dim=1)\n    \n    # Output projections\n    attn_output_img = F.linear(attn_output_img, to_out_weight, to_out_bias)\n    c_attn_output = F.linear(c_attn_output, to_add_out_weight, to_add_out_bias)\n    \n    # Gated residual connection for attention\n    hidden_states = hidden_states + gate_msa.unsqueeze(1) * attn_output_img\n    encoder_hidden_states = encoder_hidden_states + c_gate_msa.unsqueeze(1) * c_attn_output\n    \n    # Feedforward path\n    # Normalize\n    norm_hidden_states = F.layer_norm(hidden_states, (dim,), eps=1e-6)\n    norm_encoder_hidden_states = F.layer_norm(encoder_hidden_states, (context_dim,), eps=1e-6)\n    \n    # Apply modulation\n    norm_hidden_states = norm_hidden_states * (1 + scale_mlp.unsqueeze(1)) + shift_mlp.unsqueeze(1)\n    norm_encoder_hidden_states = norm_encoder_hidden_states * (1 + c_scale_mlp.unsqueeze(1)) + c_shift_mlp.unsqueeze(1)\n    \n    # Feedforward with GELU-approximate\n    ff_hidden = F.linear(norm_hidden_states, ff_linear1_weight, ff_linear1_bias)\n    ff_hidden = F.gelu(ff_hidden, approximate='tanh')\n    ff_output = F.linear(ff_hidden, ff_linear2_weight, ff_linear2_bias)\n    \n    c_ff_hidden = F.linear(norm_encoder_hidden_states, ff_context_linear1_weight, ff_context_linear1_bias)\n    c_ff_hidden = F.gelu(c_ff_hidden, approximate='tanh')\n    c_ff_output = F.linear(c_ff_hidden, ff_context_linear2_weight, ff_context_linear2_bias)\n    \n    # Gated residual connection for feedforward\n    hidden_states = hidden_states + gate_mlp.unsqueeze(1) * ff_output\n    encoder_hidden_states = encoder_hidden_states + c_gate_mlp.unsqueeze(1) * c_ff_output\n    \n    return encoder_hidden_states, hidden_states\n"
+}

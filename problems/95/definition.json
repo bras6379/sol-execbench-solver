@@ -1,0 +1,222 @@
+{
+    "name": "001_fused_vision_multihead_attention_with_norms_backward",
+    "hf_id": "1024m/Molmo-7B-D-Base",
+    "description": "Backward pass for fused vision multi-head attention with pre-normalization and residual connection. Computes gradients through: residual connection, dropout, output projection, attention mechanism (softmax, matmul), head split/merge, QKV projection, and LayerNorm.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "const",
+            "value": 577,
+            "description": "Sequence length (vision transformer patches + CLS token)"
+        },
+        "embed_dim": {
+            "type": "const",
+            "value": 1024,
+            "description": "Embedding dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per head"
+        },
+        "qkv_dim": {
+            "type": "expr",
+            "expression": "embed_dim * 3",
+            "description": "Combined QKV projection dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient of loss w.r.t. output"
+        },
+        "x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Original input tensor"
+        },
+        "x_mean": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Saved mean from LayerNorm forward"
+        },
+        "x_var": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Saved variance from LayerNorm forward"
+        },
+        "x_norm": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved normalized input from forward"
+        },
+        "ln_weight": {
+            "shape": [
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm weight"
+        },
+        "qkv_weight": {
+            "shape": [
+                "qkv_dim",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection weight"
+        },
+        "q": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved query tensor from forward"
+        },
+        "k": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved key tensor from forward"
+        },
+        "v": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved value tensor from forward"
+        },
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Saved attention weights from forward"
+        },
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved attention output from forward"
+        },
+        "out_weight": {
+            "shape": [
+                "embed_dim",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scale factor (1/sqrt(head_dim))"
+        },
+        "norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "LayerNorm epsilon"
+        }
+    },
+    "outputs": {
+        "grad_x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input"
+        },
+        "grad_qkv_weight": {
+            "shape": [
+                "qkv_dim",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV projection weight"
+        },
+        "grad_qkv_bias": {
+            "shape": [
+                "qkv_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV projection bias"
+        },
+        "grad_out_weight": {
+            "shape": [
+                "embed_dim",
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output projection weight"
+        },
+        "grad_out_bias": {
+            "shape": [
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output projection bias"
+        },
+        "grad_ln_weight": {
+            "shape": [
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. LayerNorm weight"
+        },
+        "grad_ln_bias": {
+            "shape": [
+                "embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. LayerNorm bias"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    x_mean: torch.Tensor,\n    x_var: torch.Tensor,\n    x_norm: torch.Tensor,\n    ln_weight: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    v: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_output: torch.Tensor,\n    out_weight: torch.Tensor,\n    scale: float,\n    norm_eps: float,\n):\n    \"\"\"\n    Backward pass for fused vision multi-head attention with norms.\n    \n    Computes gradients through:\n    1. Residual connection\n    2. Output projection\n    3. Attention mechanism (softmax, matmul)\n    4. Head split/merge\n    5. QKV projection\n    6. LayerNorm\n    \"\"\"\n    batch_size, seq_len, embed_dim = x.shape\n    num_heads = 16\n    head_dim = 64\n    \n    # Gradient through residual connection\n    # output = output_before_residual + residual\n    grad_output_before_residual = grad_output\n    grad_residual = grad_output\n    \n    # Gradient through output projection\n    # output = F.linear(attn_output, out_weight, out_bias)\n    grad_attn_output = F.linear(grad_output_before_residual, out_weight.t())\n    grad_out_weight = torch.matmul(\n        grad_output_before_residual.reshape(-1, embed_dim).t(),\n        attn_output.reshape(-1, embed_dim)\n    )\n    grad_out_bias = grad_output_before_residual.sum(dim=(0, 1))\n    \n    # Gradient through head merging\n    grad_attn_output_heads = grad_attn_output.view(\n        batch_size, seq_len, num_heads, head_dim\n    ).transpose(1, 2)\n    \n    # Gradient through attention application: attn_output = attn_weights @ v\n    grad_v = torch.matmul(\n        attn_weights.transpose(-2, -1),\n        grad_attn_output_heads\n    )\n    \n    grad_attn_weights = torch.matmul(\n        grad_attn_output_heads,\n        v.transpose(-2, -1)\n    )\n    \n    # Gradient through softmax\n    sum_grad = (grad_attn_weights * attn_weights).sum(dim=-1, keepdim=True)\n    grad_attn_scores = attn_weights * (grad_attn_weights - sum_grad)\n    \n    # Gradient through scaled dot-product: attn_scores = (q * scale) @ k^T\n    grad_q = torch.matmul(grad_attn_scores, k) * scale\n    grad_k = torch.matmul(\n        grad_attn_scores.transpose(-2, -1),\n        q * scale\n    )\n    \n    # Gradient through head splitting\n    grad_q = grad_q.transpose(1, 2).reshape(batch_size, seq_len, embed_dim)\n    grad_k = grad_k.transpose(1, 2).reshape(batch_size, seq_len, embed_dim)\n    grad_v = grad_v.transpose(1, 2).reshape(batch_size, seq_len, embed_dim)\n    \n    # Gradient through QKV chunking\n    grad_qkv = torch.cat([grad_q, grad_k, grad_v], dim=-1)\n    \n    # Gradient through QKV projection\n    grad_x_norm = F.linear(grad_qkv, qkv_weight.t())\n    grad_qkv_weight = torch.matmul(\n        grad_qkv.reshape(-1, 3 * embed_dim).t(),\n        x_norm.reshape(-1, embed_dim)\n    )\n    grad_qkv_bias = grad_qkv.sum(dim=(0, 1))\n    \n    # Gradient through LayerNorm\n    x_normalized = (x - x_mean) / torch.sqrt(x_var + norm_eps)\n    grad_ln_weight = (grad_x_norm * x_normalized).sum(dim=(0, 1))\n    grad_ln_bias = grad_x_norm.sum(dim=(0, 1))\n    \n    # Gradient through normalization\n    grad_x_normalized = grad_x_norm * ln_weight\n    \n    # Gradient through standardization\n    std = torch.sqrt(x_var + norm_eps)\n    x_centered = x - x_mean\n    \n    grad_x_from_norm = grad_x_normalized / std\n    mean_grad = grad_x_from_norm.mean(dim=-1, keepdim=True)\n    mean_grad_x_centered = (grad_x_normalized * x_centered).mean(dim=-1, keepdim=True) / (std ** 2)\n    \n    grad_x_from_norm = grad_x_from_norm - mean_grad - x_centered * mean_grad_x_centered\n    \n    # Combine gradients from residual and normalization paths\n    grad_x = grad_residual + grad_x_from_norm\n    \n    return (\n        grad_x,\n        grad_qkv_weight,\n        grad_qkv_bias,\n        grad_out_weight,\n        grad_out_bias,\n        grad_ln_weight,\n        grad_ln_bias,\n    )\n"
+}

@@ -1,0 +1,185 @@
+{
+  "task_id": 35,
+  "subset": "L1",
+  "collection_index": 35,
+  "name": "035_flux_ada_layer_norm_zero_modulation_extraction",
+  "hf_id": "black-forest-labs/FLUX.1-Kontext-dev",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:20.795052Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.024066,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 512
+        },
+        "sol_ms": 0.0324,
+        "baseline_latency_ms": 0.122992
+      },
+      {
+        "index": 1,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 211
+        },
+        "sol_ms": 0.0162,
+        "baseline_latency_ms": 0.1007515
+      },
+      {
+        "index": 2,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 449
+        },
+        "sol_ms": 0.0285,
+        "baseline_latency_ms": 0.1191355
+      },
+      {
+        "index": 3,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 373
+        },
+        "sol_ms": 0.0237,
+        "baseline_latency_ms": 0.1101915
+      },
+      {
+        "index": 4,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 16
+        },
+        "sol_ms": 0.0152,
+        "baseline_latency_ms": 0.083088
+      },
+      {
+        "index": 5,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 192
+        },
+        "sol_ms": 0.0161,
+        "baseline_latency_ms": 0.098416
+      },
+      {
+        "index": 6,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 131
+        },
+        "sol_ms": 0.0158,
+        "baseline_latency_ms": 0.0938084999999999
+      },
+      {
+        "index": 7,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 919
+        },
+        "sol_ms": 0.0579,
+        "baseline_latency_ms": 0.169777
+      },
+      {
+        "index": 8,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 32
+        },
+        "sol_ms": 0.0153,
+        "baseline_latency_ms": 0.084768
+      },
+      {
+        "index": 9,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 853
+        },
+        "sol_ms": 0.0537,
+        "baseline_latency_ms": 0.1643204999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 128
+        },
+        "sol_ms": 0.0158,
+        "baseline_latency_ms": 0.0907205
+      },
+      {
+        "index": 11,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 773
+        },
+        "sol_ms": 0.0487,
+        "baseline_latency_ms": 0.1517275
+      },
+      {
+        "index": 12,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 5
+        },
+        "sol_ms": 0.0152,
+        "baseline_latency_ms": 0.082848
+      },
+      {
+        "index": 13,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 384
+        },
+        "sol_ms": 0.0244,
+        "baseline_latency_ms": 0.11048
+      },
+      {
+        "index": 14,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 691
+        },
+        "sol_ms": 0.0436,
+        "baseline_latency_ms": 0.145008
+      },
+      {
+        "index": 15,
+        "axes": {
+          "inner_dim": 3072,
+          "output_dim": 18432,
+          "batch_size": 96
+        },
+        "sol_ms": 0.0156,
+        "baseline_latency_ms": 0.090064
+      }
+    ]
+  }
+}

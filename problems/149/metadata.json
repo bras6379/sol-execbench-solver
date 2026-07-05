@@ -1,0 +1,250 @@
+{
+  "task_id": 149,
+  "subset": "L2",
+  "collection_index": 55,
+  "name": "055_audio_encoder_conv_positional_layer_stack",
+  "hf_id": "mistralai/Voxtral-Small-24B-2507",
+  "num_workloads": 15,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:47.492107Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 11.218917,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 16
+        },
+        "sol_ms": 10.8932,
+        "baseline_latency_ms": 17.370231500000003
+      },
+      {
+        "index": 1,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 3
+        },
+        "sol_ms": 2.0428,
+        "baseline_latency_ms": 3.6971575
+      },
+      {
+        "index": 2,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 23
+        },
+        "sol_ms": 15.6588,
+        "baseline_latency_ms": 25.294411
+      },
+      {
+        "index": 3,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 56
+        },
+        "sol_ms": 38.1252,
+        "baseline_latency_ms": 62.2547
+      },
+      {
+        "index": 4,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 8
+        },
+        "sol_ms": 5.4468,
+        "baseline_latency_ms": 8.975161
+      },
+      {
+        "index": 5,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 7
+        },
+        "sol_ms": 4.766,
+        "baseline_latency_ms": 7.985175
+      },
+      {
+        "index": 6,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 40
+        },
+        "sol_ms": 27.2324,
+        "baseline_latency_ms": 43.87764
+      },
+      {
+        "index": 7,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 29
+        },
+        "sol_ms": 19.7436,
+        "baseline_latency_ms": 31.686139
+      },
+      {
+        "index": 8,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 80
+        },
+        "sol_ms": 54.4644,
+        "baseline_latency_ms": 87.2609605
+      },
+      {
+        "index": 9,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 19
+        },
+        "sol_ms": 12.9356,
+        "baseline_latency_ms": 20.921238
+      },
+      {
+        "index": 10,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 24
+        },
+        "sol_ms": 16.3396,
+        "baseline_latency_ms": 26.432221
+      },
+      {
+        "index": 11,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 12
+        },
+        "sol_ms": 8.17,
+        "baseline_latency_ms": 13.5513525
+      },
+      {
+        "index": 12,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 17
+        },
+        "sol_ms": 11.574,
+        "baseline_latency_ms": 18.713502
+      },
+      {
+        "index": 13,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 10
+        },
+        "sol_ms": 6.8084,
+        "baseline_latency_ms": 11.1055025
+      },
+      {
+        "index": 14,
+        "axes": {
+          "input_seq_len": 3000,
+          "output_seq_len": 1500,
+          "num_mel_bins": 80,
+          "d_model": 5120,
+          "num_heads": 20,
+          "head_dim": 256,
+          "encoder_ffn_dim": 20480,
+          "batch_size": 6
+        },
+        "sol_ms": 4.0852,
+        "baseline_latency_ms": 6.942349
+      }
+    ]
+  }
+}

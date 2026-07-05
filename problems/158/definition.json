@@ -1,0 +1,161 @@
+{
+    "name": "064_multi_head_qkv_projection_with_rope_backward",
+    "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+    "description": "Backward pass for multi-head QKV projection with RoPE. Computes gradients for hidden_states, q_weight, k_weight, and v_weight given gradients of query, key, and value states.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1536
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 24
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 4
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 96
+        },
+        "q_out_dim": {
+            "type": "expr",
+            "expression": "num_heads * head_dim"
+        },
+        "kv_out_dim": {
+            "type": "expr",
+            "expression": "num_kv_heads * head_dim"
+        },
+        "half_head_dim": {
+            "type": "expr",
+            "expression": "head_dim // 2"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_query": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query states after RoPE"
+        },
+        "grad_key": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key states after RoPE"
+        },
+        "grad_value": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. value states"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Original input hidden states"
+        },
+        "q_weight": {
+            "shape": [
+                "q_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "k_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "v_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine values for RoPE"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine values for RoPE"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hidden states"
+        },
+        "grad_q_weight": {
+            "shape": [
+                "q_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query weight"
+        },
+        "grad_k_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key weight"
+        },
+        "grad_v_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. value weight"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_query: torch.Tensor,\n    grad_key: torch.Tensor,\n    grad_value: torch.Tensor,\n    hidden_states: torch.Tensor,\n    q_weight: torch.Tensor,\n    k_weight: torch.Tensor,\n    v_weight: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_heads = 24\n    num_kv_heads = 4\n    head_dim = 96\n    half_head_dim = head_dim // 2\n    \n    # Expand cos/sin for broadcasting: (batch, 1, seq_len, head_dim)\n    cos_unsqueezed = cos.unsqueeze(1)\n    sin_unsqueezed = sin.unsqueeze(1)\n    \n    # Backward through RoPE for Q\n    # Forward: q_rope = q * cos + rotate_half(q) * sin\n    # where rotate_half([x1, x2]) = [-x2, x1]\n    # Backward: grad_q = grad_q_rope * cos + rotate_half_inverse(grad_q_rope * sin)\n    # where rotate_half_inverse([y1, y2]) = [y2, -y1]\n    grad_q_cos_term = grad_query * cos_unsqueezed\n    grad_q_sin_term = grad_query * sin_unsqueezed\n    \n    # Reverse rotate_half for sin term: [y1, y2] -> [y2, -y1]\n    grad_q_sin_1 = grad_q_sin_term[..., :half_head_dim]\n    grad_q_sin_2 = grad_q_sin_term[..., half_head_dim:]\n    grad_q_sin_reversed = torch.cat((grad_q_sin_2, -grad_q_sin_1), dim=-1)\n    \n    grad_query_unrotated = grad_q_cos_term + grad_q_sin_reversed\n    \n    # Backward through RoPE for K\n    grad_k_cos_term = grad_key * cos_unsqueezed\n    grad_k_sin_term = grad_key * sin_unsqueezed\n    \n    grad_k_sin_1 = grad_k_sin_term[..., :half_head_dim]\n    grad_k_sin_2 = grad_k_sin_term[..., half_head_dim:]\n    grad_k_sin_reversed = torch.cat((grad_k_sin_2, -grad_k_sin_1), dim=-1)\n    \n    grad_key_unrotated = grad_k_cos_term + grad_k_sin_reversed\n    \n    # Backward through transpose and reshape for Q\n    # Forward: (B, S, N*D) -> view -> (B, S, N, D) -> transpose -> (B, N, S, D)\n    # Backward: (B, N, S, D) -> transpose -> (B, S, N, D) -> view -> (B, S, N*D)\n    grad_query_transposed = grad_query_unrotated.transpose(1, 2)\n    grad_query_proj = grad_query_transposed.contiguous().view(\n        batch_size, seq_len, num_heads * head_dim\n    )\n    \n    # Backward through transpose and reshape for K\n    grad_key_transposed = grad_key_unrotated.transpose(1, 2)\n    grad_key_proj = grad_key_transposed.contiguous().view(\n        batch_size, seq_len, num_kv_heads * head_dim\n    )\n    \n    # Backward through transpose and reshape for V (no RoPE)\n    grad_value_transposed = grad_value.transpose(1, 2)\n    grad_value_proj = grad_value_transposed.contiguous().view(\n        batch_size, seq_len, num_kv_heads * head_dim\n    )\n    \n    # Backward through linear projections\n    # Forward: output = input @ weight.T\n    # Backward: grad_input = grad_output @ weight\n    #           grad_weight = grad_output.T @ input\n    \n    # Gradient w.r.t. hidden_states (sum contributions from Q, K, V)\n    grad_hidden_from_q = torch.matmul(grad_query_proj, q_weight)\n    grad_hidden_from_k = torch.matmul(grad_key_proj, k_weight)\n    grad_hidden_from_v = torch.matmul(grad_value_proj, v_weight)\n    grad_hidden_states = grad_hidden_from_q + grad_hidden_from_k + grad_hidden_from_v\n    \n    # Gradient w.r.t. q_weight\n    grad_query_proj_2d = grad_query_proj.view(-1, num_heads * head_dim)\n    hidden_states_2d = hidden_states.view(-1, hidden_size)\n    grad_q_weight = torch.matmul(grad_query_proj_2d.t(), hidden_states_2d)\n    \n    # Gradient w.r.t. k_weight\n    grad_key_proj_2d = grad_key_proj.view(-1, num_kv_heads * head_dim)\n    grad_k_weight = torch.matmul(grad_key_proj_2d.t(), hidden_states_2d)\n    \n    # Gradient w.r.t. v_weight\n    grad_value_proj_2d = grad_value_proj.view(-1, num_kv_heads * head_dim)\n    grad_v_weight = torch.matmul(grad_value_proj_2d.t(), hidden_states_2d)\n    \n    return grad_hidden_states, grad_q_weight, grad_k_weight, grad_v_weight\n"
+}

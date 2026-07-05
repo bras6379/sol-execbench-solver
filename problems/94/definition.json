@@ -1,0 +1,115 @@
+{
+    "name": "094_time_decay_exponential_stabilization",
+    "hf_id": "zhiyuan8/RWKV-v7-1.5B-G1-GGUF",
+    "description": "RWKV's time decay exponential computation with numerical stabilization for the WKV attention mechanism. Computes -exp(time_decay) and manages exponential stability through max-state tracking for linear-time attention.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "attention_hidden_size": {
+            "type": "const",
+            "value": 2048,
+            "description": "Attention hidden dimension"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "time_decay": {
+            "shape": [
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Decay parameters for each channel"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key tensor from attention"
+        },
+        "time_first": {
+            "shape": [
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "First-step time mixing parameters"
+        },
+        "value": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value tensor from attention"
+        },
+        "max_state": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Maximum state for numerical stability"
+        },
+        "num_state": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Numerator state for WKV"
+        },
+        "den_state": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Denominator state for WKV"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Attention output"
+        },
+        "max_state_out": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Updated max state"
+        },
+        "num_state_out": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Updated numerator state"
+        },
+        "den_state_out": {
+            "shape": [
+                "batch_size",
+                "attention_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Updated denominator state"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, int], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs with proper initialization for numerical stability.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    attention_hidden_size = axes_and_scalars[\"attention_hidden_size\"]\n    \n    # time_decay should be reasonable values (not too large to avoid overflow)\n    time_decay = torch.randn(attention_hidden_size, dtype=torch.float32, device=device) * 0.5\n    \n    # key and value are standard attention tensors\n    key = torch.randn(batch_size, seq_len, attention_hidden_size, dtype=torch.float32, device=device)\n    value = torch.randn(batch_size, seq_len, attention_hidden_size, dtype=torch.float32, device=device)\n    \n    # time_first should be reasonable values\n    time_first = torch.randn(attention_hidden_size, dtype=torch.float32, device=device) * 0.5\n    \n    # Initialize max_state to very negative values (like -1e38) for proper initialization\n    max_state = torch.full((batch_size, attention_hidden_size), -1e38, dtype=torch.float32, device=device)\n    \n    # Initialize num_state and den_state to zeros\n    num_state = torch.zeros(batch_size, attention_hidden_size, dtype=torch.float32, device=device)\n    den_state = torch.zeros(batch_size, attention_hidden_size, dtype=torch.float32, device=device)\n    \n    return {\n        \"time_decay\": time_decay,\n        \"key\": key,\n        \"time_first\": time_first,\n        \"value\": value,\n        \"max_state\": max_state,\n        \"num_state\": num_state,\n        \"den_state\": den_state,\n    }\n\n\n@torch.no_grad()\ndef run(\n    time_decay: torch.Tensor,\n    key: torch.Tensor,\n    time_first: torch.Tensor,\n    value: torch.Tensor,\n    max_state: torch.Tensor,\n    num_state: torch.Tensor,\n    den_state: torch.Tensor,\n):\n    \"\"\"\n    RWKV Time Decay Exponential with Numerical Stabilization.\n    \n    Computes:\n    1. time_decay_exp = -exp(time_decay)\n    2. For each timestep: max_state = max(max_state + time_decay_exp, current_key)\n    3. Exponential normalization: e1 = exp(old_max - new_max), e2 = exp(key - new_max)\n    \n    This prevents numerical overflow/underflow in the exponential computations\n    while maintaining the recurrent state updates.\n    \"\"\"\n    batch_size, seq_len, hidden_size = key.size()\n    \n    # Clone states to avoid modifying inputs\n    max_state = max_state.clone().float()\n    num_state = num_state.clone().float()\n    den_state = den_state.clone().float()\n    \n    # Compute exponential decay (negative to ensure decay)\n    time_decay_exp = -torch.exp(time_decay.float())  # [attention_hidden_size]\n    \n    output = torch.zeros_like(key, dtype=torch.float32)\n    \n    # Process each timestep with exponential stabilization\n    for t in range(seq_len):\n        current_key = key[:, t].float()  # [batch_size, attention_hidden_size]\n        current_value = value[:, t].float()  # [batch_size, attention_hidden_size]\n        \n        # === Output computation with stabilization ===\n        # max_for_output prevents overflow in exp(max_state) and exp(current_key + time_first)\n        max_for_output = torch.maximum(\n            max_state, current_key + time_first\n        )  # [batch_size, attention_hidden_size]\n        \n        # Compute normalized exponentials\n        e1_output = torch.exp(max_state - max_for_output)\n        e2_output = torch.exp(current_key + time_first - max_for_output)\n        \n        # WKV computation: weighted sum of values\n        numerator = e1_output * num_state + e2_output * current_value\n        denominator = e1_output * den_state + e2_output\n        output[:, t] = numerator / denominator\n        \n        # === State update with stabilization ===\n        # max_for_state prevents overflow in exp(max_state + time_decay_exp) and exp(current_key)\n        max_for_state = torch.maximum(\n            max_state + time_decay_exp, current_key\n        )  # [batch_size, attention_hidden_size]\n        \n        # Compute normalized exponentials for state update\n        e1_state = torch.exp(max_state + time_decay_exp - max_for_state)\n        e2_state = torch.exp(current_key - max_for_state)\n        \n        # Update recurrent states\n        num_state = e1_state * num_state + e2_state * current_value\n        den_state = e1_state * den_state + e2_state\n        max_state = max_for_state\n    \n    return output, max_state, num_state, den_state\n"
+}

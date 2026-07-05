@@ -1,0 +1,249 @@
+{
+  "task_id": 143,
+  "subset": "L2",
+  "collection_index": 49,
+  "name": "049_group_limited_topk_routing",
+  "hf_id": "inclusionAI/Ring-flash-2.0",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:46.157474Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.004656,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2048
+        },
+        "sol_ms": 0.0028788,
+        "baseline_latency_ms": 0.0958885
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2080
+        },
+        "sol_ms": 0.00291326,
+        "baseline_latency_ms": 0.0979205
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 3557
+        },
+        "sol_ms": 0.00451846,
+        "baseline_latency_ms": 0.114385
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 4093
+        },
+        "sol_ms": 0.00513907,
+        "baseline_latency_ms": 0.1226565
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2112
+        },
+        "sol_ms": 0.00294771,
+        "baseline_latency_ms": 0.0958885
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2144
+        },
+        "sol_ms": 0.00298217,
+        "baseline_latency_ms": 0.095904
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 6144
+        },
+        "sol_ms": 0.00751381,
+        "baseline_latency_ms": 0.1734724999999999
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 16384
+        },
+        "sol_ms": 0.01937016,
+        "baseline_latency_ms": 0.358065
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2176
+        },
+        "sol_ms": 0.00301663,
+        "baseline_latency_ms": 0.095888
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 3169
+        },
+        "sol_ms": 0.00408586,
+        "baseline_latency_ms": 0.108193
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 8192
+        },
+        "sol_ms": 0.00988508,
+        "baseline_latency_ms": 0.198816
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2208
+        },
+        "sol_ms": 0.00305108,
+        "baseline_latency_ms": 0.095888
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2240
+        },
+        "sol_ms": 0.00308554,
+        "baseline_latency_ms": 0.098176
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 12288
+        },
+        "sol_ms": 0.01462762,
+        "baseline_latency_ms": 0.2804645
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2851
+        },
+        "sol_ms": 0.00374344,
+        "baseline_latency_ms": 0.104272
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "n_group": 8,
+          "topk_group": 4,
+          "gating_dim": 4096,
+          "experts_per_group": 32,
+          "num_tokens": 2272
+        },
+        "sol_ms": 0.00312,
+        "baseline_latency_ms": 0.1
+      }
+    ]
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "task_id": 20,
+  "subset": "L1",
+  "collection_index": 20,
+  "name": "020_vision_patch_merger_spatial_shuffle_mlp",
+  "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "num_workloads": 15,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:15.824008Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.069811,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 4096,
+          "num_merged_patches": 1024,
+          "num_grids": 4
+        },
+        "sol_ms": 0.068,
+        "baseline_latency_ms": 0.20528
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 1024,
+          "num_merged_patches": 256,
+          "num_grids": 1
+        },
+        "sol_ms": 0.0173,
+        "baseline_latency_ms": 0.1147519999999999
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 576,
+          "num_merged_patches": 144,
+          "num_grids": 1
+        },
+        "sol_ms": 0.0099,
+        "baseline_latency_ms": 0.108976
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 3072,
+          "num_merged_patches": 768,
+          "num_grids": 3
+        },
+        "sol_ms": 0.0511,
+        "baseline_latency_ms": 0.1607525
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 1600,
+          "num_merged_patches": 400,
+          "num_grids": 1
+        },
+        "sol_ms": 0.0268,
+        "baseline_latency_ms": 0.132432
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 8192,
+          "num_merged_patches": 2048,
+          "num_grids": 8
+        },
+        "sol_ms": 0.1356,
+        "baseline_latency_ms": 0.334705
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 6400,
+          "num_merged_patches": 1600,
+          "num_grids": 1
+        },
+        "sol_ms": 0.106,
+        "baseline_latency_ms": 0.259232
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 32768,
+          "num_merged_patches": 8192,
+          "num_grids": 8
+        },
+        "sol_ms": 0.541,
+        "baseline_latency_ms": 1.1260655
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 12288,
+          "num_merged_patches": 3072,
+          "num_grids": 3
+        },
+        "sol_ms": 0.2031,
+        "baseline_latency_ms": 0.4443205
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 7168,
+          "num_merged_patches": 1792,
+          "num_grids": 7
+        },
+        "sol_ms": 0.1187,
+        "baseline_latency_ms": 0.302608
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 16384,
+          "num_merged_patches": 4096,
+          "num_grids": 4
+        },
+        "sol_ms": 0.2707,
+        "baseline_latency_ms": 0.569664
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 65536,
+          "num_merged_patches": 16384,
+          "num_grids": 4
+        },
+        "sol_ms": 1.0817,
+        "baseline_latency_ms": 1.797426
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 1024,
+          "num_merged_patches": 256,
+          "num_grids": 4
+        },
+        "sol_ms": 0.0173,
+        "baseline_latency_ms": 0.1149765
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 2048,
+          "num_merged_patches": 512,
+          "num_grids": 2
+        },
+        "sol_ms": 0.0342,
+        "baseline_latency_ms": 0.143664
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 1536,
+          "spatial_merge_size": 2,
+          "out_hidden_size": 3584,
+          "hidden_size_expanded": 6144,
+          "three": 3,
+          "num_patches": 512,
+          "num_merged_patches": 128,
+          "num_grids": 2
+        },
+        "sol_ms": 0.0088,
+        "baseline_latency_ms": 0.104832
+      }
+    ]
+  }
+}

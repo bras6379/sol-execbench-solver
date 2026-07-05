@@ -1,0 +1,137 @@
+{
+    "name": "082_moe_layer_complete_forward_with_residual",
+    "hf_id": "zai-org/GLM-4.7",
+    "description": "Complete MoE layer forward pass that fuses routing, expert dispatch/computation, aggregation, shared expert computation. This represents the entire MoE layer computation from input hidden states through router sigmoid scoring, hierarchical group-based top-8 expert selection, parallel expert execution (160 routed experts with 1536 intermediate size), weighted aggregation, and shared expert computation (also 1536 intermediate size).",
+    "axes": {
+        "batch_seq_len": {
+            "type": "var",
+            "description": "Flattened batch * sequence length dimension"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 5120
+        },
+        "moe_intermediate_size": {
+            "type": "const",
+            "value": 1536
+        },
+        "n_routed_experts": {
+            "type": "const",
+            "value": 160
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 8
+        },
+        "n_group": {
+            "type": "const",
+            "value": 1
+        },
+        "topk_group": {
+            "type": "const",
+            "value": 1
+        },
+        "shared_intermediate": {
+            "type": "expr",
+            "expression": "moe_intermediate_size * 1"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "router_weight": {
+            "shape": [
+                "n_routed_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router projection weights"
+        },
+        "e_score_correction_bias": {
+            "shape": [
+                "n_routed_experts"
+            ],
+            "dtype": "float32",
+            "description": "Expert score correction bias"
+        },
+        "expert_gate_projs": {
+            "shape": [
+                "n_routed_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weights for all routed experts"
+        },
+        "expert_up_projs": {
+            "shape": [
+                "n_routed_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weights for all routed experts"
+        },
+        "expert_down_projs": {
+            "shape": [
+                "n_routed_experts",
+                "hidden_size",
+                "moe_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weights for all routed experts"
+        },
+        "shared_gate_proj_weight": {
+            "shape": [
+                "shared_intermediate",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert gate projection weight"
+        },
+        "shared_up_proj_weight": {
+            "shape": [
+                "shared_intermediate",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert up projection weight"
+        },
+        "shared_down_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "shared_intermediate"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert down projection weight"
+        },
+        "routed_scaling_factor": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Scaling factor for routing weights"
+        },
+        "norm_topk_prob": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether to normalize topk probabilities"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final MoE layer output (routed + shared expert outputs)"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    router_weight: torch.Tensor,\n    e_score_correction_bias: torch.Tensor,\n    expert_gate_projs: torch.Tensor,\n    expert_up_projs: torch.Tensor,\n    expert_down_projs: torch.Tensor,\n    shared_gate_proj_weight: torch.Tensor,\n    shared_up_proj_weight: torch.Tensor,\n    shared_down_proj_weight: torch.Tensor,\n    routed_scaling_factor: float,\n    norm_topk_prob: bool,\n):\n    \"\"\"\n    Complete MoE layer forward pass.\n    \n    1. Router: Sigmoid-based hierarchical group selection for top-8 experts from 160\n    2. Routed Experts: 160 experts with SwiGLU activation\n    3. Weighted Aggregation: Normalized routing weights scaled by routed_scaling_factor\n    4. Shared Expert: Single expert processing all tokens\n    5. Output: routed_output + shared_output\n    \"\"\"\n    # Constants\n    n_routed_experts = 160\n    num_experts_per_tok = 8\n    n_group = 1\n    topk_group = 1\n    \n    batch_seq_len = hidden_states.shape[0]\n    \n    # Step 1: Compute routing\n    # Router forward: [batch_seq_len, n_routed_experts]\n    router_logits = F.linear(hidden_states.float(), router_weight.float())\n    scores = torch.sigmoid(router_logits)  # [batch_seq_len, 160]\n    \n    # Apply expert score correction bias\n    scores_for_choice = scores + e_score_correction_bias.unsqueeze(0)\n    \n    # Hierarchical group-based selection\n    experts_per_group = n_routed_experts // n_group\n    group_scores_reshaped = scores_for_choice.view(-1, n_group, experts_per_group)\n    \n    # Get top-2 scores per group and sum them\n    group_scores = group_scores_reshaped.topk(2, dim=-1)[0].sum(dim=-1)  # [batch_seq_len, n_group]\n    \n    # Select top groups\n    group_idx = torch.topk(group_scores, k=topk_group, dim=-1, sorted=False)[1]\n    \n    # Create group mask\n    group_mask = torch.zeros_like(group_scores)\n    group_mask.scatter_(1, group_idx, 1)\n    \n    # Expand group mask to expert mask\n    score_mask = (\n        group_mask.unsqueeze(-1)\n        .expand(-1, n_group, experts_per_group)\n        .reshape(-1, n_routed_experts)\n    )\n    \n    # Mask out experts outside selected groups\n    scores_for_choice = scores_for_choice.masked_fill(~score_mask.bool(), 0.0)\n    \n    # Select top-k experts within selected groups\n    topk_weights, topk_indices = torch.topk(\n        scores_for_choice, k=num_experts_per_tok, dim=-1, sorted=False\n    )\n    \n    # Normalize weights if configured\n    if norm_topk_prob:\n        denominator = topk_weights.sum(dim=-1, keepdim=True) + 1e-20\n        topk_weights = topk_weights / denominator\n    \n    # Apply routing scaling factor\n    topk_weights = topk_weights * routed_scaling_factor\n    \n    # Step 2: Compute routed expert outputs\n    final_hidden_states = torch.zeros_like(hidden_states, dtype=topk_weights.dtype)\n    \n    # Create expert mask: [n_routed_experts, batch_seq_len, num_experts_per_tok]\n    expert_mask = F.one_hot(topk_indices, num_classes=n_routed_experts)\n    expert_mask = expert_mask.permute(2, 0, 1)  # [160, batch_seq_len, 8]\n    \n    # Process each expert\n    for expert_idx in range(n_routed_experts):\n        mask = expert_mask[expert_idx]  # [batch_seq_len, num_experts_per_tok]\n        token_indices, weight_indices = torch.where(mask)\n        \n        if token_indices.numel() > 0:\n            # Gather tokens for this expert\n            expert_input = hidden_states[token_indices]  # [num_tokens, hidden_size]\n            expert_weights_sel = topk_weights[token_indices, weight_indices]  # [num_tokens]\n            \n            # Expert forward: SwiGLU activation\n            gate_output = F.linear(expert_input, expert_gate_projs[expert_idx])\n            up_output = F.linear(expert_input, expert_up_projs[expert_idx])\n            intermediate = F.silu(gate_output) * up_output\n            expert_output = F.linear(intermediate, expert_down_projs[expert_idx])\n            \n            # Apply routing weights\n            weighted_output = expert_output * expert_weights_sel.unsqueeze(-1)\n            \n            # Scatter-add back to final output\n            final_hidden_states.index_add_(0, token_indices, weighted_output)\n    \n    routed_output = final_hidden_states.to(hidden_states.dtype)\n    \n    # Step 3: Compute shared expert output\n    gate_output = F.linear(hidden_states, shared_gate_proj_weight)\n    up_output = F.linear(hidden_states, shared_up_proj_weight)\n    intermediate = F.silu(gate_output) * up_output\n    shared_output = F.linear(intermediate, shared_down_proj_weight)\n    \n    # Step 4: Combine outputs\n    output = routed_output + shared_output\n    \n    return output\n"
+}

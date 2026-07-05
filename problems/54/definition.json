@@ -1,0 +1,123 @@
+{
+    "name": "054_audio_attention_qkv_projection_with_normalization",
+    "hf_id": "google/gemma-3n-E4B",
+    "description": "Fused QKV projection with per-head RMS normalization for audio attention. Projects hidden states to Q, K, V representations, reshapes to multi-head format, and applies separate RMS normalization to each head. This is a unique pattern where normalization is applied per-head rather than per-sequence.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": null
+        },
+        "seq_len": {
+            "type": "var",
+            "description": null
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024,
+            "description": null
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 8,
+            "description": null
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": null
+        },
+        "qkv_out_size": {
+            "type": "expr",
+            "expression": "num_heads * head_dim",
+            "description": null
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "qkv_out_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight matrix"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "qkv_out_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight matrix"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "qkv_out_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight matrix"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query per-head RMS norm scale"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key per-head RMS norm scale"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability in RMS norm"
+        }
+    },
+    "outputs": {
+        "query_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized query states"
+        },
+        "key_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized key states"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized value states"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Fused QKV projection with per-head RMS normalization.\n    \n    Args:\n        hidden_states: [batch_size, seq_len, hidden_size=1024]\n        q_proj_weight: [qkv_out_size=1024, hidden_size=1024]\n        k_proj_weight: [qkv_out_size=1024, hidden_size=1024]\n        v_proj_weight: [qkv_out_size=1024, hidden_size=1024]\n        q_norm_weight: [head_dim=128]\n        k_norm_weight: [head_dim=128]\n        eps: epsilon for RMS norm\n    \n    Returns:\n        query_states: [batch_size, seq_len, num_heads=8, head_dim=128]\n        key_states: [batch_size, seq_len, num_heads=8, head_dim=128]\n        value_states: [batch_size, seq_len, num_heads=8, head_dim=128]\n    \"\"\"\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_heads = 8\n    head_dim = 128\n    \n    # Linear projections: [batch, seq, hidden] @ [hidden, qkv_out].T -> [batch, seq, qkv_out]\n    # Using matmul with transposed weights\n    query = torch.matmul(hidden_states, q_proj_weight.t())\n    key = torch.matmul(hidden_states, k_proj_weight.t())\n    value = torch.matmul(hidden_states, v_proj_weight.t())\n    \n    # Reshape to multi-head format: [batch, seq, num_heads * head_dim] -> [batch, seq, num_heads, head_dim]\n    query = query.view(batch_size, seq_len, num_heads, head_dim)\n    key = key.view(batch_size, seq_len, num_heads, head_dim)\n    value = value.view(batch_size, seq_len, num_heads, head_dim)\n    \n    # Per-head RMS normalization for query\n    # Compute variance over head_dim (last dimension)\n    q_variance = query.pow(2).mean(dim=-1, keepdim=True)\n    q_normed = query / torch.sqrt(q_variance + eps)\n    query_states = q_normed * q_norm_weight\n    \n    # Per-head RMS normalization for key\n    k_variance = key.pow(2).mean(dim=-1, keepdim=True)\n    k_normed = key / torch.sqrt(k_variance + eps)\n    key_states = k_normed * k_norm_weight\n    \n    # No RMS normalization for value in audio attention\n    value_states = value\n    \n    return query_states, key_states, value_states\n"
+}

@@ -1,0 +1,66 @@
+{
+    "name": "074_fused_gated_mlp_silu",
+    "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+    "description": "Gated MLP with SiLU activation that fuses gate and up projections into a single linear layer, then splits and applies gated activation before down projection. The pattern is: gate_up_proj -> chunk -> SiLU(gate) * up -> down_proj.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 4096
+        },
+        "intermediate_size_x2": {
+            "type": "expr",
+            "expression": "intermediate_size * 2",
+            "description": "2 * intermediate_size for fused gate and up projection"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "gate_up_weight": {
+            "shape": [
+                "intermediate_size_x2",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Fused gate and up projection weight matrix"
+        },
+        "down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "Down projection weight matrix"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states after gated MLP"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, gate_up_weight: torch.Tensor, down_weight: torch.Tensor) -> torch.Tensor:\n    # hidden_states: (batch_size, seq_len, hidden_size)\n    # gate_up_weight: (2 * intermediate_size, hidden_size)\n    # down_weight: (hidden_size, intermediate_size)\n    \n    # Fused gate and up projection: (B, S, H) @ (H, 2*I) -> (B, S, 2*I)\n    up_states = F.linear(hidden_states, gate_up_weight)\n    \n    # Split into gate and up components along last dimension\n    # Each has shape (B, S, I)\n    gate, up_states = up_states.chunk(2, dim=-1)\n    \n    # Apply SiLU gating: SiLU(x) = x * sigmoid(x)\n    # Then multiply: up_states = up_states * silu(gate)\n    silu_gate = gate * torch.sigmoid(gate)\n    up_states = up_states * silu_gate\n    \n    # Down projection: (B, S, I) @ (I, H) -> (B, S, H)\n    output = F.linear(up_states, down_weight)\n    \n    return output\n"
+}

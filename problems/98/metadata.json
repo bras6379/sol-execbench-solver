@@ -1,0 +1,201 @@
+{
+  "task_id": 98,
+  "subset": "L2",
+  "collection_index": 4,
+  "name": "004_fused_residual_rms_mlp",
+  "hf_id": "NousResearch/Hermes-4-405B",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:34.992581Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 6.777476,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 2,
+          "seq_len": 4096
+        },
+        "sol_ms": 23.6752,
+        "baseline_latency_ms": 35.066599
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 256
+        },
+        "sol_ms": 0.7402,
+        "baseline_latency_ms": 1.22573775
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 4096
+        },
+        "sol_ms": 11.8378,
+        "baseline_latency_ms": 17.2529235
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 1024
+        },
+        "sol_ms": 2.9597,
+        "baseline_latency_ms": 4.061170499999999
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 23.6752,
+        "baseline_latency_ms": 34.622496
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 8,
+          "seq_len": 512
+        },
+        "sol_ms": 11.8378,
+        "baseline_latency_ms": 16.8266135
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 16,
+          "seq_len": 128
+        },
+        "sol_ms": 5.9191,
+        "baseline_latency_ms": 8.541578
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 2048
+        },
+        "sol_ms": 5.9191,
+        "baseline_latency_ms": 8.75979575
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 1571
+        },
+        "sol_ms": 4.5406,
+        "baseline_latency_ms": 6.46733375
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 4,
+          "seq_len": 373
+        },
+        "sol_ms": 4.3123,
+        "baseline_latency_ms": 5.9781005
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 2053
+        },
+        "sol_ms": 5.9335,
+        "baseline_latency_ms": 9.00052625
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 5.9191,
+        "baseline_latency_ms": 8.554588500000001
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 1,
+          "seq_len": 997
+        },
+        "sol_ms": 2.8817,
+        "baseline_latency_ms": 3.9862255
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 2,
+          "seq_len": 2048
+        },
+        "sol_ms": 11.8378,
+        "baseline_latency_ms": 16.94100425
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 16,
+          "seq_len": 256
+        },
+        "sol_ms": 11.8378,
+        "baseline_latency_ms": 16.873597250000003
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 16384,
+          "intermediate_size": 53248,
+          "batch_size": 4,
+          "seq_len": 1024
+        },
+        "sol_ms": 11.8378,
+        "baseline_latency_ms": 16.87611725
+      }
+    ]
+  }
+}

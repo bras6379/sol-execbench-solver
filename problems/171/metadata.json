@@ -1,0 +1,297 @@
+{
+  "task_id": 171,
+  "subset": "L2",
+  "collection_index": 77,
+  "name": "077_sam_hq_vision_encoder_window_partition_attention",
+  "hf_id": "syscv-community/sam-hq-vit-base",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:52.512592Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.975975,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 613,
+          "width": 613
+        },
+        "sol_ms": 3.0736,
+        "baseline_latency_ms": 25.1122705
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 131,
+          "width": 131
+        },
+        "sol_ms": 0.1474,
+        "baseline_latency_ms": 1.4033145
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 449,
+          "width": 449
+        },
+        "sol_ms": 1.6782,
+        "baseline_latency_ms": 14.0254035
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 1024,
+          "width": 1024
+        },
+        "sol_ms": 8.6185,
+        "baseline_latency_ms": 78.276235
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 8,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.2864,
+        "baseline_latency_ms": 2.5873015
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 2,
+          "height": 256,
+          "width": 256
+        },
+        "sol_ms": 1.0993,
+        "baseline_latency_ms": 9.242692
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 512,
+          "width": 512
+        },
+        "sol_ms": 2.1549,
+        "baseline_latency_ms": 17.6020885
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 2,
+          "height": 192,
+          "width": 384
+        },
+        "sol_ms": 1.2204,
+        "baseline_latency_ms": 10.123783
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 293,
+          "width": 293
+        },
+        "sol_ms": 0.7018,
+        "baseline_latency_ms": 5.7380770000000005
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 16,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.5723,
+        "baseline_latency_ms": 8.273331500000001
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 224,
+          "width": 224
+        },
+        "sol_ms": 0.4093,
+        "baseline_latency_ms": 5.364444000000001
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 16,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 2.288,
+        "baseline_latency_ms": 32.4894675
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 4,
+          "height": 128,
+          "width": 128
+        },
+        "sol_ms": 0.5723,
+        "baseline_latency_ms": 8.270547
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 8,
+          "height": 256,
+          "width": 256
+        },
+        "sol_ms": 4.3959,
+        "baseline_latency_ms": 60.061582
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 1,
+          "height": 336,
+          "width": 336
+        },
+        "sol_ms": 0.9205,
+        "baseline_latency_ms": 11.859084
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 768,
+          "num_attention_heads": 12,
+          "head_dim": 64,
+          "window_size": 14,
+          "mlp_dim": 3072,
+          "rel_pos_size": 27,
+          "qkv_out_size": 2304,
+          "batch_size": 4,
+          "height": 64,
+          "width": 64
+        },
+        "sol_ms": 0.1434,
+        "baseline_latency_ms": 2.256885
+      }
+    ]
+  }
+}

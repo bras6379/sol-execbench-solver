@@ -1,0 +1,169 @@
+{
+    "name": "058_mamba2_selective_scan",
+    "hf_id": "nvidia/Nemotron-H-47B-Base-8K",
+    "description": "Mamba2 selective state space model core computation including convolution, selective scan with chunking, state space discretization, and gated normalization. This is the dominant computation in the hybrid architecture.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 8192,
+            "description": "Hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 256,
+            "description": "Number of SSM heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per head"
+        },
+        "ssm_state_size": {
+            "type": "const",
+            "value": 256,
+            "description": "SSM state dimension"
+        },
+        "conv_kernel_size": {
+            "type": "const",
+            "value": 4,
+            "description": "Convolution kernel size"
+        },
+        "n_groups": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of groups for normalization"
+        },
+        "chunk_size": {
+            "type": "const",
+            "value": 128,
+            "description": "Chunk size for parallel scan"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 16384,
+            "description": "Intermediate size (num_heads * head_dim)"
+        },
+        "groups_time_state_size": {
+            "type": "expr",
+            "expression": "n_groups * ssm_state_size",
+            "description": "n_groups * ssm_state_size"
+        },
+        "conv_dim": {
+            "type": "expr",
+            "expression": "intermediate_size + 2 * groups_time_state_size",
+            "description": "Conv dimension"
+        },
+        "projection_size": {
+            "type": "expr",
+            "expression": "intermediate_size + conv_dim + num_heads",
+            "description": "Total projection size"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "in_proj_weight": {
+            "shape": [
+                "projection_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input projection weight"
+        },
+        "conv1d_weight": {
+            "shape": [
+                "conv_dim",
+                "1",
+                "conv_kernel_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv1d weight (depthwise)"
+        },
+        "conv1d_bias": {
+            "shape": [
+                "conv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv1d bias"
+        },
+        "dt_bias": {
+            "shape": [
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Time step bias"
+        },
+        "A_log": {
+            "shape": [
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Log of A matrix"
+        },
+        "D": {
+            "shape": [
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Skip connection parameter"
+        },
+        "norm_weight": {
+            "shape": [
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "RMS norm weight"
+        },
+        "out_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "time_step_limit_min": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Minimum time step limit"
+        },
+        "time_step_limit_max": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Maximum time step limit"
+        },
+        "layer_norm_epsilon": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Layer norm epsilon"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output hidden states"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    in_proj_weight: torch.Tensor,\n    conv1d_weight: torch.Tensor,\n    conv1d_bias: torch.Tensor,\n    dt_bias: torch.Tensor,\n    A_log: torch.Tensor,\n    D: torch.Tensor,\n    norm_weight: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    time_step_limit_min: float,\n    time_step_limit_max: float,\n    layer_norm_epsilon: float,\n):\n    # Constants\n    hidden_size = 8192\n    num_heads = 256\n    head_dim = 64\n    intermediate_size = 16384\n    ssm_state_size = 256\n    conv_kernel_size = 4\n    n_groups = 8\n    chunk_size = 128\n    groups_time_state_size = n_groups * ssm_state_size\n    conv_dim = intermediate_size + 2 * groups_time_state_size\n    \n    batch_size, seq_len, _ = hidden_states.shape\n    dtype = hidden_states.dtype\n    device = hidden_states.device\n    \n    # 1. Input projection\n    projected = torch.matmul(hidden_states, in_proj_weight.t())\n    \n    # Split projections\n    gate_start = projected.shape[-1] - intermediate_size - conv_dim - num_heads\n    gate = projected[..., gate_start:gate_start + intermediate_size]\n    hidden_B_C = projected[..., gate_start + intermediate_size:gate_start + intermediate_size + conv_dim]\n    dt = projected[..., -num_heads:]\n    \n    # 2. Causal Convolution\n    hidden_B_C_t = hidden_B_C.transpose(1, 2)\n    conv_out = F.conv1d(\n        hidden_B_C_t,\n        conv1d_weight,\n        conv1d_bias,\n        padding=conv_kernel_size - 1,\n        groups=conv_dim\n    )[..., :seq_len]\n    hidden_B_C = (conv_out * torch.sigmoid(conv_out)).transpose(1, 2)  # silu\n    \n    # Split into hidden_states, B, C\n    hidden_states_ssm = hidden_B_C[..., :intermediate_size]\n    B = hidden_B_C[..., intermediate_size:intermediate_size + groups_time_state_size]\n    C = hidden_B_C[..., intermediate_size + groups_time_state_size:]\n    \n    # 3. Selective State Space Model with Chunking\n    \n    # Discretize time step\n    dt = F.softplus(dt + dt_bias)\n    dt = torch.clamp(dt, time_step_limit_min, time_step_limit_max)\n    \n    # Reshape for SSM computation\n    hidden_states_ssm = hidden_states_ssm.view(batch_size, seq_len, num_heads, head_dim).float()\n    B = B.view(batch_size, seq_len, n_groups, ssm_state_size).float()\n    C = C.view(batch_size, seq_len, n_groups, ssm_state_size).float()\n    \n    # Repeat B and C for all heads in each group\n    heads_per_group = num_heads // n_groups\n    B = B.repeat(1, 1, heads_per_group, 1)  # (batch, seq, num_heads, ssm_state_size)\n    C = C.repeat(1, 1, heads_per_group, 1)  # (batch, seq, num_heads, ssm_state_size)\n    \n    # Pad to chunk size\n    pad_size = (chunk_size - seq_len % chunk_size) % chunk_size\n    \n    def pad_tensor_4d(x, pad_size):\n        if pad_size > 0:\n            return F.pad(x, (0, 0, 0, 0, 0, pad_size, 0, 0))\n        return x\n    \n    def pad_tensor_3d(x, pad_size):\n        if pad_size > 0:\n            return F.pad(x, (0, 0, 0, pad_size, 0, 0))\n        return x\n    \n    # D residual (skip connection)\n    D_residual = D.float()[..., None] * pad_tensor_4d(hidden_states_ssm, pad_size)\n    \n    # Discretize x and A\n    hidden_states_ssm = hidden_states_ssm * dt[..., None]\n    A = -torch.exp(A_log.float()) * dt\n    \n    # Pad tensors\n    hidden_states_ssm_padded = pad_tensor_4d(hidden_states_ssm, pad_size)\n    A_padded = pad_tensor_3d(A, pad_size)\n    B_padded = pad_tensor_4d(B, pad_size)\n    C_padded = pad_tensor_4d(C, pad_size)\n    \n    padded_seq_len = hidden_states_ssm_padded.shape[1]\n    num_chunks = padded_seq_len // chunk_size\n    \n    # Reshape into chunks\n    hidden_states_ssm_chunked = hidden_states_ssm_padded.reshape(batch_size, num_chunks, chunk_size, num_heads, head_dim)\n    A_chunked = A_padded.reshape(batch_size, num_chunks, chunk_size, num_heads)\n    B_chunked = B_padded.reshape(batch_size, num_chunks, chunk_size, num_heads, ssm_state_size)\n    C_chunked = C_padded.reshape(batch_size, num_chunks, chunk_size, num_heads, ssm_state_size)\n    \n    # Permute A for computation: (batch, num_heads, num_chunks, chunk_size)\n    A_perm = A_chunked.permute(0, 3, 1, 2)\n    A_cumsum = torch.cumsum(A_perm, dim=-1)\n    \n    # 3a. Intra-chunk computation (diagonal blocks)\n    # Segment sum for causal mask\n    def segment_sum(x):\n        # x: (batch, num_heads, num_chunks, chunk_size)\n        cs = x.size(-1)\n        x_expanded = x[..., None].expand(*x.size(), cs)  # (batch, heads, chunks, cs, cs)\n        mask = torch.tril(torch.ones(cs, cs, device=device, dtype=torch.bool), diagonal=-1)\n        x_masked = x_expanded.masked_fill(~mask, 0)\n        tensor_segsum = torch.cumsum(x_masked, dim=-2)\n        mask_diag = torch.tril(torch.ones(cs, cs, device=device, dtype=torch.bool), diagonal=0)\n        return tensor_segsum.masked_fill(~mask_diag, -torch.inf)\n    \n    L = torch.exp(segment_sum(A_perm))  # (batch, heads, chunks, cs, cs)\n    \n    # Attention-like weights: G = C^T B\n    # C_chunked: (batch, chunks, cs, heads, state)\n    # B_chunked: (batch, chunks, cs, heads, state)\n    # G: (batch, chunks, cs_l, cs_s, heads)\n    G = torch.einsum('bclhn,bcshn->bclsh', C_chunked, B_chunked)\n    \n    # L: (batch, heads, chunks, cs_l, cs_s) -> need (batch, chunks, cs_l, cs_s, heads)\n    L_perm = L.permute(0, 2, 3, 4, 1)  # (batch, chunks, cs_l, cs_s, heads)\n    \n    # M = G * L (element-wise)\n    M = G * L_perm  # (batch, chunks, cs_l, cs_s, heads)\n    \n    # Y_diag = einsum(M, hidden_states_ssm_chunked)\n    # M: (batch, chunks, cs_l, cs_s, heads)\n    # hidden_states_ssm_chunked: (batch, chunks, cs_s, heads, head_dim)\n    Y_diag = torch.einsum('bclsh,bcshd->bclhd', M, hidden_states_ssm_chunked)\n    \n    # 3b. Compute states at chunk boundaries\n    # decay_states: exp(A_cumsum[:,:,:,-1:] - A_cumsum)\n    decay_states = torch.exp(A_cumsum[:, :, :, -1:] - A_cumsum)  # (batch, heads, chunks, cs)\n    # decay_states permuted: (batch, chunks, cs, heads)\n    decay_states_perm = decay_states.permute(0, 2, 3, 1)\n    \n    # B_decay = B * decay_states[..., None]\n    B_decay = B_chunked * decay_states_perm[..., None]  # (batch, chunks, cs, heads, state)\n    \n    # states = einsum(hidden_states_ssm_chunked, B_decay)\n    # hidden_states_ssm_chunked: (batch, chunks, cs, heads, head_dim)\n    # B_decay: (batch, chunks, cs, heads, state)\n    # states: (batch, chunks, heads, head_dim, state)\n    states = torch.einsum('bcshd,bcshn->bchdn', hidden_states_ssm_chunked, B_decay)\n    \n    # 3c. Inter-chunk recurrence\n    previous_states = torch.zeros_like(states[:, :1])  # (batch, 1, heads, head_dim, state)\n    states_with_prev = torch.cat([previous_states, states], dim=1)  # (batch, chunks+1, heads, head_dim, state)\n    \n    # decay_chunk computation\n    # A_cumsum[:, :, :, -1]: (batch, heads, chunks)\n    A_chunk_ends = A_cumsum[:, :, :, -1]  # (batch, heads, chunks)\n    A_chunk_ends_padded = F.pad(A_chunk_ends, (1, 0))  # (batch, heads, chunks+1)\n    \n    # segment_sum for inter-chunk decay\n    def segment_sum_1d(x):\n        # x: (batch, heads, chunks+1)\n        cs = x.size(-1)\n        x_expanded = x[..., None].expand(*x.size(), cs)\n        mask = torch.tril(torch.ones(cs, cs, device=device, dtype=torch.bool), diagonal=-1)\n        x_masked = x_expanded.masked_fill(~mask, 0)\n        tensor_segsum = torch.cumsum(x_masked, dim=-2)\n        mask_diag = torch.tril(torch.ones(cs, cs, device=device, dtype=torch.bool), diagonal=0)\n        return tensor_segsum.masked_fill(~mask_diag, -torch.inf)\n    \n    decay_chunk = torch.exp(segment_sum_1d(A_chunk_ends_padded))  # (batch, heads, chunks+1, chunks+1)\n    \n    # new_states = einsum(decay_chunk, states_with_prev)\n    # decay_chunk: (batch, heads, chunks+1, chunks+1) -> need (batch, heads, c_out, c_in)\n    # states_with_prev: (batch, chunks+1, heads, head_dim, state)\n    # Permute states_with_prev: (batch, heads, chunks+1, head_dim, state)\n    states_with_prev_perm = states_with_prev.permute(0, 2, 1, 3, 4)\n    \n    # new_states: (batch, heads, chunks+1, head_dim, state)\n    new_states = torch.einsum('bhcd,bhdin->bhcin', decay_chunk, states_with_prev_perm)\n    \n    # Remove last chunk and permute back\n    new_states = new_states[:, :, :-1, :, :]  # (batch, heads, chunks, head_dim, state)\n    states_final = new_states.permute(0, 2, 1, 3, 4)  # (batch, chunks, heads, head_dim, state)\n    \n    # 3d. State to output (off-diagonal blocks)\n    # state_decay_out = exp(A_cumsum)\n    state_decay_out = torch.exp(A_cumsum)  # (batch, heads, chunks, cs)\n    state_decay_out_perm = state_decay_out.permute(0, 2, 3, 1)  # (batch, chunks, cs, heads)\n    \n    # Y_off = einsum(C_chunked, states_final, state_decay_out_perm)\n    # C_chunked: (batch, chunks, cs, heads, state)\n    # states_final: (batch, chunks, heads, head_dim, state)\n    # state_decay_out_perm: (batch, chunks, cs, heads)\n    # Y_off: (batch, chunks, cs, heads, head_dim)\n    Y_off = torch.einsum('bcshn,bchdn,bcsh->bcshd', C_chunked, states_final, state_decay_out_perm)\n    \n    # Combine intra and inter chunk outputs\n    y = Y_diag + Y_off  # (batch, chunks, cs, heads, head_dim)\n    y = y.reshape(batch_size, padded_seq_len, num_heads, head_dim)\n    \n    # Add skip connection\n    y = y + D_residual\n    \n    # Remove padding\n    if pad_size > 0:\n        y = y[:, :seq_len]\n    \n    # Reshape and convert back to original dtype\n    y = y.reshape(batch_size, seq_len, intermediate_size).to(dtype)\n    \n    # 4. Gated normalization\n    group_size = intermediate_size // n_groups\n    y_grouped = y.view(batch_size, seq_len, n_groups, group_size)\n    variance = y_grouped.float().pow(2).mean(dim=-1, keepdim=True)\n    y_normed = y_grouped * torch.rsqrt(variance + layer_norm_epsilon)\n    y_normed = y_normed.view(batch_size, seq_len, intermediate_size).to(dtype)\n    y_normed = y_normed * norm_weight\n    y = y_normed * (gate * torch.sigmoid(gate))  # silu gate\n    \n    # 5. Output projection\n    output = torch.matmul(y, out_proj_weight.t())\n    \n    return output\n"
+}

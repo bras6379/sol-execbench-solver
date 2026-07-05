@@ -1,0 +1,90 @@
+{
+    "name": "014_fp8_yarn_rope_embedding",
+    "hf_id": "deepseek-ai/DeepSeek-V3.1-Terminus",
+    "description": "FP8-quantized YaRN (Yet another RoPE extensioN method) rotary position embedding computation with dynamic frequency adjustment for extended context (163840 tokens). Computes cos/sin embeddings for rotary position encoding with YaRN interpolation and mscale factors.",
+    "axes": {
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length for position embeddings"
+        },
+        "qk_rope_head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension of rotary embeddings"
+        },
+        "half_dim": {
+            "type": "expr",
+            "expression": "qk_rope_head_dim // 2",
+            "description": "Half of rope head dimension"
+        },
+        "max_position_embeddings": {
+            "type": "const",
+            "value": 163840,
+            "description": "Maximum sequence length supported"
+        },
+        "original_max_position_embeddings": {
+            "type": "const",
+            "value": 4096,
+            "description": "Original context length before YaRN extension"
+        },
+        "rope_theta": {
+            "type": "const",
+            "value": 10000,
+            "description": "Base for frequency computation"
+        },
+        "scaling_factor": {
+            "type": "const",
+            "value": 40,
+            "description": "YaRN scaling factor"
+        },
+        "beta_fast": {
+            "type": "const",
+            "value": 32,
+            "description": "Fast frequency correction threshold"
+        },
+        "beta_slow": {
+            "type": "const",
+            "value": 1,
+            "description": "Slow frequency correction threshold"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "position_ids": {
+            "shape": [
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for each token"
+        },
+        "mscale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Mscale factor for YaRN"
+        },
+        "mscale_all_dim": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Mscale all dimension factor"
+        }
+    },
+    "outputs": {
+        "cos_emb": {
+            "shape": [
+                "seq_len",
+                "qk_rope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine embeddings for rotary position encoding"
+        },
+        "sin_emb": {
+            "shape": [
+                "seq_len",
+                "qk_rope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine embeddings for rotary position encoding"
+        }
+    },
+    "reference": "import torch\nimport math\n# --- inlined fp8_reference ---\nimport torch\n\nfrom enum import StrEnum\n\n\nclass ScalingType(StrEnum):\n    \"\"\"\n    Enum for different FP8 scaling strategies.\n\n    Scaling types:\n    - TensorWise: Global per-tensor scaling (no blocks)\n    - RowWise: Per-row scaling (1 scale per row)\n    - BlockWise1x16: 1x16 blocks (per-tensor in M, 16-sized blocks in K)\n    - BlockWise1x32: 1x32 blocks (per-tensor in M, 32-sized blocks in K)\n    - BlockWise1x128: 1x128 blocks (per-tensor in M, 128-sized blocks in K)\n    - BlockWise128x128: 128x128 blocks (blockwise in both dimensions)\n    \"\"\"\n\n    TensorWise = \"TensorWise\"\n    RowWise = \"RowWise\"\n    BlockWise1x16 = \"BlockWise1x16\"\n    BlockWise1x32 = \"BlockWise1x32\"\n    BlockWise1x128 = \"BlockWise1x128\"\n    BlockWise128x128 = \"BlockWise128x128\"\n\n    @property\n    def shape(self) -> tuple[int, int]:\n        return {\n            ScalingType.TensorWise: (None, None),\n            ScalingType.RowWise: (1, None),\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }[self]\n\n\nclass BlockwiseScaler:\n    \"\"\"\n    Compute and apply scales for FP8 tensors.\n\n    Supports various scaling strategies via ScalingType enum:\n    - TensorWise: Global per-tensor scaling\n    - RowWise: Per-row scaling\n    - BlockWise1x16/32/128: Rectangular blocks\n    - BlockWise128x128: Square blocks\n    \"\"\"\n\n    E4M3_MAX = 448.0  # Maximum representable value in E4M3\n\n    def __init__(self, scaling_type: ScalingType):\n        \"\"\"\n        Initialize BlockwiseScaler with a specific scaling strategy.\n\n        Args:\n            scaling_type: ScalingType enum value\n                Examples:\n                - ScalingType.TensorWise -> global per-tensor scaling\n                - ScalingType.RowWise -> per-row scaling (1 scale per row)\n                - ScalingType.BlockWise1x128 -> 1x128 blocks\n                - ScalingType.BlockWise128x128 -> 128x128 blocks\n        \"\"\"\n        self.scaling_type = scaling_type\n        self.shape = self.scaling_type.shape\n\n        # Map enum to block dimensions (M, K)\n        scaling_map = {\n            ScalingType.TensorWise: (None, None),  # No blocking\n            ScalingType.RowWise: (1, None),  # Per-row, full K dimension\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }\n\n        self.block_size_m, self.block_size_k = scaling_map[scaling_type]\n\n        # Keep for backward compatibility (use first dimension if available)\n        self.block_size = self.block_size_m if self.block_size_m else None\n\n    def compute_scales(self, tensor: torch.Tensor) -> torch.Tensor:\n        \"\"\"\n        Compute scale factors based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Returns scalar tensor\n        - RowWise: Returns (M,) tensor\n        - BlockWise*: Returns (M//block_size_m, K//block_size_k) tensor\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n\n        Returns:\n            Scale tensor with shape depending on scaling type.\n            These are inverse scales (amax / dtype_max) used for dequantization.\n        \"\"\"\n        if self.scaling_type == ScalingType.TensorWise:\n            # Global per-tensor scaling\n            amax = torch.max(torch.abs(tensor)).clamp(min=1e-12)\n            return amax / self.E4M3_MAX\n\n        M, K = tensor.shape\n\n        if self.scaling_type == ScalingType.RowWise:\n            # Per-row scaling: (M, K) -> (M,)\n            row_max = tensor.abs().amax(dim=1)\n            scales = row_max / self.E4M3_MAX\n            return torch.clamp(scales, min=1e-12)\n\n        # BlockWise scaling\n        assert M % self.block_size_m == 0, (\n            f\"M={M} must be a multiple of {self.block_size_m}\"\n        )\n        assert K % self.block_size_k == 0, (\n            f\"K={K} must be a multiple of {self.block_size_k}\"\n        )\n\n        # Reshape (M, K) -> (M//block_size_m, block_size_m, K//block_size_k, block_size_k)\n        new_shape = (\n            M // self.block_size_m,\n            self.block_size_m,\n            K // self.block_size_k,\n            self.block_size_k,\n        )\n        tensor_blocked = tensor.reshape(new_shape)\n\n        # Compute max over the block dimensions (dims 1 and 3)\n        block_max = tensor_blocked.abs().amax(dim=3).amax(dim=1)\n\n        # Compute inverse scales\n        scales = block_max / self.E4M3_MAX\n        return torch.clamp(scales, min=1e-12)\n\n    def apply_scaling(\n        self,\n        tensor: torch.Tensor,\n        scales: torch.Tensor,\n        inverse: bool = False,\n        clamp_to_fp8_range: bool = False,\n    ) -> torch.Tensor:\n        \"\"\"\n        Apply scaling to tensor based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Uses scalar scale\n        - RowWise: Uses per-row scales (M,)\n        - BlockWise*: Uses blockwise scales (M//block_size_m, K//block_size_k)\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n            scales: Scale tensor with shape depending on scaling type\n                   These are inverse scales (amax / dtype_max)\n            inverse: If True, multiply by scales (dequantization)\n                    If False, divide by scales (quantization)\n            clamp_to_fp8_range: If True, clamp to FP8 range before returning\n\n        Returns:\n            Scaled tensor (same shape as input)\n        \"\"\"\n        old_shape = tensor.shape\n        if self.scaling_type == ScalingType.RowWise:\n            # expand (M,) -> (M, 1)\n            scales = scales.unsqueeze(1)\n        elif self.scaling_type != ScalingType.TensorWise:\n            # blockwise scaling\n            M, K = tensor.shape\n            new_shape = (\n                M // self.block_size_m,\n                self.block_size_m,\n                K // self.block_size_k,\n                self.block_size_k,\n            )\n            tensor = tensor.reshape(new_shape)\n            scales = scales.unsqueeze(1).unsqueeze(3)\n\n        if inverse:\n            tensor_scaled = tensor * scales\n        else:\n            tensor_scaled = tensor / scales\n            if clamp_to_fp8_range:\n                tensor_scaled = torch.clamp(\n                    tensor_scaled, min=-self.E4M3_MAX, max=self.E4M3_MAX\n                )\n\n        return tensor_scaled.reshape(*old_shape)\n\n\nclass CuBLASRefBlockwiseGemm:\n    \"\"\"\n    Reference implementation of blockwise-scaled GEMM via dequantize-then-matmul.\n    \"\"\"\n\n    def scaled_mm(\n        self,\n        mat_a: torch.Tensor,\n        mat_b: torch.Tensor,\n        scale_a: torch.Tensor,\n        scale_recipe_a: ScalingType,\n        scale_b: torch.Tensor,\n        scale_recipe_b: ScalingType,\n        bias: torch.Tensor | None = None,\n        output_dtype: torch.dtype = torch.bfloat16,\n        use_fast_accum: bool = True,\n    ) -> torch.Tensor:\n        \"\"\"\n        Scaled matrix multiplication: dequantize A and B, then matmul in float32.\n\n        Args:\n            mat_a: Input matrix A (M, K) in float8_e4m3fn\n            mat_b: Input matrix B (N, K) in float8_e4m3fn\n            scale_a: Scaling factors for A\n            scale_recipe_a: Scaling type for A\n            scale_b: Scaling factors for B\n            scale_recipe_b: Scaling type for B\n            bias: Optional bias vector (N,)\n            output_dtype: Output data type\n            use_fast_accum: Unused (kept for API compatibility)\n\n        Returns:\n            Result matrix (M, N) with dtype=output_dtype\n        \"\"\"\n        scaler_a = BlockwiseScaler(scale_recipe_a)\n        scaler_b = BlockwiseScaler(scale_recipe_b)\n\n        # Dequantize: FP8 values * inverse_scales -> float32\n        a_f32 = scaler_a.apply_scaling(mat_a.to(torch.float32), scale_a, inverse=True)\n        b_f32 = scaler_b.apply_scaling(mat_b.to(torch.float32), scale_b, inverse=True)\n\n        # Single matmul in float32\n        y = a_f32 @ b_f32.T\n\n        if bias is not None and bias.numel():\n            y = y + bias\n\n        return y.to(output_dtype)\n\n# --- end inlined fp8_reference ---\n\n\n\ndef yarn_find_correction_dim(num_rotations, dim, base=10000, max_position_embeddings=2048):\n    \"\"\"Find dimension for correction based on number of rotations.\"\"\"\n    return (dim * math.log(max_position_embeddings / (num_rotations * 2 * math.pi))) / (\n        2 * math.log(base)\n    )\n\n\ndef yarn_find_correction_range(low_rot, high_rot, dim, base=10000, max_position_embeddings=2048):\n    \"\"\"Find dimension range bounds based on rotations.\"\"\"\n    low = math.floor(yarn_find_correction_dim(low_rot, dim, base, max_position_embeddings))\n    high = math.ceil(yarn_find_correction_dim(high_rot, dim, base, max_position_embeddings))\n    return max(low, 0), min(high, dim - 1)\n\n\ndef yarn_get_mscale(scale=1, mscale=1):\n    \"\"\"Compute mscale factor for YaRN.\"\"\"\n    if scale <= 1:\n        return 1.0\n    return 0.1 * mscale * math.log(scale) + 1.0\n\n\ndef yarn_linear_ramp_mask(min_val, max_val, dim, device):\n    \"\"\"Create linear ramp mask for frequency interpolation.\"\"\"\n    if min_val == max_val:\n        max_val += 0.001\n    linear_func = (torch.arange(dim, dtype=torch.float32, device=device) - min_val) / (max_val - min_val)\n    ramp_func = torch.clamp(linear_func, 0, 1)\n    return ramp_func\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs for YaRN RoPE embedding computation.\"\"\"\n    seq_len = axes_and_scalars[\"seq_len\"]\n    \n    position_ids = torch.arange(seq_len, dtype=torch.int64, device=device)\n    mscale = 1.0\n    mscale_all_dim = 1.0\n    \n    return {\n        \"position_ids\": position_ids,\n        \"mscale\": mscale,\n        \"mscale_all_dim\": mscale_all_dim,\n    }\n\n\n@torch.no_grad()\ndef run(\n    position_ids: torch.Tensor,\n    mscale: float,\n    mscale_all_dim: float,\n):\n    \"\"\"\n    Compute FP8-quantized YaRN rotary position embeddings.\n    \n    This implements YaRN (Yet another RoPE extensioN method) with FP8 quantization\n    for memory bandwidth reduction. The computation involves:\n    1. Computing base inverse frequencies\n    2. Applying YaRN interpolation with correction ranges\n    3. FP8 quantization of frequency computations\n    4. Computing cos/sin embeddings with mscale\n    \n    Args:\n        position_ids: Position indices (seq_len,)\n        mscale: Mscale factor for YaRN\n        mscale_all_dim: Mscale all dimension factor\n    \n    Returns:\n        Tuple of (cos_emb, sin_emb) tensors for rotary embedding application\n    \"\"\"\n    device = position_ids.device\n    seq_len = position_ids.shape[0]\n    \n    # Constants from definition\n    dim = 64  # qk_rope_head_dim\n    base = 10000  # rope_theta\n    scaling_factor = 40\n    original_max_position_embeddings = 4096\n    beta_fast = 32\n    beta_slow = 1\n    \n    # FP8 scaler for frequency computations\n    freq_scaler = BlockwiseScaler(ScalingType.BlockWise1x128)\n    \n    # Compute base frequencies\n    freq_extra = 1.0 / (\n        base ** (torch.arange(0, dim, 2, dtype=torch.float32, device=device) / dim)\n    )\n    freq_inter = 1.0 / (\n        scaling_factor * base ** (torch.arange(0, dim, 2, dtype=torch.float32, device=device) / dim)\n    )\n    \n    # Find correction range for YaRN interpolation\n    low, high = yarn_find_correction_range(\n        beta_fast,\n        beta_slow,\n        dim,\n        base,\n        original_max_position_embeddings,\n    )\n    \n    # Create interpolation mask\n    inv_freq_mask = 1.0 - yarn_linear_ramp_mask(low, high, dim // 2, device)\n    \n    # Interpolate frequencies using YaRN method\n    inv_freq = freq_inter * (1 - inv_freq_mask) + freq_extra * inv_freq_mask\n    \n    # Create position tensor from position_ids\n    t = position_ids.to(torch.float32)\n    \n    # Compute frequencies via outer product\n    freqs = torch.outer(t, inv_freq)  # (seq_len, dim//2)\n    \n    # Pad to multiple of 128 for blockwise FP8 scaling\n    pad_size = (128 - (freqs.shape[1] % 128)) % 128\n    if pad_size > 0:\n        freqs_padded = torch.nn.functional.pad(freqs, (0, pad_size), value=0.0)\n    else:\n        freqs_padded = freqs\n    \n    # FP8 quantization of frequencies\n    scales = freq_scaler.compute_scales(freqs_padded)\n    freqs_scaled = freq_scaler.apply_scaling(\n        freqs_padded, scales, inverse=False, clamp_to_fp8_range=True\n    )\n    freqs_fp8 = freqs_scaled.to(torch.float8_e4m3fn)\n    \n    # Dequantize for cos/sin computation\n    freqs_dequant = freqs_fp8.to(torch.float32)\n    freqs_dequant = freq_scaler.apply_scaling(\n        freqs_dequant, scales, inverse=True\n    )\n    \n    # Remove padding\n    freqs_final = freqs_dequant[:, :dim // 2]\n    \n    # Compute mscale factor\n    _mscale = float(\n        yarn_get_mscale(scaling_factor, mscale)\n        / yarn_get_mscale(scaling_factor, mscale_all_dim)\n    )\n    \n    # Concatenate for full embedding dimension\n    emb = torch.cat((freqs_final, freqs_final), dim=-1)  # (seq_len, dim)\n    \n    # Compute cos/sin with mscale\n    cos_emb = (emb.cos() * _mscale).to(torch.bfloat16)\n    sin_emb = (emb.sin() * _mscale).to(torch.bfloat16)\n    \n    return cos_emb, sin_emb\n\n\nif __name__ == \"__main__\":\n    inputs = get_inputs(\n        axes_and_scalars={\"seq_len\": 1024},\n        device=torch.device(\"cuda:0\"),\n    )\n    cos_emb, sin_emb = run(**inputs)\n    print(f\"cos_emb shape: {cos_emb.shape}\")\n    print(f\"sin_emb shape: {sin_emb.shape}\")\n"
+}

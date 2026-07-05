@@ -1,0 +1,45 @@
+{
+    "name": "006_gemm_n2048_k4096",
+    "hf_id": "",
+    "description": "General matrix multiply (GEMM) C = A @ B.T. Captured from Qwen 3 30B A3B attn.o_proj.",
+    "axes": {
+        "M": {
+            "type": "var"
+        },
+        "N": {
+            "type": "const",
+            "value": 2048
+        },
+        "K": {
+            "type": "const",
+            "value": 4096
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "A": {
+            "shape": [
+                "M",
+                "K"
+            ],
+            "dtype": "float16"
+        },
+        "B": {
+            "shape": [
+                "N",
+                "K"
+            ],
+            "dtype": "float16"
+        }
+    },
+    "outputs": {
+        "C": {
+            "shape": [
+                "M",
+                "N"
+            ],
+            "dtype": "float16"
+        }
+    },
+    "reference": "import torch\n\ndef run(A, B):\n    C = torch.matmul(A, B.T)\n    return C"
+}

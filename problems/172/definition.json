@@ -1,0 +1,227 @@
+{
+    "name": "078_fused_final_layer_upsample_with_adaptive_norm",
+    "hf_id": "tencent/HunyuanImage-3.0",
+    "description": "Fused UNet upsampling path that combines timestep-conditioned adaptive group normalization with ResBlock upsampling and final convolution to convert transformer hidden states back to VAE latent space. This critical operation runs at every diffusion step for image generation.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "token_h": {
+            "type": "var",
+            "description": "Height of token grid"
+        },
+        "token_w": {
+            "type": "var",
+            "description": "Width of token grid"
+        },
+        "seq_len": {
+            "type": "expr",
+            "expression": "token_h * token_w",
+            "description": "Sequence length (token_h * token_w)"
+        },
+        "patch_size": {
+            "type": "const",
+            "value": 1
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096
+        },
+        "emb_channels": {
+            "type": "const",
+            "value": 4096
+        },
+        "hidden_channels": {
+            "type": "const",
+            "value": 3072
+        },
+        "out_channels": {
+            "type": "const",
+            "value": 4
+        },
+        "double_hidden_channels": {
+            "type": "expr",
+            "expression": "hidden_channels * 2",
+            "description": "2 * hidden_channels for scale/shift"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Transformer hidden states"
+        },
+        "timestep_emb": {
+            "shape": [
+                "batch_size",
+                "emb_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Timestep embeddings"
+        },
+        "time_emb_mlp_linear_weight": {
+            "shape": [
+                "double_hidden_channels",
+                "emb_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Time embedding MLP linear weight"
+        },
+        "time_emb_mlp_linear_bias": {
+            "shape": [
+                "double_hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Time embedding MLP linear bias"
+        },
+        "resblock_in_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock input GroupNorm weight"
+        },
+        "resblock_in_norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock input GroupNorm bias"
+        },
+        "resblock_in_conv_weight": {
+            "shape": [
+                "hidden_channels",
+                "hidden_size",
+                "3",
+                "3"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock input conv weight"
+        },
+        "resblock_in_conv_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock input conv bias"
+        },
+        "resblock_emb_linear_weight": {
+            "shape": [
+                "double_hidden_channels",
+                "emb_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock embedding linear weight"
+        },
+        "resblock_emb_linear_bias": {
+            "shape": [
+                "double_hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock embedding linear bias"
+        },
+        "resblock_out_norm_weight": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock output GroupNorm weight"
+        },
+        "resblock_out_norm_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock output GroupNorm bias"
+        },
+        "resblock_out_conv_weight": {
+            "shape": [
+                "hidden_channels",
+                "hidden_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock output conv weight"
+        },
+        "resblock_out_conv_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock output conv bias"
+        },
+        "resblock_skip_conv_weight": {
+            "shape": [
+                "hidden_channels",
+                "hidden_size",
+                "1",
+                "1"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock skip connection conv weight"
+        },
+        "resblock_skip_conv_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "ResBlock skip connection conv bias"
+        },
+        "final_norm_weight": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final GroupNorm weight"
+        },
+        "final_norm_bias": {
+            "shape": [
+                "hidden_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final GroupNorm bias"
+        },
+        "final_conv_weight": {
+            "shape": [
+                "out_channels",
+                "hidden_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final conv weight"
+        },
+        "final_conv_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "bfloat16",
+            "description": "Final conv bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for group normalization"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "out_channels",
+                "token_h",
+                "token_w"
+            ],
+            "dtype": "bfloat16",
+            "description": "VAE latent predictions"
+        }
+    },
+    "reference": "import math\n\nimport torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    token_h = axes_and_scalars[\"token_h\"]\n    token_w = axes_and_scalars[\"token_w\"]\n    seq_len = token_h * token_w\n\n    hidden_size = 4096\n    emb_channels = 4096\n    hidden_channels = 3072\n    out_channels = 4\n    double_hidden_channels = hidden_channels * 2\n    dtype = torch.bfloat16\n\n    g = torch.Generator(device=device)\n    g.manual_seed(42)\n\n    def xavier(out_f, in_f):\n        return (torch.randn(out_f, in_f, device=device, generator=g) / math.sqrt(in_f)).to(dtype)\n\n    def kaiming_conv(out_c, in_c, kh, kw):\n        fan_in = in_c * kh * kw\n        return (torch.randn(out_c, in_c, kh, kw, device=device, generator=g) * math.sqrt(2.0 / fan_in)).to(dtype)\n\n    return {\n        \"x\": torch.randn(batch_size, seq_len, hidden_size, device=device, generator=g).to(dtype),\n        # Time embedding \u2014 small magnitude\n        \"timestep_emb\": (torch.randn(batch_size, emb_channels, device=device, generator=g) * 0.1).to(dtype),\n        # Weight matrices \u2014 Xavier init\n        \"time_emb_mlp_linear_weight\": xavier(double_hidden_channels, emb_channels),\n        \"time_emb_mlp_linear_bias\": torch.randn(double_hidden_channels, device=device, generator=g).to(dtype),\n        # Norm weights: ones; norm biases: zeros\n        \"resblock_in_norm_weight\": torch.ones(hidden_size, device=device, dtype=dtype),\n        \"resblock_in_norm_bias\": torch.zeros(hidden_size, device=device, dtype=dtype),\n        # Conv weights \u2014 Kaiming init\n        \"resblock_in_conv_weight\": kaiming_conv(hidden_channels, hidden_size, 3, 3),\n        \"resblock_in_conv_bias\": torch.randn(hidden_channels, device=device, generator=g).to(dtype),\n        # Embedding linear \u2014 Xavier init\n        \"resblock_emb_linear_weight\": xavier(double_hidden_channels, emb_channels),\n        \"resblock_emb_linear_bias\": torch.randn(double_hidden_channels, device=device, generator=g).to(dtype),\n        # Norm weights: ones; norm biases: zeros\n        \"resblock_out_norm_weight\": torch.ones(hidden_channels, device=device, dtype=dtype),\n        \"resblock_out_norm_bias\": torch.zeros(hidden_channels, device=device, dtype=dtype),\n        # Conv weights \u2014 Kaiming init\n        \"resblock_out_conv_weight\": kaiming_conv(hidden_channels, hidden_channels, 3, 3),\n        \"resblock_out_conv_bias\": torch.randn(hidden_channels, device=device, generator=g).to(dtype),\n        # Skip conv \u2014 Kaiming (1x1)\n        \"resblock_skip_conv_weight\": kaiming_conv(hidden_channels, hidden_size, 1, 1),\n        \"resblock_skip_conv_bias\": torch.randn(hidden_channels, device=device, generator=g).to(dtype),\n        # Final norm weights: ones; biases: zeros\n        \"final_norm_weight\": torch.ones(hidden_channels, device=device, dtype=dtype),\n        \"final_norm_bias\": torch.zeros(hidden_channels, device=device, dtype=dtype),\n        # Final conv \u2014 Kaiming init\n        \"final_conv_weight\": kaiming_conv(out_channels, hidden_channels, 3, 3),\n        \"final_conv_bias\": torch.randn(out_channels, device=device, generator=g).to(dtype),\n        # Epsilon\n        \"eps\": 1e-6,\n    }\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    timestep_emb: torch.Tensor,\n    time_emb_mlp_linear_weight: torch.Tensor,\n    time_emb_mlp_linear_bias: torch.Tensor,\n    resblock_in_norm_weight: torch.Tensor,\n    resblock_in_norm_bias: torch.Tensor,\n    resblock_in_conv_weight: torch.Tensor,\n    resblock_in_conv_bias: torch.Tensor,\n    resblock_emb_linear_weight: torch.Tensor,\n    resblock_emb_linear_bias: torch.Tensor,\n    resblock_out_norm_weight: torch.Tensor,\n    resblock_out_norm_bias: torch.Tensor,\n    resblock_out_conv_weight: torch.Tensor,\n    resblock_out_conv_bias: torch.Tensor,\n    resblock_skip_conv_weight: torch.Tensor,\n    resblock_skip_conv_bias: torch.Tensor,\n    final_norm_weight: torch.Tensor,\n    final_norm_bias: torch.Tensor,\n    final_conv_weight: torch.Tensor,\n    final_conv_bias: torch.Tensor,\n    eps: float,\n):\n    batch_size = x.shape[0]\n    seq_len = x.shape[1]\n    hidden_size = x.shape[2]\n    hidden_channels = resblock_in_conv_weight.shape[0]\n    out_channels = final_conv_weight.shape[0]\n    \n    # Infer token_h and token_w from seq_len (assuming square or close to square)\n    token_h = int(seq_len ** 0.5)\n    token_w = seq_len // token_h\n    while token_h * token_w != seq_len:\n        token_h -= 1\n        token_w = seq_len // token_h\n    \n    # Reshape from sequence to spatial: (B, seq_len, C) -> (B, C, H, W)\n    x_spatial = x.reshape(batch_size, token_h, token_w, hidden_size)\n    x_spatial = x_spatial.permute(0, 3, 1, 2).contiguous()  # (B, C, H, W)\n    \n    # Process timestep embedding through MLP: SiLU + Linear\n    emb = F.silu(timestep_emb)\n    emb = F.linear(emb, time_emb_mlp_linear_weight, time_emb_mlp_linear_bias)  # (B, 2 * hidden_channels)\n    \n    # ResBlock forward pass\n    # Input processing: GroupNorm + SiLU + Conv\n    h = F.group_norm(x_spatial, 32, resblock_in_norm_weight, resblock_in_norm_bias, eps)\n    h = F.silu(h)\n    h = F.conv2d(h, resblock_in_conv_weight, resblock_in_conv_bias, padding=1)\n    \n    # Get scale and shift from timestep embedding for adaptive normalization\n    emb_out = F.silu(timestep_emb)\n    emb_out = F.linear(emb_out, resblock_emb_linear_weight, resblock_emb_linear_bias)  # (B, 2 * out_channels)\n    emb_out = emb_out.unsqueeze(-1).unsqueeze(-1)  # (B, 2 * out_channels, 1, 1)\n    \n    # Adaptive Group Normalization\n    h = F.group_norm(h, 32, resblock_out_norm_weight, resblock_out_norm_bias, eps)\n    scale, shift = torch.chunk(emb_out, 2, dim=1)  # Each (B, out_channels, 1, 1)\n    h = h * (1.0 + scale) + shift  # Adaptive affine transformation\n    \n    # Output processing: SiLU + Conv\n    h = F.silu(h)\n    h = F.conv2d(h, resblock_out_conv_weight, resblock_out_conv_bias, padding=1)\n    \n    # Skip connection (with 1x1 conv since in_channels != out_channels)\n    skip = F.conv2d(x_spatial, resblock_skip_conv_weight, resblock_skip_conv_bias)\n    h = skip + h\n    \n    # Final normalization and projection to VAE latent space\n    h = F.group_norm(h, 32, final_norm_weight, final_norm_bias, eps)\n    h = F.silu(h)\n    output = F.conv2d(h, final_conv_weight, final_conv_bias, padding=1)\n    \n    return output\n"
+}

@@ -1,0 +1,204 @@
+{
+    "name": "021_cross_attention_text_video_conditioning_backward",
+    "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+    "description": "Backward pass for cross-attention text-video conditioning. Computes gradients through output projection, attention mechanism (softmax, Q@K^T), and Q/K/V linear projections. Queries from video latents, keys/values from text embeddings.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "num_video_tokens": {
+            "type": "var"
+        },
+        "num_text_tokens": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "num_video_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient from next layer"
+        },
+        "video_latents": {
+            "shape": [
+                "batch_size",
+                "num_video_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input video tokens (saved from forward)"
+        },
+        "text_embeddings": {
+            "shape": [
+                "batch_size",
+                "num_text_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input text tokens (saved from forward)"
+        },
+        "query_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "query_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection bias"
+        },
+        "key_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "key_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection bias"
+        },
+        "value_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "value_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection bias"
+        },
+        "output_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "output_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention score scaling factor (1/sqrt(head_dim))"
+        }
+    },
+    "outputs": {
+        "grad_video_latents": {
+            "shape": [
+                "batch_size",
+                "num_video_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. video latents"
+        },
+        "grad_text_embeddings": {
+            "shape": [
+                "batch_size",
+                "num_text_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. text embeddings"
+        },
+        "grad_query_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query weight"
+        },
+        "grad_query_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query bias"
+        },
+        "grad_key_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key weight"
+        },
+        "grad_key_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key bias"
+        },
+        "grad_value_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. value weight"
+        },
+        "grad_value_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. value bias"
+        },
+        "grad_output_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output weight"
+        },
+        "grad_output_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output bias"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    video_latents: torch.Tensor,\n    text_embeddings: torch.Tensor,\n    query_weight: torch.Tensor,\n    query_bias: torch.Tensor,\n    key_weight: torch.Tensor,\n    key_bias: torch.Tensor,\n    value_weight: torch.Tensor,\n    value_bias: torch.Tensor,\n    output_weight: torch.Tensor,\n    output_bias: torch.Tensor,\n    scale: float,\n):\n    \"\"\"\n    Backward pass for cross-attention text-video conditioning.\n    \n    Computes gradients through:\n    1. Output projection\n    2. Attention-value multiplication\n    3. Softmax\n    4. Attention score computation (Q @ K^T)\n    5. Q, K, V linear projections\n    \"\"\"\n    batch_size, num_video_tokens, hidden_size = video_latents.shape\n    num_text_tokens = text_embeddings.shape[1]\n    num_heads = 16\n    head_dim = 64\n    \n    # Recompute forward pass intermediates\n    # Project queries from video latents\n    queries = F.linear(video_latents, query_weight, query_bias)  # [B, N_v, D]\n    queries = queries.view(batch_size, num_video_tokens, num_heads, head_dim)\n    queries = queries.transpose(1, 2)  # [B, H, N_v, d]\n    \n    # Project keys and values from text embeddings\n    keys = F.linear(text_embeddings, key_weight, key_bias)  # [B, N_t, D]\n    keys = keys.view(batch_size, num_text_tokens, num_heads, head_dim)\n    keys = keys.transpose(1, 2)  # [B, H, N_t, d]\n    \n    values = F.linear(text_embeddings, value_weight, value_bias)  # [B, N_t, D]\n    values = values.view(batch_size, num_text_tokens, num_heads, head_dim)\n    values = values.transpose(1, 2)  # [B, H, N_t, d]\n    \n    # Compute attention scores\n    attention_scores = torch.matmul(queries, keys.transpose(-2, -1)) * scale  # [B, H, N_v, N_t]\n    \n    # Compute attention probabilities\n    attention_probs = F.softmax(attention_scores, dim=-1, dtype=torch.float32)  # [B, H, N_v, N_t]\n    \n    # Apply attention to values\n    context = torch.matmul(attention_probs, values)  # [B, H, N_v, d]\n    \n    # Reshape back to [B, N_v, D]\n    context = context.transpose(1, 2).contiguous()  # [B, N_v, H, d]\n    context = context.view(batch_size, num_video_tokens, hidden_size)  # [B, N_v, D]\n    \n    # ========================================\n    # Backward through output projection\n    # ========================================\n    grad_context = torch.matmul(grad_output, output_weight)  # [B, N_v, D]\n    \n    # grad_output_weight = grad_output^T @ context (summed over batch)\n    grad_output_weight = torch.einsum('bnd,bnk->dk', grad_output, context)  # [D, D]\n    grad_output_bias = grad_output.sum(dim=(0, 1))  # [D]\n    \n    # ========================================\n    # Backward through reshape from attention\n    # ========================================\n    grad_context_heads = grad_context.view(batch_size, num_video_tokens, num_heads, head_dim)\n    grad_context_heads = grad_context_heads.transpose(1, 2)  # [B, H, N_v, d]\n    \n    # ========================================\n    # Backward through attention @ values\n    # ========================================\n    grad_attention_probs = torch.matmul(grad_context_heads, values.transpose(-2, -1))  # [B, H, N_v, N_t]\n    grad_values = torch.matmul(attention_probs.transpose(-2, -1), grad_context_heads)  # [B, H, N_t, d]\n    \n    # ========================================\n    # Backward through softmax\n    # ========================================\n    sum_grad_probs = (grad_attention_probs * attention_probs).sum(dim=-1, keepdim=True)  # [B, H, N_v, 1]\n    grad_attention_scores = attention_probs * (grad_attention_probs - sum_grad_probs)  # [B, H, N_v, N_t]\n    \n    # ========================================\n    # Backward through scaling\n    # ========================================\n    grad_attention_scores = grad_attention_scores * scale\n    \n    # ========================================\n    # Backward through Q @ K^T\n    # ========================================\n    grad_queries = torch.matmul(grad_attention_scores, keys)  # [B, H, N_v, d]\n    grad_keys = torch.matmul(grad_attention_scores.transpose(-2, -1), queries)  # [B, H, N_t, d]\n    \n    # ========================================\n    # Backward through reshape for Q, K, V\n    # ========================================\n    grad_queries = grad_queries.transpose(1, 2).contiguous()  # [B, N_v, H, d]\n    grad_queries = grad_queries.view(batch_size, num_video_tokens, hidden_size)  # [B, N_v, D]\n    \n    grad_keys = grad_keys.transpose(1, 2).contiguous()  # [B, N_t, H, d]\n    grad_keys = grad_keys.view(batch_size, num_text_tokens, hidden_size)  # [B, N_t, D]\n    \n    grad_values = grad_values.transpose(1, 2).contiguous()  # [B, N_t, H, d]\n    grad_values = grad_values.view(batch_size, num_text_tokens, hidden_size)  # [B, N_t, D]\n    \n    # ========================================\n    # Backward through Q projection\n    # ========================================\n    grad_video_latents = torch.matmul(grad_queries, query_weight)  # [B, N_v, D]\n    grad_query_weight = torch.einsum('bnd,bnk->dk', grad_queries, video_latents)  # [D, D]\n    grad_query_bias = grad_queries.sum(dim=(0, 1))  # [D]\n    \n    # ========================================\n    # Backward through K projection\n    # ========================================\n    grad_text_from_keys = torch.matmul(grad_keys, key_weight)  # [B, N_t, D]\n    grad_key_weight = torch.einsum('bnd,bnk->dk', grad_keys, text_embeddings)  # [D, D]\n    grad_key_bias = grad_keys.sum(dim=(0, 1))  # [D]\n    \n    # ========================================\n    # Backward through V projection\n    # ========================================\n    grad_text_from_values = torch.matmul(grad_values, value_weight)  # [B, N_t, D]\n    grad_value_weight = torch.einsum('bnd,bnk->dk', grad_values, text_embeddings)  # [D, D]\n    grad_value_bias = grad_values.sum(dim=(0, 1))  # [D]\n    \n    # ========================================\n    # Accumulate gradients for text_embeddings\n    # ========================================\n    grad_text_embeddings = grad_text_from_keys + grad_text_from_values\n    \n    return (\n        grad_video_latents,\n        grad_text_embeddings,\n        grad_query_weight,\n        grad_query_bias,\n        grad_key_weight,\n        grad_key_bias,\n        grad_value_weight,\n        grad_value_bias,\n        grad_output_weight,\n        grad_output_bias,\n    )\n"
+}

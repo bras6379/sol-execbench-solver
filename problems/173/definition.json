@@ -1,0 +1,182 @@
+{
+    "name": "079_git_vision_encoder_layer",
+    "hf_id": "valhalla/maskgit-imagenet-soft-code-34k",
+    "description": "Complete vision encoder layer combining multi-head self-attention with pre-LayerNorm, MLP with GELU activation, and residual connections. Performs: pre-norm -> attention -> residual -> pre-norm -> MLP -> residual.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length (number of patches + class token)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 768,
+            "description": "Hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 12,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "expr",
+            "expression": "hidden_size // num_heads",
+            "description": "Per-head dimension (64)"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 3072,
+            "description": "MLP intermediate dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "layer_norm1_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm1 weight"
+        },
+        "layer_norm1_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm1 bias"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "q_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection bias"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "k_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection bias"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "v_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection bias"
+        },
+        "out_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "out_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "layer_norm2_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm2 weight"
+        },
+        "layer_norm2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm2 bias"
+        },
+        "fc1_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP fc1 weight"
+        },
+        "fc1_bias": {
+            "shape": [
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP fc1 bias"
+        },
+        "fc2_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP fc2 weight"
+        },
+        "fc2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "MLP fc2 bias"
+        },
+        "layer_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "LayerNorm epsilon"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    layer_norm1_weight: torch.Tensor,\n    layer_norm1_bias: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    q_proj_bias: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    k_proj_bias: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    v_proj_bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n    layer_norm2_weight: torch.Tensor,\n    layer_norm2_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    layer_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_heads = 12\n    head_dim = hidden_size // num_heads\n    scale = head_dim ** -0.5\n    \n    # ===== Attention Block =====\n    residual = hidden_states\n    \n    # LayerNorm1\n    mean = hidden_states.mean(dim=-1, keepdim=True)\n    var = ((hidden_states - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_states = (hidden_states - mean) / torch.sqrt(var + layer_norm_eps)\n    hidden_states = hidden_states * layer_norm1_weight + layer_norm1_bias\n    \n    # Q, K, V projections\n    queries = torch.matmul(hidden_states, q_proj_weight.t()) + q_proj_bias\n    keys = torch.matmul(hidden_states, k_proj_weight.t()) + k_proj_bias\n    values = torch.matmul(hidden_states, v_proj_weight.t()) + v_proj_bias\n    \n    # Reshape for multi-head attention\n    queries = queries.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    keys = keys.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    values = values.view(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n    \n    # Attention computation\n    attn_weights = torch.matmul(queries, keys.transpose(-1, -2)) * scale\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32)\n    \n    attn_output = torch.matmul(attn_weights, values)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, hidden_size)\n    \n    # Output projection\n    attn_output = torch.matmul(attn_output, out_proj_weight.t()) + out_proj_bias\n    hidden_states = residual + attn_output\n    \n    # ===== MLP Block =====\n    residual = hidden_states\n    \n    # LayerNorm2\n    mean = hidden_states.mean(dim=-1, keepdim=True)\n    var = ((hidden_states - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_states = (hidden_states - mean) / torch.sqrt(var + layer_norm_eps)\n    hidden_states = hidden_states * layer_norm2_weight + layer_norm2_bias\n    \n    # MLP: fc1 -> quick_gelu -> fc2\n    hidden_states = torch.matmul(hidden_states, fc1_weight.t()) + fc1_bias\n    # Quick GELU: x * sigmoid(1.702 * x)\n    hidden_states = hidden_states * torch.sigmoid(1.702 * hidden_states)\n    hidden_states = torch.matmul(hidden_states, fc2_weight.t()) + fc2_bias\n    \n    # Residual connection\n    output = residual + hidden_states\n    \n    return output\n"
+}

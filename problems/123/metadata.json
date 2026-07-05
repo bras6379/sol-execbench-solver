@@ -1,0 +1,151 @@
+{
+  "task_id": 123,
+  "subset": "L2",
+  "collection_index": 29,
+  "name": "029_moe_sparse_routing_and_dispatch",
+  "hf_id": "baidu/ERNIE-4.5-300B-A47B-PT",
+  "num_workloads": 9,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:41.252773Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 4.265182,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 4,
+          "seq_len": 1024
+        },
+        "sol_ms": 3.98650465,
+        "baseline_latency_ms": 9.850372
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 1,
+          "seq_len": 4096
+        },
+        "sol_ms": 3.98650465,
+        "baseline_latency_ms": 9.831252
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 4,
+          "seq_len": 512
+        },
+        "sol_ms": 1.99345233,
+        "baseline_latency_ms": 5.734586999999999
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 8,
+          "seq_len": 512
+        },
+        "sol_ms": 3.98650465,
+        "baseline_latency_ms": 9.6864365
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 1,
+          "seq_len": 8192
+        },
+        "sol_ms": 7.97260931,
+        "baseline_latency_ms": 18.800889
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 7.97260931,
+        "baseline_latency_ms": 18.412619
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 1,
+          "seq_len": 1571
+        },
+        "sol_ms": 1.5292502,
+        "baseline_latency_ms": 4.4076745
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 8,
+          "seq_len": 613
+        },
+        "sol_ms": 4.77282608,
+        "baseline_latency_ms": 11.915531
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 8192,
+          "num_experts": 64,
+          "top_k": 8,
+          "intermediate_size": 3584,
+          "shared_intermediate_size": 7168,
+          "batch_size": 32,
+          "seq_len": 256
+        },
+        "sol_ms": 7.97260931,
+        "baseline_latency_ms": 18.439835
+      }
+    ]
+  }
+}

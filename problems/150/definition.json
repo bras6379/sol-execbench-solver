@@ -1,0 +1,436 @@
+{
+    "name": "056_language_model_decoder_prenorm_attention_ffn_residual_backward",
+    "hf_id": "mistralai/Voxtral-Small-24B-2507",
+    "description": "Backward pass for complete decoder transformer layer with pre-norm attention and FFN with residual connections. Computes gradients for all weights and input through RMSNorm, GQA attention with RoPE, and SwiGLU FFN.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 5120,
+            "description": "Hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of attention heads"
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key-value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 160,
+            "description": "Dimension per attention head"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 14336,
+            "description": "FFN intermediate dimension"
+        },
+        "num_heads_x_head_dim": {
+            "type": "expr",
+            "expression": "num_heads * head_dim"
+        },
+        "num_kv_heads_x_head_dim": {
+            "type": "expr",
+            "expression": "num_kv_heads * head_dim"
+        },
+        "half_head_dim": {
+            "type": "expr",
+            "expression": "head_dim // 2"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from upstream layer"
+        },
+        "residual": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input (residual connection)"
+        },
+        "attn_input": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input to attention after first layernorm"
+        },
+        "query_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query states before RoPE"
+        },
+        "key_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key states before RoPE"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value states"
+        },
+        "query_states_rotated": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query states after RoPE"
+        },
+        "key_states_rotated": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key states after RoPE"
+        },
+        "key_states_repeated": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key states repeated for GQA"
+        },
+        "value_states_repeated": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value states repeated for GQA"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine for RoPE"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine for RoPE"
+        },
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention weights after softmax"
+        },
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads_x_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output before projection"
+        },
+        "residual2": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input to FFN block (residual connection)"
+        },
+        "ffn_input": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input to FFN after second layernorm"
+        },
+        "gate": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection output"
+        },
+        "up": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection output"
+        },
+        "silu_up": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "SiLU activation of up projection"
+        },
+        "swiglu_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "SwiGLU output (gate * silu_up)"
+        },
+        "input_ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input layernorm weight"
+        },
+        "q_weight": {
+            "shape": [
+                "num_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_weight": {
+            "shape": [
+                "num_kv_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_weight": {
+            "shape": [
+                "num_kv_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "o_weight": {
+            "shape": [
+                "hidden_size",
+                "num_heads_x_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "post_attn_ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Post-attention layernorm weight"
+        },
+        "gate_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weight"
+        },
+        "up_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weight"
+        },
+        "down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weight"
+        },
+        "variance1": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Variance from first RMSNorm"
+        },
+        "variance2": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Variance from second RMSNorm"
+        },
+        "hidden_states_normalized1": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Normalized hidden states from first RMSNorm"
+        },
+        "hidden_states_normalized2": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Normalized hidden states from second RMSNorm"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability"
+        }
+    },
+    "outputs": {
+        "grad_input": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input hidden states"
+        },
+        "grad_input_ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input layernorm weight"
+        },
+        "grad_q_weight": {
+            "shape": [
+                "num_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query projection weight"
+        },
+        "grad_k_weight": {
+            "shape": [
+                "num_kv_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key projection weight"
+        },
+        "grad_v_weight": {
+            "shape": [
+                "num_kv_heads_x_head_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. value projection weight"
+        },
+        "grad_o_weight": {
+            "shape": [
+                "hidden_size",
+                "num_heads_x_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output projection weight"
+        },
+        "grad_post_attn_ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. post-attention layernorm weight"
+        },
+        "grad_gate_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. gate projection weight"
+        },
+        "grad_up_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. up projection weight"
+        },
+        "grad_down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. down projection weight"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n\ndef rotate_half(x: torch.Tensor) -> torch.Tensor:\n    \"\"\"Rotates half the hidden dims of the input.\"\"\"\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef apply_rotary_pos_emb(x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor) -> torch.Tensor:\n    \"\"\"Apply RoPE to input tensor x. cos/sin shape: (batch, seq, head_dim), x shape: (batch, heads, seq, head_dim).\"\"\"\n    cos_expanded = cos.unsqueeze(1)  # (batch, 1, seq, head_dim)\n    sin_expanded = sin.unsqueeze(1)\n    return (x * cos_expanded) + (rotate_half(x) * sin_expanded)\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate realistic inputs by running the forward pass to produce consistent intermediates.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    num_heads = axes_and_scalars[\"num_heads\"]\n    num_kv_heads = axes_and_scalars[\"num_kv_heads\"]\n    head_dim = axes_and_scalars[\"head_dim\"]\n    intermediate_size = axes_and_scalars[\"intermediate_size\"]\n    eps = 1e-6\n    num_key_value_groups = num_heads // num_kv_heads\n\n    with torch.no_grad():\n        # ---- Weights with realistic initialization ----\n        # RMSNorm weights near 1.0\n        input_ln_weight = (1.0 + 0.02 * torch.randn(hidden_size, device=device)).to(torch.bfloat16)\n        post_attn_ln_weight = (1.0 + 0.02 * torch.randn(hidden_size, device=device)).to(torch.bfloat16)\n\n        # Linear projection weights with Kaiming-like init\n        q_weight = (torch.randn(num_heads * head_dim, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5).to(torch.bfloat16)\n        k_weight = (torch.randn(num_kv_heads * head_dim, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5).to(torch.bfloat16)\n        v_weight = (torch.randn(num_kv_heads * head_dim, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5).to(torch.bfloat16)\n        o_weight = (torch.randn(hidden_size, num_heads * head_dim, device=device) * (2.0 / (num_heads * head_dim)) ** 0.5).to(torch.bfloat16)\n        gate_weight = (torch.randn(intermediate_size, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5).to(torch.bfloat16)\n        up_weight = (torch.randn(intermediate_size, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5).to(torch.bfloat16)\n        down_weight = (torch.randn(hidden_size, intermediate_size, device=device) * (2.0 / intermediate_size) ** 0.5).to(torch.bfloat16)\n\n        # ---- RoPE cos/sin (actual trigonometric values) ----\n        # Mistral-style RoPE with base frequency\n        rope_base = 1000000.0\n        inv_freq = 1.0 / (rope_base ** (torch.arange(0, head_dim, 2, device=device, dtype=torch.float32) / head_dim))\n        positions = torch.arange(seq_len, device=device, dtype=torch.float32)\n        freqs = torch.outer(positions, inv_freq)  # (seq_len, head_dim//2)\n        emb = torch.cat([freqs, freqs], dim=-1)  # (seq_len, head_dim)\n        cos = emb.cos().unsqueeze(0).expand(batch_size, -1, -1).to(torch.bfloat16)  # (batch, seq, head_dim)\n        sin = emb.sin().unsqueeze(0).expand(batch_size, -1, -1).to(torch.bfloat16)\n\n        # ---- Input residual (unit-scale) ----\n        residual = (torch.randn(batch_size, seq_len, hidden_size, device=device) * 0.02).to(torch.bfloat16)\n\n        # ---- RMSNorm 1: residual -> attn_input ----\n        residual_fp32 = residual.to(torch.float32)\n        variance1 = residual_fp32.pow(2).mean(-1, keepdim=True)  # (batch, seq, 1)\n        hidden_states_normalized1 = residual_fp32 * torch.rsqrt(variance1 + eps)  # (batch, seq, hidden)\n        attn_input = (hidden_states_normalized1 * input_ln_weight.to(torch.float32)).to(torch.bfloat16)\n\n        # ---- QKV projections ----\n        query_states = F.linear(attn_input, q_weight).reshape(batch_size, seq_len, num_heads, head_dim).transpose(1, 2)\n        key_states = F.linear(attn_input, k_weight).reshape(batch_size, seq_len, num_kv_heads, head_dim).transpose(1, 2)\n        value_states = F.linear(attn_input, v_weight).reshape(batch_size, seq_len, num_kv_heads, head_dim).transpose(1, 2)\n\n        # ---- Apply RoPE ----\n        query_states_rotated = apply_rotary_pos_emb(query_states, cos, sin)\n        key_states_rotated = apply_rotary_pos_emb(key_states, cos, sin)\n\n        # ---- GQA: repeat KV heads ----\n        key_states_repeated = key_states_rotated.unsqueeze(2).expand(\n            batch_size, num_kv_heads, num_key_value_groups, seq_len, head_dim\n        ).reshape(batch_size, num_heads, seq_len, head_dim)\n        value_states_repeated = value_states.unsqueeze(2).expand(\n            batch_size, num_kv_heads, num_key_value_groups, seq_len, head_dim\n        ).reshape(batch_size, num_heads, seq_len, head_dim)\n\n        # ---- Scaled dot-product attention ----\n        attn_logits = torch.matmul(query_states_rotated, key_states_repeated.transpose(2, 3)) / math.sqrt(head_dim)\n        # Apply causal mask\n        causal_mask = torch.triu(torch.ones(seq_len, seq_len, device=device, dtype=torch.bool), diagonal=1)\n        attn_logits = attn_logits.masked_fill(causal_mask.unsqueeze(0).unsqueeze(0), float('-inf'))\n        attn_weights = torch.softmax(attn_logits.to(torch.float32), dim=-1).to(torch.bfloat16)\n\n        # ---- Attention output ----\n        attn_out_heads = torch.matmul(attn_weights, value_states_repeated)  # (batch, heads, seq, head_dim)\n        attn_output = attn_out_heads.transpose(1, 2).reshape(batch_size, seq_len, num_heads * head_dim)\n\n        # ---- Output projection + residual ----\n        residual2 = residual + F.linear(attn_output, o_weight)\n\n        # ---- RMSNorm 2: residual2 -> ffn_input ----\n        residual2_fp32 = residual2.to(torch.float32)\n        variance2 = residual2_fp32.pow(2).mean(-1, keepdim=True)\n        hidden_states_normalized2 = residual2_fp32 * torch.rsqrt(variance2 + eps)\n        ffn_input = (hidden_states_normalized2 * post_attn_ln_weight.to(torch.float32)).to(torch.bfloat16)\n\n        # ---- FFN: SwiGLU ----\n        gate = F.linear(ffn_input, gate_weight)\n        up = F.linear(ffn_input, up_weight)\n        silu_up = F.silu(up.to(torch.float32)).to(torch.bfloat16)\n        swiglu_output = gate * silu_up\n\n        # ---- grad_output (unit-scale random) ----\n        grad_output = torch.randn(batch_size, seq_len, hidden_size, device=device, dtype=torch.bfloat16)\n\n    return {\n        \"grad_output\": grad_output,\n        \"residual\": residual,\n        \"attn_input\": attn_input,\n        \"query_states\": query_states,\n        \"key_states\": key_states,\n        \"value_states\": value_states,\n        \"query_states_rotated\": query_states_rotated,\n        \"key_states_rotated\": key_states_rotated,\n        \"key_states_repeated\": key_states_repeated,\n        \"value_states_repeated\": value_states_repeated,\n        \"cos\": cos,\n        \"sin\": sin,\n        \"attn_weights\": attn_weights,\n        \"attn_output\": attn_output,\n        \"residual2\": residual2,\n        \"ffn_input\": ffn_input,\n        \"gate\": gate,\n        \"up\": up,\n        \"silu_up\": silu_up,\n        \"swiglu_output\": swiglu_output,\n        \"input_ln_weight\": input_ln_weight,\n        \"q_weight\": q_weight,\n        \"k_weight\": k_weight,\n        \"v_weight\": v_weight,\n        \"o_weight\": o_weight,\n        \"post_attn_ln_weight\": post_attn_ln_weight,\n        \"gate_weight\": gate_weight,\n        \"up_weight\": up_weight,\n        \"down_weight\": down_weight,\n        \"variance1\": variance1,\n        \"variance2\": variance2,\n        \"hidden_states_normalized1\": hidden_states_normalized1,\n        \"hidden_states_normalized2\": hidden_states_normalized2,\n        \"eps\": eps,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    residual: torch.Tensor,\n    attn_input: torch.Tensor,\n    query_states: torch.Tensor,\n    key_states: torch.Tensor,\n    value_states: torch.Tensor,\n    query_states_rotated: torch.Tensor,\n    key_states_rotated: torch.Tensor,\n    key_states_repeated: torch.Tensor,\n    value_states_repeated: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_output: torch.Tensor,\n    residual2: torch.Tensor,\n    ffn_input: torch.Tensor,\n    gate: torch.Tensor,\n    up: torch.Tensor,\n    silu_up: torch.Tensor,\n    swiglu_output: torch.Tensor,\n    input_ln_weight: torch.Tensor,\n    q_weight: torch.Tensor,\n    k_weight: torch.Tensor,\n    v_weight: torch.Tensor,\n    o_weight: torch.Tensor,\n    post_attn_ln_weight: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    variance1: torch.Tensor,\n    variance2: torch.Tensor,\n    hidden_states_normalized1: torch.Tensor,\n    hidden_states_normalized2: torch.Tensor,\n    eps: float,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    num_kv_heads = 8\n    head_dim = 160\n    intermediate_size = 14336\n    num_key_value_groups = num_heads // num_kv_heads\n    \n    # ============ Backward through FFN Block ============\n    # Gradient through final residual\n    grad_residual2 = grad_output\n    grad_ffn_output = grad_output\n    \n    # Gradient through down projection\n    grad_swiglu_output = F.linear(grad_ffn_output, down_weight.t())\n    grad_down_weight = grad_ffn_output.reshape(-1, hidden_size).t() @ swiglu_output.reshape(-1, intermediate_size)\n    \n    # Gradient through SwiGLU: gate * silu(up)\n    grad_gate = grad_swiglu_output * silu_up\n    sigmoid_up = torch.sigmoid(up.to(torch.float32))\n    grad_silu = sigmoid_up * (1.0 + up.to(torch.float32) * (1.0 - sigmoid_up))\n    grad_up = grad_swiglu_output * gate * grad_silu.to(up.dtype)\n    \n    # Gradient through gate and up projections\n    grad_ffn_input_gate = F.linear(grad_gate, gate_weight.t())\n    grad_ffn_input_up = F.linear(grad_up, up_weight.t())\n    grad_ffn_input = grad_ffn_input_gate + grad_ffn_input_up\n    \n    grad_gate_weight = grad_gate.reshape(-1, intermediate_size).t() @ ffn_input.reshape(-1, hidden_size)\n    grad_up_weight = grad_up.reshape(-1, intermediate_size).t() @ ffn_input.reshape(-1, hidden_size)\n    \n    # Gradient through post-attention layernorm\n    grad_ffn_input_fp32 = grad_ffn_input.to(torch.float32)\n    grad_post_attn_ln_weight = (grad_ffn_input_fp32 * hidden_states_normalized2).sum(dim=[0, 1])\n    \n    N = hidden_size\n    rsqrt_var2 = torch.rsqrt(variance2 + eps)\n    grad_normalized2 = grad_ffn_input_fp32 * post_attn_ln_weight.to(torch.float32)\n    grad_hidden_states2 = grad_normalized2 * rsqrt_var2\n    grad_var2 = -0.5 * (grad_normalized2 * residual2.to(torch.float32)).sum(dim=-1, keepdim=True) * rsqrt_var2.pow(3)\n    grad_hidden_states2 = grad_hidden_states2 + (2.0 / N) * residual2.to(torch.float32) * grad_var2\n    grad_hidden_states2 = grad_hidden_states2.to(residual2.dtype)\n    \n    # Accumulate gradient from residual2\n    grad_hidden_states_attn = grad_residual2 + grad_hidden_states2\n    \n    # ============ Backward through Attention Block ============\n    # Gradient through attention residual\n    grad_residual1 = grad_hidden_states_attn\n    grad_attn_output_proj = grad_hidden_states_attn\n    \n    # Gradient through output projection\n    grad_attn_output = F.linear(grad_attn_output_proj, o_weight.t())\n    grad_o_weight = grad_attn_output_proj.reshape(-1, hidden_size).t() @ attn_output.reshape(-1, num_heads * head_dim)\n    \n    # Reshape gradient\n    grad_attn_output = grad_attn_output.reshape(batch_size, seq_len, num_heads, head_dim)\n    grad_attn_output = grad_attn_output.transpose(1, 2)\n    \n    # Gradient through attention output = matmul(attn_weights, value_states_repeated)\n    grad_attn_weights = torch.matmul(grad_attn_output, value_states_repeated.transpose(2, 3))\n    grad_value_states_repeated = torch.matmul(attn_weights.transpose(2, 3), grad_attn_output)\n    \n    # Gradient through softmax\n    grad_attn_weights_fp32 = grad_attn_weights.to(torch.float32)\n    attn_weights_fp32 = attn_weights.to(torch.float32)\n    grad_attn_logits = attn_weights_fp32 * (grad_attn_weights_fp32 - (grad_attn_weights_fp32 * attn_weights_fp32).sum(dim=-1, keepdim=True))\n    \n    # Gradient through scaling\n    grad_attn_logits = grad_attn_logits / math.sqrt(head_dim)\n    grad_attn_logits = grad_attn_logits.to(query_states_rotated.dtype)\n    \n    # Gradient through attention matmul: attn_logits = query @ key.T\n    grad_query_states_rotated = torch.matmul(grad_attn_logits, key_states_repeated)\n    grad_key_states_repeated = torch.matmul(grad_attn_logits.transpose(2, 3), query_states_rotated)\n    \n    # Gradient through KV repetition (GQA)\n    grad_key_states_repeated = grad_key_states_repeated.reshape(\n        batch_size, num_kv_heads, num_key_value_groups, seq_len, head_dim\n    )\n    grad_key_states_rotated = grad_key_states_repeated.sum(dim=2)\n    \n    grad_value_states_repeated = grad_value_states_repeated.reshape(\n        batch_size, num_kv_heads, num_key_value_groups, seq_len, head_dim\n    )\n    grad_value_states = grad_value_states_repeated.sum(dim=2)\n    \n    # Gradient through RoPE\n    cos_expanded = cos.unsqueeze(1)\n    sin_expanded = sin.unsqueeze(1)\n    grad_query_states = (grad_query_states_rotated * cos_expanded) + (rotate_half(grad_query_states_rotated) * (-sin_expanded))\n    grad_key_states = (grad_key_states_rotated * cos_expanded) + (rotate_half(grad_key_states_rotated) * (-sin_expanded))\n    \n    # Reshape gradients back\n    grad_query_states = grad_query_states.transpose(1, 2).reshape(batch_size, seq_len, num_heads * head_dim)\n    grad_key_states = grad_key_states.transpose(1, 2).reshape(batch_size, seq_len, num_kv_heads * head_dim)\n    grad_value_states = grad_value_states.transpose(1, 2).reshape(batch_size, seq_len, num_kv_heads * head_dim)\n    \n    # Gradient through QKV projections\n    grad_attn_input_q = F.linear(grad_query_states, q_weight.t())\n    grad_attn_input_k = F.linear(grad_key_states, k_weight.t())\n    grad_attn_input_v = F.linear(grad_value_states, v_weight.t())\n    grad_attn_input = grad_attn_input_q + grad_attn_input_k + grad_attn_input_v\n    \n    grad_q_weight = grad_query_states.reshape(-1, num_heads * head_dim).t() @ attn_input.reshape(-1, hidden_size)\n    grad_k_weight = grad_key_states.reshape(-1, num_kv_heads * head_dim).t() @ attn_input.reshape(-1, hidden_size)\n    grad_v_weight = grad_value_states.reshape(-1, num_kv_heads * head_dim).t() @ attn_input.reshape(-1, hidden_size)\n    \n    # Gradient through input layernorm\n    grad_attn_input_fp32 = grad_attn_input.to(torch.float32)\n    grad_input_ln_weight = (grad_attn_input_fp32 * hidden_states_normalized1).sum(dim=[0, 1])\n    \n    rsqrt_var1 = torch.rsqrt(variance1 + eps)\n    grad_normalized1 = grad_attn_input_fp32 * input_ln_weight.to(torch.float32)\n    grad_hidden_states1 = grad_normalized1 * rsqrt_var1\n    grad_var1 = -0.5 * (grad_normalized1 * residual.to(torch.float32)).sum(dim=-1, keepdim=True) * rsqrt_var1.pow(3)\n    grad_hidden_states1 = grad_hidden_states1 + (2.0 / N) * residual.to(torch.float32) * grad_var1\n    grad_hidden_states1 = grad_hidden_states1.to(residual.dtype)\n    \n    # Accumulate gradient from residual1\n    grad_input = grad_residual1 + grad_hidden_states1\n    \n    return (\n        grad_input,\n        grad_input_ln_weight,\n        grad_q_weight,\n        grad_k_weight,\n        grad_v_weight,\n        grad_o_weight,\n        grad_post_attn_ln_weight,\n        grad_gate_weight,\n        grad_up_weight,\n        grad_down_weight,\n    )\n"
+}

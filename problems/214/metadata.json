@@ -1,0 +1,195 @@
+{
+  "task_id": 214,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 5,
+  "name": "005_gemm_n256_k7168",
+  "hf_id": "",
+  "num_workloads": 17,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:01.931928Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.001414,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 1
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.0104964999999999
+      },
+      {
+        "index": 1,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 32
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.0107515
+      },
+      {
+        "index": 2,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 80
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.01296
+      },
+      {
+        "index": 3,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 901
+        },
+        "sol_ms": 0.0022,
+        "baseline_latency_ms": 0.017856
+      },
+      {
+        "index": 4,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 16
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.01056
+      },
+      {
+        "index": 5,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 15
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.010352
+      },
+      {
+        "index": 6,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 14
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.010305
+      },
+      {
+        "index": 7,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 4
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.01056
+      },
+      {
+        "index": 8,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 14104
+        },
+        "sol_ms": 0.029,
+        "baseline_latency_ms": 0.051536
+      },
+      {
+        "index": 9,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 11948
+        },
+        "sol_ms": 0.0246,
+        "baseline_latency_ms": 0.0478725
+      },
+      {
+        "index": 10,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 63
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.014688
+      },
+      {
+        "index": 11,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 58
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.0145925
+      },
+      {
+        "index": 12,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 57
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.014561
+      },
+      {
+        "index": 13,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 56
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.013792
+      },
+      {
+        "index": 14,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 55
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.014704
+      },
+      {
+        "index": 15,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 54
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.013008
+      },
+      {
+        "index": 16,
+        "axes": {
+          "N": 256,
+          "K": 7168,
+          "M": 53
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.0147359999999999
+      }
+    ]
+  }
+}

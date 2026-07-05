@@ -1,0 +1,80 @@
+{
+    "name": "004_fp8_moe_expert_linear",
+    "hf_id": "Qwen/Qwen3-VL-30B-A3B-Instruct-FP8",
+    "description": "FP8-quantized MoE expert computation with fused gate-up projection, SiLU activation, and down projection. Uses blockwise FP8 quantization with BlockWise1x128 for activations and BlockWise128x128 for weights.",
+    "axes": {
+        "num_tokens": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3584
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 2048
+        },
+        "double_intermediate_size": {
+            "type": "expr",
+            "expression": "intermediate_size * 2"
+        },
+        "hidden_blocks": {
+            "type": "expr",
+            "expression": "hidden_size // 128"
+        },
+        "intermediate_blocks": {
+            "type": "expr",
+            "expression": "intermediate_size // 128"
+        },
+        "double_intermediate_blocks": {
+            "type": "expr",
+            "expression": "double_intermediate_size // 128"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "routing_weight": {
+            "shape": [
+                "num_tokens",
+                "1"
+            ],
+            "dtype": "bfloat16",
+            "description": "Routing weight for this expert"
+        },
+        "gate_up_weight": {
+            "shape": [
+                "double_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate-up projection weight matrix"
+        },
+        "down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weight matrix"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert output weighted by routing weight"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n# --- inlined fp8_reference ---\nimport torch\n\nfrom enum import StrEnum\n\n\nclass ScalingType(StrEnum):\n    \"\"\"\n    Enum for different FP8 scaling strategies.\n\n    Scaling types:\n    - TensorWise: Global per-tensor scaling (no blocks)\n    - RowWise: Per-row scaling (1 scale per row)\n    - BlockWise1x16: 1x16 blocks (per-tensor in M, 16-sized blocks in K)\n    - BlockWise1x32: 1x32 blocks (per-tensor in M, 32-sized blocks in K)\n    - BlockWise1x128: 1x128 blocks (per-tensor in M, 128-sized blocks in K)\n    - BlockWise128x128: 128x128 blocks (blockwise in both dimensions)\n    \"\"\"\n\n    TensorWise = \"TensorWise\"\n    RowWise = \"RowWise\"\n    BlockWise1x16 = \"BlockWise1x16\"\n    BlockWise1x32 = \"BlockWise1x32\"\n    BlockWise1x128 = \"BlockWise1x128\"\n    BlockWise128x128 = \"BlockWise128x128\"\n\n    @property\n    def shape(self) -> tuple[int, int]:\n        return {\n            ScalingType.TensorWise: (None, None),\n            ScalingType.RowWise: (1, None),\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }[self]\n\n\nclass BlockwiseScaler:\n    \"\"\"\n    Compute and apply scales for FP8 tensors.\n\n    Supports various scaling strategies via ScalingType enum:\n    - TensorWise: Global per-tensor scaling\n    - RowWise: Per-row scaling\n    - BlockWise1x16/32/128: Rectangular blocks\n    - BlockWise128x128: Square blocks\n    \"\"\"\n\n    E4M3_MAX = 448.0  # Maximum representable value in E4M3\n\n    def __init__(self, scaling_type: ScalingType):\n        \"\"\"\n        Initialize BlockwiseScaler with a specific scaling strategy.\n\n        Args:\n            scaling_type: ScalingType enum value\n                Examples:\n                - ScalingType.TensorWise -> global per-tensor scaling\n                - ScalingType.RowWise -> per-row scaling (1 scale per row)\n                - ScalingType.BlockWise1x128 -> 1x128 blocks\n                - ScalingType.BlockWise128x128 -> 128x128 blocks\n        \"\"\"\n        self.scaling_type = scaling_type\n        self.shape = self.scaling_type.shape\n\n        # Map enum to block dimensions (M, K)\n        scaling_map = {\n            ScalingType.TensorWise: (None, None),  # No blocking\n            ScalingType.RowWise: (1, None),  # Per-row, full K dimension\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }\n\n        self.block_size_m, self.block_size_k = scaling_map[scaling_type]\n\n        # Keep for backward compatibility (use first dimension if available)\n        self.block_size = self.block_size_m if self.block_size_m else None\n\n    def compute_scales(self, tensor: torch.Tensor) -> torch.Tensor:\n        \"\"\"\n        Compute scale factors based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Returns scalar tensor\n        - RowWise: Returns (M,) tensor\n        - BlockWise*: Returns (M//block_size_m, K//block_size_k) tensor\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n\n        Returns:\n            Scale tensor with shape depending on scaling type.\n            These are inverse scales (amax / dtype_max) used for dequantization.\n        \"\"\"\n        if self.scaling_type == ScalingType.TensorWise:\n            # Global per-tensor scaling\n            amax = torch.max(torch.abs(tensor)).clamp(min=1e-12)\n            return amax / self.E4M3_MAX\n\n        M, K = tensor.shape\n\n        if self.scaling_type == ScalingType.RowWise:\n            # Per-row scaling: (M, K) -> (M,)\n            row_max = tensor.abs().amax(dim=1)\n            scales = row_max / self.E4M3_MAX\n            return torch.clamp(scales, min=1e-12)\n\n        # BlockWise scaling\n        assert M % self.block_size_m == 0, (\n            f\"M={M} must be a multiple of {self.block_size_m}\"\n        )\n        assert K % self.block_size_k == 0, (\n            f\"K={K} must be a multiple of {self.block_size_k}\"\n        )\n\n        # Reshape (M, K) -> (M//block_size_m, block_size_m, K//block_size_k, block_size_k)\n        new_shape = (\n            M // self.block_size_m,\n            self.block_size_m,\n            K // self.block_size_k,\n            self.block_size_k,\n        )\n        tensor_blocked = tensor.reshape(new_shape)\n\n        # Compute max over the block dimensions (dims 1 and 3)\n        block_max = tensor_blocked.abs().amax(dim=3).amax(dim=1)\n\n        # Compute inverse scales\n        scales = block_max / self.E4M3_MAX\n        return torch.clamp(scales, min=1e-12)\n\n    def apply_scaling(\n        self,\n        tensor: torch.Tensor,\n        scales: torch.Tensor,\n        inverse: bool = False,\n        clamp_to_fp8_range: bool = False,\n    ) -> torch.Tensor:\n        \"\"\"\n        Apply scaling to tensor based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Uses scalar scale\n        - RowWise: Uses per-row scales (M,)\n        - BlockWise*: Uses blockwise scales (M//block_size_m, K//block_size_k)\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n            scales: Scale tensor with shape depending on scaling type\n                   These are inverse scales (amax / dtype_max)\n            inverse: If True, multiply by scales (dequantization)\n                    If False, divide by scales (quantization)\n            clamp_to_fp8_range: If True, clamp to FP8 range before returning\n\n        Returns:\n            Scaled tensor (same shape as input)\n        \"\"\"\n        old_shape = tensor.shape\n        if self.scaling_type == ScalingType.RowWise:\n            # expand (M,) -> (M, 1)\n            scales = scales.unsqueeze(1)\n        elif self.scaling_type != ScalingType.TensorWise:\n            # blockwise scaling\n            M, K = tensor.shape\n            new_shape = (\n                M // self.block_size_m,\n                self.block_size_m,\n                K // self.block_size_k,\n                self.block_size_k,\n            )\n            tensor = tensor.reshape(new_shape)\n            scales = scales.unsqueeze(1).unsqueeze(3)\n\n        if inverse:\n            tensor_scaled = tensor * scales\n        else:\n            tensor_scaled = tensor / scales\n            if clamp_to_fp8_range:\n                tensor_scaled = torch.clamp(\n                    tensor_scaled, min=-self.E4M3_MAX, max=self.E4M3_MAX\n                )\n\n        return tensor_scaled.reshape(*old_shape)\n\n\nclass CuBLASRefBlockwiseGemm:\n    \"\"\"\n    Reference implementation of blockwise-scaled GEMM via dequantize-then-matmul.\n    \"\"\"\n\n    def scaled_mm(\n        self,\n        mat_a: torch.Tensor,\n        mat_b: torch.Tensor,\n        scale_a: torch.Tensor,\n        scale_recipe_a: ScalingType,\n        scale_b: torch.Tensor,\n        scale_recipe_b: ScalingType,\n        bias: torch.Tensor | None = None,\n        output_dtype: torch.dtype = torch.bfloat16,\n        use_fast_accum: bool = True,\n    ) -> torch.Tensor:\n        \"\"\"\n        Scaled matrix multiplication: dequantize A and B, then matmul in float32.\n\n        Args:\n            mat_a: Input matrix A (M, K) in float8_e4m3fn\n            mat_b: Input matrix B (N, K) in float8_e4m3fn\n            scale_a: Scaling factors for A\n            scale_recipe_a: Scaling type for A\n            scale_b: Scaling factors for B\n            scale_recipe_b: Scaling type for B\n            bias: Optional bias vector (N,)\n            output_dtype: Output data type\n            use_fast_accum: Unused (kept for API compatibility)\n\n        Returns:\n            Result matrix (M, N) with dtype=output_dtype\n        \"\"\"\n        scaler_a = BlockwiseScaler(scale_recipe_a)\n        scaler_b = BlockwiseScaler(scale_recipe_b)\n\n        # Dequantize: FP8 values * inverse_scales -> float32\n        a_f32 = scaler_a.apply_scaling(mat_a.to(torch.float32), scale_a, inverse=True)\n        b_f32 = scaler_b.apply_scaling(mat_b.to(torch.float32), scale_b, inverse=True)\n\n        # Single matmul in float32\n        y = a_f32 @ b_f32.T\n\n        if bias is not None and bias.numel():\n            y = y + bias\n\n        return y.to(output_dtype)\n\n# --- end inlined fp8_reference ---\n\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs with scaled weights to keep outputs in reasonable range.\"\"\"\n    num_tokens = axes_and_scalars[\"num_tokens\"]\n    hidden_size = 3584\n    intermediate_size = 2048\n\n    hidden_states = torch.randn(num_tokens, hidden_size, dtype=torch.bfloat16, device=device)\n    routing_weight = torch.randn(num_tokens, 1, dtype=torch.bfloat16, device=device)\n    gate_up_weight = torch.randn(intermediate_size * 2, hidden_size, dtype=torch.bfloat16, device=device) * (hidden_size ** -0.5)\n    down_weight = torch.randn(hidden_size, intermediate_size, dtype=torch.bfloat16, device=device) * (intermediate_size ** -0.5)\n\n    return {\n        \"hidden_states\": hidden_states,\n        \"routing_weight\": routing_weight,\n        \"gate_up_weight\": gate_up_weight,\n        \"down_weight\": down_weight,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    routing_weight: torch.Tensor,\n    gate_up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n):\n    \"\"\"\n    FP8-quantized MoE expert computation.\n    \n    1. Gate-up projection: hidden_states @ gate_up_weight.T -> [num_tokens, 2*intermediate_size]\n    2. Split and apply SiLU activation: silu(gate) * up\n    3. Down projection: gated_output @ down_weight.T -> [num_tokens, hidden_size]\n    4. Apply routing weight\n    \"\"\"\n    # Initialize scalers\n    activation_scaler = BlockwiseScaler(ScalingType.BlockWise1x128)\n    weight_scaler = BlockwiseScaler(ScalingType.BlockWise128x128)\n    gemm_ref = CuBLASRefBlockwiseGemm()\n    \n    # Step 1: Gate-up projection with FP8\n    # Compute scales for input activation\n    hidden_fp32 = hidden_states.to(torch.float32)\n    scale_hidden = activation_scaler.compute_scales(hidden_fp32)\n    \n    # Compute scales for gate_up weight\n    gate_up_weight_fp32 = gate_up_weight.to(torch.float32)\n    gate_up_weight_t = gate_up_weight_fp32.T  # (hidden_size, 2*intermediate_size)\n    scale_gate_up = weight_scaler.compute_scales(gate_up_weight_t)\n    \n    # Apply scaling and quantize\n    hidden_scaled = activation_scaler.apply_scaling(\n        hidden_fp32, scale_hidden, inverse=False, clamp_to_fp8_range=True\n    )\n    gate_up_scaled = weight_scaler.apply_scaling(\n        gate_up_weight_t, scale_gate_up, inverse=False, clamp_to_fp8_range=True\n    )\n    \n    # Quantize to FP8\n    hidden_fp8 = hidden_scaled.to(torch.float8_e4m3fn)\n    gate_up_fp8 = gate_up_scaled.T.to(torch.float8_e4m3fn)  # Back to (2*intermediate, hidden)\n    \n    # Transpose weight scales for CuBLAS format\n    scale_gate_up_cublas = scale_gate_up.T.contiguous()\n    \n    # FP8 GEMM: hidden @ gate_up.T -> [num_tokens, 2*intermediate_size]\n    gate_up_output = gemm_ref.scaled_mm(\n        mat_a=hidden_fp8,\n        mat_b=gate_up_fp8,\n        scale_a=scale_hidden,\n        scale_recipe_a=ScalingType.BlockWise1x128,\n        scale_b=scale_gate_up_cublas,\n        scale_recipe_b=ScalingType.BlockWise128x128,\n        bias=None,\n        output_dtype=torch.bfloat16,\n        use_fast_accum=True,\n    )\n    \n    # Step 2: Split and apply activation (NOT quantized)\n    gate, up = gate_up_output.chunk(2, dim=-1)\n    gated_output = F.silu(gate) * up  # SiLU activation on gate, element-wise multiply\n    \n    # Step 3: Down projection with FP8\n    # Compute scales for gated output\n    gated_fp32 = gated_output.to(torch.float32)\n    scale_gated = activation_scaler.compute_scales(gated_fp32)\n    \n    # Compute scales for down weight\n    down_weight_fp32 = down_weight.to(torch.float32)\n    down_weight_t = down_weight_fp32.T  # (intermediate_size, hidden_size)\n    scale_down = weight_scaler.compute_scales(down_weight_t)\n    \n    # Apply scaling and quantize\n    gated_scaled = activation_scaler.apply_scaling(\n        gated_fp32, scale_gated, inverse=False, clamp_to_fp8_range=True\n    )\n    down_scaled = weight_scaler.apply_scaling(\n        down_weight_t, scale_down, inverse=False, clamp_to_fp8_range=True\n    )\n    \n    # Quantize to FP8\n    gated_fp8 = gated_scaled.to(torch.float8_e4m3fn)\n    down_fp8 = down_scaled.T.to(torch.float8_e4m3fn)  # Back to (hidden, intermediate)\n    \n    # Transpose weight scales for CuBLAS format\n    scale_down_cublas = scale_down.T.contiguous()\n    \n    # FP8 GEMM: gated @ down.T -> [num_tokens, hidden_size]\n    output = gemm_ref.scaled_mm(\n        mat_a=gated_fp8,\n        mat_b=down_fp8,\n        scale_a=scale_gated,\n        scale_recipe_a=ScalingType.BlockWise1x128,\n        scale_b=scale_down_cublas,\n        scale_recipe_b=ScalingType.BlockWise128x128,\n        bias=None,\n        output_dtype=torch.bfloat16,\n        use_fast_accum=True,\n    )\n    \n    # Step 4: Apply routing weight (NOT quantized)\n    weighted_output = output * routing_weight\n    \n    return weighted_output\n"
+}

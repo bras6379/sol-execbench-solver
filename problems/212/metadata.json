@@ -1,0 +1,97 @@
+{
+  "task_id": 212,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 3,
+  "name": "003_fused_add_rmsnorm_h7168",
+  "hf_id": "",
+  "num_workloads": 8,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:01.441843Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.002276,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 7
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.004992
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.004608
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 32
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.004928
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 18
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0050555
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 539
+        },
+        "sol_ms": 0.0034,
+        "baseline_latency_ms": 0.007584
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 14521
+        },
+        "sol_ms": 0.0819,
+        "baseline_latency_ms": 0.156384
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 11949
+        },
+        "sol_ms": 0.0674,
+        "baseline_latency_ms": 0.1299045
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 7168,
+          "batch_size": 64
+        },
+        "sol_ms": 0.0008,
+        "baseline_latency_ms": 0.0049759999999999
+      }
+    ]
+  }
+}

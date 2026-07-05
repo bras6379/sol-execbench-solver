@@ -1,0 +1,217 @@
+{
+  "task_id": 74,
+  "subset": "L1",
+  "collection_index": 74,
+  "name": "074_fused_gated_mlp_silu",
+  "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:29.376717Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.042658,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 2,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.0573,
+        "baseline_latency_ms": 0.2066405
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 32,
+          "seq_len": 256
+        },
+        "sol_ms": 0.1142,
+        "baseline_latency_ms": 0.377329
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0289,
+        "baseline_latency_ms": 0.1206885
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 8,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0573,
+        "baseline_latency_ms": 0.206865
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 8,
+          "seq_len": 613
+        },
+        "sol_ms": 0.0685,
+        "baseline_latency_ms": 0.265248
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 4,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.0573,
+        "baseline_latency_ms": 0.206784
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 4,
+          "seq_len": 449
+        },
+        "sol_ms": 0.0254,
+        "baseline_latency_ms": 0.1181925
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 16,
+          "seq_len": 773
+        },
+        "sol_ms": 0.1722,
+        "baseline_latency_ms": 0.542945
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 4,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0289,
+        "baseline_latency_ms": 0.1209125
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 0.1142,
+        "baseline_latency_ms": 0.377505
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 32,
+          "seq_len": 128
+        },
+        "sol_ms": 0.0573,
+        "baseline_latency_ms": 0.206656
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 2,
+          "seq_len": 128
+        },
+        "sol_ms": 0.004,
+        "baseline_latency_ms": 0.0592005
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 2,
+          "seq_len": 1249
+        },
+        "sol_ms": 0.0351,
+        "baseline_latency_ms": 0.157952
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 16,
+          "seq_len": 512
+        },
+        "sol_ms": 0.1142,
+        "baseline_latency_ms": 0.377488
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0146,
+        "baseline_latency_ms": 0.0783355
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 1024,
+          "intermediate_size": 4096,
+          "intermediate_size_x2": 8192,
+          "batch_size": 4,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0146,
+        "baseline_latency_ms": 0.0783845
+      }
+    ]
+  }
+}

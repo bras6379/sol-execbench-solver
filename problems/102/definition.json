@@ -1,0 +1,99 @@
+{
+    "name": "008_moe_sparse_routing_and_dispatch",
+    "hf_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "description": "Mixture-of-Experts sparse routing and expert dispatch system. Routes each token to top-8 experts out of 128 total experts using gating network, performs expert computation with dynamic batching, and aggregates results weighted by routing probabilities.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048,
+            "description": "Hidden dimension"
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 128,
+            "description": "Total number of experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of experts to route each token to (top-k)"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 768,
+            "description": "Expert MLP intermediate dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "gate_weight": {
+            "shape": [
+                "num_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gating network weight matrix"
+        },
+        "expert_gate_proj": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert gate projection weights"
+        },
+        "expert_up_proj": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert up projection weights"
+        },
+        "expert_down_proj": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert down projection weights"
+        },
+        "norm_topk_prob": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether to normalize routing weights"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Weighted expert outputs"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    gate_weight: torch.Tensor,\n    expert_gate_proj: torch.Tensor,\n    expert_up_proj: torch.Tensor,\n    expert_down_proj: torch.Tensor,\n    norm_topk_prob: bool,\n):\n    \"\"\"\n    Sparse MoE routing and expert dispatch with top-k gating.\n    \n    1. Gate network computes routing logits for all 128 experts\n    2. Top-8 experts are selected per token via softmax + topk\n    3. Routing weights are normalized across selected experts\n    4. Tokens are dynamically dispatched to experts\n    5. Expert outputs are weighted and aggregated\n    \"\"\"\n    batch_size, sequence_length, hidden_dim = hidden_states.shape\n    num_experts = gate_weight.shape[0]\n    top_k = 8\n    \n    # Flatten batch and sequence dimensions for routing\n    hidden_states_flat = hidden_states.view(-1, hidden_dim)\n    num_tokens = hidden_states_flat.shape[0]\n    \n    # Step 1: Compute routing logits via gating network\n    # (num_tokens, hidden_size) @ (hidden_size, num_experts) -> (num_tokens, num_experts)\n    router_logits = torch.matmul(hidden_states_flat, gate_weight.t())\n    \n    # Step 2: Compute routing weights via softmax\n    routing_weights = F.softmax(router_logits.float(), dim=1).to(hidden_states.dtype)\n    \n    # Step 3: Select top-k experts per token\n    routing_weights_topk, selected_experts = torch.topk(routing_weights, top_k, dim=-1)\n    \n    # Step 4: Normalize routing weights across selected experts (if enabled)\n    if norm_topk_prob:\n        routing_weights_topk = routing_weights_topk / (routing_weights_topk.sum(dim=-1, keepdim=True) + 1e-9)\n    \n    # Step 5: Initialize output accumulator\n    final_hidden_states = torch.zeros(\n        (num_tokens, hidden_dim),\n        dtype=hidden_states.dtype,\n        device=hidden_states.device\n    )\n    \n    # Step 6: Create expert mask for efficient dispatching\n    # One-hot encode selected experts: (num_tokens, top_k, num_experts)\n    # Then permute to: (num_experts, top_k, num_tokens)\n    expert_mask = F.one_hot(selected_experts, num_classes=num_experts).permute(2, 1, 0)\n    \n    # Step 7: Loop over experts and compute outputs for assigned tokens\n    for expert_idx in range(num_experts):\n        # Find which tokens are routed to this expert and at which top-k position\n        idx, top_x = torch.where(expert_mask[expert_idx])\n        \n        if top_x.numel() == 0:\n            continue\n        \n        # Gather hidden states for tokens assigned to this expert\n        current_state = hidden_states_flat[top_x]\n        \n        # Expert MLP forward: SiLU(gate_proj(x)) * up_proj(x), then down_proj\n        gate_out = torch.matmul(current_state, expert_gate_proj[expert_idx].t())\n        up_out = torch.matmul(current_state, expert_up_proj[expert_idx].t())\n        \n        # SiLU activation: x * sigmoid(x)\n        silu_gate = gate_out * torch.sigmoid(gate_out)\n        intermediate = silu_gate * up_out\n        \n        expert_out = torch.matmul(intermediate, expert_down_proj[expert_idx].t())\n        \n        # Weight by routing probability\n        current_hidden_states = expert_out * routing_weights_topk[top_x, idx, None]\n        \n        # Scatter-add expert outputs back to final output\n        final_hidden_states.index_add_(0, top_x, current_hidden_states)\n    \n    # Step 8: Reshape output back to original dimensions\n    final_hidden_states = final_hidden_states.reshape(batch_size, sequence_length, hidden_dim)\n    \n    return final_hidden_states\n"
+}

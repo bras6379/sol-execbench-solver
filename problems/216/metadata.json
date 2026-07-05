@@ -1,0 +1,455 @@
+{
+  "task_id": 216,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 7,
+  "name": "007_gemm_n4096_k4096",
+  "hf_id": "",
+  "num_workloads": 43,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:02.329650Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.00604,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 256
+        },
+        "sol_ms": 0.0051,
+        "baseline_latency_ms": 0.015696
+      },
+      {
+        "index": 1,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 248
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.015728
+      },
+      {
+        "index": 2,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 240
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.0154715
+      },
+      {
+        "index": 3,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 232
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.01552
+      },
+      {
+        "index": 4,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 224
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.016176
+      },
+      {
+        "index": 5,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 216
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.01456
+      },
+      {
+        "index": 6,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 208
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.014433
+      },
+      {
+        "index": 7,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 200
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.018432
+      },
+      {
+        "index": 8,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 192
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.016576
+      },
+      {
+        "index": 9,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 184
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.0138719999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 176
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.013888
+      },
+      {
+        "index": 11,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 168
+        },
+        "sol_ms": 0.005,
+        "baseline_latency_ms": 0.016416
+      },
+      {
+        "index": 12,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 160
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013536
+      },
+      {
+        "index": 13,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 152
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0135675
+      },
+      {
+        "index": 14,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 144
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0135365
+      },
+      {
+        "index": 15,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 136
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0151834999999999
+      },
+      {
+        "index": 16,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 128
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.012896
+      },
+      {
+        "index": 17,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 120
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013376
+      },
+      {
+        "index": 18,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 112
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013344
+      },
+      {
+        "index": 19,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 104
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0133285
+      },
+      {
+        "index": 20,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 96
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013312
+      },
+      {
+        "index": 21,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 88
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013344
+      },
+      {
+        "index": 22,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 80
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0133444999999999
+      },
+      {
+        "index": 23,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 72
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.013264
+      },
+      {
+        "index": 24,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 64
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.013152
+      },
+      {
+        "index": 25,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 56
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.0131845
+      },
+      {
+        "index": 26,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 48
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.013088
+      },
+      {
+        "index": 27,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 40
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.013088
+      },
+      {
+        "index": 28,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 32
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.013984
+      },
+      {
+        "index": 29,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 24
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.0129755
+      },
+      {
+        "index": 30,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 16
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.016432
+      },
+      {
+        "index": 31,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 8
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.01504
+      },
+      {
+        "index": 32,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 4
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.015392
+      },
+      {
+        "index": 33,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 2
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.017024
+      },
+      {
+        "index": 34,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 1
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.0151365
+      },
+      {
+        "index": 35,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 7
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.015232
+      },
+      {
+        "index": 36,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 35
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.013168
+      },
+      {
+        "index": 37,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 972
+        },
+        "sol_ms": 0.0184,
+        "baseline_latency_ms": 0.034432
+      },
+      {
+        "index": 38,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 70
+        },
+        "sol_ms": 0.0049,
+        "baseline_latency_ms": 0.0127835
+      },
+      {
+        "index": 39,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 2053
+        },
+        "sol_ms": 0.0384,
+        "baseline_latency_ms": 0.058368
+      },
+      {
+        "index": 40,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 8192
+        },
+        "sol_ms": 0.1522,
+        "baseline_latency_ms": 0.181776
+      },
+      {
+        "index": 41,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 2379
+        },
+        "sol_ms": 0.0445,
+        "baseline_latency_ms": 0.067632
+      },
+      {
+        "index": 42,
+        "axes": {
+          "N": 4096,
+          "K": 4096,
+          "M": 15
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.012128
+      }
+    ]
+  }
+}

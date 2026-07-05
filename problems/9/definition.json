@@ -1,0 +1,164 @@
+{
+    "name": "009_expert_token_scatter_with_weighted_forward_backward",
+    "hf_id": "MiniMaxAI/MiniMax-M2",
+    "description": "Backward pass for expert token scatter with weighted forward. Computes gradients for hidden_states, routing_weights, and expert MLP weights (w1, w2, w3) through SwiGLU activation.",
+    "axes": {
+        "batch_seq_len": {
+            "type": "var",
+            "description": "Total number of tokens (batch_size * seq_len)"
+        },
+        "num_tokens": {
+            "type": "var",
+            "description": "Number of tokens assigned to this expert"
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 4096,
+            "description": "Hidden dimension size"
+        },
+        "ffn_dim": {
+            "type": "const",
+            "value": 14336,
+            "description": "FFN intermediate dimension size"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from next layer"
+        },
+        "token_indices": {
+            "shape": [
+                "num_tokens"
+            ],
+            "dtype": "int64",
+            "description": "Indices of tokens assigned to this expert"
+        },
+        "selected_tokens": {
+            "shape": [
+                "num_tokens",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gathered tokens for this expert"
+        },
+        "w1_output": {
+            "shape": [
+                "num_tokens",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output of w1 linear layer (before SiLU)"
+        },
+        "gate_output": {
+            "shape": [
+                "num_tokens",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output after SiLU activation"
+        },
+        "up_output": {
+            "shape": [
+                "num_tokens",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output of w3 linear layer"
+        },
+        "gated_output": {
+            "shape": [
+                "num_tokens",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Element-wise product of gate and up outputs"
+        },
+        "expert_output": {
+            "shape": [
+                "num_tokens",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output of w2 linear layer"
+        },
+        "selected_weights": {
+            "shape": [
+                "num_tokens"
+            ],
+            "dtype": "bfloat16",
+            "description": "Routing weights for selected tokens"
+        },
+        "w1_weight": {
+            "shape": [
+                "ffn_dim",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "W1 weight matrix (gate projection)"
+        },
+        "w2_weight": {
+            "shape": [
+                "hidden_dim",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "W2 weight matrix (down projection)"
+        },
+        "w3_weight": {
+            "shape": [
+                "ffn_dim",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "W3 weight matrix (up projection)"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. hidden_states"
+        },
+        "grad_routing_weights": {
+            "shape": [
+                "batch_seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. routing_weights"
+        },
+        "grad_w1_weight": {
+            "shape": [
+                "ffn_dim",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. w1_weight"
+        },
+        "grad_w2_weight": {
+            "shape": [
+                "hidden_dim",
+                "ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. w2_weight"
+        },
+        "grad_w3_weight": {
+            "shape": [
+                "ffn_dim",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. w3_weight"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, int], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs for backward pass testing.\"\"\"\n    batch_seq_len = axes_and_scalars[\"batch_seq_len\"]\n    num_tokens = axes_and_scalars[\"num_tokens\"]\n    hidden_dim = axes_and_scalars[\"hidden_dim\"]\n    ffn_dim = axes_and_scalars[\"ffn_dim\"]\n    \n    # Ensure num_tokens <= batch_seq_len\n    num_tokens = min(num_tokens, batch_seq_len)\n    \n    # Generate random token indices (unique indices into batch_seq_len)\n    perm = torch.randperm(batch_seq_len, device=device)\n    token_indices = perm[:num_tokens].sort().values.to(torch.int64)\n    \n    # Gradient from next layer\n    grad_output = torch.randn(batch_seq_len, hidden_dim, device=device, dtype=torch.bfloat16)\n    \n    # Selected tokens (gathered from hidden_states)\n    selected_tokens = torch.randn(num_tokens, hidden_dim, device=device, dtype=torch.bfloat16)\n    \n    # Forward pass intermediate values\n    w1_output = torch.randn(num_tokens, ffn_dim, device=device, dtype=torch.bfloat16)\n    gate_output = torch.nn.functional.silu(w1_output.float()).to(torch.bfloat16)\n    up_output = torch.randn(num_tokens, ffn_dim, device=device, dtype=torch.bfloat16)\n    gated_output = gate_output * up_output\n    expert_output = torch.randn(num_tokens, hidden_dim, device=device, dtype=torch.bfloat16)\n    \n    # Routing weights for selected tokens\n    selected_weights = torch.rand(num_tokens, device=device, dtype=torch.bfloat16)\n    \n    # Expert MLP weights\n    w1_weight = torch.randn(ffn_dim, hidden_dim, device=device, dtype=torch.bfloat16) * 0.02\n    w2_weight = torch.randn(hidden_dim, ffn_dim, device=device, dtype=torch.bfloat16) * 0.02\n    w3_weight = torch.randn(ffn_dim, hidden_dim, device=device, dtype=torch.bfloat16) * 0.02\n    \n    return {\n        \"grad_output\": grad_output,\n        \"token_indices\": token_indices,\n        \"selected_tokens\": selected_tokens,\n        \"w1_output\": w1_output,\n        \"gate_output\": gate_output,\n        \"up_output\": up_output,\n        \"gated_output\": gated_output,\n        \"expert_output\": expert_output,\n        \"selected_weights\": selected_weights,\n        \"w1_weight\": w1_weight,\n        \"w2_weight\": w2_weight,\n        \"w3_weight\": w3_weight,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n    \n    Gradient flow:\n    1. Gather gradients from scattered positions\n    2. Backprop through routing weight multiplication\n    3. Backprop through w2 linear layer\n    4. Backprop through element-wise gating\n    5. Backprop through w3 linear layer (up branch)\n    6. Backprop through SiLU activation and w1 linear layer (gate branch)\n    7. Accumulate gradients and scatter back\n    \"\"\"\n    batch_seq_len = grad_output.shape[0]\n    hidden_dim = grad_output.shape[1]\n    num_tokens = token_indices.shape[0]\n    ffn_dim = w1_weight.shape[0]\n    \n    device = grad_output.device\n    \n    # Convert to float32 for numerical stability\n    grad_output_f = grad_output.to(torch.float32)\n    selected_tokens_f = selected_tokens.to(torch.float32)\n    w1_output_f = w1_output.to(torch.float32)\n    gate_output_f = gate_output.to(torch.float32)\n    up_output_f = up_output.to(torch.float32)\n    gated_output_f = gated_output.to(torch.float32)\n    expert_output_f = expert_output.to(torch.float32)\n    selected_weights_f = selected_weights.to(torch.float32)\n    w1_weight_f = w1_weight.to(torch.float32)\n    w2_weight_f = w2_weight.to(torch.float32)\n    w3_weight_f = w3_weight.to(torch.float32)\n    \n    # Step 1: Gather gradients from scattered positions\n    grad_weighted_output = grad_output_f[token_indices]  # (num_tokens, hidden_dim)\n    \n    # Step 2: Backprop through routing weight multiplication\n    # weighted_output = expert_output * selected_weights.unsqueeze(-1)\n    # grad_selected_weights = (grad_weighted_output * expert_output).sum(dim=-1)\n    grad_selected_weights = (grad_weighted_output * expert_output_f).sum(dim=-1)  # (num_tokens,)\n    \n    # Scatter to full routing_weights tensor\n    grad_routing_weights = torch.zeros(batch_seq_len, dtype=torch.float32, device=device)\n    grad_routing_weights[token_indices] = grad_selected_weights\n    \n    # Gradient w.r.t. expert_output\n    grad_expert_output = grad_weighted_output * selected_weights_f.unsqueeze(-1)  # (num_tokens, hidden_dim)\n    \n    # Step 3: Backprop through w2 linear layer\n    # expert_output = gated_output @ w2_weight.T\n    # grad_w2_weight = grad_expert_output.T @ gated_output\n    grad_w2_weight = grad_expert_output.t() @ gated_output_f  # (hidden_dim, ffn_dim)\n    \n    # Gradient w.r.t. gated_output\n    grad_gated_output = grad_expert_output @ w2_weight_f  # (num_tokens, ffn_dim)\n    \n    # Step 4: Backprop through element-wise gating\n    # gated_output = gate_output * up_output\n    grad_gate_output = grad_gated_output * up_output_f  # (num_tokens, ffn_dim)\n    grad_up_output = grad_gated_output * gate_output_f  # (num_tokens, ffn_dim)\n    \n    # Step 5: Backprop through w3 linear layer (up branch)\n    # up_output = selected_tokens @ w3_weight.T\n    grad_w3_weight = grad_up_output.t() @ selected_tokens_f  # (ffn_dim, hidden_dim)\n    grad_selected_tokens_w3 = grad_up_output @ w3_weight_f  # (num_tokens, hidden_dim)\n    \n    # Step 6: Backprop through SiLU activation and w1 linear layer\n    # gate_output = silu(w1_output) = w1_output * sigmoid(w1_output)\n    # d(silu)/d(x) = sigmoid(x) * (1 + x * (1 - sigmoid(x)))\n    sigmoid_w1 = torch.sigmoid(w1_output_f)\n    grad_w1_output = grad_gate_output * (sigmoid_w1 * (1 + w1_output_f * (1 - sigmoid_w1)))  # (num_tokens, ffn_dim)\n    \n    # w1_output = selected_tokens @ w1_weight.T\n    grad_w1_weight = grad_w1_output.t() @ selected_tokens_f  # (ffn_dim, hidden_dim)\n    grad_selected_tokens_w1 = grad_w1_output @ w1_weight_f  # (num_tokens, hidden_dim)\n    \n    # Step 7: Accumulate gradients for selected_tokens\n    grad_selected_tokens = grad_selected_tokens_w1 + grad_selected_tokens_w3  # (num_tokens, hidden_dim)\n    \n    # Step 8: Scatter gradients back to full hidden_states tensor\n    grad_hidden_states = torch.zeros(batch_seq_len, hidden_dim, dtype=torch.float32, device=device)\n    grad_hidden_states[token_indices] = grad_selected_tokens\n    \n    # Convert back to bfloat16\n    return (\n        grad_hidden_states.to(torch.bfloat16),\n        grad_routing_weights.to(torch.bfloat16),\n        grad_w1_weight.to(torch.bfloat16),\n        grad_w2_weight.to(torch.bfloat16),\n        grad_w3_weight.to(torch.bfloat16),\n    )\n"
+}

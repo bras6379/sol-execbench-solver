@@ -1,0 +1,249 @@
+{
+  "task_id": 202,
+  "subset": "Quant",
+  "collection_index": 26,
+  "name": "026_nvfp4_mamba2_out_projection",
+  "hf_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:59.298542Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.000748,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 1664
+        },
+        "sol_ms": 0.00084668,
+        "baseline_latency_ms": 0.035872
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 512
+        },
+        "sol_ms": 0.00026052,
+        "baseline_latency_ms": 0.029056
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 4352
+        },
+        "sol_ms": 0.00221438,
+        "baseline_latency_ms": 0.0477915
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 256
+        },
+        "sol_ms": 0.00013026,
+        "baseline_latency_ms": 0.027168
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 4608
+        },
+        "sol_ms": 0.00234464,
+        "baseline_latency_ms": 0.048208
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 2304
+        },
+        "sol_ms": 0.00117232,
+        "baseline_latency_ms": 0.0384485
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 1408
+        },
+        "sol_ms": 0.00071642,
+        "baseline_latency_ms": 0.035184
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 3328
+        },
+        "sol_ms": 0.00169335,
+        "baseline_latency_ms": 0.042176
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 4864
+        },
+        "sol_ms": 0.0024749,
+        "baseline_latency_ms": 0.048608
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 640
+        },
+        "sol_ms": 0.00032564,
+        "baseline_latency_ms": 0.029424
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 384
+        },
+        "sol_ms": 0.00019539,
+        "baseline_latency_ms": 0.02904
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 8192
+        },
+        "sol_ms": 0.00416825,
+        "baseline_latency_ms": 0.064192
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 128
+        },
+        "sol_ms": 6.51e-05,
+        "baseline_latency_ms": 0.026416
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 1024
+        },
+        "sol_ms": 0.00052103,
+        "baseline_latency_ms": 0.032128
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 3584
+        },
+        "sol_ms": 0.00182361,
+        "baseline_latency_ms": 0.044512
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 1920,
+          "intermediate_size": 1920,
+          "sf_vec_size": 16,
+          "num_hidden_blocks": 120,
+          "num_intermediate_blocks": 120,
+          "half_intermediate": 960,
+          "M": 2176
+        },
+        "sol_ms": 0.00110719,
+        "baseline_latency_ms": 0.038144
+      }
+    ]
+  }
+}

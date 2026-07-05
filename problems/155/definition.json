@@ -1,0 +1,144 @@
+{
+    "name": "061_sparse_moe_routing_and_experts",
+    "hf_id": "nvidia/Qwen3-Next-80B-A3B-Thinking-NVFP4",
+    "description": "Sparse Mixture-of-Experts block with top-10 routing across 512 experts. Includes router network, top-k expert selection with normalized weights, parallel expert computation with weighted aggregation, and shared expert with learned gating. This is a complete MoE forward pass with dynamic token-to-expert routing.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048,
+            "description": "Hidden dimension size"
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 512,
+            "description": "Total number of experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 10,
+            "description": "Number of experts selected per token (top-k)"
+        },
+        "moe_intermediate_size": {
+            "type": "const",
+            "value": 512,
+            "description": "Intermediate size for each expert MLP"
+        },
+        "shared_expert_intermediate_size": {
+            "type": "const",
+            "value": 512,
+            "description": "Intermediate size for shared expert MLP"
+        },
+        "batch_seq": {
+            "type": "expr",
+            "expression": "batch_size * seq_len",
+            "description": "Flattened batch*seq dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "router_weight": {
+            "shape": [
+                "num_experts",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router gate projection weight"
+        },
+        "expert_gate_proj": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert gate projection weights (all experts stacked)"
+        },
+        "expert_up_proj": {
+            "shape": [
+                "num_experts",
+                "moe_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert up projection weights (all experts stacked)"
+        },
+        "expert_down_proj": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "moe_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Expert down projection weights (all experts stacked)"
+        },
+        "shared_gate_proj": {
+            "shape": [
+                "shared_expert_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert gate projection weight"
+        },
+        "shared_up_proj": {
+            "shape": [
+                "shared_expert_intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert up projection weight"
+        },
+        "shared_down_proj": {
+            "shape": [
+                "hidden_size",
+                "shared_expert_intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert down projection weight"
+        },
+        "shared_expert_gate_weight": {
+            "shape": [
+                "1",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared expert gating weight"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output hidden states after MoE processing"
+        },
+        "router_logits": {
+            "shape": [
+                "batch_seq",
+                "num_experts"
+            ],
+            "dtype": "bfloat16",
+            "description": "Router logits for load balancing loss computation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    router_weight: torch.Tensor,\n    expert_gate_proj: torch.Tensor,\n    expert_up_proj: torch.Tensor,\n    expert_down_proj: torch.Tensor,\n    shared_gate_proj: torch.Tensor,\n    shared_up_proj: torch.Tensor,\n    shared_down_proj: torch.Tensor,\n    shared_expert_gate_weight: torch.Tensor,\n):\n    \"\"\"\n    Sparse MoE block with top-10 routing across 512 experts.\n    \n    Steps:\n    1. Compute router logits via linear projection\n    2. Apply softmax and select top-10 experts per token\n    3. Normalize routing weights to sum to 1\n    4. Process tokens through selected experts with SwiGLU activation\n    5. Aggregate weighted expert outputs\n    6. Add shared expert output with sigmoid gating\n    \"\"\"\n    batch_size, sequence_length, hidden_dim = hidden_states.shape\n    num_experts = router_weight.shape[0]\n    top_k = 10\n    \n    # Flatten batch and sequence dimensions for routing\n    hidden_states_flat = hidden_states.view(-1, hidden_dim)  # (batch*seq, hidden_size)\n    \n    # Compute router logits: (batch*seq, hidden_size) @ (hidden_size, num_experts)\n    router_logits = torch.matmul(hidden_states_flat, router_weight.t())  # (batch*seq, 512)\n    \n    # Softmax over experts and select top-k\n    routing_weights = F.softmax(router_logits.float(), dim=1)  # (batch*seq, 512) in float32\n    routing_weights_topk, selected_experts = torch.topk(routing_weights, top_k, dim=-1)\n    # routing_weights_topk: (batch*seq, 10), selected_experts: (batch*seq, 10)\n    \n    # Normalize top-k weights to sum to 1\n    routing_weights_topk = routing_weights_topk / routing_weights_topk.sum(dim=-1, keepdim=True)\n    routing_weights_topk = routing_weights_topk.to(torch.bfloat16)\n    \n    # Initialize output accumulator\n    num_tokens = batch_size * sequence_length\n    final_hidden_states = torch.zeros(\n        (num_tokens, hidden_dim),\n        dtype=torch.bfloat16,\n        device=hidden_states.device\n    )\n    \n    # Create expert mask: (num_experts, top_k, num_tokens)\n    # expert_mask[i, j, k] = 1 if token k selected expert i in position j\n    expert_mask = F.one_hot(selected_experts, num_classes=num_experts).permute(2, 1, 0)\n    \n    # Find which experts have at least one token assigned\n    expert_hit = torch.greater(expert_mask.sum(dim=(-1, -2)), 0).nonzero().squeeze(-1)\n    \n    # Process each expert that has tokens assigned\n    for expert_idx in expert_hit:\n        expert_idx_int = expert_idx.item()\n        \n        # Find which tokens selected this expert and at which top-k position\n        idx, top_x = torch.where(expert_mask[expert_idx_int])\n        \n        if top_x.numel() == 0:\n            continue\n        \n        # Gather tokens for this expert\n        current_state = hidden_states_flat[top_x]  # (num_tokens_for_expert, hidden_size)\n        \n        # Get expert weights\n        gate_w = expert_gate_proj[expert_idx_int]  # (intermediate_size, hidden_size)\n        up_w = expert_up_proj[expert_idx_int]      # (intermediate_size, hidden_size)\n        down_w = expert_down_proj[expert_idx_int]  # (hidden_size, intermediate_size)\n        \n        # SwiGLU: down(silu(gate(x)) * up(x))\n        gate_out = torch.matmul(current_state, gate_w.t())  # (n, intermediate_size)\n        up_out = torch.matmul(current_state, up_w.t())      # (n, intermediate_size)\n        \n        # SiLU activation: x * sigmoid(x)\n        silu_out = gate_out * torch.sigmoid(gate_out)\n        \n        # Element-wise multiply and down projection\n        intermediate = silu_out * up_out\n        expert_output = torch.matmul(intermediate, down_w.t())  # (n, hidden_size)\n        \n        # Weight by routing weights\n        weighted_output = expert_output * routing_weights_topk[top_x, idx, None]\n        \n        # Scatter-add back to output\n        final_hidden_states.index_add_(0, top_x, weighted_output)\n    \n    # Shared expert processes all tokens\n    # SwiGLU for shared expert\n    shared_gate_out = torch.matmul(hidden_states_flat, shared_gate_proj.t())  # (batch*seq, shared_intermediate)\n    shared_up_out = torch.matmul(hidden_states_flat, shared_up_proj.t())      # (batch*seq, shared_intermediate)\n    shared_silu = shared_gate_out * torch.sigmoid(shared_gate_out)\n    shared_intermediate = shared_silu * shared_up_out\n    shared_expert_output = torch.matmul(shared_intermediate, shared_down_proj.t())  # (batch*seq, hidden_size)\n    \n    # Shared expert gating: sigmoid(x @ gate_weight.T) * shared_output\n    shared_gate = torch.sigmoid(torch.matmul(hidden_states_flat, shared_expert_gate_weight.t()))  # (batch*seq, 1)\n    shared_expert_output = shared_gate * shared_expert_output\n    \n    # Combine sparse MoE and shared expert\n    final_hidden_states = final_hidden_states + shared_expert_output\n    \n    # Reshape back to (batch, seq, hidden)\n    output = final_hidden_states.view(batch_size, sequence_length, hidden_dim)\n    \n    return output, router_logits.to(torch.bfloat16)\n"
+}

@@ -1,0 +1,193 @@
+{
+  "task_id": 130,
+  "subset": "L2",
+  "collection_index": 36,
+  "name": "036_convnextv2_layer_with_nhwc_persistence_backward",
+  "hf_id": "facebook/convnextv2-base-22k-224",
+  "num_workloads": 14,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:42.979713Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.005394,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 16,
+          "H": 14,
+          "W": 14
+        },
+        "sol_ms": 0.0028,
+        "baseline_latency_ms": 0.259679
+      },
+      {
+        "index": 1,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 8,
+          "H": 28,
+          "W": 28
+        },
+        "sol_ms": 0.0051,
+        "baseline_latency_ms": 0.3264785
+      },
+      {
+        "index": 2,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 8,
+          "H": 14,
+          "W": 14
+        },
+        "sol_ms": 0.0016,
+        "baseline_latency_ms": 0.4074225
+      },
+      {
+        "index": 3,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 1,
+          "H": 14,
+          "W": 14
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.317407
+      },
+      {
+        "index": 4,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 4,
+          "H": 56,
+          "W": 56
+        },
+        "sol_ms": 0.0097,
+        "baseline_latency_ms": 0.5005744999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 32,
+          "H": 28,
+          "W": 28
+        },
+        "sol_ms": 0.0189,
+        "baseline_latency_ms": 0.7616769999999999
+      },
+      {
+        "index": 6,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 1,
+          "H": 56,
+          "W": 56
+        },
+        "sol_ms": 0.0028,
+        "baseline_latency_ms": 0.2343195
+      },
+      {
+        "index": 7,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 8,
+          "H": 56,
+          "W": 56
+        },
+        "sol_ms": 0.0189,
+        "baseline_latency_ms": 0.745389
+      },
+      {
+        "index": 8,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 1,
+          "H": 28,
+          "W": 28
+        },
+        "sol_ms": 0.0011,
+        "baseline_latency_ms": 0.3480465
+      },
+      {
+        "index": 9,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 64,
+          "H": 14,
+          "W": 14
+        },
+        "sol_ms": 0.0097,
+        "baseline_latency_ms": 0.8599330000000001
+      },
+      {
+        "index": 10,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 4,
+          "H": 28,
+          "W": 28
+        },
+        "sol_ms": 0.0028,
+        "baseline_latency_ms": 0.4543185
+      },
+      {
+        "index": 11,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 32,
+          "H": 56,
+          "W": 56
+        },
+        "sol_ms": 0.0743,
+        "baseline_latency_ms": 2.4538960000000003
+      },
+      {
+        "index": 12,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 16,
+          "H": 56,
+          "W": 56
+        },
+        "sol_ms": 0.0374,
+        "baseline_latency_ms": 1.3052275
+      },
+      {
+        "index": 13,
+        "axes": {
+          "C": 128,
+          "C4": 512,
+          "B": 2,
+          "H": 28,
+          "W": 28
+        },
+        "sol_ms": 0.0016,
+        "baseline_latency_ms": 0.422815
+      }
+    ]
+  }
+}

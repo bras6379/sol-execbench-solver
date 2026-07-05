@@ -1,0 +1,112 @@
+{
+    "name": "018_cu_seqlens_variable_length_vision_attention",
+    "hf_id": "Qwen/Qwen-Image-Edit-2509",
+    "description": "Variable-length vision attention using cumulative sequence lengths (cu_seqlens). Processes multiple images/videos in a single batch by splitting Q/K/V according to cu_seqlens boundaries, applying rotary position embeddings, performing separate attention computations for each sequence, then concatenating results. Used in vision transformer layers for efficient batched inference with mixed image/video inputs.",
+    "axes": {
+        "total_seq_len": {
+            "type": "var",
+            "description": "Total number of tokens across all sequences in the batch"
+        },
+        "num_sequences": {
+            "type": "var",
+            "description": "Number of separate sequences (images/videos) in the batch"
+        },
+        "embed_dim": {
+            "type": "const",
+            "value": 1152,
+            "description": "Embedding dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 72,
+            "description": "Dimension per attention head"
+        },
+        "qkv_dim": {
+            "type": "expr",
+            "expression": "embed_dim * 3",
+            "description": "Combined QKV projection dimension"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "total_seq_len",
+                "embed_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input embeddings for all sequences concatenated"
+        },
+        "cu_seqlens": {
+            "shape": [
+                "num_sequences"
+            ],
+            "dtype": "int64",
+            "description": "Cumulative sequence lengths (excluding initial 0, so length is num_sequences not num_sequences+1)"
+        },
+        "cos": {
+            "shape": [
+                "total_seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Rotary position embedding cosines"
+        },
+        "sin": {
+            "shape": [
+                "total_seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Rotary position embedding sines"
+        },
+        "qkv_weight": {
+            "shape": [
+                "qkv_dim",
+                "embed_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "QKV projection weight matrix"
+        },
+        "qkv_bias": {
+            "shape": [
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "QKV projection bias"
+        },
+        "proj_weight": {
+            "shape": [
+                "embed_dim",
+                "embed_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight matrix"
+        },
+        "proj_bias": {
+            "shape": [
+                "embed_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "total_seq_len",
+                "embed_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output embeddings for all sequences concatenated"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nfrom typing import Tuple\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs with valid cu_seqlens that sum to total_seq_len.\"\"\"\n    total_seq_len = axes_and_scalars[\"total_seq_len\"]\n    num_sequences = axes_and_scalars[\"num_sequences\"]\n    embed_dim = axes_and_scalars[\"embed_dim\"]\n    num_heads = axes_and_scalars[\"num_heads\"]\n    head_dim = axes_and_scalars[\"head_dim\"]\n    qkv_dim = embed_dim * 3\n    \n    # Generate random sequence lengths that sum to total_seq_len\n    # Ensure each sequence has at least 1 token\n    if num_sequences >= total_seq_len:\n        # Edge case: more sequences than tokens, give 1 token each to first total_seq_len sequences\n        lengths = [1] * total_seq_len + [0] * (num_sequences - total_seq_len)\n    else:\n        # Distribute tokens among sequences\n        base_len = total_seq_len // num_sequences\n        remainder = total_seq_len % num_sequences\n        lengths = [base_len] * num_sequences\n        for i in range(remainder):\n            lengths[i] += 1\n    \n    # Create cumulative sequence lengths (excluding initial 0)\n    cu_seqlens = torch.cumsum(torch.tensor(lengths, dtype=torch.int64, device=device), dim=0)\n    \n    # Generate other inputs\n    hidden_states = torch.randn(total_seq_len, embed_dim, device=device, dtype=torch.bfloat16)\n    cos = torch.randn(total_seq_len, num_heads, head_dim, device=device, dtype=torch.bfloat16)\n    sin = torch.randn(total_seq_len, num_heads, head_dim, device=device, dtype=torch.bfloat16)\n    qkv_weight = torch.randn(qkv_dim, embed_dim, device=device, dtype=torch.bfloat16) * 0.02\n    qkv_bias = torch.zeros(qkv_dim, device=device, dtype=torch.bfloat16)\n    proj_weight = torch.randn(embed_dim, embed_dim, device=device, dtype=torch.bfloat16) * 0.02\n    proj_bias = torch.zeros(embed_dim, device=device, dtype=torch.bfloat16)\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"cu_seqlens\": cu_seqlens,\n        \"cos\": cos,\n        \"sin\": sin,\n        \"qkv_weight\": qkv_weight,\n        \"qkv_bias\": qkv_bias,\n        \"proj_weight\": proj_weight,\n        \"proj_bias\": proj_bias,\n    }\n\n\ndef _apply_rotary_pos_emb(\n    q: torch.Tensor,\n    k: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n) -> Tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"Apply rotary position embeddings to query and key.\"\"\"\n    def rotate_half(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((-x2, x1), dim=-1)\n    \n    q_embed = (q * cos) + (rotate_half(q) * sin)\n    k_embed = (k * cos) + (rotate_half(k) * sin)\n    \n    return q_embed, k_embed\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cu_seqlens: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    qkv_bias: torch.Tensor,\n    proj_weight: torch.Tensor,\n    proj_bias: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"Variable-length vision attention with cu_seqlens.\"\"\"\n    embed_dim = 1152\n    num_heads = 16\n    head_dim = 72\n    scaling = head_dim ** -0.5\n    \n    seq_length = hidden_states.shape[0]\n    \n    # QKV projection: [seq_len, embed_dim] -> [seq_len, 3 * embed_dim]\n    qkv = F.linear(hidden_states, qkv_weight, qkv_bias)\n    qkv = qkv.reshape(seq_length, 3, num_heads, head_dim)\n    query_states, key_states, value_states = qkv.permute(1, 0, 2, 3).unbind(0)\n    # Each is now [seq_len, num_heads, head_dim]\n    \n    # Apply rotary position embeddings\n    query_states, key_states = _apply_rotary_pos_emb(\n        query_states, key_states, cos, sin\n    )\n    \n    # Build cu_seqlens with prepended 0 for splitting\n    cu_seqlens_with_zero = torch.cat([torch.zeros(1, dtype=torch.int64, device=cu_seqlens.device), cu_seqlens])\n    \n    # Compute lengths for each sequence\n    lengths = (cu_seqlens_with_zero[1:] - cu_seqlens_with_zero[:-1]).tolist()\n    \n    # Filter out zero-length sequences\n    lengths = [l for l in lengths if l > 0]\n    \n    if len(lengths) == 0:\n        # No valid sequences, return zeros\n        return torch.zeros(seq_length, embed_dim, device=hidden_states.device, dtype=hidden_states.dtype)\n    \n    # Split Q, K, V by sequence lengths\n    query_splits = torch.split(query_states, lengths, dim=0)\n    key_splits = torch.split(key_states, lengths, dim=0)\n    value_splits = torch.split(value_states, lengths, dim=0)\n    \n    # Process each sequence independently\n    attn_outputs = []\n    for q, k, v in zip(query_splits, key_splits, value_splits):\n        # q, k, v: [seq_len_i, num_heads, head_dim]\n        # Reshape for batch processing: [1, num_heads, seq_len_i, head_dim]\n        q = q.transpose(0, 1).unsqueeze(0)\n        k = k.transpose(0, 1).unsqueeze(0)\n        v = v.transpose(0, 1).unsqueeze(0)\n        \n        # Compute attention: [1, num_heads, seq_len_i, seq_len_i]\n        attn_weights = torch.matmul(q, k.transpose(2, 3)) * scaling\n        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(q.dtype)\n        \n        # Apply attention to values: [1, num_heads, seq_len_i, head_dim]\n        attn_output = torch.matmul(attn_weights, v)\n        \n        # Reshape back: [seq_len_i, num_heads, head_dim]\n        attn_output = attn_output.squeeze(0).transpose(0, 1)\n        attn_outputs.append(attn_output)\n    \n    # Concatenate all sequences: [total_seq_len, num_heads, head_dim]\n    attn_output = torch.cat(attn_outputs, dim=0)\n    \n    # Reshape and project: [total_seq_len, embed_dim]\n    attn_output = attn_output.reshape(seq_length, embed_dim)\n    attn_output = F.linear(attn_output, proj_weight, proj_bias)\n    \n    return attn_output\n"
+}

@@ -1,0 +1,112 @@
+{
+    "name": "026_moe_expert_parallel_execution_with_weighted_aggregation",
+    "hf_id": "ai21labs/AI21-Jamba-Large-1.7",
+    "description": "Complete MoE expert parallel execution with weighted aggregation. After routing determines expert assignments, this operation performs parallel expert computations across all 16 experts with dynamic token assignment. Each expert processes assigned tokens through a gated MLP (gate_proj, up_proj, SiLU, multiply, down_proj), then results are weighted by routing weights and aggregated back to original token positions via scattered writes.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 8192,
+            "description": "Model hidden dimension"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 24576,
+            "description": "Expert MLP intermediate dimension"
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 16,
+            "description": "Total number of experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 2,
+            "description": "Number of experts selected per token"
+        },
+        "batch_seq_len": {
+            "type": "expr",
+            "expression": "batch_size * seq_len",
+            "description": "Flattened batch*seq dimension"
+        },
+        "num_selected_tokens": {
+            "type": "expr",
+            "expression": "batch_size * seq_len * num_experts_per_tok",
+            "description": "Total expert-token assignments"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "routing_weights": {
+            "shape": [
+                "batch_seq_len",
+                "num_experts_per_tok"
+            ],
+            "dtype": "float32",
+            "description": "Normalized routing weights for each token-expert pair"
+        },
+        "selected_experts": {
+            "shape": [
+                "batch_seq_len",
+                "num_experts_per_tok"
+            ],
+            "dtype": "int64",
+            "description": "Expert indices selected for each token"
+        },
+        "gate_proj_weights": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weights for all experts"
+        },
+        "up_proj_weights": {
+            "shape": [
+                "num_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weights for all experts"
+        },
+        "down_proj_weights": {
+            "shape": [
+                "num_experts",
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weights for all experts"
+        }
+    },
+    "outputs": {
+        "final_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Aggregated expert outputs"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs with valid expert indices.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    intermediate_size = axes_and_scalars[\"intermediate_size\"]\n    num_experts = axes_and_scalars[\"num_experts\"]\n    num_experts_per_tok = axes_and_scalars[\"num_experts_per_tok\"]\n    \n    batch_seq_len = batch_size * seq_len\n    \n    # Hidden states\n    hidden_states = torch.randn(\n        batch_size, seq_len, hidden_size,\n        dtype=torch.bfloat16, device=device\n    )\n    \n    # Routing weights - normalized per token\n    routing_weights = torch.rand(\n        batch_seq_len, num_experts_per_tok,\n        dtype=torch.float32, device=device\n    )\n    routing_weights = routing_weights / routing_weights.sum(dim=-1, keepdim=True)\n    \n    # Selected experts - random expert indices in [0, num_experts)\n    # Each token selects num_experts_per_tok different experts\n    selected_experts = torch.stack([\n        torch.randperm(num_experts, device=device)[:num_experts_per_tok]\n        for _ in range(batch_seq_len)\n    ]).to(torch.int64)\n    \n    # Expert weights\n    gate_proj_weights = torch.randn(\n        num_experts, intermediate_size, hidden_size,\n        dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    up_proj_weights = torch.randn(\n        num_experts, intermediate_size, hidden_size,\n        dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    down_proj_weights = torch.randn(\n        num_experts, hidden_size, intermediate_size,\n        dtype=torch.bfloat16, device=device\n    ) * 0.02\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"routing_weights\": routing_weights,\n        \"selected_experts\": selected_experts,\n        \"gate_proj_weights\": gate_proj_weights,\n        \"up_proj_weights\": up_proj_weights,\n        \"down_proj_weights\": down_proj_weights,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    routing_weights: torch.Tensor,\n    selected_experts: torch.Tensor,\n    gate_proj_weights: torch.Tensor,\n    up_proj_weights: torch.Tensor,\n    down_proj_weights: torch.Tensor,\n):\n    \"\"\"\n    MoE expert parallel execution with weighted aggregation.\n    \n    For each expert:\n    1. Find tokens assigned to this expert\n    2. Gather those tokens\n    3. Execute gated MLP: down(SiLU(gate(x)) * up(x))\n    4. Weight by routing weights\n    5. Scatter-add back to output positions\n    \"\"\"\n    batch_size, seq_len, hidden_dim = hidden_states.shape\n    num_experts = gate_proj_weights.shape[0]\n    num_experts_per_tok = selected_experts.shape[1]\n    \n    # Flatten batch and sequence dimensions\n    hidden_states_flat = hidden_states.view(-1, hidden_dim)  # [batch*seq, hidden]\n    \n    # Create expert mask: one-hot encoding of expert assignments\n    # [batch*seq, top_k, num_experts] -> [num_experts, top_k, batch*seq]\n    expert_mask = F.one_hot(\n        selected_experts,\n        num_classes=num_experts\n    ).permute(2, 1, 0)  # [num_experts, top_k, batch*seq]\n    \n    # Initialize output accumulator\n    final_hidden_states = torch.zeros(\n        (batch_size * seq_len, hidden_dim),\n        dtype=torch.bfloat16,\n        device=hidden_states.device\n    )\n    \n    # Process each expert\n    for expert_idx in range(num_experts):\n        # Find which tokens are assigned to this expert\n        # idx: which top-k position, top_x: which token indices\n        idx, top_x = torch.where(expert_mask[expert_idx])\n        \n        # Skip if no tokens assigned to this expert\n        if top_x.shape[0] == 0:\n            continue\n        \n        # Gather tokens assigned to this expert\n        current_state = hidden_states_flat[top_x]  # [num_tokens, hidden]\n        \n        # Get expert weights\n        gate_w = gate_proj_weights[expert_idx]  # [intermediate, hidden]\n        up_w = up_proj_weights[expert_idx]      # [intermediate, hidden]\n        down_w = down_proj_weights[expert_idx]  # [hidden, intermediate]\n        \n        # Execute gated MLP: down(SiLU(gate(x)) * up(x))\n        # Convert to float32 for computation\n        current_state_f32 = current_state.to(torch.float32)\n        gate_w_f32 = gate_w.to(torch.float32)\n        up_w_f32 = up_w.to(torch.float32)\n        down_w_f32 = down_w.to(torch.float32)\n        \n        # gate_proj: [num_tokens, hidden] @ [hidden, intermediate] = [num_tokens, intermediate]\n        gate_out = current_state_f32 @ gate_w_f32.t()\n        \n        # up_proj: [num_tokens, hidden] @ [hidden, intermediate] = [num_tokens, intermediate]\n        up_out = current_state_f32 @ up_w_f32.t()\n        \n        # SiLU activation on gate output\n        gate_activated = F.silu(gate_out)\n        \n        # Element-wise multiply\n        intermediate = gate_activated * up_out\n        \n        # down_proj: [num_tokens, intermediate] @ [intermediate, hidden] = [num_tokens, hidden]\n        expert_output = intermediate @ down_w_f32.t()\n        \n        # Weight expert output by routing weights\n        # routing_weights[top_x, idx] gives the weight for each token-expert pair\n        token_weights = routing_weights[top_x, idx].unsqueeze(1)  # [num_tokens, 1]\n        weighted_output = expert_output * token_weights  # [num_tokens, hidden]\n        \n        # Scatter weighted results back to original positions\n        final_hidden_states.index_add_(\n            0,\n            top_x,\n            weighted_output.to(torch.bfloat16)\n        )\n    \n    # Reshape back to original dimensions\n    final_hidden_states = final_hidden_states.reshape(batch_size, seq_len, hidden_dim)\n    \n    return final_hidden_states\n"
+}

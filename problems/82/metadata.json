@@ -1,0 +1,233 @@
+{
+  "task_id": 82,
+  "subset": "L1",
+  "collection_index": 82,
+  "name": "082_qk_norm_scaled_dot_product_attention",
+  "hf_id": "stabilityai/stable-diffusion-3.5-medium",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:31.127080Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.020168,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 293
+        },
+        "sol_ms": 0.0138,
+        "baseline_latency_ms": 0.238112
+      },
+      {
+        "index": 1,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 16,
+          "seq_len": 691
+        },
+        "sol_ms": 0.1415,
+        "baseline_latency_ms": 1.682928
+      },
+      {
+        "index": 2,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 8,
+          "seq_len": 613
+        },
+        "sol_ms": 0.0617,
+        "baseline_latency_ms": 0.7866085
+      },
+      {
+        "index": 3,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 1,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.036,
+        "baseline_latency_ms": 0.8036
+      },
+      {
+        "index": 4,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0128,
+        "baseline_latency_ms": 0.2328005
+      },
+      {
+        "index": 5,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 128
+        },
+        "sol_ms": 0.006,
+        "baseline_latency_ms": 0.183647
+      },
+      {
+        "index": 6,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 256
+        },
+        "sol_ms": 0.012,
+        "baseline_latency_ms": 0.185664
+      },
+      {
+        "index": 7,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 1,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.0146,
+        "baseline_latency_ms": 0.329056
+      },
+      {
+        "index": 8,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 211
+        },
+        "sol_ms": 0.0098,
+        "baseline_latency_ms": 0.18336
+      },
+      {
+        "index": 9,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.0573,
+        "baseline_latency_ms": 0.924496
+      },
+      {
+        "index": 10,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 16,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0466,
+        "baseline_latency_ms": 0.417216
+      },
+      {
+        "index": 11,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 16,
+          "seq_len": 449
+        },
+        "sol_ms": 0.0862,
+        "baseline_latency_ms": 0.9923195
+      },
+      {
+        "index": 12,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0235,
+        "baseline_latency_ms": 0.2703839999999999
+      },
+      {
+        "index": 13,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 4,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0253,
+        "baseline_latency_ms": 0.361568
+      },
+      {
+        "index": 14,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 1,
+          "seq_len": 128
+        },
+        "sol_ms": 0.0029,
+        "baseline_latency_ms": 0.1395199999999999
+      },
+      {
+        "index": 15,
+        "axes": {
+          "dim": 1536,
+          "num_heads": 24,
+          "head_dim": 64,
+          "dim_times_3": 4608,
+          "batch_size": 1,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0033,
+        "baseline_latency_ms": 0.169536
+      }
+    ]
+  }
+}

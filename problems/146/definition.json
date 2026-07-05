@@ -1,0 +1,103 @@
+{
+    "name": "052_seqlen-finetuned-reconstructed_hyena_gating_and_output_projection",
+    "hf_id": "magicslabnu/Hyena-small-32k",
+    "description": "Hyena gating mechanism and output projection that combines multiple orders of filtered outputs through cascaded gating with FFT convolution, followed by transpose and linear projection. For order=2: v = dropout(v * x[1]), v = fftconv(v, k[0], bias[0]), y = v * x[0], y = transpose(y), y = out_proj(y).",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "d_model": {
+            "type": "const",
+            "value": 256
+        },
+        "hyena_order": {
+            "type": "const",
+            "value": 2
+        },
+        "order_minus_1": {
+            "type": "const",
+            "value": 1
+        },
+        "fft_size_expr": {
+            "type": "expr",
+            "expression": "seq_len * 2"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "v": {
+            "shape": [
+                "batch_size",
+                "d_model",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Filtered output from previous Hyena stage"
+        },
+        "x0": {
+            "shape": [
+                "batch_size",
+                "d_model",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "First gating input (x[0])"
+        },
+        "x1": {
+            "shape": [
+                "batch_size",
+                "d_model",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Second gating input (x[1]) for order=2"
+        },
+        "k": {
+            "shape": [
+                "order_minus_1",
+                "d_model",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Filter coefficients for each order"
+        },
+        "bias": {
+            "shape": [
+                "order_minus_1",
+                "d_model"
+            ],
+            "dtype": "float32",
+            "description": "Bias terms for FFT convolution"
+        },
+        "out_proj_weight": {
+            "shape": [
+                "d_model",
+                "d_model"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight matrix"
+        },
+        "out_proj_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "d_model"
+            ],
+            "dtype": "float32",
+            "description": "Gated and projected output"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    v: torch.Tensor,\n    x0: torch.Tensor,\n    x1: torch.Tensor,\n    k: torch.Tensor,\n    bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Hyena gating and output projection.\n    \n    Args:\n        v: (batch, d_model, L) - filtered output\n        x0: (batch, d_model, L) - first gating input\n        x1: (batch, d_model, L) - second gating input (for order=2)\n        k: (order-1, d_model, L) - filter coefficients\n        bias: (order-1, d_model) - bias terms for FFT conv\n        out_proj_weight: (d_model, d_model) - output projection weight\n        out_proj_bias: (d_model,) - output projection bias\n    \n    Returns:\n        (batch, L, d_model) - gated and projected output\n    \"\"\"\n    seqlen = v.shape[-1]\n    fft_size = 2 * seqlen\n    \n    # For order=2, we have one gating step with x1\n    # Step 1: Element-wise gating multiplication (dropout=0.0, so no effect)\n    v = v * x1\n    \n    # Step 2: FFT convolution with filter k[0] and bias[0]\n    # fftconv_kernel implementation\n    k_0 = k[0]  # (d_model, L)\n    bias_0 = bias[0]  # (d_model,)\n    \n    # FFT of filter\n    k_f = torch.fft.rfft(k_0.to(torch.float32), n=fft_size) / fft_size\n    # FFT of input\n    u_f = torch.fft.rfft(v.to(torch.float32), n=fft_size)\n    \n    # Element-wise multiplication in frequency domain and inverse FFT\n    # k_f shape: (d_model, fft_size//2+1)\n    # u_f shape: (batch, d_model, fft_size//2+1)\n    # Need to broadcast k_f\n    y = torch.fft.irfft(u_f * k_f.unsqueeze(0), n=fft_size, norm='forward')[..., :seqlen]\n    \n    # Add skip connection with bias\n    v = y + v * bias_0.unsqueeze(-1)\n    v = v.to(torch.float32)\n    \n    # Step 3: Final gating with x0\n    y = v * x0\n    \n    # Step 4: Transpose from (batch, d_model, L) to (batch, L, d_model)\n    y = y.transpose(1, 2)\n    \n    # Step 5: Output projection: y @ weight.T + bias\n    y = torch.matmul(y, out_proj_weight.t()) + out_proj_bias\n    \n    return y\n"
+}

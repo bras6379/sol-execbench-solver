@@ -1,0 +1,191 @@
+{
+    "name": "016_fp8_multi_latent_attention_qkv_projection",
+    "hf_id": "deepseek-ai/DeepSeek-V3",
+    "description": "FP8-quantized Multi-Latent Attention (MLA) QKV projection with low-rank compression. Implements DeepSeek-V3's novel MLA mechanism with Q path (q_a_proj -> RMSNorm -> q_b_proj) and KV path (kv_a_proj_with_mqa -> split -> RMSNorm -> kv_b_proj). All linear layers use FP8 quantization with blockwise scaling. The kv_a_proj output dimension is padded to 640 (multiple of 128) for FP8 compatibility.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 7168,
+            "description": "Model hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 128,
+            "description": "Number of attention heads"
+        },
+        "q_lora_rank": {
+            "type": "const",
+            "value": 1536,
+            "description": "Q low-rank dimension"
+        },
+        "kv_lora_rank": {
+            "type": "const",
+            "value": 512,
+            "description": "KV low-rank dimension"
+        },
+        "qk_rope_head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "RoPE head dimension"
+        },
+        "qk_nope_head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Non-RoPE head dimension"
+        },
+        "v_head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Value head dimension"
+        },
+        "q_head_dim": {
+            "type": "const",
+            "value": 192,
+            "description": "Total Q head dimension (nope + rope)"
+        },
+        "kv_a_out_dim_padded": {
+            "type": "const",
+            "value": 640,
+            "description": "KV A projection output dimension padded to 128 multiple (512 + 64 = 576 -> 640)"
+        },
+        "q_b_out_dim": {
+            "type": "expr",
+            "expression": "num_heads * q_head_dim",
+            "description": "Q B projection output dimension (128 * 192 = 24576)"
+        },
+        "kv_b_out_dim": {
+            "type": "expr",
+            "expression": "num_heads * (qk_nope_head_dim + v_head_dim)",
+            "description": "KV B projection output dimension (128 * 256 = 32768)"
+        },
+        "block_size": {
+            "type": "const",
+            "value": 128,
+            "description": "Block size for FP8 scaling"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "q_a_proj_weight": {
+            "shape": [
+                "q_lora_rank",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Q A projection weight"
+        },
+        "q_a_layernorm_weight": {
+            "shape": [
+                "q_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "Q A layernorm weight"
+        },
+        "q_b_proj_weight": {
+            "shape": [
+                "q_b_out_dim",
+                "q_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "Q B projection weight"
+        },
+        "kv_a_proj_weight": {
+            "shape": [
+                "kv_a_out_dim_padded",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "KV A projection weight (padded to 640 for FP8 compatibility)"
+        },
+        "kv_a_layernorm_weight": {
+            "shape": [
+                "kv_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "KV A layernorm weight"
+        },
+        "kv_b_proj_weight": {
+            "shape": [
+                "kv_b_out_dim",
+                "kv_lora_rank"
+            ],
+            "dtype": "bfloat16",
+            "description": "KV B projection weight"
+        },
+        "rms_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RMSNorm epsilon"
+        }
+    },
+    "outputs": {
+        "q_nope": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "qk_nope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query non-RoPE component"
+        },
+        "q_pe": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "qk_rope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query RoPE component"
+        },
+        "k_nope": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "qk_nope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key non-RoPE component"
+        },
+        "k_pe": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1",
+                "qk_rope_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key RoPE component (single head for MQA)"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "v_head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value states"
+        }
+    },
+    "reference": "import torch\n# --- inlined fp8_reference ---\nimport torch\n\nfrom enum import StrEnum\n\n\nclass ScalingType(StrEnum):\n    \"\"\"\n    Enum for different FP8 scaling strategies.\n\n    Scaling types:\n    - TensorWise: Global per-tensor scaling (no blocks)\n    - RowWise: Per-row scaling (1 scale per row)\n    - BlockWise1x16: 1x16 blocks (per-tensor in M, 16-sized blocks in K)\n    - BlockWise1x32: 1x32 blocks (per-tensor in M, 32-sized blocks in K)\n    - BlockWise1x128: 1x128 blocks (per-tensor in M, 128-sized blocks in K)\n    - BlockWise128x128: 128x128 blocks (blockwise in both dimensions)\n    \"\"\"\n\n    TensorWise = \"TensorWise\"\n    RowWise = \"RowWise\"\n    BlockWise1x16 = \"BlockWise1x16\"\n    BlockWise1x32 = \"BlockWise1x32\"\n    BlockWise1x128 = \"BlockWise1x128\"\n    BlockWise128x128 = \"BlockWise128x128\"\n\n    @property\n    def shape(self) -> tuple[int, int]:\n        return {\n            ScalingType.TensorWise: (None, None),\n            ScalingType.RowWise: (1, None),\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }[self]\n\n\nclass BlockwiseScaler:\n    \"\"\"\n    Compute and apply scales for FP8 tensors.\n\n    Supports various scaling strategies via ScalingType enum:\n    - TensorWise: Global per-tensor scaling\n    - RowWise: Per-row scaling\n    - BlockWise1x16/32/128: Rectangular blocks\n    - BlockWise128x128: Square blocks\n    \"\"\"\n\n    E4M3_MAX = 448.0  # Maximum representable value in E4M3\n\n    def __init__(self, scaling_type: ScalingType):\n        \"\"\"\n        Initialize BlockwiseScaler with a specific scaling strategy.\n\n        Args:\n            scaling_type: ScalingType enum value\n                Examples:\n                - ScalingType.TensorWise -> global per-tensor scaling\n                - ScalingType.RowWise -> per-row scaling (1 scale per row)\n                - ScalingType.BlockWise1x128 -> 1x128 blocks\n                - ScalingType.BlockWise128x128 -> 128x128 blocks\n        \"\"\"\n        self.scaling_type = scaling_type\n        self.shape = self.scaling_type.shape\n\n        # Map enum to block dimensions (M, K)\n        scaling_map = {\n            ScalingType.TensorWise: (None, None),  # No blocking\n            ScalingType.RowWise: (1, None),  # Per-row, full K dimension\n            ScalingType.BlockWise1x16: (1, 16),\n            ScalingType.BlockWise1x32: (1, 32),\n            ScalingType.BlockWise1x128: (1, 128),\n            ScalingType.BlockWise128x128: (128, 128),\n        }\n\n        self.block_size_m, self.block_size_k = scaling_map[scaling_type]\n\n        # Keep for backward compatibility (use first dimension if available)\n        self.block_size = self.block_size_m if self.block_size_m else None\n\n    def compute_scales(self, tensor: torch.Tensor) -> torch.Tensor:\n        \"\"\"\n        Compute scale factors based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Returns scalar tensor\n        - RowWise: Returns (M,) tensor\n        - BlockWise*: Returns (M//block_size_m, K//block_size_k) tensor\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n\n        Returns:\n            Scale tensor with shape depending on scaling type.\n            These are inverse scales (amax / dtype_max) used for dequantization.\n        \"\"\"\n        if self.scaling_type == ScalingType.TensorWise:\n            # Global per-tensor scaling\n            amax = torch.max(torch.abs(tensor)).clamp(min=1e-12)\n            return amax / self.E4M3_MAX\n\n        M, K = tensor.shape\n\n        if self.scaling_type == ScalingType.RowWise:\n            # Per-row scaling: (M, K) -> (M,)\n            row_max = tensor.abs().amax(dim=1)\n            scales = row_max / self.E4M3_MAX\n            return torch.clamp(scales, min=1e-12)\n\n        # BlockWise scaling\n        assert M % self.block_size_m == 0, (\n            f\"M={M} must be a multiple of {self.block_size_m}\"\n        )\n        assert K % self.block_size_k == 0, (\n            f\"K={K} must be a multiple of {self.block_size_k}\"\n        )\n\n        # Reshape (M, K) -> (M//block_size_m, block_size_m, K//block_size_k, block_size_k)\n        new_shape = (\n            M // self.block_size_m,\n            self.block_size_m,\n            K // self.block_size_k,\n            self.block_size_k,\n        )\n        tensor_blocked = tensor.reshape(new_shape)\n\n        # Compute max over the block dimensions (dims 1 and 3)\n        block_max = tensor_blocked.abs().amax(dim=3).amax(dim=1)\n\n        # Compute inverse scales\n        scales = block_max / self.E4M3_MAX\n        return torch.clamp(scales, min=1e-12)\n\n    def apply_scaling(\n        self,\n        tensor: torch.Tensor,\n        scales: torch.Tensor,\n        inverse: bool = False,\n        clamp_to_fp8_range: bool = False,\n    ) -> torch.Tensor:\n        \"\"\"\n        Apply scaling to tensor based on the scaling type.\n\n        This is a unified method that handles all scaling types:\n        - TensorWise: Uses scalar scale\n        - RowWise: Uses per-row scales (M,)\n        - BlockWise*: Uses blockwise scales (M//block_size_m, K//block_size_k)\n\n        Args:\n            tensor: Input tensor (typically M, K for 2D)\n            scales: Scale tensor with shape depending on scaling type\n                   These are inverse scales (amax / dtype_max)\n            inverse: If True, multiply by scales (dequantization)\n                    If False, divide by scales (quantization)\n            clamp_to_fp8_range: If True, clamp to FP8 range before returning\n\n        Returns:\n            Scaled tensor (same shape as input)\n        \"\"\"\n        old_shape = tensor.shape\n        if self.scaling_type == ScalingType.RowWise:\n            # expand (M,) -> (M, 1)\n            scales = scales.unsqueeze(1)\n        elif self.scaling_type != ScalingType.TensorWise:\n            # blockwise scaling\n            M, K = tensor.shape\n            new_shape = (\n                M // self.block_size_m,\n                self.block_size_m,\n                K // self.block_size_k,\n                self.block_size_k,\n            )\n            tensor = tensor.reshape(new_shape)\n            scales = scales.unsqueeze(1).unsqueeze(3)\n\n        if inverse:\n            tensor_scaled = tensor * scales\n        else:\n            tensor_scaled = tensor / scales\n            if clamp_to_fp8_range:\n                tensor_scaled = torch.clamp(\n                    tensor_scaled, min=-self.E4M3_MAX, max=self.E4M3_MAX\n                )\n\n        return tensor_scaled.reshape(*old_shape)\n\n\nclass CuBLASRefBlockwiseGemm:\n    \"\"\"\n    Reference implementation of blockwise-scaled GEMM via dequantize-then-matmul.\n    \"\"\"\n\n    def scaled_mm(\n        self,\n        mat_a: torch.Tensor,\n        mat_b: torch.Tensor,\n        scale_a: torch.Tensor,\n        scale_recipe_a: ScalingType,\n        scale_b: torch.Tensor,\n        scale_recipe_b: ScalingType,\n        bias: torch.Tensor | None = None,\n        output_dtype: torch.dtype = torch.bfloat16,\n        use_fast_accum: bool = True,\n    ) -> torch.Tensor:\n        \"\"\"\n        Scaled matrix multiplication: dequantize A and B, then matmul in float32.\n\n        Args:\n            mat_a: Input matrix A (M, K) in float8_e4m3fn\n            mat_b: Input matrix B (N, K) in float8_e4m3fn\n            scale_a: Scaling factors for A\n            scale_recipe_a: Scaling type for A\n            scale_b: Scaling factors for B\n            scale_recipe_b: Scaling type for B\n            bias: Optional bias vector (N,)\n            output_dtype: Output data type\n            use_fast_accum: Unused (kept for API compatibility)\n\n        Returns:\n            Result matrix (M, N) with dtype=output_dtype\n        \"\"\"\n        scaler_a = BlockwiseScaler(scale_recipe_a)\n        scaler_b = BlockwiseScaler(scale_recipe_b)\n\n        # Dequantize: FP8 values * inverse_scales -> float32\n        a_f32 = scaler_a.apply_scaling(mat_a.to(torch.float32), scale_a, inverse=True)\n        b_f32 = scaler_b.apply_scaling(mat_b.to(torch.float32), scale_b, inverse=True)\n\n        # Single matmul in float32\n        y = a_f32 @ b_f32.T\n\n        if bias is not None and bias.numel():\n            y = y + bias\n\n        return y.to(output_dtype)\n\n# --- end inlined fp8_reference ---\n\n\n\ndef _rms_norm(x: torch.Tensor, weight: torch.Tensor, eps: float) -> torch.Tensor:\n    \"\"\"RMSNorm implementation.\"\"\"\n    variance = x.to(torch.float32).pow(2).mean(-1, keepdim=True)\n    x_normed = x * torch.rsqrt(variance + eps)\n    return (x_normed * weight).to(x.dtype)\n\n\ndef _fp8_linear(x: torch.Tensor, weight: torch.Tensor,\n                activation_scaler: BlockwiseScaler,\n                weight_scaler: BlockwiseScaler,\n                gemm_ref: CuBLASRefBlockwiseGemm) -> torch.Tensor:\n    \"\"\"\n    FP8 linear layer with blockwise scaling.\n    \n    Args:\n        x: Input tensor [M, K] in bfloat16\n        weight: Weight tensor [N, K] in bfloat16\n    \n    Returns:\n        Output tensor [M, N] in bfloat16\n    \"\"\"\n    M, K = x.shape\n    N, K_w = weight.shape\n    assert K == K_w\n    \n    # Convert to FP32 for scaling\n    x_fp32 = x.to(torch.float32)\n    w_fp32 = weight.T.to(torch.float32)  # [K, N]\n    \n    # Compute scales\n    scale_x = activation_scaler.compute_scales(x_fp32)\n    scale_w = weight_scaler.compute_scales(w_fp32)\n    \n    # Apply scaling and quantize\n    x_scaled = activation_scaler.apply_scaling(\n        x_fp32, scale_x, inverse=False, clamp_to_fp8_range=True\n    )\n    w_scaled = weight_scaler.apply_scaling(\n        w_fp32, scale_w, inverse=False, clamp_to_fp8_range=True\n    )\n    \n    # Quantize to FP8\n    qx = x_scaled.to(torch.float8_e4m3fn)  # [M, K]\n    qw = w_scaled.T.to(torch.float8_e4m3fn)  # [N, K]\n    \n    # Transpose weight scales for CuBLAS format\n    scale_w_cublas = scale_w.T.contiguous()  # [N//128, K//128]\n    \n    # FP8 GEMM\n    output = gemm_ref.scaled_mm(\n        mat_a=qx,\n        mat_b=qw,\n        scale_a=scale_x,\n        scale_recipe_a=ScalingType.BlockWise1x128,\n        scale_b=scale_w_cublas,\n        scale_recipe_b=ScalingType.BlockWise128x128,\n        bias=None,\n        output_dtype=torch.bfloat16,\n        use_fast_accum=True\n    )\n    \n    return output\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    q_a_proj_weight: torch.Tensor,\n    q_a_layernorm_weight: torch.Tensor,\n    q_b_proj_weight: torch.Tensor,\n    kv_a_proj_weight: torch.Tensor,\n    kv_a_layernorm_weight: torch.Tensor,\n    kv_b_proj_weight: torch.Tensor,\n    rms_norm_eps: float,\n):\n    \"\"\"\n    FP8-quantized Multi-Latent Attention QKV projection.\n    \n    Args:\n        hidden_states: [B, L, 7168]\n        q_a_proj_weight: [1536, 7168]\n        q_a_layernorm_weight: [1536]\n        q_b_proj_weight: [24576, 1536]\n        kv_a_proj_weight: [640, 7168] (padded from 576 to 640 for FP8)\n        kv_a_layernorm_weight: [512]\n        kv_b_proj_weight: [32768, 512]\n        rms_norm_eps: float\n    \n    Returns:\n        q_nope: [B, L, 128, 128]\n        q_pe: [B, L, 128, 64]\n        k_nope: [B, L, 128, 128]\n        k_pe: [B, L, 1, 64]\n        value_states: [B, L, 128, 128]\n    \"\"\"\n    # Constants\n    num_heads = 128\n    q_lora_rank = 1536\n    kv_lora_rank = 512\n    qk_rope_head_dim = 64\n    qk_nope_head_dim = 128\n    v_head_dim = 128\n    q_head_dim = 192\n    \n    bsz, q_len, hidden_size = hidden_states.shape\n    \n    # Initialize scalers and GEMM reference\n    activation_scaler = BlockwiseScaler(ScalingType.BlockWise1x128)\n    weight_scaler = BlockwiseScaler(ScalingType.BlockWise128x128)\n    gemm_ref = CuBLASRefBlockwiseGemm()\n    \n    # Reshape for linear layers: [B, L, H] -> [B*L, H]\n    hidden_flat = hidden_states.reshape(-1, hidden_size)\n    \n    # === Q Path with Low-Rank Factorization ===\n    # q_a_proj: [B*L, 7168] -> [B*L, 1536]\n    q_a = _fp8_linear(hidden_flat, q_a_proj_weight, activation_scaler, weight_scaler, gemm_ref)\n    \n    # RMSNorm\n    q_a = q_a.reshape(bsz, q_len, q_lora_rank)\n    q_a_norm = _rms_norm(q_a, q_a_layernorm_weight, rms_norm_eps)\n    q_a_norm_flat = q_a_norm.reshape(-1, q_lora_rank)\n    \n    # q_b_proj: [B*L, 1536] -> [B*L, 24576]\n    q = _fp8_linear(q_a_norm_flat, q_b_proj_weight, activation_scaler, weight_scaler, gemm_ref)\n    \n    # Reshape and split Q: [B*L, 24576] -> [B, L, 128, 192] -> q_nope[128] + q_pe[64]\n    q = q.view(bsz, q_len, num_heads, q_head_dim)\n    q_nope, q_pe = torch.split(q, [qk_nope_head_dim, qk_rope_head_dim], dim=-1)\n    \n    # === KV Path with Mandatory Low-Rank Compression ===\n    # kv_a_proj_with_mqa: [B*L, 7168] -> [B*L, 640] (padded output)\n    compressed_kv_with_pe_padded = _fp8_linear(hidden_flat, kv_a_proj_weight, activation_scaler, weight_scaler, gemm_ref)\n    \n    # Extract only the first 576 elements (512 + 64) from the padded output\n    compressed_kv_with_pe = compressed_kv_with_pe_padded[:, :kv_lora_rank + qk_rope_head_dim]\n    \n    # Split into compressed_kv [512] and k_pe [64]\n    compressed_kv_with_pe = compressed_kv_with_pe.reshape(bsz, q_len, kv_lora_rank + qk_rope_head_dim)\n    compressed_kv, k_pe = torch.split(compressed_kv_with_pe, [kv_lora_rank, qk_rope_head_dim], dim=-1)\n    \n    # Reshape k_pe: [B, L, 64] -> [B, L, 1, 64]\n    k_pe = k_pe.unsqueeze(2)\n    \n    # RMSNorm on compressed KV\n    compressed_kv_norm = _rms_norm(compressed_kv, kv_a_layernorm_weight, rms_norm_eps)\n    compressed_kv_norm_flat = compressed_kv_norm.reshape(-1, kv_lora_rank)\n    \n    # kv_b_proj: [B*L, 512] -> [B*L, 32768]\n    kv = _fp8_linear(compressed_kv_norm_flat, kv_b_proj_weight, activation_scaler, weight_scaler, gemm_ref)\n    \n    # Reshape and split KV: [B*L, 32768] -> [B, L, 128, 256] -> k_nope[128] + v[128]\n    kv = kv.view(bsz, q_len, num_heads, qk_nope_head_dim + v_head_dim)\n    k_nope, value_states = torch.split(kv, [qk_nope_head_dim, v_head_dim], dim=-1)\n    \n    return q_nope, q_pe, k_nope, k_pe, value_states\n"
+}

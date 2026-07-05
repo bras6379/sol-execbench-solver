@@ -1,0 +1,217 @@
+{
+  "task_id": 58,
+  "subset": "L1",
+  "collection_index": 58,
+  "name": "058_moe_expert_token_radix_sort_with_prefix_sum",
+  "hf_id": "inclusionAI/Ling-mini-2.0",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:25.986781Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.000413,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 0.00040861,
+        "baseline_latency_ms": 0.04944
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 0.00043426,
+        "baseline_latency_ms": 0.055296
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 2,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.00040861,
+        "baseline_latency_ms": 0.0495365
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 32,
+          "seq_len": 128
+        },
+        "sol_ms": 0.00041716,
+        "baseline_latency_ms": 0.051344
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 4,
+          "seq_len": 512
+        },
+        "sol_ms": 0.00040861,
+        "baseline_latency_ms": 0.049216
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 1,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.00040861,
+        "baseline_latency_ms": 0.049264
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 4,
+          "seq_len": 544
+        },
+        "sol_ms": 0.00040915,
+        "baseline_latency_ms": 0.0541125
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 2,
+          "seq_len": 1056
+        },
+        "sol_ms": 0.00040888,
+        "baseline_latency_ms": 0.054016
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 2,
+          "seq_len": 1088
+        },
+        "sol_ms": 0.00040915,
+        "baseline_latency_ms": 0.0542405
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 2,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.00041716,
+        "baseline_latency_ms": 0.055456
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 1,
+          "seq_len": 2080
+        },
+        "sol_ms": 0.00040875,
+        "baseline_latency_ms": 0.055984
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 1,
+          "seq_len": 2112
+        },
+        "sol_ms": 0.00040888,
+        "baseline_latency_ms": 0.053984
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 2,
+          "seq_len": 1120
+        },
+        "sol_ms": 0.00040942,
+        "baseline_latency_ms": 0.055552
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 1,
+          "seq_len": 4096
+        },
+        "sol_ms": 0.00041716,
+        "baseline_latency_ms": 0.055632
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 4,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.00041716,
+        "baseline_latency_ms": 0.0553925
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_experts": 256,
+          "num_experts_per_tok": 8,
+          "num_experts_plus_one": 257,
+          "batch_size": 8,
+          "seq_len": 288
+        },
+        "sol_ms": 0.00040968,
+        "baseline_latency_ms": 0.0534245
+      }
+    ]
+  }
+}

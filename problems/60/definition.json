@@ -1,0 +1,95 @@
+{
+    "name": "060_fused_attention_qk_matmul_scale_mask_softmax_backward",
+    "hf_id": "meta-llama/Llama-3.1-405B",
+    "description": "Backward pass for fused attention QK matmul with scaling, causal mask, and softmax. Computes gradients for query and key tensors through the chain: softmax_backward -> scale_backward -> matmul_backward.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 128
+        },
+        "seq_len_q": {
+            "type": "var"
+        },
+        "seq_len_k": {
+            "type": "var"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "seq_len_k"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from downstream with respect to attention weights"
+        },
+        "query": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query tensor saved from forward pass"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_k",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key tensor saved from forward pass"
+        },
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "seq_len_k"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention weights (softmax output) saved from forward pass"
+        },
+        "scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Scaling factor (1/sqrt(head_dim))"
+        }
+    },
+    "outputs": {
+        "grad_query": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_q",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient with respect to query tensor"
+        },
+        "grad_key": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_k",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient with respect to key tensor"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    query: torch.Tensor,\n    key: torch.Tensor,\n    attn_weights: torch.Tensor,\n    scaling: float,\n):\n    \"\"\"\n    Backward pass for fused attention QK matmul + scale + mask + softmax.\n    \n    Gradient flow:\n    grad_output -> softmax_backward -> scale_backward -> matmul_backward -> grad_Q, grad_K\n    \n    Args:\n        grad_output: (batch, num_heads, seq_len_q, seq_len_k) gradient from downstream\n        query: (batch, num_heads, seq_len_q, head_dim) saved from forward\n        key: (batch, num_heads, seq_len_k, head_dim) saved from forward\n        attn_weights: (batch, num_heads, seq_len_q, seq_len_k) softmax output saved from forward\n        scaling: float, scaling factor (1/sqrt(head_dim))\n    \n    Returns:\n        grad_query: (batch, num_heads, seq_len_q, head_dim)\n        grad_key: (batch, num_heads, seq_len_k, head_dim)\n    \"\"\"\n    # Convert to float32 for numerical stability in softmax backward\n    grad_output_f32 = grad_output.to(torch.float32)\n    attn_weights_f32 = attn_weights.to(torch.float32)\n    \n    # Step 1: Gradient through softmax\n    # For softmax: d_softmax/d_logits = softmax * (grad_out - sum(grad_out * softmax))\n    # This is the efficient formulation that avoids computing the full Jacobian\n    sum_grad = torch.sum(grad_output_f32 * attn_weights_f32, dim=-1, keepdim=True)\n    grad_attn_logits = attn_weights_f32 * (grad_output_f32 - sum_grad)\n    \n    # Convert back to original dtype\n    grad_attn_logits = grad_attn_logits.to(query.dtype)\n    \n    # Step 2: Gradient through scaling\n    # d(x * scaling)/dx = scaling\n    grad_scaled_logits = grad_attn_logits * scaling\n    \n    # Step 3: Gradient through Q @ K^T matrix multiplication\n    # Forward: attn_logits = Q @ K^T\n    # Backward: grad_Q = grad_attn_logits @ K\n    #           grad_K = grad_attn_logits^T @ Q\n    \n    # grad_Q = grad_scaled_logits @ K\n    # Shape: (batch, num_heads, seq_len_q, seq_len_k) @ (batch, num_heads, seq_len_k, head_dim)\n    #     -> (batch, num_heads, seq_len_q, head_dim)\n    grad_query = torch.matmul(grad_scaled_logits, key)\n    \n    # grad_K = grad_scaled_logits^T @ Q\n    # Shape: (batch, num_heads, seq_len_k, seq_len_q) @ (batch, num_heads, seq_len_q, head_dim)\n    #     -> (batch, num_heads, seq_len_k, head_dim)\n    grad_key = torch.matmul(grad_scaled_logits.transpose(-2, -1), query)\n    \n    return grad_query, grad_key\n"
+}

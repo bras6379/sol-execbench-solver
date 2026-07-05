@@ -1,0 +1,316 @@
+{
+    "name": "023_video_latent_vae_encoder_downsampling",
+    "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+    "description": "VAE encoder downsampling block for video-to-latent compression. Converts raw video frames to compressed latent representations through spatial and temporal downsampling with 3D convolutions, group normalization, SiLU activations, and residual connections.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "frames": {
+            "type": "var"
+        },
+        "height": {
+            "type": "var"
+        },
+        "width": {
+            "type": "var"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 3
+        },
+        "latent_channels": {
+            "type": "const",
+            "value": 16
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "num_groups": {
+            "type": "const",
+            "value": 32
+        },
+        "hidden_div4": {
+            "type": "expr",
+            "expression": "hidden_size // 4"
+        },
+        "hidden_div2": {
+            "type": "expr",
+            "expression": "hidden_size // 2"
+        },
+        "groups_div4": {
+            "type": "expr",
+            "expression": "num_groups // 4"
+        },
+        "groups_div2": {
+            "type": "expr",
+            "expression": "num_groups // 2"
+        },
+        "frames_div2": {
+            "type": "expr",
+            "expression": "frames // 2"
+        },
+        "frames_div4": {
+            "type": "expr",
+            "expression": "frames // 4"
+        },
+        "height_div2": {
+            "type": "expr",
+            "expression": "height // 2"
+        },
+        "height_div4": {
+            "type": "expr",
+            "expression": "height // 4"
+        },
+        "height_div8": {
+            "type": "expr",
+            "expression": "height // 8"
+        },
+        "width_div2": {
+            "type": "expr",
+            "expression": "width // 2"
+        },
+        "width_div4": {
+            "type": "expr",
+            "expression": "width // 4"
+        },
+        "width_div8": {
+            "type": "expr",
+            "expression": "width // 8"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "frames",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input video tensor normalized to [-1, 1]"
+        },
+        "input_conv_weight": {
+            "shape": [
+                "hidden_div4",
+                "in_channels",
+                "3",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Initial 3D convolution weight"
+        },
+        "input_conv_bias": {
+            "shape": [
+                "hidden_div4"
+            ],
+            "dtype": "float32",
+            "description": "Initial 3D convolution bias"
+        },
+        "down1_gn_weight": {
+            "shape": [
+                "hidden_div4"
+            ],
+            "dtype": "float32",
+            "description": "First block group norm weight"
+        },
+        "down1_gn_bias": {
+            "shape": [
+                "hidden_div4"
+            ],
+            "dtype": "float32",
+            "description": "First block group norm bias"
+        },
+        "down1_conv_weight": {
+            "shape": [
+                "hidden_div2",
+                "hidden_div4",
+                "3",
+                "4",
+                "4"
+            ],
+            "dtype": "float32",
+            "description": "First downsampling conv weight"
+        },
+        "down1_conv_bias": {
+            "shape": [
+                "hidden_div2"
+            ],
+            "dtype": "float32",
+            "description": "First downsampling conv bias"
+        },
+        "down1_res_weight": {
+            "shape": [
+                "hidden_div2",
+                "hidden_div4",
+                "1",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "First residual projection weight"
+        },
+        "down1_res_bias": {
+            "shape": [
+                "hidden_div2"
+            ],
+            "dtype": "float32",
+            "description": "First residual projection bias"
+        },
+        "down2_gn_weight": {
+            "shape": [
+                "hidden_div2"
+            ],
+            "dtype": "float32",
+            "description": "Second block group norm weight"
+        },
+        "down2_gn_bias": {
+            "shape": [
+                "hidden_div2"
+            ],
+            "dtype": "float32",
+            "description": "Second block group norm bias"
+        },
+        "down2_conv_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_div2",
+                "3",
+                "4",
+                "4"
+            ],
+            "dtype": "float32",
+            "description": "Second downsampling conv weight"
+        },
+        "down2_conv_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Second downsampling conv bias"
+        },
+        "down2_res_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_div2",
+                "1",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Second residual projection weight"
+        },
+        "down2_res_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Second residual projection bias"
+        },
+        "down3_gn_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Third block group norm weight"
+        },
+        "down3_gn_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Third block group norm bias"
+        },
+        "down3_conv_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size",
+                "3",
+                "4",
+                "4"
+            ],
+            "dtype": "float32",
+            "description": "Third downsampling conv weight"
+        },
+        "down3_conv_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Third downsampling conv bias"
+        },
+        "down3_res_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size",
+                "1",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Third residual projection weight"
+        },
+        "down3_res_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Third residual projection bias"
+        },
+        "latent_gn_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Latent projection group norm weight"
+        },
+        "latent_gn_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Latent projection group norm bias"
+        },
+        "latent_conv_weight": {
+            "shape": [
+                "latent_channels",
+                "hidden_size",
+                "3",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Latent projection conv weight"
+        },
+        "latent_conv_bias": {
+            "shape": [
+                "latent_channels"
+            ],
+            "dtype": "float32",
+            "description": "Latent projection conv bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for group normalization"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "latent_channels",
+                "frames_div4",
+                "height_div8",
+                "width_div8"
+            ],
+            "dtype": "float32",
+            "description": "Compressed latent representation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    input_conv_weight: torch.Tensor,\n    input_conv_bias: torch.Tensor,\n    down1_gn_weight: torch.Tensor,\n    down1_gn_bias: torch.Tensor,\n    down1_conv_weight: torch.Tensor,\n    down1_conv_bias: torch.Tensor,\n    down1_res_weight: torch.Tensor,\n    down1_res_bias: torch.Tensor,\n    down2_gn_weight: torch.Tensor,\n    down2_gn_bias: torch.Tensor,\n    down2_conv_weight: torch.Tensor,\n    down2_conv_bias: torch.Tensor,\n    down2_res_weight: torch.Tensor,\n    down2_res_bias: torch.Tensor,\n    down3_gn_weight: torch.Tensor,\n    down3_gn_bias: torch.Tensor,\n    down3_conv_weight: torch.Tensor,\n    down3_conv_bias: torch.Tensor,\n    down3_res_weight: torch.Tensor,\n    down3_res_bias: torch.Tensor,\n    latent_gn_weight: torch.Tensor,\n    latent_gn_bias: torch.Tensor,\n    latent_conv_weight: torch.Tensor,\n    latent_conv_bias: torch.Tensor,\n    eps: float,\n):\n    num_groups = 32\n    \n    # Initial projection: (B, 3, T, H, W) -> (B, 256, T, H, W)\n    h = F.conv3d(x, input_conv_weight, input_conv_bias, stride=1, padding=1)\n    \n    # First downsampling block with residual\n    # Group norm + SiLU + Conv3d\n    identity1 = F.conv3d(h, down1_res_weight, down1_res_bias, stride=2)\n    h = F.group_norm(h, num_groups // 4, down1_gn_weight, down1_gn_bias, eps)\n    h = F.silu(h)\n    h = F.conv3d(h, down1_conv_weight, down1_conv_bias, stride=2, padding=1)\n    h = h + identity1\n    \n    # Second downsampling block with residual\n    identity2 = F.conv3d(h, down2_res_weight, down2_res_bias, stride=2)\n    h = F.group_norm(h, num_groups // 2, down2_gn_weight, down2_gn_bias, eps)\n    h = F.silu(h)\n    h = F.conv3d(h, down2_conv_weight, down2_conv_bias, stride=2, padding=1)\n    h = h + identity2\n    \n    # Third downsampling block with residual (spatial only)\n    identity3 = F.conv3d(h, down3_res_weight, down3_res_bias, stride=(1, 2, 2))\n    h = F.group_norm(h, num_groups, down3_gn_weight, down3_gn_bias, eps)\n    h = F.silu(h)\n    h = F.conv3d(h, down3_conv_weight, down3_conv_bias, stride=(1, 2, 2), padding=1)\n    h = h + identity3\n    \n    # Latent projection\n    h = F.group_norm(h, num_groups, latent_gn_weight, latent_gn_bias, eps)\n    h = F.silu(h)\n    output = F.conv3d(h, latent_conv_weight, latent_conv_bias, stride=1, padding=1)\n    \n    return output\n"
+}

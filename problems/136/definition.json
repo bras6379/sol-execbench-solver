@@ -1,0 +1,171 @@
+{
+    "name": "042_ffn_gelu_projection_fused_backward",
+    "hf_id": "hexgrad/Kokoro-82M",
+    "description": "Backward pass for fused FFN block with GELU activation, residual connection, and layer normalization. Computes gradients for hidden_states, fc1_weight, fc1_bias, fc2_weight, fc2_bias, ln_weight, and ln_bias.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 512
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 2048
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient from upstream"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Original input hidden states (saved from forward)"
+        },
+        "fc1_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "FC1 expansion weight"
+        },
+        "fc1_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "Output of FC1 before GELU (saved from forward)"
+        },
+        "gelu_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "Output after GELU activation (saved from forward)"
+        },
+        "fc2_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "FC2 contraction weight"
+        },
+        "residual_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output after residual addition (saved from forward)"
+        },
+        "normalized": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Normalized tensor before affine transform (saved from forward)"
+        },
+        "var": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Variance from layer norm (saved from forward)"
+        },
+        "ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Layer norm gamma"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Layer norm epsilon"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input hidden states"
+        },
+        "grad_fc1_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. FC1 weight"
+        },
+        "grad_fc1_bias": {
+            "shape": [
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. FC1 bias"
+        },
+        "grad_fc2_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. FC2 weight"
+        },
+        "grad_fc2_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. FC2 bias"
+        },
+        "grad_ln_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. layer norm gamma"
+        },
+        "grad_ln_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. layer norm beta"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate realistic backward pass inputs by running the forward pass.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    intermediate_size = axes_and_scalars[\"intermediate_size\"]\n    eps = 1e-5\n\n    with torch.no_grad():\n        # Realistic input hidden states (small scale like embeddings)\n        hidden_states = torch.randn(batch_size, seq_len, hidden_size, device=device) * 0.1\n\n        # Weights with Kaiming-style initialization\n        fc1_weight = torch.randn(intermediate_size, hidden_size, device=device) * (2.0 / hidden_size) ** 0.5\n        fc2_weight = torch.randn(hidden_size, intermediate_size, device=device) * (2.0 / intermediate_size) ** 0.5\n        ln_weight = torch.ones(hidden_size, device=device)\n\n        # Forward pass: FC1\n        fc1_output = hidden_states.matmul(fc1_weight.t())\n\n        # Forward pass: GELU (tanh approximation)\n        sqrt_2_over_pi = 0.7978845608028654\n        coeff = 0.044715\n        inner = sqrt_2_over_pi * (fc1_output + coeff * fc1_output.pow(3))\n        gelu_output = 0.5 * fc1_output * (1.0 + torch.tanh(inner))\n\n        # Forward pass: FC2\n        fc2_output = gelu_output.matmul(fc2_weight.t())\n\n        # Forward pass: Residual addition\n        residual_output = fc2_output + hidden_states\n\n        # Forward pass: Layer norm\n        mean = residual_output.mean(dim=-1, keepdim=True)\n        var = residual_output.var(dim=-1, keepdim=True, unbiased=False)\n        normalized = (residual_output - mean) / torch.sqrt(var + eps)\n\n        # Unit-scale grad_output\n        grad_output = torch.randn(batch_size, seq_len, hidden_size, device=device)\n\n    return {\n        \"grad_output\": grad_output,\n        \"hidden_states\": hidden_states,\n        \"fc1_weight\": fc1_weight,\n        \"fc1_output\": fc1_output,\n        \"gelu_output\": gelu_output,\n        \"fc2_weight\": fc2_weight,\n        \"residual_output\": residual_output,\n        \"normalized\": normalized,\n        \"var\": var,\n        \"ln_weight\": ln_weight,\n        \"eps\": eps,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_output: torch.Tensor,\n    gelu_output: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    residual_output: torch.Tensor,\n    normalized: torch.Tensor,\n    var: torch.Tensor,\n    ln_weight: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Backward pass for fused FFN with GELU, residual, and layer norm.\n    \n    Computes gradients through:\n    1. Layer norm backward\n    2. Residual addition backward\n    3. FC2 backward (contraction)\n    4. GELU backward\n    5. FC1 backward (expansion)\n    \"\"\"\n    B, S, H = grad_output.shape  # H = 512\n    I = fc1_weight.shape[0]  # I = 2048\n    \n    # ========================================================================\n    # BACKWARD THROUGH LAYER NORM\n    # ========================================================================\n    # output = normalized * ln_weight + ln_bias\n    \n    # Gradient w.r.t. ln_weight: sum over batch and sequence\n    grad_ln_weight = (grad_output * normalized).sum(dim=(0, 1))  # [512]\n    \n    # Gradient w.r.t. ln_bias: sum over batch and sequence\n    grad_ln_bias = grad_output.sum(dim=(0, 1))  # [512]\n    \n    # Gradient w.r.t. normalized\n    grad_normalized = grad_output * ln_weight  # [B, S, 512]\n    \n    # Backward through normalization: normalized = (x - mean) / sqrt(var + eps)\n    std = torch.sqrt(var + eps)  # [B, S, 1]\n    \n    # Layer norm gradient formula\n    grad_normalized_mean = grad_normalized.mean(dim=-1, keepdim=True)  # [B, S, 1]\n    grad_normalized_normalized_mean = (grad_normalized * normalized).mean(dim=-1, keepdim=True)  # [B, S, 1]\n    \n    grad_residual_output = (1.0 / std) * (\n        grad_normalized - grad_normalized_mean - normalized * grad_normalized_normalized_mean\n    )  # [B, S, 512]\n    \n    # ========================================================================\n    # BACKWARD THROUGH RESIDUAL ADDITION\n    # ========================================================================\n    # residual_output = fc2_output + residual\n    grad_fc2_output = grad_residual_output  # [B, S, 512]\n    grad_residual = grad_residual_output  # [B, S, 512]\n    \n    # ========================================================================\n    # BACKWARD THROUGH FC2 (CONTRACTION LAYER)\n    # ========================================================================\n    # fc2_output = gelu_output @ fc2_weight.T + fc2_bias\n    \n    # Gradient w.r.t. fc2_bias\n    grad_fc2_bias = grad_fc2_output.sum(dim=(0, 1))  # [512]\n    \n    # Gradient w.r.t. fc2_weight\n    grad_fc2_output_reshaped = grad_fc2_output.view(-1, H)  # [B*S, 512]\n    gelu_output_reshaped = gelu_output.view(-1, I)  # [B*S, 2048]\n    grad_fc2_weight = grad_fc2_output_reshaped.t() @ gelu_output_reshaped  # [512, 2048]\n    \n    # Gradient w.r.t. gelu_output\n    grad_gelu_output = grad_fc2_output @ fc2_weight  # [B, S, 2048]\n    \n    # ========================================================================\n    # BACKWARD THROUGH GELU ACTIVATION\n    # ========================================================================\n    # GELU gradient using tanh approximation\n    sqrt_2_over_pi = 0.7978845608028654\n    coeff = 0.044715\n    \n    x = fc1_output\n    x_cubed = x * x * x\n    tanh_arg = sqrt_2_over_pi * (x + coeff * x_cubed)\n    tanh_out = torch.tanh(tanh_arg)\n    \n    dtanh_arg_dx = sqrt_2_over_pi * (1.0 + 3.0 * coeff * x * x)\n    sech_sq = 1.0 - tanh_out * tanh_out\n    \n    gelu_grad = 0.5 * (1.0 + tanh_out) + 0.5 * x * sech_sq * dtanh_arg_dx\n    \n    grad_fc1_output = grad_gelu_output * gelu_grad  # [B, S, 2048]\n    \n    # ========================================================================\n    # BACKWARD THROUGH FC1 (EXPANSION LAYER)\n    # ========================================================================\n    # fc1_output = hidden_states @ fc1_weight.T + fc1_bias\n    \n    # Gradient w.r.t. fc1_bias\n    grad_fc1_bias = grad_fc1_output.sum(dim=(0, 1))  # [2048]\n    \n    # Gradient w.r.t. fc1_weight\n    grad_fc1_output_reshaped = grad_fc1_output.view(-1, I)  # [B*S, 2048]\n    hidden_states_reshaped = hidden_states.view(-1, H)  # [B*S, 512]\n    grad_fc1_weight = grad_fc1_output_reshaped.t() @ hidden_states_reshaped  # [2048, 512]\n    \n    # Gradient w.r.t. hidden_states (from FC1)\n    grad_hidden_states_fc1 = grad_fc1_output @ fc1_weight  # [B, S, 512]\n    \n    # ========================================================================\n    # COMBINE GRADIENTS FOR HIDDEN_STATES\n    # ========================================================================\n    grad_hidden_states = grad_hidden_states_fc1 + grad_residual  # [B, S, 512]\n    \n    return (\n        grad_hidden_states,\n        grad_fc1_weight,\n        grad_fc1_bias,\n        grad_fc2_weight,\n        grad_fc2_bias,\n        grad_ln_weight,\n        grad_ln_bias,\n    )\n"
+}

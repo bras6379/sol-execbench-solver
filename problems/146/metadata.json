@@ -1,0 +1,217 @@
+{
+  "task_id": 146,
+  "subset": "L2",
+  "collection_index": 52,
+  "name": "052_seqlen-finetuned-reconstructed_hyena_gating_and_output_projection",
+  "hf_id": "magicslabnu/Hyena-small-32k",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:46.847910Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.001797,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 1,
+          "seq_len": 1163
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.1123205
+      },
+      {
+        "index": 1,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 1,
+          "seq_len": 1721
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.113888
+      },
+      {
+        "index": 2,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 16,
+          "seq_len": 2053
+        },
+        "sol_ms": 0.0071,
+        "baseline_latency_ms": 0.642178
+      },
+      {
+        "index": 3,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 2,
+          "seq_len": 691
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.1079519999999999
+      },
+      {
+        "index": 4,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 2,
+          "seq_len": 211
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0971685
+      },
+      {
+        "index": 5,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 8,
+          "seq_len": 853
+        },
+        "sol_ms": 0.0018,
+        "baseline_latency_ms": 0.165313
+      },
+      {
+        "index": 6,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 2,
+          "seq_len": 1801
+        },
+        "sol_ms": 0.0013,
+        "baseline_latency_ms": 0.1325925
+      },
+      {
+        "index": 7,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 16,
+          "seq_len": 449
+        },
+        "sol_ms": 0.0019,
+        "baseline_latency_ms": 0.167521
+      },
+      {
+        "index": 8,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 4,
+          "seq_len": 1879
+        },
+        "sol_ms": 0.002,
+        "baseline_latency_ms": 0.171681
+      },
+      {
+        "index": 9,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 16,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.0071,
+        "baseline_latency_ms": 0.4725615
+      },
+      {
+        "index": 10,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 1,
+          "seq_len": 613
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.0961925
+      },
+      {
+        "index": 11,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 16,
+          "seq_len": 1489
+        },
+        "sol_ms": 0.0053,
+        "baseline_latency_ms": 0.4107855
+      },
+      {
+        "index": 12,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 4,
+          "seq_len": 773
+        },
+        "sol_ms": 0.0011,
+        "baseline_latency_ms": 0.123376
+      },
+      {
+        "index": 13,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 16,
+          "seq_len": 919
+        },
+        "sol_ms": 0.0034,
+        "baseline_latency_ms": 0.2613605
+      },
+      {
+        "index": 14,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 64,
+          "seq_len": 1087
+        },
+        "sol_ms": 0.0144,
+        "baseline_latency_ms": 1.1668525
+      },
+      {
+        "index": 15,
+        "axes": {
+          "d_model": 256,
+          "hyena_order": 2,
+          "order_minus_1": 1,
+          "batch_size": 4,
+          "seq_len": 293
+        },
+        "sol_ms": 0.0007,
+        "baseline_latency_ms": 0.1024325
+      }
+    ]
+  }
+}

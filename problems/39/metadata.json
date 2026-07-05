@@ -1,0 +1,201 @@
+{
+  "task_id": 39,
+  "subset": "L1",
+  "collection_index": 39,
+  "name": "039_adaptive_instance_normalization_2d_backward",
+  "hf_id": "chuxiaojie/NAFNet",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:21.727714Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.020953,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "C": 32,
+          "N": 8,
+          "H": 480,
+          "W": 640
+        },
+        "sol_ms": 0.0619,
+        "baseline_latency_ms": 2.0277015
+      },
+      {
+        "index": 1,
+        "axes": {
+          "C": 32,
+          "N": 2,
+          "H": 128,
+          "W": 128
+        },
+        "sol_ms": 0.0012,
+        "baseline_latency_ms": 0.1328325
+      },
+      {
+        "index": 2,
+        "axes": {
+          "C": 32,
+          "N": 1,
+          "H": 1163,
+          "W": 1249
+        },
+        "sol_ms": 0.0368,
+        "baseline_latency_ms": 1.0731225
+      },
+      {
+        "index": 3,
+        "axes": {
+          "C": 32,
+          "N": 2,
+          "H": 691,
+          "W": 773
+        },
+        "sol_ms": 0.0272,
+        "baseline_latency_ms": 0.95541
+      },
+      {
+        "index": 4,
+        "axes": {
+          "C": 32,
+          "N": 32,
+          "H": 120,
+          "W": 160
+        },
+        "sol_ms": 0.0158,
+        "baseline_latency_ms": 0.573617
+      },
+      {
+        "index": 5,
+        "axes": {
+          "C": 32,
+          "N": 64,
+          "H": 60,
+          "W": 80
+        },
+        "sol_ms": 0.0081,
+        "baseline_latency_ms": 0.377809
+      },
+      {
+        "index": 6,
+        "axes": {
+          "C": 32,
+          "N": 32,
+          "H": 64,
+          "W": 128
+        },
+        "sol_ms": 0.007,
+        "baseline_latency_ms": 0.293633
+      },
+      {
+        "index": 7,
+        "axes": {
+          "C": 32,
+          "N": 16,
+          "H": 240,
+          "W": 320
+        },
+        "sol_ms": 0.0312,
+        "baseline_latency_ms": 1.0331545
+      },
+      {
+        "index": 8,
+        "axes": {
+          "C": 32,
+          "N": 4,
+          "H": 720,
+          "W": 1280
+        },
+        "sol_ms": 0.0927,
+        "baseline_latency_ms": 2.843912
+      },
+      {
+        "index": 9,
+        "axes": {
+          "C": 32,
+          "N": 8,
+          "H": 373,
+          "W": 373
+        },
+        "sol_ms": 0.0283,
+        "baseline_latency_ms": 0.974355
+      },
+      {
+        "index": 10,
+        "axes": {
+          "C": 32,
+          "N": 2,
+          "H": 211,
+          "W": 211
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.2478575
+      },
+      {
+        "index": 11,
+        "axes": {
+          "C": 32,
+          "N": 8,
+          "H": 256,
+          "W": 512
+        },
+        "sol_ms": 0.0267,
+        "baseline_latency_ms": 0.9100505
+      },
+      {
+        "index": 12,
+        "axes": {
+          "C": 32,
+          "N": 4,
+          "H": 256,
+          "W": 256
+        },
+        "sol_ms": 0.007,
+        "baseline_latency_ms": 0.319745
+      },
+      {
+        "index": 13,
+        "axes": {
+          "C": 32,
+          "N": 1,
+          "H": 1080,
+          "W": 1920
+        },
+        "sol_ms": 0.0523,
+        "baseline_latency_ms": 1.464388
+      },
+      {
+        "index": 14,
+        "axes": {
+          "C": 32,
+          "N": 1,
+          "H": 2048,
+          "W": 2048
+        },
+        "sol_ms": 0.1054,
+        "baseline_latency_ms": 2.5281835
+      },
+      {
+        "index": 15,
+        "axes": {
+          "C": 32,
+          "N": 2,
+          "H": 1321,
+          "W": 1423
+        },
+        "sol_ms": 0.0945,
+        "baseline_latency_ms": 2.851128
+      }
+    ]
+  }
+}

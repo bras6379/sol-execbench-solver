@@ -1,0 +1,233 @@
+{
+  "task_id": 108,
+  "subset": "L2",
+  "collection_index": 14,
+  "name": "014_audio_encoder_varlen_attention_with_chunking_backward",
+  "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:37.090349Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.010137,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 1280,
+          "num_chunks": 20
+        },
+        "sol_ms": 0.0197,
+        "baseline_latency_ms": 0.492849
+      },
+      {
+        "index": 1,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 373,
+          "num_chunks": 5
+        },
+        "sol_ms": 0.0061,
+        "baseline_latency_ms": 0.5734725
+      },
+      {
+        "index": 2,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 997,
+          "num_chunks": 14
+        },
+        "sol_ms": 0.0155,
+        "baseline_latency_ms": 0.714977
+      },
+      {
+        "index": 3,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 1249,
+          "num_chunks": 18
+        },
+        "sol_ms": 0.0193,
+        "baseline_latency_ms": 0.748561
+      },
+      {
+        "index": 4,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 448,
+          "num_chunks": 7
+        },
+        "sol_ms": 0.0072,
+        "baseline_latency_ms": 0.4292964999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 1163,
+          "num_chunks": 17
+        },
+        "sol_ms": 0.018,
+        "baseline_latency_ms": 0.751729
+      },
+      {
+        "index": 6,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 449,
+          "num_chunks": 6
+        },
+        "sol_ms": 0.0072,
+        "baseline_latency_ms": 0.6105445
+      },
+      {
+        "index": 7,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 1024,
+          "num_chunks": 16
+        },
+        "sol_ms": 0.0159,
+        "baseline_latency_ms": 0.501185
+      },
+      {
+        "index": 8,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 256,
+          "num_chunks": 4
+        },
+        "sol_ms": 0.0043,
+        "baseline_latency_ms": 0.414721
+      },
+      {
+        "index": 9,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 640,
+          "num_chunks": 10
+        },
+        "sol_ms": 0.0101,
+        "baseline_latency_ms": 0.4618569999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 1087,
+          "num_chunks": 15
+        },
+        "sol_ms": 0.0169,
+        "baseline_latency_ms": 0.7125775000000001
+      },
+      {
+        "index": 11,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 211,
+          "num_chunks": 3
+        },
+        "sol_ms": 0.0042,
+        "baseline_latency_ms": 0.543857
+      },
+      {
+        "index": 12,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 853,
+          "num_chunks": 12
+        },
+        "sol_ms": 0.0133,
+        "baseline_latency_ms": 0.695953
+      },
+      {
+        "index": 13,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 128,
+          "num_chunks": 1
+        },
+        "sol_ms": 0.0041,
+        "baseline_latency_ms": 0.389185
+      },
+      {
+        "index": 14,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 613,
+          "num_chunks": 8
+        },
+        "sol_ms": 0.0097,
+        "baseline_latency_ms": 0.684161
+      },
+      {
+        "index": 15,
+        "axes": {
+          "d_model": 1280,
+          "num_heads": 20,
+          "head_dim": 64,
+          "qkv_dim": 1280,
+          "total_seq_len": 919,
+          "num_chunks": 13
+        },
+        "sol_ms": 0.0143,
+        "baseline_latency_ms": 0.742417
+      }
+    ]
+  }
+}

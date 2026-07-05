@@ -1,0 +1,87 @@
+{
+    "name": "042_moe_expert_load_balancing_and_token_capacity_backward",
+    "hf_id": "deepseek-ai/DeepSeek-R1-0528",
+    "description": "Backward pass for MoE expert load balancing and token capacity. Computes gradients through load_balance_loss, sum reduction, and scatter operations. Since topk_idx contains discrete indices and hidden_states is only used for shape, gradients w.r.t. both inputs are None.",
+    "axes": {
+        "batch_seq_len": {
+            "type": "var",
+            "description": "Total number of tokens (batch_size * seq_len)"
+        },
+        "n_routed_experts": {
+            "type": "const",
+            "value": 256,
+            "description": "Number of routed experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 8,
+            "description": "Top-k experts per token"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_tokens_per_expert": {
+            "shape": [
+                "n_routed_experts"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. tokens_per_expert"
+        },
+        "grad_expert_mask": {
+            "shape": [
+                "batch_seq_len",
+                "n_routed_experts"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. expert_mask"
+        },
+        "grad_load_balance_loss": {
+            "shape": [
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. load_balance_loss (1-element tensor)"
+        },
+        "topk_idx": {
+            "shape": [
+                "batch_seq_len",
+                "num_experts_per_tok"
+            ],
+            "dtype": "int64",
+            "description": "Expert indices for each token"
+        },
+        "expert_mask": {
+            "shape": [
+                "batch_seq_len",
+                "n_routed_experts"
+            ],
+            "dtype": "int64",
+            "description": "Binary mask indicating expert assignments"
+        },
+        "tokens_per_expert": {
+            "shape": [
+                "n_routed_experts"
+            ],
+            "dtype": "int32",
+            "description": "Token counts per expert from forward pass"
+        },
+        "training": {
+            "shape": [
+                "1"
+            ],
+            "dtype": "bool",
+            "description": "Whether in training mode (1-element tensor)"
+        }
+    },
+    "outputs": {
+        "grad_expert_mask_out": {
+            "shape": [
+                "batch_seq_len",
+                "n_routed_experts"
+            ],
+            "dtype": "float32",
+            "description": "Accumulated gradient for expert_mask"
+        }
+    },
+    "reference": "import torch\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs for backward pass testing.\"\"\"\n    batch_seq_len = axes_and_scalars[\"batch_seq_len\"]\n    n_routed_experts = axes_and_scalars[\"n_routed_experts\"]\n    num_experts_per_tok = axes_and_scalars[\"num_experts_per_tok\"]\n    \n    # Gradient inputs\n    grad_tokens_per_expert = torch.randn(n_routed_experts, dtype=torch.float32, device=device)\n    grad_expert_mask = torch.randn(batch_seq_len, n_routed_experts, dtype=torch.float32, device=device)\n    grad_load_balance_loss = torch.randn(1, dtype=torch.float32, device=device)\n    \n    # Saved tensors from forward pass\n    topk_idx = torch.randint(0, n_routed_experts, (batch_seq_len, num_experts_per_tok), dtype=torch.int64, device=device)\n    \n    # Create expert_mask from topk_idx (as done in forward)\n    expert_mask = torch.zeros((batch_seq_len, n_routed_experts), dtype=torch.int64, device=device)\n    expert_mask.scatter_(1, topk_idx, 1)\n    \n    # Compute tokens_per_expert from expert_mask\n    tokens_per_expert = expert_mask.sum(dim=0).to(torch.int32)\n    \n    # Training flag as 1-element bool tensor\n    training = torch.tensor([True], dtype=torch.bool, device=device)\n    \n    return {\n        \"grad_tokens_per_expert\": grad_tokens_per_expert,\n        \"grad_expert_mask\": grad_expert_mask,\n        \"grad_load_balance_loss\": grad_load_balance_loss,\n        \"topk_idx\": topk_idx,\n        \"expert_mask\": expert_mask,\n        \"tokens_per_expert\": tokens_per_expert,\n        \"training\": training,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_tokens_per_expert: torch.Tensor,\n    grad_expert_mask: torch.Tensor,\n    grad_load_balance_loss: torch.Tensor,\n    topk_idx: torch.Tensor,\n    expert_mask: torch.Tensor,\n    tokens_per_expert: torch.Tensor,\n    training: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for MoE expert load balancing.\n    \n    Computes gradients through:\n    1. load_balance_loss computation\n    2. sum reduction (tokens_per_expert = expert_mask.sum(dim=0))\n    3. scatter operation (discrete, no gradient for topk_idx)\n    \n    Returns accumulated gradient for expert_mask.\n    \"\"\"\n    batch_seq_len = topk_idx.shape[0]\n    n_routed_experts = 256\n    num_experts_per_tok = 8\n    \n    # Extract scalar values from tensors\n    grad_loss_val = grad_load_balance_loss.item()\n    is_training = training.item()\n    \n    # Initialize output gradient\n    grad_expert_mask_out = grad_expert_mask.clone()\n    \n    # Gradient from load_balance_loss\n    # load_balance_loss = n_routed_experts * sum(expert_fraction * uniform_prob)\n    # where expert_fraction = tokens_per_expert / (batch_seq_len * num_experts_per_tok)\n    # and uniform_prob = 1.0 / n_routed_experts\n    #\n    # d(load_balance_loss)/d(tokens_per_expert) = n_routed_experts * uniform_prob / (batch_seq_len * num_experts_per_tok)\n    #                                            = 1 / (batch_seq_len * num_experts_per_tok)\n    \n    grad_tpe_accumulated = grad_tokens_per_expert.clone()\n    \n    if is_training:\n        uniform_prob = 1.0 / n_routed_experts\n        grad_from_loss = grad_loss_val * n_routed_experts * uniform_prob / (\n            batch_seq_len * num_experts_per_tok\n        )\n        grad_tpe_accumulated = grad_tpe_accumulated + grad_from_loss\n    \n    # Gradient through sum operation\n    # tokens_per_expert = expert_mask.sum(dim=0)\n    # d(loss)/d(expert_mask) = d(loss)/d(tokens_per_expert).unsqueeze(0).expand_as(expert_mask)\n    \n    # Broadcast gradient from [n_routed_experts] to [batch_seq_len, n_routed_experts]\n    grad_expert_mask_from_sum = grad_tpe_accumulated.unsqueeze(0).expand(\n        batch_seq_len, n_routed_experts\n    ).float()\n    \n    grad_expert_mask_out = grad_expert_mask_out + grad_expert_mask_from_sum\n    \n    return grad_expert_mask_out\n\n\nif __name__ == \"__main__\":\n    inputs = get_inputs(\n        axes_and_scalars={\n            \"batch_seq_len\": 512,\n            \"n_routed_experts\": 256,\n            \"num_experts_per_tok\": 8,\n        },\n        device=torch.device(\"cuda:0\"),\n    )\n    out = run(**inputs)\n    print(f\"Output shape: {out.shape}\")\n    print(f\"Output dtype: {out.dtype}\")\n"
+}

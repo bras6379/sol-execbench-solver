@@ -1,0 +1,470 @@
+{
+    "name": "074_sam_hq_mask_decoder_iou_hypernetwork_fusion_backward",
+    "hf_id": "syscv-community/sam-hq-vit-base",
+    "description": "Backward pass for SAM-HQ mask decoder IoU prediction and hypernetwork weight generation. Computes gradients for 5 MLPs: 1 IoU prediction MLP (256->1024->1024->4) and 4 parallel hypernetwork MLPs (256->256->256->32).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "point_batch_size": {
+            "type": "var",
+            "description": "Number of point prompts per image"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 256,
+            "description": "Token embedding dimension"
+        },
+        "iou_head_hidden_dim": {
+            "type": "const",
+            "value": 1024,
+            "description": "IoU MLP hidden dimension"
+        },
+        "num_mask_tokens": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of mask tokens/outputs"
+        },
+        "output_channels": {
+            "type": "const",
+            "value": 32,
+            "description": "Hypernetwork output dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_iou_scores": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU scores"
+        },
+        "grad_hyper_weights": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens",
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork weights"
+        },
+        "iou_token_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "IoU token embeddings (saved from forward)"
+        },
+        "mask_tokens_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Mask token embeddings (saved from forward)"
+        },
+        "iou_proj_in_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "IoU first layer weight"
+        },
+        "iou_proj_in_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU first layer bias"
+        },
+        "iou_hidden_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU hidden layer weight"
+        },
+        "iou_hidden_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU hidden layer bias"
+        },
+        "iou_proj_out_weight": {
+            "shape": [
+                "num_mask_tokens",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU output layer weight"
+        },
+        "iou_proj_out_bias": {
+            "shape": [
+                "num_mask_tokens"
+            ],
+            "dtype": "float32",
+            "description": "IoU output layer bias"
+        },
+        "iou_hidden1": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU first layer pre-ReLU activation (saved from forward)"
+        },
+        "iou_hidden1_relu": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU first layer post-ReLU activation (saved from forward)"
+        },
+        "iou_hidden2": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU hidden layer pre-ReLU activation (saved from forward)"
+        },
+        "iou_hidden2_relu": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "IoU hidden layer post-ReLU activation (saved from forward)"
+        },
+        "hyper_proj_in_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork first layer weights (4 MLPs)"
+        },
+        "hyper_proj_in_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork first layer biases (4 MLPs)"
+        },
+        "hyper_hidden_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork hidden layer weights (4 MLPs)"
+        },
+        "hyper_hidden_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork hidden layer biases (4 MLPs)"
+        },
+        "hyper_proj_out_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork output layer weights (4 MLPs)"
+        },
+        "hyper_proj_out_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork output layer biases (4 MLPs)"
+        },
+        "hyper_hidden1_0": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 first layer pre-ReLU"
+        },
+        "hyper_hidden1_1": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 first layer pre-ReLU"
+        },
+        "hyper_hidden1_2": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 first layer pre-ReLU"
+        },
+        "hyper_hidden1_3": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 first layer pre-ReLU"
+        },
+        "hyper_hidden1_relu_0": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 first layer post-ReLU"
+        },
+        "hyper_hidden1_relu_1": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 first layer post-ReLU"
+        },
+        "hyper_hidden1_relu_2": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 first layer post-ReLU"
+        },
+        "hyper_hidden1_relu_3": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 first layer post-ReLU"
+        },
+        "hyper_hidden2_0": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 hidden layer pre-ReLU"
+        },
+        "hyper_hidden2_1": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 hidden layer pre-ReLU"
+        },
+        "hyper_hidden2_2": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 hidden layer pre-ReLU"
+        },
+        "hyper_hidden2_3": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 hidden layer pre-ReLU"
+        },
+        "hyper_hidden2_relu_0": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 0 hidden layer post-ReLU"
+        },
+        "hyper_hidden2_relu_1": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 1 hidden layer post-ReLU"
+        },
+        "hyper_hidden2_relu_2": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 2 hidden layer post-ReLU"
+        },
+        "hyper_hidden2_relu_3": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Hypernetwork 3 hidden layer post-ReLU"
+        }
+    },
+    "outputs": {
+        "grad_iou_token_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU token input"
+        },
+        "grad_mask_tokens_out": {
+            "shape": [
+                "batch_size",
+                "point_batch_size",
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. mask token inputs"
+        },
+        "grad_iou_proj_in_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU first layer weight"
+        },
+        "grad_iou_proj_in_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU first layer bias"
+        },
+        "grad_iou_hidden_weight": {
+            "shape": [
+                "iou_head_hidden_dim",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU hidden layer weight"
+        },
+        "grad_iou_hidden_bias": {
+            "shape": [
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU hidden layer bias"
+        },
+        "grad_iou_proj_out_weight": {
+            "shape": [
+                "num_mask_tokens",
+                "iou_head_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU output layer weight"
+        },
+        "grad_iou_proj_out_bias": {
+            "shape": [
+                "num_mask_tokens"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. IoU output layer bias"
+        },
+        "grad_hyper_proj_in_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork first layer weights"
+        },
+        "grad_hyper_proj_in_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork first layer biases"
+        },
+        "grad_hyper_hidden_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork hidden layer weights"
+        },
+        "grad_hyper_hidden_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork hidden layer biases"
+        },
+        "grad_hyper_proj_out_weights": {
+            "shape": [
+                "num_mask_tokens",
+                "output_channels",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork output layer weights"
+        },
+        "grad_hyper_proj_out_biases": {
+            "shape": [
+                "num_mask_tokens",
+                "output_channels"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hypernetwork output layer biases"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_iou_scores: torch.Tensor,\n    grad_hyper_weights: torch.Tensor,\n    iou_token_out: torch.Tensor,\n    mask_tokens_out: torch.Tensor,\n    iou_proj_in_weight: torch.Tensor,\n    iou_proj_in_bias: torch.Tensor,\n    iou_hidden_weight: torch.Tensor,\n    iou_hidden_bias: torch.Tensor,\n    iou_proj_out_weight: torch.Tensor,\n    iou_proj_out_bias: torch.Tensor,\n    iou_hidden1: torch.Tensor,\n    iou_hidden1_relu: torch.Tensor,\n    iou_hidden2: torch.Tensor,\n    iou_hidden2_relu: torch.Tensor,\n    hyper_proj_in_weights: torch.Tensor,\n    hyper_proj_in_biases: torch.Tensor,\n    hyper_hidden_weights: torch.Tensor,\n    hyper_hidden_biases: torch.Tensor,\n    hyper_proj_out_weights: torch.Tensor,\n    hyper_proj_out_biases: torch.Tensor,\n    hyper_hidden1_0: torch.Tensor,\n    hyper_hidden1_1: torch.Tensor,\n    hyper_hidden1_2: torch.Tensor,\n    hyper_hidden1_3: torch.Tensor,\n    hyper_hidden1_relu_0: torch.Tensor,\n    hyper_hidden1_relu_1: torch.Tensor,\n    hyper_hidden1_relu_2: torch.Tensor,\n    hyper_hidden1_relu_3: torch.Tensor,\n    hyper_hidden2_0: torch.Tensor,\n    hyper_hidden2_1: torch.Tensor,\n    hyper_hidden2_2: torch.Tensor,\n    hyper_hidden2_3: torch.Tensor,\n    hyper_hidden2_relu_0: torch.Tensor,\n    hyper_hidden2_relu_1: torch.Tensor,\n    hyper_hidden2_relu_2: torch.Tensor,\n    hyper_hidden2_relu_3: torch.Tensor,\n):\n    batch_size, point_batch_size, _ = iou_token_out.shape\n    \n    hyper_hidden1_list = [hyper_hidden1_0, hyper_hidden1_1, hyper_hidden1_2, hyper_hidden1_3]\n    hyper_hidden1_relu_list = [hyper_hidden1_relu_0, hyper_hidden1_relu_1, hyper_hidden1_relu_2, hyper_hidden1_relu_3]\n    hyper_hidden2_list = [hyper_hidden2_0, hyper_hidden2_1, hyper_hidden2_2, hyper_hidden2_3]\n    hyper_hidden2_relu_list = [hyper_hidden2_relu_0, hyper_hidden2_relu_1, hyper_hidden2_relu_2, hyper_hidden2_relu_3]\n    \n    # ==================== IoU Path Backward ====================\n    # Gradient through IoU output layer: Linear(1024 -> 4)\n    grad_iou_scores_flat = grad_iou_scores.reshape(-1, 4)  # (B*P, 4)\n    iou_hidden2_relu_flat = iou_hidden2_relu.reshape(-1, 1024)  # (B*P, 1024)\n    \n    # Gradient w.r.t. iou_proj_out_weight: (4, 1024)\n    grad_iou_proj_out_weight = grad_iou_scores_flat.t() @ iou_hidden2_relu_flat\n    \n    # Gradient w.r.t. iou_proj_out_bias: (4,)\n    grad_iou_proj_out_bias = grad_iou_scores_flat.sum(dim=0)\n    \n    # Gradient w.r.t. iou_hidden2_relu: (B, P, 1024)\n    grad_iou_hidden2_relu = grad_iou_scores_flat @ iou_proj_out_weight  # (B*P, 1024)\n    grad_iou_hidden2_relu = grad_iou_hidden2_relu.reshape(batch_size, point_batch_size, 1024)\n    \n    # Gradient through ReLU\n    grad_iou_hidden2 = grad_iou_hidden2_relu * (iou_hidden2 > 0).float()\n    \n    # Gradient through IoU hidden layer: Linear(1024 -> 1024)\n    grad_iou_hidden2_flat = grad_iou_hidden2.reshape(-1, 1024)  # (B*P, 1024)\n    iou_hidden1_relu_flat = iou_hidden1_relu.reshape(-1, 1024)  # (B*P, 1024)\n    \n    # Gradient w.r.t. iou_hidden_weight: (1024, 1024)\n    grad_iou_hidden_weight = grad_iou_hidden2_flat.t() @ iou_hidden1_relu_flat\n    \n    # Gradient w.r.t. iou_hidden_bias: (1024,)\n    grad_iou_hidden_bias = grad_iou_hidden2_flat.sum(dim=0)\n    \n    # Gradient w.r.t. iou_hidden1_relu: (B, P, 1024)\n    grad_iou_hidden1_relu = grad_iou_hidden2_flat @ iou_hidden_weight  # (B*P, 1024)\n    grad_iou_hidden1_relu = grad_iou_hidden1_relu.reshape(batch_size, point_batch_size, 1024)\n    \n    # Gradient through ReLU\n    grad_iou_hidden1 = grad_iou_hidden1_relu * (iou_hidden1 > 0).float()\n    \n    # Gradient through IoU input layer: Linear(256 -> 1024)\n    grad_iou_hidden1_flat = grad_iou_hidden1.reshape(-1, 1024)  # (B*P, 1024)\n    iou_token_out_flat = iou_token_out.reshape(-1, 256)  # (B*P, 256)\n    \n    # Gradient w.r.t. iou_proj_in_weight: (1024, 256)\n    grad_iou_proj_in_weight = grad_iou_hidden1_flat.t() @ iou_token_out_flat\n    \n    # Gradient w.r.t. iou_proj_in_bias: (1024,)\n    grad_iou_proj_in_bias = grad_iou_hidden1_flat.sum(dim=0)\n    \n    # Gradient w.r.t. iou_token_out: (B, P, 256)\n    grad_iou_token_out = grad_iou_hidden1_flat @ iou_proj_in_weight  # (B*P, 256)\n    grad_iou_token_out = grad_iou_token_out.reshape(batch_size, point_batch_size, 256)\n    \n    # ==================== Hypernetwork Path Backward ====================\n    grad_mask_tokens_out = torch.zeros_like(mask_tokens_out)\n    \n    grad_hyper_proj_in_weights = torch.zeros_like(hyper_proj_in_weights)\n    grad_hyper_proj_in_biases = torch.zeros_like(hyper_proj_in_biases)\n    grad_hyper_hidden_weights = torch.zeros_like(hyper_hidden_weights)\n    grad_hyper_hidden_biases = torch.zeros_like(hyper_hidden_biases)\n    grad_hyper_proj_out_weights = torch.zeros_like(hyper_proj_out_weights)\n    grad_hyper_proj_out_biases = torch.zeros_like(hyper_proj_out_biases)\n    \n    for mask_idx in range(4):\n        # Extract gradient for this mask: (B, P, 32)\n        grad_weights = grad_hyper_weights[:, :, mask_idx, :]\n        \n        # Get saved activations for this mask\n        hidden1 = hyper_hidden1_list[mask_idx]\n        hidden1_relu = hyper_hidden1_relu_list[mask_idx]\n        hidden2 = hyper_hidden2_list[mask_idx]\n        hidden2_relu = hyper_hidden2_relu_list[mask_idx]\n        token = mask_tokens_out[:, :, mask_idx, :]\n        \n        # Flatten for batch processing\n        grad_weights_flat = grad_weights.reshape(-1, 32)  # (B*P, 32)\n        hidden2_relu_flat = hidden2_relu.reshape(-1, 256)  # (B*P, 256)\n        hidden1_relu_flat = hidden1_relu.reshape(-1, 256)  # (B*P, 256)\n        token_flat = token.reshape(-1, 256)  # (B*P, 256)\n        \n        # Gradient through output layer: Linear(256 -> 32)\n        grad_hyper_proj_out_weights[mask_idx] = grad_weights_flat.t() @ hidden2_relu_flat\n        grad_hyper_proj_out_biases[mask_idx] = grad_weights_flat.sum(dim=0)\n        \n        # Gradient w.r.t. hidden2_relu: (B*P, 256)\n        grad_hidden2_relu = grad_weights_flat @ hyper_proj_out_weights[mask_idx]\n        grad_hidden2_relu = grad_hidden2_relu.reshape(batch_size, point_batch_size, 256)\n        \n        # Gradient through ReLU\n        grad_hidden2 = grad_hidden2_relu * (hidden2 > 0).float()\n        grad_hidden2_flat = grad_hidden2.reshape(-1, 256)\n        \n        # Gradient through hidden layer: Linear(256 -> 256)\n        grad_hyper_hidden_weights[mask_idx] = grad_hidden2_flat.t() @ hidden1_relu_flat\n        grad_hyper_hidden_biases[mask_idx] = grad_hidden2_flat.sum(dim=0)\n        \n        # Gradient w.r.t. hidden1_relu: (B*P, 256)\n        grad_hidden1_relu = grad_hidden2_flat @ hyper_hidden_weights[mask_idx]\n        grad_hidden1_relu = grad_hidden1_relu.reshape(batch_size, point_batch_size, 256)\n        \n        # Gradient through ReLU\n        grad_hidden1 = grad_hidden1_relu * (hidden1 > 0).float()\n        grad_hidden1_flat = grad_hidden1.reshape(-1, 256)\n        \n        # Gradient through input layer: Linear(256 -> 256)\n        grad_hyper_proj_in_weights[mask_idx] = grad_hidden1_flat.t() @ token_flat\n        grad_hyper_proj_in_biases[mask_idx] = grad_hidden1_flat.sum(dim=0)\n        \n        # Gradient w.r.t. token: (B, P, 256)\n        grad_token = grad_hidden1_flat @ hyper_proj_in_weights[mask_idx]\n        grad_token = grad_token.reshape(batch_size, point_batch_size, 256)\n        \n        grad_mask_tokens_out[:, :, mask_idx, :] = grad_token\n    \n    return (\n        grad_iou_token_out,\n        grad_mask_tokens_out,\n        grad_iou_proj_in_weight,\n        grad_iou_proj_in_bias,\n        grad_iou_hidden_weight,\n        grad_iou_hidden_bias,\n        grad_iou_proj_out_weight,\n        grad_iou_proj_out_bias,\n        grad_hyper_proj_in_weights,\n        grad_hyper_proj_in_biases,\n        grad_hyper_hidden_weights,\n        grad_hyper_hidden_biases,\n        grad_hyper_proj_out_weights,\n        grad_hyper_proj_out_biases,\n    )\n"
+}

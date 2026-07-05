@@ -1,0 +1,136 @@
+{
+    "name": "089_vae_attention_block_with_groupnorm",
+    "hf_id": "tencent/HunyuanImage-2.1",
+    "description": "VAE self-attention block with group normalization. Applies group norm, flattens spatial dimensions (B,C,H,W) to (B,H*W,C), computes single-head self-attention over spatial positions, reshapes back, and adds residual. Critical for capturing long-range spatial dependencies in VAE encoder/decoder.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "channels": {
+            "type": "const",
+            "value": 512,
+            "description": "Number of channels"
+        },
+        "num_groups": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of groups for group normalization"
+        },
+        "spatial_size": {
+            "type": "const",
+            "value": 64,
+            "description": "Height and width of spatial dimensions"
+        },
+        "seq_len": {
+            "type": "expr",
+            "expression": "spatial_size * spatial_size",
+            "description": "Sequence length after flattening spatial dimensions (H*W)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "channels",
+                "spatial_size",
+                "spatial_size"
+            ],
+            "dtype": "float32",
+            "description": "Input feature map (B, C, H, W)"
+        },
+        "group_norm_weight": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Group normalization scale parameter"
+        },
+        "group_norm_bias": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Group normalization shift parameter"
+        },
+        "query_weight": {
+            "shape": [
+                "channels",
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight matrix"
+        },
+        "query_bias": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Query projection bias"
+        },
+        "key_weight": {
+            "shape": [
+                "channels",
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight matrix"
+        },
+        "key_bias": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Key projection bias"
+        },
+        "value_weight": {
+            "shape": [
+                "channels",
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight matrix"
+        },
+        "value_bias": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Value projection bias"
+        },
+        "proj_out_weight": {
+            "shape": [
+                "channels",
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight matrix"
+        },
+        "proj_out_bias": {
+            "shape": [
+                "channels"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for group normalization numerical stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "channels",
+                "spatial_size",
+                "spatial_size"
+            ],
+            "dtype": "float32",
+            "description": "Output feature map with residual connection (B, C, H, W)"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    group_norm_weight: torch.Tensor,\n    group_norm_bias: torch.Tensor,\n    query_weight: torch.Tensor,\n    query_bias: torch.Tensor,\n    key_weight: torch.Tensor,\n    key_bias: torch.Tensor,\n    value_weight: torch.Tensor,\n    value_bias: torch.Tensor,\n    proj_out_weight: torch.Tensor,\n    proj_out_bias: torch.Tensor,\n    eps: float,\n):\n    batch, channels, height, width = x.shape\n    num_groups = 32\n    \n    # Store residual\n    residual = x\n    \n    # Group normalization\n    # Reshape to (B, num_groups, channels_per_group, H, W)\n    channels_per_group = channels // num_groups\n    x_grouped = x.view(batch, num_groups, channels_per_group, height, width)\n    \n    # Compute mean and variance per group\n    mean = x_grouped.mean(dim=(2, 3, 4), keepdim=True)\n    var = x_grouped.var(dim=(2, 3, 4), keepdim=True, unbiased=False)\n    \n    # Normalize\n    x_norm = (x_grouped - mean) / torch.sqrt(var + eps)\n    \n    # Reshape back to (B, C, H, W)\n    x_norm = x_norm.view(batch, channels, height, width)\n    \n    # Apply scale and shift\n    x_norm = x_norm * group_norm_weight.view(1, channels, 1, 1) + group_norm_bias.view(1, channels, 1, 1)\n    \n    # Reshape to sequence format: (B, C, H, W) -> (B, H*W, C)\n    seq_len = height * width\n    x_seq = x_norm.view(batch, channels, seq_len)\n    x_seq = x_seq.permute(0, 2, 1).contiguous()  # (B, H*W, C)\n    \n    # Compute Q, K, V projections using linear layers\n    # q = x_seq @ query_weight.T + query_bias\n    q = torch.matmul(x_seq, query_weight.t()) + query_bias  # (B, H*W, C)\n    k = torch.matmul(x_seq, key_weight.t()) + key_bias      # (B, H*W, C)\n    v = torch.matmul(x_seq, value_weight.t()) + value_bias  # (B, H*W, C)\n    \n    # Compute attention scores: Q @ K^T with scaling\n    scale = channels ** -0.5\n    attn_scores = torch.bmm(q, k.transpose(1, 2)) * scale  # (B, H*W, H*W)\n    \n    # Softmax over key dimension\n    attn_weights = F.softmax(attn_scores, dim=-1)\n    \n    # Apply attention to values\n    attn_output = torch.bmm(attn_weights, v)  # (B, H*W, C)\n    \n    # Output projection\n    attn_output = torch.matmul(attn_output, proj_out_weight.t()) + proj_out_bias\n    \n    # Reshape back to spatial format: (B, H*W, C) -> (B, C, H, W)\n    attn_output = attn_output.permute(0, 2, 1).contiguous()\n    attn_output = attn_output.view(batch, channels, height, width)\n    \n    # Residual connection\n    output = residual + attn_output\n    \n    return output\n"
+}

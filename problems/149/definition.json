@@ -1,0 +1,221 @@
+{
+    "name": "055_audio_encoder_conv_positional_layer_stack",
+    "hf_id": "mistralai/Voxtral-Small-24B-2507",
+    "description": "Complete fused audio preprocessing pipeline that performs two strided 1D convolutions with GELU activations on mel spectrogram input, adds learned positional embeddings, and processes through the first encoder layer's self-attention and FFN blocks. This represents the critical path from raw audio features to contextualized audio embeddings.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "input_seq_len": {
+            "type": "const",
+            "value": 3000,
+            "description": "Input mel spectrogram sequence length"
+        },
+        "output_seq_len": {
+            "type": "const",
+            "value": 1500,
+            "description": "Output sequence length after stride-2 conv"
+        },
+        "num_mel_bins": {
+            "type": "const",
+            "value": 80,
+            "description": "Number of mel frequency bins"
+        },
+        "d_model": {
+            "type": "const",
+            "value": 5120,
+            "description": "Model hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 20,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 256,
+            "description": "Dimension per attention head"
+        },
+        "encoder_ffn_dim": {
+            "type": "const",
+            "value": 20480,
+            "description": "FFN intermediate dimension"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "input_features": {
+            "shape": [
+                "batch_size",
+                "num_mel_bins",
+                "input_seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Mel spectrogram input"
+        },
+        "conv1_weight": {
+            "shape": [
+                "d_model",
+                "num_mel_bins",
+                "3"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv1 weight (out_channels, in_channels, kernel_size)"
+        },
+        "conv1_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv1 bias"
+        },
+        "conv2_weight": {
+            "shape": [
+                "d_model",
+                "d_model",
+                "3"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv2 weight (out_channels, in_channels, kernel_size)"
+        },
+        "conv2_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Conv2 bias"
+        },
+        "embed_positions_weight": {
+            "shape": [
+                "output_seq_len",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Positional embeddings"
+        },
+        "self_attn_layer_norm_weight": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention layer norm weight"
+        },
+        "self_attn_layer_norm_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention layer norm bias"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "d_model",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "q_proj_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection bias"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "d_model",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "d_model",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "v_proj_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection bias"
+        },
+        "out_proj_weight": {
+            "shape": [
+                "d_model",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "out_proj_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection bias"
+        },
+        "final_layer_norm_weight": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN layer norm weight"
+        },
+        "final_layer_norm_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN layer norm bias"
+        },
+        "fc1_weight": {
+            "shape": [
+                "encoder_ffn_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN fc1 weight"
+        },
+        "fc1_bias": {
+            "shape": [
+                "encoder_ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN fc1 bias"
+        },
+        "fc2_weight": {
+            "shape": [
+                "d_model",
+                "encoder_ffn_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN fc2 weight"
+        },
+        "fc2_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "FFN fc2 bias"
+        }
+    },
+    "outputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "output_seq_len",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Contextualized audio embeddings"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    input_seq_len = axes_and_scalars[\"input_seq_len\"]\n    output_seq_len = axes_and_scalars[\"output_seq_len\"]\n    num_mel_bins = axes_and_scalars[\"num_mel_bins\"]\n    d_model = axes_and_scalars[\"d_model\"]\n    encoder_ffn_dim = axes_and_scalars[\"encoder_ffn_dim\"]\n\n    dtype = torch.bfloat16\n\n    input_features = torch.randn(batch_size, num_mel_bins, input_seq_len, dtype=dtype, device=device)\n\n    # Conv1 weight: Kaiming init for conv1d (fan_in = in_channels * kernel_size)\n    conv1_weight = torch.randn(d_model, num_mel_bins, 3, dtype=dtype, device=device) / math.sqrt(num_mel_bins * 3)\n    conv1_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    # Conv2 weight: Kaiming init for conv1d (fan_in = in_channels * kernel_size)\n    conv2_weight = torch.randn(d_model, d_model, 3, dtype=dtype, device=device) / math.sqrt(d_model * 3)\n    conv2_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    # Positional embedding: small-magnitude learned embedding init\n    embed_positions_weight = torch.randn(output_seq_len, d_model, dtype=dtype, device=device) * 0.02\n\n    # Norm weights/biases\n    self_attn_layer_norm_weight = torch.ones(d_model, dtype=dtype, device=device)\n    self_attn_layer_norm_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    # Projection weights: Xavier init (fan_in = last dim)\n    q_proj_weight = torch.randn(d_model, d_model, dtype=dtype, device=device) / math.sqrt(d_model)\n    q_proj_bias = torch.zeros(d_model, dtype=dtype, device=device)\n    k_proj_weight = torch.randn(d_model, d_model, dtype=dtype, device=device) / math.sqrt(d_model)\n    v_proj_weight = torch.randn(d_model, d_model, dtype=dtype, device=device) / math.sqrt(d_model)\n    v_proj_bias = torch.zeros(d_model, dtype=dtype, device=device)\n    out_proj_weight = torch.randn(d_model, d_model, dtype=dtype, device=device) / math.sqrt(d_model)\n    out_proj_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    # FFN norm weights/biases\n    final_layer_norm_weight = torch.ones(d_model, dtype=dtype, device=device)\n    final_layer_norm_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    # FFN weights: Xavier init\n    fc1_weight = torch.randn(encoder_ffn_dim, d_model, dtype=dtype, device=device) / math.sqrt(d_model)\n    fc1_bias = torch.zeros(encoder_ffn_dim, dtype=dtype, device=device)\n    fc2_weight = torch.randn(d_model, encoder_ffn_dim, dtype=dtype, device=device) / math.sqrt(encoder_ffn_dim)\n    fc2_bias = torch.zeros(d_model, dtype=dtype, device=device)\n\n    return {\n        \"input_features\": input_features,\n        \"conv1_weight\": conv1_weight,\n        \"conv1_bias\": conv1_bias,\n        \"conv2_weight\": conv2_weight,\n        \"conv2_bias\": conv2_bias,\n        \"embed_positions_weight\": embed_positions_weight,\n        \"self_attn_layer_norm_weight\": self_attn_layer_norm_weight,\n        \"self_attn_layer_norm_bias\": self_attn_layer_norm_bias,\n        \"q_proj_weight\": q_proj_weight,\n        \"q_proj_bias\": q_proj_bias,\n        \"k_proj_weight\": k_proj_weight,\n        \"v_proj_weight\": v_proj_weight,\n        \"v_proj_bias\": v_proj_bias,\n        \"out_proj_weight\": out_proj_weight,\n        \"out_proj_bias\": out_proj_bias,\n        \"final_layer_norm_weight\": final_layer_norm_weight,\n        \"final_layer_norm_bias\": final_layer_norm_bias,\n        \"fc1_weight\": fc1_weight,\n        \"fc1_bias\": fc1_bias,\n        \"fc2_weight\": fc2_weight,\n        \"fc2_bias\": fc2_bias,\n    }\n\n\n@torch.no_grad()\ndef run(\n    input_features: torch.Tensor,\n    conv1_weight: torch.Tensor,\n    conv1_bias: torch.Tensor,\n    conv2_weight: torch.Tensor,\n    conv2_bias: torch.Tensor,\n    embed_positions_weight: torch.Tensor,\n    self_attn_layer_norm_weight: torch.Tensor,\n    self_attn_layer_norm_bias: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    q_proj_bias: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    v_proj_bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n    final_layer_norm_weight: torch.Tensor,\n    final_layer_norm_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n):\n    # Constants\n    d_model = 5120\n    num_heads = 20\n    head_dim = 256\n    scaling = head_dim ** -0.5\n    \n    # Stage 1: Convolutional feature extraction\n    # Conv1: (B, 80, 3000) -> (B, 5120, 3000)\n    x = F.conv1d(input_features, conv1_weight, conv1_bias, padding=1)\n    x = F.gelu(x)\n    \n    # Conv2 with stride=2: (B, 5120, 3000) -> (B, 5120, 1500)\n    x = F.conv1d(x, conv2_weight, conv2_bias, stride=2, padding=1)\n    x = F.gelu(x)\n    \n    # Permute to (B, 1500, 5120)\n    x = x.permute(0, 2, 1)\n    \n    bsz, seq_len, _ = x.shape\n    \n    # Stage 2: Add positional embeddings\n    hidden_states = x + embed_positions_weight\n    \n    # Stage 3: First encoder layer - Self-attention block\n    residual = hidden_states\n    \n    # Layer norm\n    hidden_states_fp32 = hidden_states.to(torch.float32)\n    mean = hidden_states_fp32.mean(dim=-1, keepdim=True)\n    var = ((hidden_states_fp32 - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_states_norm = (hidden_states_fp32 - mean) / torch.sqrt(var + 1e-5)\n    hidden_states = (hidden_states_norm * self_attn_layer_norm_weight.to(torch.float32) + self_attn_layer_norm_bias.to(torch.float32)).to(torch.bfloat16)\n    \n    # Q, K, V projections\n    query_states = F.linear(hidden_states, q_proj_weight, q_proj_bias) * scaling\n    key_states = F.linear(hidden_states, k_proj_weight, None)\n    value_states = F.linear(hidden_states, v_proj_weight, v_proj_bias)\n    \n    # Reshape for multi-head attention: (B, seq_len, d_model) -> (B, num_heads, seq_len, head_dim)\n    query_states = query_states.view(bsz, seq_len, num_heads, head_dim).transpose(1, 2).contiguous()\n    key_states = key_states.view(bsz, seq_len, num_heads, head_dim).transpose(1, 2).contiguous()\n    value_states = value_states.view(bsz, seq_len, num_heads, head_dim).transpose(1, 2).contiguous()\n    \n    # Attention computation\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3))\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    \n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(bsz, seq_len, d_model)\n    \n    # Output projection\n    attn_output = F.linear(attn_output, out_proj_weight, out_proj_bias)\n    \n    # Residual connection\n    hidden_states = residual + attn_output\n    \n    # Stage 4: FFN block\n    residual = hidden_states\n    \n    # Layer norm\n    hidden_states_fp32 = hidden_states.to(torch.float32)\n    mean = hidden_states_fp32.mean(dim=-1, keepdim=True)\n    var = ((hidden_states_fp32 - mean) ** 2).mean(dim=-1, keepdim=True)\n    hidden_states_norm = (hidden_states_fp32 - mean) / torch.sqrt(var + 1e-5)\n    hidden_states = (hidden_states_norm * final_layer_norm_weight.to(torch.float32) + final_layer_norm_bias.to(torch.float32)).to(torch.bfloat16)\n    \n    # FFN\n    hidden_states = F.linear(hidden_states, fc1_weight, fc1_bias)\n    hidden_states = F.gelu(hidden_states)\n    hidden_states = F.linear(hidden_states, fc2_weight, fc2_bias)\n    \n    # Residual connection\n    hidden_states = residual + hidden_states\n    \n    return hidden_states\n"
+}

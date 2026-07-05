@@ -1,0 +1,169 @@
+{
+    "name": "041_kv_shared_attention_with_dual_rope",
+    "hf_id": "google/gemma-3n-E4B",
+    "description": "KV-shared attention with dual RoPE (global and local), Q/K/V normalization, soft-capping, and grouped-query attention. Implements attention where later layers can reuse KV states from earlier layers, with dual rotary position embeddings.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3072
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 32
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 96
+        },
+        "num_key_value_groups": {
+            "type": "const",
+            "value": 4
+        },
+        "q_proj_dim": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim"
+        },
+        "kv_proj_dim": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "position_ids": {
+            "shape": [
+                "batch_size",
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for RoPE"
+        },
+        "attention_mask": {
+            "shape": [
+                "batch_size",
+                "1",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Causal attention mask"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "q_proj_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_proj_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_proj_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "q_proj_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query RMSNorm weight"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key RMSNorm weight"
+        },
+        "shared_key_states": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared key states from earlier layer (used if use_shared_kv is True)"
+        },
+        "shared_value_states": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Shared value states from earlier layer (used if use_shared_kv is True)"
+        },
+        "rope_theta": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RoPE base frequency (10000.0 for global, 100000.0 for local)"
+        },
+        "softcap": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention logit soft-capping value"
+        },
+        "rms_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RMSNorm epsilon"
+        },
+        "use_shared_kv": {
+            "shape": null,
+            "dtype": "bool",
+            "description": "Whether to use shared KV states from input"
+        }
+    },
+    "outputs": {
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = 3072\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 96\n\n    # Use fixed values for scalars\n    rope_theta = 10000.0\n    softcap = 30.0\n    rms_norm_eps = 1e-6\n    use_shared_kv = False\n\n    dtype = torch.bfloat16\n\n    hidden_states = torch.randn(batch_size, seq_len, hidden_size, dtype=dtype, device=device)\n    position_ids = torch.arange(seq_len, device=device).unsqueeze(0).expand(batch_size, -1)\n\n    # Create causal mask\n    causal_mask = torch.triu(torch.full((seq_len, seq_len), float(\"-inf\"), device=device, dtype=dtype), diagonal=1)\n    attention_mask = causal_mask.unsqueeze(0).unsqueeze(0).expand(batch_size, 1, seq_len, seq_len).contiguous()\n\n    # Projection weights: Xavier init with 1/sqrt(fan_in) where fan_in is the last dim\n    q_proj_weight = torch.randn(num_attention_heads * head_dim, hidden_size, dtype=dtype, device=device) / math.sqrt(hidden_size)\n    k_proj_weight = torch.randn(num_key_value_heads * head_dim, hidden_size, dtype=dtype, device=device) / math.sqrt(hidden_size)\n    v_proj_weight = torch.randn(num_key_value_heads * head_dim, hidden_size, dtype=dtype, device=device) / math.sqrt(hidden_size)\n    o_proj_weight = torch.randn(hidden_size, num_attention_heads * head_dim, dtype=dtype, device=device) / math.sqrt(num_attention_heads * head_dim)\n\n    q_norm_weight = torch.ones(head_dim, dtype=dtype, device=device)\n    k_norm_weight = torch.ones(head_dim, dtype=dtype, device=device)\n\n    shared_key_states = torch.randn(batch_size, num_key_value_heads, seq_len, head_dim, dtype=dtype, device=device)\n    shared_value_states = torch.randn(batch_size, num_key_value_heads, seq_len, head_dim, dtype=dtype, device=device)\n\n    return {\n        \"hidden_states\": hidden_states,\n        \"position_ids\": position_ids,\n        \"attention_mask\": attention_mask,\n        \"q_proj_weight\": q_proj_weight,\n        \"k_proj_weight\": k_proj_weight,\n        \"v_proj_weight\": v_proj_weight,\n        \"o_proj_weight\": o_proj_weight,\n        \"q_norm_weight\": q_norm_weight,\n        \"k_norm_weight\": k_norm_weight,\n        \"shared_key_states\": shared_key_states,\n        \"shared_value_states\": shared_value_states,\n        \"rope_theta\": rope_theta,\n        \"softcap\": softcap,\n        \"rms_norm_eps\": rms_norm_eps,\n        \"use_shared_kv\": use_shared_kv,\n    }\n\n\ndef rms_norm(x: torch.Tensor, weight: torch.Tensor, eps: float) -> torch.Tensor:\n    variance = x.to(torch.float32).pow(2).mean(-1, keepdim=True)\n    x_normed = x * torch.rsqrt(variance + eps)\n    return (x_normed * weight).to(x.dtype)\n\n\ndef rms_norm_no_scale(x: torch.Tensor, eps: float) -> torch.Tensor:\n    variance = x.to(torch.float32).pow(2).mean(-1, keepdim=True)\n    return (x * torch.rsqrt(variance + eps)).to(x.dtype)\n\n\ndef rotate_half(x: torch.Tensor) -> torch.Tensor:\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef apply_rotary_pos_emb(x: torch.Tensor, cos: torch.Tensor, sin: torch.Tensor, unsqueeze_dim: int = 1) -> torch.Tensor:\n    cos = cos.unsqueeze(unsqueeze_dim)\n    sin = sin.unsqueeze(unsqueeze_dim)\n    return (x * cos) + (rotate_half(x) * sin)\n\n\ndef compute_rope_embeddings(x: torch.Tensor, position_ids: torch.Tensor, theta: float, head_dim: int) -> tuple:\n    inv_freq = 1.0 / (theta ** (torch.arange(0, head_dim, 2, dtype=torch.float32, device=x.device) / head_dim))\n    inv_freq_expanded = inv_freq[None, :, None].expand(position_ids.shape[0], -1, 1)\n    position_ids_expanded = position_ids[:, None, :].float()\n    freqs = (inv_freq_expanded @ position_ids_expanded).transpose(1, 2)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    cos = emb.cos().to(x.dtype)\n    sin = emb.sin().to(x.dtype)\n    return cos, sin\n\n\ndef repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:\n    batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n    if n_rep == 1:\n        return hidden_states\n    hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n    return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    position_ids: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    shared_key_states: torch.Tensor,\n    shared_value_states: torch.Tensor,\n    rope_theta: float,\n    softcap: float,\n    rms_norm_eps: float,\n    use_shared_kv: bool,\n) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 96\n    num_key_value_groups = 4\n    \n    # Query projection: [batch, seq_len, hidden_size] @ [hidden_size, num_heads * head_dim].T\n    query_states = F.linear(hidden_states, q_proj_weight)\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim)\n    \n    # Query normalization\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    \n    # Compute RoPE embeddings\n    cos, sin = compute_rope_embeddings(query_states, position_ids, rope_theta, head_dim)\n    \n    # Apply RoPE to queries\n    query_states = apply_rotary_pos_emb(query_states, cos, sin, unsqueeze_dim=2)\n    query_states = query_states.transpose(1, 2)  # [batch, num_heads, seq_len, head_dim]\n    \n    if use_shared_kv:\n        # Use shared KV states from earlier layer\n        key_states = shared_key_states\n        value_states = shared_value_states\n    else:\n        # Compute new KV states\n        key_states = F.linear(hidden_states, k_proj_weight)\n        key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim)\n        key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n        key_states = apply_rotary_pos_emb(key_states, cos, sin, unsqueeze_dim=2)\n        key_states = key_states.transpose(1, 2)  # [batch, num_kv_heads, seq_len, head_dim]\n        \n        value_states = F.linear(hidden_states, v_proj_weight)\n        value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim)\n        value_states = rms_norm_no_scale(value_states, rms_norm_eps)\n        value_states = value_states.transpose(1, 2)  # [batch, num_kv_heads, seq_len, head_dim]\n    \n    # Repeat KV for grouped-query attention\n    key_states_expanded = repeat_kv(key_states, num_key_value_groups)\n    value_states_expanded = repeat_kv(value_states, num_key_value_groups)\n    \n    # Attention computation: Q @ K^T\n    attn_weights = torch.matmul(query_states, key_states_expanded.transpose(2, 3))\n    \n    # Apply soft-capping: softcap * tanh(attn_weights / softcap)\n    attn_weights = attn_weights / softcap\n    attn_weights = torch.tanh(attn_weights)\n    attn_weights = attn_weights * softcap\n    \n    # Apply attention mask\n    attn_weights = attn_weights + attention_mask\n    \n    # Softmax\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    \n    # Compute attention output: attn_weights @ V\n    attn_output = torch.matmul(attn_weights, value_states_expanded)\n    \n    # Reshape and project output\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n    attn_output = F.linear(attn_output, o_proj_weight)\n    \n    return attn_output\n"
+}

@@ -1,0 +1,67 @@
+{
+    "name": "052_altup_hidden_state_collapse_with_magnitude_normalization",
+    "hf_id": "google/gemma-3n-E2B",
+    "description": "Collapses multiple AltUp prediction streams back into a single hidden state by projecting each stream through learned unembed matrices, normalizing their magnitudes to match the first stream, and averaging them together.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3072
+        },
+        "altup_num_inputs": {
+            "type": "const",
+            "value": 3
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "altup_num_inputs",
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Stacked hidden states from multiple AltUp streams"
+        },
+        "unembed_proj_1": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Unembed projection matrix for stream 1"
+        },
+        "unembed_proj_2": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Unembed projection matrix for stream 2"
+        },
+        "epsilon": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Small epsilon for numerical stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Collapsed hidden state"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    unembed_proj_1: torch.Tensor,\n    unembed_proj_2: torch.Tensor,\n    epsilon: float,\n):\n    \"\"\"\n    Collapses multiple AltUp prediction streams into a single hidden state.\n    \n    Args:\n        hidden_states: [altup_num_inputs, batch_size, seq_len, hidden_size]\n        unembed_proj_1: [hidden_size, hidden_size] - projection for stream 1\n        unembed_proj_2: [hidden_size, hidden_size] - projection for stream 2\n        epsilon: small value for numerical stability\n    \n    Returns:\n        output: [batch_size, seq_len, hidden_size]\n    \"\"\"\n    # Extract first stream as reference (no projection needed)\n    first_stream = hidden_states[0]  # [batch, seq_len, hidden_size]\n    \n    # Compute target magnitude from first stream\n    # Shape: [batch, seq_len, 1]\n    target_magnitude = torch.sqrt(\n        torch.mean(first_stream.to(torch.float32) ** 2, dim=-1, keepdim=True)\n    )\n    \n    # Initialize list to collect all streams\n    collapsed_streams = [first_stream.to(torch.float32)]\n    \n    # Process stream 1\n    # Project through unembed matrix: [batch, seq_len, hidden_size] @ [hidden_size, hidden_size].T\n    projected_stream_1 = torch.matmul(\n        hidden_states[1].to(torch.float32),\n        unembed_proj_1.to(torch.float32).t()\n    )\n    \n    # Compute current magnitude\n    current_magnitude_1 = torch.sqrt(\n        torch.maximum(\n            torch.mean(projected_stream_1 ** 2, dim=-1, keepdim=True),\n            torch.tensor(epsilon, dtype=torch.float32, device=hidden_states.device)\n        )\n    )\n    \n    # Normalize to match target magnitude\n    normalized_stream_1 = projected_stream_1 * (target_magnitude / current_magnitude_1)\n    collapsed_streams.append(normalized_stream_1)\n    \n    # Process stream 2\n    projected_stream_2 = torch.matmul(\n        hidden_states[2].to(torch.float32),\n        unembed_proj_2.to(torch.float32).t()\n    )\n    \n    # Compute current magnitude\n    current_magnitude_2 = torch.sqrt(\n        torch.maximum(\n            torch.mean(projected_stream_2 ** 2, dim=-1, keepdim=True),\n            torch.tensor(epsilon, dtype=torch.float32, device=hidden_states.device)\n        )\n    )\n    \n    # Normalize to match target magnitude\n    normalized_stream_2 = projected_stream_2 * (target_magnitude / current_magnitude_2)\n    collapsed_streams.append(normalized_stream_2)\n    \n    # Stack all streams and compute mean\n    stacked_streams = torch.stack(collapsed_streams, dim=0)  # [3, batch, seq_len, hidden_size]\n    \n    # Average across streams (dim=0)\n    output = torch.mean(stacked_streams, dim=0)  # [batch, seq_len, hidden_size]\n    \n    return output.to(torch.bfloat16)\n"
+}

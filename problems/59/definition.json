@@ -1,0 +1,61 @@
+{
+    "name": "059_moe_group_score_aggregation_and_masking",
+    "hf_id": "inclusionAI/Ling-mini-2.0",
+    "description": "Group-based score aggregation and masking for MoE routing. Reshapes 256 expert scores into 8 groups of 32 experts each, computes group scores by summing top-2 expert scores within each group, selects top 4 groups, creates and expands group mask to expert-level, and applies masked_fill to suppress non-selected experts with -inf. This reduces the expert search space from 256 to ~128 experts before final topk selection.",
+    "axes": {
+        "num_tokens": {
+            "type": "var",
+            "description": "Number of tokens being routed"
+        },
+        "num_experts": {
+            "type": "const",
+            "value": 256,
+            "description": "Total number of experts"
+        },
+        "n_group": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of expert groups"
+        },
+        "topk_group": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of groups to select"
+        },
+        "experts_per_group": {
+            "type": "expr",
+            "expression": "num_experts // n_group",
+            "description": "Number of experts per group (32)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "scores": {
+            "shape": [
+                "num_tokens",
+                "num_experts"
+            ],
+            "dtype": "float32",
+            "description": "Expert scores after sigmoid activation"
+        }
+    },
+    "outputs": {
+        "masked_scores": {
+            "shape": [
+                "num_tokens",
+                "num_experts"
+            ],
+            "dtype": "float32",
+            "description": "Scores with non-selected groups masked to -inf"
+        },
+        "group_mask": {
+            "shape": [
+                "num_tokens",
+                "n_group"
+            ],
+            "dtype": "float32",
+            "description": "Binary mask indicating selected groups"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(scores: torch.Tensor):\n    \"\"\"\n    Group-based score aggregation and masking for MoE routing.\n    \n    Args:\n        scores: Shape (num_tokens, 256) - expert scores after sigmoid activation\n        \n    Returns:\n        masked_scores: Shape (num_tokens, 256) - scores with non-selected groups masked\n        group_mask: Shape (num_tokens, 8) - binary mask of selected groups\n    \"\"\"\n    num_experts = 256\n    n_group = 8\n    topk_group = 4\n    experts_per_group = num_experts // n_group  # 32\n    \n    num_tokens = scores.size(0)\n    \n    # Reshape scores into groups: (num_tokens, 8, 32)\n    group_scores_reshaped = scores.view(num_tokens, n_group, experts_per_group)\n    \n    # Compute top-2 scores per group and sum them: (num_tokens, 8, 2) -> (num_tokens, 8)\n    # This aggregates group quality by summing the two best experts in each group\n    top2_per_group = torch.topk(group_scores_reshaped, k=2, dim=-1)[0]  # (num_tokens, 8, 2)\n    group_scores = top2_per_group.sum(dim=-1)  # (num_tokens, 8)\n    \n    # Select top 4 groups based on aggregated scores\n    # group_idx: (num_tokens, 4) - indices of selected groups\n    group_idx = torch.topk(group_scores, k=topk_group, dim=-1, sorted=False)[1]\n    \n    # Create binary mask for selected groups: (num_tokens, 8)\n    group_mask = torch.zeros_like(group_scores)\n    group_mask.scatter_(1, group_idx, 1)\n    \n    # Expand group mask to expert-level mask\n    # (num_tokens, 8) -> (num_tokens, 8, 1) -> (num_tokens, 8, 32) -> (num_tokens, 256)\n    score_mask = (\n        group_mask.unsqueeze(-1)\n        .expand(num_tokens, n_group, experts_per_group)\n        .reshape(num_tokens, num_experts)\n    )\n    \n    # Apply mask: set non-selected experts to 0 for subsequent topk (don't use -inf since output tensors must contain finite values only)\n    masked_scores = scores.masked_fill(~score_mask.bool(), float('-inf'))\n    \n    return masked_scores, group_mask\n"
+}

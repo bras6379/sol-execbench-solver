@@ -1,0 +1,65 @@
+{
+    "name": "032_attention_weights_matmul_with_value_projection",
+    "hf_id": "allenai/Olmo-3-32B-Think",
+    "description": "Fused attention weights @ value matmul with transpose and reshape. Performs attn_weights @ value_states followed by transpose from (batch, num_heads, seq_len, head_dim) to (batch, seq_len, num_heads, head_dim) and reshape to (batch, seq_len, hidden_size). This is the second major matmul in attention that combines attention weights with value states, appearing 64 times per forward pass.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 40,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Head dimension"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 5120,
+            "description": "Hidden size (num_attention_heads * head_dim)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention weights after softmax"
+        },
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value states after GQA expansion"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Reshaped attention output ready for output projection"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    attn_weights: torch.Tensor,\n    value_states: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention weights @ value matmul with transpose and reshape.\n    \n    Args:\n        attn_weights: Attention weights after softmax, shape (batch, 40, seq_len, seq_len)\n        value_states: Value states after GQA expansion, shape (batch, 40, seq_len, 128)\n        \n    Returns:\n        Reshaped attention output ready for output projection, shape (batch, seq_len, 5120)\n    \"\"\"\n    # Constants\n    num_attention_heads = 40\n    head_dim = 128\n    hidden_size = 5120\n    \n    # Step 1: Attention weights @ value states\n    # (batch, 40, seq_len, seq_len) @ (batch, 40, seq_len, 128) -> (batch, 40, seq_len, 128)\n    attn_output = torch.matmul(attn_weights, value_states)\n    \n    # Step 2: Transpose to move heads dimension\n    # (batch, 40, seq_len, 128) -> (batch, seq_len, 40, 128)\n    attn_output = attn_output.transpose(1, 2)\n    \n    # Step 3: Reshape to combine heads\n    # (batch, seq_len, 40, 128) -> (batch, seq_len, 5120)\n    batch_size, seq_len = attn_output.shape[0], attn_output.shape[1]\n    attn_output = attn_output.reshape(batch_size, seq_len, hidden_size)\n    \n    # Ensure contiguous for next operation\n    attn_output = attn_output.contiguous()\n    \n    return attn_output\n"
+}

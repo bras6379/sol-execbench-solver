@@ -1,0 +1,239 @@
+{
+    "name": "067_patch_embed_to_joint_attention_input",
+    "hf_id": "stabilityai/stable-diffusion-3.5-large",
+    "description": "Complete input processing pipeline for SD3.5 that converts spatial image latents through patch embedding with positional encoding, processes timestep and pooled projections into temporal conditioning, and projects context embeddings. Combines three embedding pathways: image patches, temporal conditioning, and text context.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len_context": {
+            "type": "var"
+        },
+        "sample_size": {
+            "type": "const",
+            "value": 128
+        },
+        "patch_size": {
+            "type": "const",
+            "value": 2
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 16
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 38
+        },
+        "attention_head_dim": {
+            "type": "const",
+            "value": 64
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 2432
+        },
+        "joint_attention_dim": {
+            "type": "const",
+            "value": 4096
+        },
+        "caption_projection_dim": {
+            "type": "const",
+            "value": 2432
+        },
+        "pooled_projection_dim": {
+            "type": "const",
+            "value": 2048
+        },
+        "pos_embed_max_size": {
+            "type": "const",
+            "value": 192
+        },
+        "num_patches": {
+            "type": "expr",
+            "expression": "(sample_size // patch_size) * (sample_size // patch_size)"
+        },
+        "sinusoidal_dim": {
+            "type": "const",
+            "value": 256
+        },
+        "sinusoidal_half_dim": {
+            "type": "const",
+            "value": 128
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "sample_size",
+                "sample_size"
+            ],
+            "dtype": "float32",
+            "description": "Image latents"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_context",
+                "joint_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Text embeddings from encoder"
+        },
+        "pooled_projections": {
+            "shape": [
+                "batch_size",
+                "pooled_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled text embeddings"
+        },
+        "timestep": {
+            "shape": [
+                "batch_size"
+            ],
+            "dtype": "float32",
+            "description": "Timestep values"
+        },
+        "proj_weight": {
+            "shape": [
+                "inner_dim",
+                "in_channels",
+                "patch_size",
+                "patch_size"
+            ],
+            "dtype": "float32",
+            "description": "Patch projection conv weight"
+        },
+        "proj_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Patch projection conv bias"
+        },
+        "pos_embed": {
+            "shape": [
+                "1",
+                "num_patches",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Learned positional embeddings"
+        },
+        "timestep_linear1_weight": {
+            "shape": [
+                "inner_dim",
+                "sinusoidal_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embedder first linear weight"
+        },
+        "timestep_linear1_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embedder first linear bias"
+        },
+        "timestep_linear2_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embedder second linear weight"
+        },
+        "timestep_linear2_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embedder second linear bias"
+        },
+        "pooled_linear1_weight": {
+            "shape": [
+                "inner_dim",
+                "pooled_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled projection first linear weight"
+        },
+        "pooled_linear1_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled projection first linear bias"
+        },
+        "pooled_linear2_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled projection second linear weight"
+        },
+        "pooled_linear2_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled projection second linear bias"
+        },
+        "context_embedder_weight": {
+            "shape": [
+                "caption_projection_dim",
+                "joint_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Context embedder linear weight"
+        },
+        "context_embedder_bias": {
+            "shape": [
+                "caption_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Context embedder linear bias"
+        },
+        "freqs": {
+            "shape": [
+                "sinusoidal_half_dim"
+            ],
+            "dtype": "float32",
+            "description": "Precomputed frequency bands for sinusoidal encoding"
+        }
+    },
+    "outputs": {
+        "output_hidden_states": {
+            "shape": [
+                "batch_size",
+                "num_patches",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Patch embeddings with positional encoding"
+        },
+        "temb": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Temporal conditioning embeddings"
+        },
+        "output_encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_context",
+                "caption_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Projected context embeddings"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    pooled_projections: torch.Tensor,\n    timestep: torch.Tensor,\n    proj_weight: torch.Tensor,\n    proj_bias: torch.Tensor,\n    pos_embed: torch.Tensor,\n    timestep_linear1_weight: torch.Tensor,\n    timestep_linear1_bias: torch.Tensor,\n    timestep_linear2_weight: torch.Tensor,\n    timestep_linear2_bias: torch.Tensor,\n    pooled_linear1_weight: torch.Tensor,\n    pooled_linear1_bias: torch.Tensor,\n    pooled_linear2_weight: torch.Tensor,\n    pooled_linear2_bias: torch.Tensor,\n    context_embedder_weight: torch.Tensor,\n    context_embedder_bias: torch.Tensor,\n    freqs: torch.Tensor,\n):\n    batch_size = hidden_states.shape[0]\n    \n    # 1. Patch Embedding: Conv2d for patch extraction\n    # (B, C, H, W) -> (B, inner_dim, H//patch_size, W//patch_size)\n    patch_embedded = F.conv2d(hidden_states, proj_weight, proj_bias, stride=2)\n    \n    # Flatten to sequence: (B, inner_dim, h, w) -> (B, h*w, inner_dim)\n    patch_embedded = patch_embedded.flatten(2).transpose(1, 2)\n    \n    # 2. Add Positional Embeddings\n    num_patches = patch_embedded.shape[1]\n    pos_embed_slice = pos_embed[:, :num_patches, :]\n    output_hidden_states = patch_embedded + pos_embed_slice\n    \n    # 3. Timestep Embedding: sinusoidal encoding\n    # timesteps: (B,) -> (B, 1)\n    timestep_expanded = timestep.unsqueeze(-1)\n    \n    # Compute sinusoidal features: (B, 128)\n    args = timestep_expanded * freqs.unsqueeze(0)\n    timestep_sinusoidal = torch.cat([torch.cos(args), torch.sin(args)], dim=-1)  # (B, 256)\n    \n    # Timestep MLP: Linear -> SiLU -> Linear\n    timestep_embed = F.linear(timestep_sinusoidal, timestep_linear1_weight, timestep_linear1_bias)\n    timestep_embed = F.silu(timestep_embed)\n    timestep_embed = F.linear(timestep_embed, timestep_linear2_weight, timestep_linear2_bias)\n    \n    # 4. Pooled Projection Embedding: Linear -> SiLU -> Linear\n    pooled_embed = F.linear(pooled_projections, pooled_linear1_weight, pooled_linear1_bias)\n    pooled_embed = F.silu(pooled_embed)\n    pooled_embed = F.linear(pooled_embed, pooled_linear2_weight, pooled_linear2_bias)\n    \n    # 5. Combine temporal embeddings\n    temb = timestep_embed + pooled_embed\n    \n    # 6. Context Embedder: Linear projection\n    output_encoder_hidden_states = F.linear(encoder_hidden_states, context_embedder_weight, context_embedder_bias)\n    \n    return output_hidden_states, temb, output_encoder_hidden_states\n"
+}

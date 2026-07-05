@@ -1,0 +1,108 @@
+{
+    "name": "065_sparse_expert_dispatch_and_combine",
+    "hf_id": "openai/gpt-oss-120b",
+    "description": "Sparse expert dispatch and weighted combination for MoE training. Processes experts sequentially with sparse token extraction, expert computation (gate_up projection, gated GLU with clamping, down projection), and scattered accumulation using index_add_.",
+    "axes": {
+        "num_tokens": {
+            "type": "var",
+            "description": "Total number of tokens (batch_size * seq_len)"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2880,
+            "description": "Model hidden dimension"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 2880,
+            "description": "Expert intermediate dimension"
+        },
+        "num_local_experts": {
+            "type": "const",
+            "value": 128,
+            "description": "Number of local experts"
+        },
+        "num_experts_per_tok": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of experts selected per token"
+        },
+        "intermediate_size_x2": {
+            "type": "expr",
+            "expression": "intermediate_size * 2",
+            "description": "Gate and up projection output size"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states flattened"
+        },
+        "router_indices": {
+            "shape": [
+                "num_tokens",
+                "num_experts_per_tok"
+            ],
+            "dtype": "int64",
+            "description": "Selected expert indices per token"
+        },
+        "routing_weights": {
+            "shape": [
+                "num_tokens",
+                "num_local_experts"
+            ],
+            "dtype": "float32",
+            "description": "Routing weights for each expert"
+        },
+        "gate_up_proj": {
+            "shape": [
+                "num_local_experts",
+                "hidden_size",
+                "intermediate_size_x2"
+            ],
+            "dtype": "float32",
+            "description": "Gate and up projection weights"
+        },
+        "gate_up_proj_bias": {
+            "shape": [
+                "num_local_experts",
+                "intermediate_size_x2"
+            ],
+            "dtype": "float32",
+            "description": "Gate and up projection bias"
+        },
+        "down_proj": {
+            "shape": [
+                "num_local_experts",
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Down projection weights"
+        },
+        "down_proj_bias": {
+            "shape": [
+                "num_local_experts",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Down projection bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "num_tokens",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states after expert processing"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\n# Fixed constants for gated GLU activation\nALPHA = 1.702\nLIMIT = 7.0\n\n\ndef get_inputs(\n    axes_and_scalars: dict[str, ...], device: torch.device\n) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs for sparse expert dispatch and combine.\"\"\"\n    num_tokens = axes_and_scalars[\"num_tokens\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    intermediate_size = axes_and_scalars[\"intermediate_size\"]\n    num_local_experts = axes_and_scalars[\"num_local_experts\"]\n    num_experts_per_tok = axes_and_scalars[\"num_experts_per_tok\"]\n    \n    # Hidden states\n    hidden_states = torch.randn(num_tokens, hidden_size, dtype=torch.float32, device=device)\n    \n    # Router indices: each token selects top_k experts from [0, num_local_experts)\n    # Generate random expert selections ensuring valid indices\n    router_indices = torch.randint(\n        0, num_local_experts, (num_tokens, num_experts_per_tok), dtype=torch.int64, device=device\n    )\n    \n    # Routing weights: softmax-normalized weights for each expert\n    routing_logits = torch.randn(num_tokens, num_local_experts, dtype=torch.float32, device=device)\n    routing_weights = F.softmax(routing_logits, dim=-1)\n    \n    # Expert weights\n    std = 0.02\n    gate_up_proj = torch.randn(num_local_experts, hidden_size, 2 * intermediate_size, dtype=torch.float32, device=device) * std\n    gate_up_proj_bias = torch.zeros(num_local_experts, 2 * intermediate_size, dtype=torch.float32, device=device)\n    down_proj = torch.randn(num_local_experts, intermediate_size, hidden_size, dtype=torch.float32, device=device) * std\n    down_proj_bias = torch.zeros(num_local_experts, hidden_size, dtype=torch.float32, device=device)\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"router_indices\": router_indices,\n        \"routing_weights\": routing_weights,\n        \"gate_up_proj\": gate_up_proj,\n        \"gate_up_proj_bias\": gate_up_proj_bias,\n        \"down_proj\": down_proj,\n        \"down_proj_bias\": down_proj_bias,\n    }\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    router_indices: torch.Tensor,\n    routing_weights: torch.Tensor,\n    gate_up_proj: torch.Tensor,\n    gate_up_proj_bias: torch.Tensor,\n    down_proj: torch.Tensor,\n    down_proj_bias: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Sparse expert dispatch and weighted combination for MoE training.\n    \n    Args:\n        hidden_states: Input tensor [num_tokens, hidden_size]\n        router_indices: Selected expert indices [num_tokens, top_k]\n        routing_weights: Routing weights [num_tokens, num_experts]\n        gate_up_proj: Gate and up projection weights [num_experts, hidden_size, 2 * intermediate_size]\n        gate_up_proj_bias: Gate and up projection bias [num_experts, 2 * intermediate_size]\n        down_proj: Down projection weights [num_experts, intermediate_size, hidden_size]\n        down_proj_bias: Down projection bias [num_experts, hidden_size]\n    \n    Returns:\n        Output tensor [num_tokens, hidden_size]\n    \"\"\"\n    alpha = ALPHA\n    limit = LIMIT\n    \n    num_tokens, hidden_size = hidden_states.shape\n    num_experts = gate_up_proj.shape[0]\n    \n    # Initialize output accumulator\n    output = torch.zeros_like(hidden_states)\n    \n    # Compute expert mask: [num_experts + 1, top_k, num_tokens]\n    # +1 for masking class (tokens not assigned to any expert)\n    expert_mask = F.one_hot(\n        router_indices, \n        num_classes=num_experts + 1\n    ).permute(2, 1, 0)\n    \n    # Identify which experts are used in this batch\n    expert_hit = torch.greater(\n        expert_mask.sum(dim=(-1, -2)), 0\n    ).nonzero(as_tuple=False)\n    \n    # Process each active expert\n    for expert_idx_tensor in expert_hit:\n        expert_idx = expert_idx_tensor[0].item()\n        \n        # Skip masking index\n        if expert_idx == num_experts:\n            continue\n        \n        # Get token indices assigned to this expert\n        _, token_idx = torch.where(expert_mask[expert_idx])\n        \n        # Extract tokens for this expert: [num_tokens_for_expert, hidden_size]\n        current_state = hidden_states[token_idx]\n        \n        # Gate-up projection: [num_tokens_for_expert, 2 * intermediate_size]\n        gate_up = (\n            current_state @ gate_up_proj[expert_idx] + \n            gate_up_proj_bias[expert_idx]\n        )\n        \n        # Split into gate and up: [num_tokens_for_expert, intermediate_size]\n        gate = gate_up[..., ::2]\n        up = gate_up[..., 1::2]\n        \n        # Apply clamping to prevent overflow\n        gate = gate.clamp(min=None, max=limit)\n        up = up.clamp(min=-limit, max=limit)\n        \n        # Custom gated GLU activation\n        # glu = gate * sigmoid(gate * alpha)\n        glu = gate * torch.sigmoid(gate * alpha)\n        gated_output = (up + 1) * glu\n        \n        # Down projection: [num_tokens_for_expert, hidden_size]\n        expert_output = (\n            gated_output @ down_proj[expert_idx] + \n            down_proj_bias[expert_idx]\n        )\n        \n        # Apply routing weights: [num_tokens_for_expert, hidden_size]\n        weighted_output = expert_output * routing_weights[token_idx, expert_idx, None]\n        \n        # Accumulate to output using scatter-add\n        output.index_add_(0, token_idx, weighted_output)\n    \n    return output\n"
+}

@@ -1,0 +1,185 @@
+{
+  "task_id": 25,
+  "subset": "L1",
+  "collection_index": 25,
+  "name": "025_video_latent_gelu_activation",
+  "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:16.959564Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.013929,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.008624
+      },
+      {
+        "index": 1,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 8,
+          "seq_len": 997
+        },
+        "sol_ms": 0.0345,
+        "baseline_latency_ms": 0.045472
+      },
+      {
+        "index": 2,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 4,
+          "seq_len": 541
+        },
+        "sol_ms": 0.0096,
+        "baseline_latency_ms": 0.014944
+      },
+      {
+        "index": 3,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 4,
+          "seq_len": 128
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.0057445
+      },
+      {
+        "index": 4,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 32,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.1404,
+        "baseline_latency_ms": 0.17256
+      },
+      {
+        "index": 5,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 8,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0092,
+        "baseline_latency_ms": 0.014336
+      },
+      {
+        "index": 6,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 8,
+          "seq_len": 4096
+        },
+        "sol_ms": 0.1404,
+        "baseline_latency_ms": 0.1727685
+      },
+      {
+        "index": 7,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 16,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0354,
+        "baseline_latency_ms": 0.046896
+      },
+      {
+        "index": 8,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 4,
+          "seq_len": 8192
+        },
+        "sol_ms": 0.1404,
+        "baseline_latency_ms": 0.1724804999999999
+      },
+      {
+        "index": 9,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 16,
+          "seq_len": 1571
+        },
+        "sol_ms": 0.1078,
+        "baseline_latency_ms": 0.133409
+      },
+      {
+        "index": 10,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 2,
+          "seq_len": 293
+        },
+        "sol_ms": 0.0029,
+        "baseline_latency_ms": 0.0061125
+      },
+      {
+        "index": 11,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 1,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0015,
+        "baseline_latency_ms": 0.0042555
+      },
+      {
+        "index": 12,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 2,
+          "seq_len": 4096
+        },
+        "sol_ms": 0.0354,
+        "baseline_latency_ms": 0.0467835
+      },
+      {
+        "index": 13,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 4,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0048,
+        "baseline_latency_ms": 0.008672
+      },
+      {
+        "index": 14,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 2,
+          "seq_len": 256
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.005776
+      },
+      {
+        "index": 15,
+        "axes": {
+          "intermediate_size": 4096,
+          "batch_size": 1,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0026,
+        "baseline_latency_ms": 0.00576
+      }
+    ]
+  }
+}

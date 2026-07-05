@@ -1,0 +1,115 @@
+{
+    "name": "067_flash_attention_gqa_ultralong",
+    "hf_id": "nvidia/Llama-3.1-Nemotron-8B-UltraLong-1M-Instruct",
+    "description": "Flash Attention for Grouped Query Attention with ultra-long context. Fuses QKV projection, RoPE application, GQA KV repetition, scaled dot-product attention with causal masking, and output projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 4096
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 32
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "num_key_value_groups": {
+            "type": "const",
+            "value": 4
+        },
+        "q_proj_out": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim"
+        },
+        "kv_proj_out": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine RoPE embeddings"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine RoPE embeddings"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "q_proj_out",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_proj_out",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_proj_out",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "q_proj_out"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Attention output"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n):\n    # Constants\n    num_attention_heads = 32\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = 4\n    scaling = head_dim ** -0.5\n    \n    batch_size, seq_len, _ = hidden_states.shape\n    \n    # QKV projection\n    query_states = F.linear(hidden_states, q_proj_weight)\n    key_states = F.linear(hidden_states, k_proj_weight)\n    value_states = F.linear(hidden_states, v_proj_weight)\n    \n    # Reshape to [batch, seq_len, num_heads, head_dim] then transpose to [batch, num_heads, seq_len, head_dim]\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    # Apply RoPE\n    cos_expanded = cos.unsqueeze(1)  # [batch, 1, seq_len, head_dim]\n    sin_expanded = sin.unsqueeze(1)  # [batch, 1, seq_len, head_dim]\n    \n    # Rotate half for query\n    q1 = query_states[..., : head_dim // 2]\n    q2 = query_states[..., head_dim // 2 :]\n    query_rotated = torch.cat((-q2, q1), dim=-1)\n    query_states = (query_states * cos_expanded) + (query_rotated * sin_expanded)\n    \n    # Rotate half for key\n    k1 = key_states[..., : head_dim // 2]\n    k2 = key_states[..., head_dim // 2 :]\n    key_rotated = torch.cat((-k2, k1), dim=-1)\n    key_states = (key_states * cos_expanded) + (key_rotated * sin_expanded)\n    \n    # Repeat KV for GQA: [batch, num_kv_heads, seq_len, head_dim] -> [batch, num_attention_heads, seq_len, head_dim]\n    key_states = key_states[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    value_states = value_states[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len, head_dim\n    ).reshape(batch_size, num_attention_heads, seq_len, head_dim)\n    \n    # Compute attention scores\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    \n    # Apply causal mask\n    causal_mask = torch.triu(\n        torch.full((seq_len, seq_len), float('-inf'), device=hidden_states.device, dtype=hidden_states.dtype),\n        diagonal=1\n    )\n    attn_weights = attn_weights + causal_mask\n    \n    # Softmax\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    \n    # Compute attention output\n    attn_output = torch.matmul(attn_weights, value_states)\n    \n    # Reshape: [batch, num_heads, seq_len, head_dim] -> [batch, seq_len, hidden_size]\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n    \n    # Output projection\n    output = F.linear(attn_output, o_proj_weight)\n    \n    return output\n"
+}

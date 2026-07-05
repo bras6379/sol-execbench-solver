@@ -1,0 +1,94 @@
+{
+    "name": "004_fused_residual_rms_mlp",
+    "hf_id": "NousResearch/Hermes-4-405B",
+    "description": "Fused operation combining residual connection, RMSNorm, and complete SwiGLU MLP block. This pattern appears at every decoder layer after the attention block where the attention output residual is added, then immediately normalized, and fed into the MLP (gate_proj, up_proj, SiLU activation, element-wise multiply, down_proj).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 16384,
+            "description": "Hidden dimension size"
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 53248,
+            "description": "MLP intermediate dimension size"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output from attention block"
+        },
+        "residual": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Residual connection from before attention"
+        },
+        "norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "RMSNorm weight parameter"
+        },
+        "gate_proj_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gate projection weight matrix"
+        },
+        "up_proj_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Up projection weight matrix"
+        },
+        "down_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Down projection weight matrix"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for RMSNorm numerical stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output tensor after fused residual + RMSNorm + MLP"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    residual: torch.Tensor,\n    norm_weight: torch.Tensor,\n    gate_proj_weight: torch.Tensor,\n    up_proj_weight: torch.Tensor,\n    down_proj_weight: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Fused residual + RMSNorm + SwiGLU MLP.\n    \n    Args:\n        hidden_states: Output from attention block [batch_size, seq_len, hidden_size]\n        residual: Residual connection from before attention [batch_size, seq_len, hidden_size]\n        norm_weight: RMSNorm weight [hidden_size]\n        gate_proj_weight: Gate projection weight [intermediate_size, hidden_size]\n        up_proj_weight: Up projection weight [intermediate_size, hidden_size]\n        down_proj_weight: Down projection weight [hidden_size, intermediate_size]\n        eps: Epsilon for numerical stability\n        \n    Returns:\n        Output tensor after MLP [batch_size, seq_len, hidden_size]\n    \"\"\"\n    # Step 1: Residual connection\n    # Shape: [batch_size, seq_len, hidden_size]\n    hidden_states = residual + hidden_states\n    \n    # Step 2: RMSNorm\n    # Convert to float32 for numerical stability\n    input_dtype = hidden_states.dtype\n    hidden_states_f32 = hidden_states.to(torch.float32)\n    \n    # Compute variance: mean of squared values\n    # Shape: [batch_size, seq_len, 1]\n    variance = hidden_states_f32.pow(2).mean(dim=-1, keepdim=True)\n    \n    # Normalize and scale\n    # Shape: [batch_size, seq_len, hidden_size]\n    hidden_states_f32 = hidden_states_f32 * torch.rsqrt(variance + eps)\n    hidden_states = (norm_weight * hidden_states_f32).to(input_dtype)\n    \n    # Step 3: SwiGLU MLP\n    # Gate projection: [batch_size, seq_len, hidden_size] @ [hidden_size, intermediate_size]\n    # Shape: [batch_size, seq_len, intermediate_size]\n    gate_output = F.linear(hidden_states, gate_proj_weight)\n    \n    # Up projection\n    # Shape: [batch_size, seq_len, intermediate_size]\n    up_output = F.linear(hidden_states, up_proj_weight)\n    \n    # SwiGLU activation: SiLU(gate) * up\n    # SiLU(x) = x * sigmoid(x)\n    # Shape: [batch_size, seq_len, intermediate_size]\n    intermediate = F.silu(gate_output) * up_output\n    \n    # Down projection\n    # Shape: [batch_size, seq_len, hidden_size]\n    output = F.linear(intermediate, down_proj_weight)\n    \n    return output\n"
+}

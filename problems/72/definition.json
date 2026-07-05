@@ -1,0 +1,168 @@
+{
+    "name": "072_cross_attention_qkv_projection_with_gqa_repeat_backward",
+    "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+    "description": "Backward pass for cross-attention QKV projection with GQA repeat. Computes gradients for decoder_hidden_states, encoder_hidden_states, q_weight, k_weight, and v_weight given upstream gradients from query_states, key_states, and value_states.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len_dec": {
+            "type": "var"
+        },
+        "seq_len_enc": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1536
+        },
+        "cross_hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 4
+        },
+        "num_key_value_groups": {
+            "type": "const",
+            "value": 4
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 256
+        },
+        "q_out_dim": {
+            "type": "expr",
+            "expression": "num_heads * head_dim"
+        },
+        "kv_out_dim": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        }
+    },
+    "custom_inputs_entrypoint": "gen_inputs",
+    "inputs": {
+        "grad_query_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_dec",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Upstream gradient for query states"
+        },
+        "grad_key_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_enc",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Upstream gradient for key states (after GQA repeat)"
+        },
+        "grad_value_states": {
+            "shape": [
+                "batch_size",
+                "num_heads",
+                "seq_len_enc",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Upstream gradient for value states (after GQA repeat)"
+        },
+        "decoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_dec",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Saved decoder hidden states from forward pass"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_enc",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Saved encoder hidden states from forward pass"
+        },
+        "q_weight": {
+            "shape": [
+                "q_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight matrix"
+        },
+        "k_weight": {
+            "shape": [
+                "kv_out_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight matrix"
+        },
+        "v_weight": {
+            "shape": [
+                "kv_out_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight matrix"
+        }
+    },
+    "outputs": {
+        "grad_decoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_dec",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. decoder hidden states"
+        },
+        "grad_encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len_enc",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. encoder hidden states"
+        },
+        "grad_q_weight": {
+            "shape": [
+                "q_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query weight"
+        },
+        "grad_k_weight": {
+            "shape": [
+                "kv_out_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key weight"
+        },
+        "grad_v_weight": {
+            "shape": [
+                "kv_out_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. value weight"
+        }
+    },
+    "reference": "import torch\nimport math\n\n\ndef gen_inputs(axes_and_scalars, device):\n    batch_size = axes_and_scalars['batch_size']\n    seq_len_dec = axes_and_scalars['seq_len_dec']\n    seq_len_enc = axes_and_scalars['seq_len_enc']\n    hidden_size = 1536\n    cross_hidden_size = 1024\n    num_heads = 16\n    num_key_value_heads = 4\n    head_dim = 256\n    q_out_dim = num_heads * head_dim\n    kv_out_dim = num_key_value_heads * head_dim\n\n    # Xavier-scaled weights\n    q_weight = torch.randn(q_out_dim, hidden_size, dtype=torch.float32, device=device) / math.sqrt(hidden_size)\n    k_weight = torch.randn(kv_out_dim, cross_hidden_size, dtype=torch.float32, device=device) / math.sqrt(cross_hidden_size)\n    v_weight = torch.randn(kv_out_dim, cross_hidden_size, dtype=torch.float32, device=device) / math.sqrt(cross_hidden_size)\n\n    # Activation-scale hidden states\n    decoder_hidden_states = torch.randn(batch_size, seq_len_dec, hidden_size, dtype=torch.float32, device=device) / math.sqrt(hidden_size)\n    encoder_hidden_states = torch.randn(batch_size, seq_len_enc, cross_hidden_size, dtype=torch.float32, device=device) / math.sqrt(cross_hidden_size)\n\n    # Small-magnitude upstream gradients\n    grad_query_states = torch.randn(batch_size, num_heads, seq_len_dec, head_dim, dtype=torch.float32, device=device) / math.sqrt(q_out_dim)\n    grad_key_states = torch.randn(batch_size, num_heads, seq_len_enc, head_dim, dtype=torch.float32, device=device) / math.sqrt(q_out_dim)\n    grad_value_states = torch.randn(batch_size, num_heads, seq_len_enc, head_dim, dtype=torch.float32, device=device) / math.sqrt(q_out_dim)\n\n    return {\n        'grad_query_states': grad_query_states,\n        'grad_key_states': grad_key_states,\n        'grad_value_states': grad_value_states,\n        'decoder_hidden_states': decoder_hidden_states,\n        'encoder_hidden_states': encoder_hidden_states,\n        'q_weight': q_weight,\n        'k_weight': k_weight,\n        'v_weight': v_weight,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_query_states: torch.Tensor,\n    grad_key_states: torch.Tensor,\n    grad_value_states: torch.Tensor,\n    decoder_hidden_states: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    q_weight: torch.Tensor,\n    k_weight: torch.Tensor,\n    v_weight: torch.Tensor,\n):\n    # Constants\n    num_heads = 16\n    num_key_value_heads = 4\n    num_key_value_groups = 4\n    head_dim = 256\n    \n    batch_size = decoder_hidden_states.shape[0]\n    seq_len_dec = decoder_hidden_states.shape[1]\n    seq_len_enc = encoder_hidden_states.shape[1]\n    \n    # ========== Query Gradient Computation ==========\n    # Reverse transpose: (batch, 16, seq_dec, 256) -> (batch, seq_dec, 16, 256)\n    grad_query_proj = grad_query_states.transpose(1, 2)\n    \n    # Reverse reshape: (batch, seq_dec, 16, 256) -> (batch, seq_dec, 4096)\n    grad_query_proj = grad_query_proj.contiguous().view(\n        batch_size, seq_len_dec, num_heads * head_dim\n    )\n    \n    # Gradient w.r.t. decoder_hidden_states\n    # grad_query_proj: (batch, seq_dec, 4096)\n    # q_weight: (4096, 1536)\n    # Result: (batch, seq_dec, 1536)\n    grad_decoder_hidden_states = torch.matmul(grad_query_proj, q_weight)\n    \n    # Gradient w.r.t. q_weight\n    # decoder_hidden_states: (batch, seq_dec, 1536)\n    # grad_query_proj: (batch, seq_dec, 4096)\n    # Result: (4096, 1536)\n    decoder_flat = decoder_hidden_states.view(-1, decoder_hidden_states.shape[-1])\n    grad_query_flat = grad_query_proj.view(-1, grad_query_proj.shape[-1])\n    grad_q_weight = torch.matmul(grad_query_flat.t(), decoder_flat)\n    \n    # ========== Key Gradient Computation ==========\n    # Reverse GQA repetition: (batch, 16, seq_enc, 256) -> (batch, 4, seq_enc, 256)\n    # Reshape: (batch, 16, seq_enc, 256) -> (batch, 4, 4, seq_enc, 256)\n    grad_key_unrepeated = grad_key_states.view(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len_enc, head_dim\n    )\n    # Sum over the repetition dimension: (batch, 4, 4, seq_enc, 256) -> (batch, 4, seq_enc, 256)\n    grad_key_unrepeated = grad_key_unrepeated.sum(dim=2)\n    \n    # Reverse transpose: (batch, 4, seq_enc, 256) -> (batch, seq_enc, 4, 256)\n    grad_key_proj = grad_key_unrepeated.transpose(1, 2)\n    \n    # Reverse reshape: (batch, seq_enc, 4, 256) -> (batch, seq_enc, 1024)\n    grad_key_proj = grad_key_proj.contiguous().view(\n        batch_size, seq_len_enc, num_key_value_heads * head_dim\n    )\n    \n    # Gradient w.r.t. encoder_hidden_states from K\n    grad_encoder_hidden_states = torch.matmul(grad_key_proj, k_weight)\n    \n    # Gradient w.r.t. k_weight\n    encoder_flat = encoder_hidden_states.view(-1, encoder_hidden_states.shape[-1])\n    grad_key_flat = grad_key_proj.view(-1, grad_key_proj.shape[-1])\n    grad_k_weight = torch.matmul(grad_key_flat.t(), encoder_flat)\n    \n    # ========== Value Gradient Computation ==========\n    # Reverse GQA repetition: (batch, 16, seq_enc, 256) -> (batch, 4, seq_enc, 256)\n    grad_value_unrepeated = grad_value_states.view(\n        batch_size, num_key_value_heads, num_key_value_groups, seq_len_enc, head_dim\n    )\n    grad_value_unrepeated = grad_value_unrepeated.sum(dim=2)\n    \n    # Reverse transpose: (batch, 4, seq_enc, 256) -> (batch, seq_enc, 4, 256)\n    grad_value_proj = grad_value_unrepeated.transpose(1, 2)\n    \n    # Reverse reshape: (batch, seq_enc, 4, 256) -> (batch, seq_enc, 1024)\n    grad_value_proj = grad_value_proj.contiguous().view(\n        batch_size, seq_len_enc, num_key_value_heads * head_dim\n    )\n    \n    # Gradient w.r.t. encoder_hidden_states from V (accumulate with K gradient)\n    grad_from_value = torch.matmul(grad_value_proj, v_weight)\n    grad_encoder_hidden_states = grad_encoder_hidden_states + grad_from_value\n    \n    # Gradient w.r.t. v_weight\n    grad_value_flat = grad_value_proj.view(-1, grad_value_proj.shape[-1])\n    grad_v_weight = torch.matmul(grad_value_flat.t(), encoder_flat)\n    \n    return (\n        grad_decoder_hidden_states,\n        grad_encoder_hidden_states,\n        grad_q_weight,\n        grad_k_weight,\n        grad_v_weight\n    )\n"
+}

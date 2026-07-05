@@ -1,0 +1,313 @@
+{
+  "task_id": 201,
+  "subset": "Quant",
+  "collection_index": 25,
+  "name": "025_nvfp4_attention_qkv_projection",
+  "hf_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:59.076348Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.009368,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 8,
+          "seq_len": 512
+        },
+        "sol_ms": 0.01718019,
+        "baseline_latency_ms": 0.7433135
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 1,
+          "seq_len": 256
+        },
+        "sol_ms": 0.00107376,
+        "baseline_latency_ms": 0.609201
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 16,
+          "seq_len": 256
+        },
+        "sol_ms": 0.01718019,
+        "baseline_latency_ms": 0.7116495
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 32,
+          "seq_len": 256
+        },
+        "sol_ms": 0.03436037,
+        "baseline_latency_ms": 0.976194
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 32,
+          "seq_len": 512
+        },
+        "sol_ms": 0.06872075,
+        "baseline_latency_ms": 1.6731075
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 1,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.00859009,
+        "baseline_latency_ms": 0.644578
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 1,
+          "seq_len": 8192
+        },
+        "sol_ms": 0.03436037,
+        "baseline_latency_ms": 0.97565
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 2,
+          "seq_len": 256
+        },
+        "sol_ms": 0.00214752,
+        "baseline_latency_ms": 0.629777
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 32,
+          "seq_len": 128
+        },
+        "sol_ms": 0.01718019,
+        "baseline_latency_ms": 0.7276015
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 0.03436037,
+        "baseline_latency_ms": 0.97405
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 4,
+          "seq_len": 512
+        },
+        "sol_ms": 0.00859009,
+        "baseline_latency_ms": 0.661586
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 4,
+          "seq_len": 256
+        },
+        "sol_ms": 0.00429505,
+        "baseline_latency_ms": 0.6740335
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 4,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.03436037,
+        "baseline_latency_ms": 0.979138
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 1,
+          "seq_len": 128
+        },
+        "sol_ms": 0.00053688,
+        "baseline_latency_ms": 0.602481
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 1,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.00429505,
+        "baseline_latency_ms": 0.6725615
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 2688,
+          "num_attention_heads": 32,
+          "num_key_value_heads": 2,
+          "head_dim": 128,
+          "q_size": 4096,
+          "kv_size": 256,
+          "sf_vec_size": 16,
+          "hidden_packed": 1344,
+          "hidden_sf_k": 168,
+          "batch_size": 2,
+          "seq_len": 512
+        },
+        "sol_ms": 0.00429505,
+        "baseline_latency_ms": 0.6629615
+      }
+    ]
+  }
+}

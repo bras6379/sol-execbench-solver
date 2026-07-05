@@ -1,0 +1,281 @@
+{
+  "task_id": 185,
+  "subset": "Quant",
+  "collection_index": 9,
+  "name": "009_nvfp4_vision_temporal_patch_merge_with_projection",
+  "hf_id": "cybermotaz/Qwen3-VL-32B-Instruct-NVFP4",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:55.266009Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.007575,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 1,
+          "merged_seq_len": 512
+        },
+        "sol_ms": 0.00257299,
+        "baseline_latency_ms": 0.491889
+      },
+      {
+        "index": 1,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 2,
+          "merged_seq_len": 1024
+        },
+        "sol_ms": 0.01029125,
+        "baseline_latency_ms": 0.5275209999999999
+      },
+      {
+        "index": 2,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 16,
+          "merged_seq_len": 256
+        },
+        "sol_ms": 0.02058227,
+        "baseline_latency_ms": 0.659489
+      },
+      {
+        "index": 3,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 4,
+          "merged_seq_len": 512
+        },
+        "sol_ms": 0.01029125,
+        "baseline_latency_ms": 0.528113
+      },
+      {
+        "index": 4,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 1,
+          "merged_seq_len": 1536
+        },
+        "sol_ms": 0.0077185,
+        "baseline_latency_ms": 0.5150250000000001
+      },
+      {
+        "index": 5,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 2,
+          "merged_seq_len": 128
+        },
+        "sol_ms": 0.00128661,
+        "baseline_latency_ms": 0.4738245
+      },
+      {
+        "index": 6,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 4,
+          "merged_seq_len": 1024
+        },
+        "sol_ms": 0.02058227,
+        "baseline_latency_ms": 0.659873
+      },
+      {
+        "index": 7,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 8,
+          "merged_seq_len": 256
+        },
+        "sol_ms": 0.01029125,
+        "baseline_latency_ms": 0.5208489999999999
+      },
+      {
+        "index": 8,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 1,
+          "merged_seq_len": 256
+        },
+        "sol_ms": 0.00128661,
+        "baseline_latency_ms": 0.4708164999999999
+      },
+      {
+        "index": 9,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 8,
+          "merged_seq_len": 384
+        },
+        "sol_ms": 0.01543676,
+        "baseline_latency_ms": 0.7953295
+      },
+      {
+        "index": 10,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 2,
+          "merged_seq_len": 512
+        },
+        "sol_ms": 0.00514574,
+        "baseline_latency_ms": 0.492433
+      },
+      {
+        "index": 11,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 1,
+          "merged_seq_len": 1024
+        },
+        "sol_ms": 0.00514574,
+        "baseline_latency_ms": 0.492465
+      },
+      {
+        "index": 12,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 16,
+          "merged_seq_len": 128
+        },
+        "sol_ms": 0.01029125,
+        "baseline_latency_ms": 0.5213129999999999
+      },
+      {
+        "index": 13,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 1,
+          "merged_seq_len": 768
+        },
+        "sol_ms": 0.00385937,
+        "baseline_latency_ms": 0.477601
+      },
+      {
+        "index": 14,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 2,
+          "merged_seq_len": 1536
+        },
+        "sol_ms": 0.01543676,
+        "baseline_latency_ms": 0.556065
+      },
+      {
+        "index": 15,
+        "axes": {
+          "in_channels": 1792,
+          "temporal_merge_size": 2,
+          "hidden_size": 3584,
+          "merged_channels": 3584,
+          "merged_channels_half": 1792,
+          "merged_channels_scale": 224,
+          "hidden_size_scale": 224,
+          "B": 16,
+          "merged_seq_len": 384
+        },
+        "sol_ms": 0.03087329,
+        "baseline_latency_ms": 0.915889
+      }
+    ]
+  }
+}

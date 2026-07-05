@@ -1,0 +1,329 @@
+{
+  "task_id": 229,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 20,
+  "name": "020_moe_fp8_block_scale_ds_routing_topk8_ng8_kg4_e32_h7168_i2048",
+  "hf_id": "",
+  "num_workloads": 19,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:05.573755Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.602192,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 7
+        },
+        "sol_ms": 0.3681,
+        "baseline_latency_ms": 1.751459
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 1
+        },
+        "sol_ms": 0.368,
+        "baseline_latency_ms": 1.053234
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 32
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 4.533607999999999
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 80
+        },
+        "sol_ms": 0.3683,
+        "baseline_latency_ms": 6.5847795
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 901
+        },
+        "sol_ms": 1.4025,
+        "baseline_latency_ms": 12.157988
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 16
+        },
+        "sol_ms": 0.3681,
+        "baseline_latency_ms": 2.8165015
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 15
+        },
+        "sol_ms": 0.3681,
+        "baseline_latency_ms": 1.490723
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 14
+        },
+        "sol_ms": 0.3681,
+        "baseline_latency_ms": 2.6029015
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 14107
+        },
+        "sol_ms": 21.9529,
+        "baseline_latency_ms": 44.5560875
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 11948
+        },
+        "sol_ms": 18.5932,
+        "baseline_latency_ms": 31.8109925
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 62
+        },
+        "sol_ms": 0.3683,
+        "baseline_latency_ms": 3.9219765
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 59
+        },
+        "sol_ms": 0.3683,
+        "baseline_latency_ms": 3.931607
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 58
+        },
+        "sol_ms": 0.3683,
+        "baseline_latency_ms": 5.814812
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 57
+        },
+        "sol_ms": 0.3683,
+        "baseline_latency_ms": 5.3139155
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 56
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 5.2744585
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 55
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 4.92084
+      },
+      {
+        "index": 16,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 54
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 4.601449000000001
+      },
+      {
+        "index": 17,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 53
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 5.031946
+      },
+      {
+        "index": 18,
+        "axes": {
+          "num_experts": 256,
+          "num_local_experts": 32,
+          "hidden_size": 7168,
+          "intermediate_size": 2048,
+          "gemm1_out_size": 4096,
+          "num_hidden_blocks": 56,
+          "num_intermediate_blocks": 16,
+          "num_gemm1_out_blocks": 32,
+          "seq_len": 52
+        },
+        "sol_ms": 0.3682,
+        "baseline_latency_ms": 3.4968705
+      }
+    ]
+  }
+}

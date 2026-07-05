@@ -1,0 +1,92 @@
+{
+    "name": "073_fused_encoder_final_norm_to_decoder_cross_attention_kv_projection",
+    "hf_id": "nvidia/parakeet-tdt-0.6b-v3",
+    "description": "Fused encoder final RMSNorm with cross-attention K/V projection. Applies RMSNorm to encoder hidden states then projects to cross-attention keys and values, avoiding intermediate materialization of normalized states.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "encoder_seq_len": {
+            "type": "var"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 2
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64
+        },
+        "kv_hidden_size": {
+            "type": "const",
+            "value": 128
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "encoder_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Encoder output hidden states"
+        },
+        "norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "RMSNorm weight parameter"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Key projection weight matrix"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Value projection weight matrix"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RMSNorm epsilon for numerical stability"
+        }
+    },
+    "outputs": {
+        "keys": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "encoder_seq_len",
+                "head_dim"
+            ],
+            "dtype": "float16",
+            "description": "Cross-attention keys in multi-head layout"
+        },
+        "values": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "encoder_seq_len",
+                "head_dim"
+            ],
+            "dtype": "float16",
+            "description": "Cross-attention values in multi-head layout"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    encoder_hidden_states: torch.Tensor,\n    norm_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Fused encoder final RMSNorm with cross-attention K/V projection.\n    \n    Args:\n        encoder_hidden_states: (batch_size, encoder_seq_len, 1024)\n        norm_weight: (1024,) RMSNorm weight\n        k_proj_weight: (128, 1024) Key projection weight\n        v_proj_weight: (128, 1024) Value projection weight\n        eps: RMSNorm epsilon\n    \n    Returns:\n        keys: (batch_size, 2, encoder_seq_len, 64)\n        values: (batch_size, 2, encoder_seq_len, 64)\n    \"\"\"\n    batch_size, seq_len, hidden_size = encoder_hidden_states.shape\n    num_kv_heads = 2\n    head_dim = 64\n    \n    # RMSNorm computation\n    input_dtype = encoder_hidden_states.dtype\n    hidden_states = encoder_hidden_states.to(torch.float32)\n    \n    # Compute variance and normalize\n    variance = hidden_states.pow(2).mean(-1, keepdim=True)\n    hidden_states = hidden_states * torch.rsqrt(variance + eps)\n    normalized = (norm_weight * hidden_states).to(input_dtype)\n    \n    # K/V projections\n    # normalized: (batch, seq_len, 1024)\n    # weights: (128, 1024)\n    # output: (batch, seq_len, 128)\n    keys_flat = F.linear(normalized, k_proj_weight, bias=None)\n    values_flat = F.linear(normalized, v_proj_weight, bias=None)\n    \n    # Reshape to multi-head format\n    # (batch, seq_len, 128) -> (batch, seq_len, 2, 64) -> (batch, 2, seq_len, 64)\n    keys = keys_flat.view(batch_size, seq_len, num_kv_heads, head_dim)\n    keys = keys.transpose(1, 2).contiguous()\n    \n    values = values_flat.view(batch_size, seq_len, num_kv_heads, head_dim)\n    values = values.transpose(1, 2).contiguous()\n    \n    return keys, values\n"
+}

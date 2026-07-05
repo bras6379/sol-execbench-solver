@@ -1,0 +1,76 @@
+{
+    "name": "056_mamba_ssm_dt_projection_softplus_clamp_backward",
+    "hf_id": "ibm-granite/granite-4.0-micro",
+    "description": "Backward pass for Mamba SSM dt projection with softplus and clamp. Computes gradients through clamp, softplus, and bias addition operations.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "seq_len": {
+            "type": "var"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 40
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from downstream layer"
+        },
+        "dt_with_bias": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved tensor: dt + dt_bias from forward pass"
+        },
+        "dt_activated": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved tensor: softplus(dt + dt_bias) from forward pass"
+        },
+        "time_step_min": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Minimum clamp value"
+        },
+        "time_step_max": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Maximum clamp value"
+        }
+    },
+    "outputs": {
+        "grad_dt": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient with respect to dt input"
+        },
+        "grad_dt_bias": {
+            "shape": [
+                "num_heads"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient with respect to dt_bias parameter"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    dt_with_bias: torch.Tensor,\n    dt_activated: torch.Tensor,\n    time_step_min: float,\n    time_step_max: float,\n):\n    \"\"\"\n    Backward pass for fused dt projection with bias, softplus, and clamping.\n    \n    Computes gradients through:\n    1. Clamp operation: gradient passes through only if value is strictly within bounds\n    2. Softplus operation: gradient is sigmoid(dt_with_bias)\n    3. Bias addition: gradient passes through for dt, summed over batch/seq for bias\n    \n    Args:\n        grad_output: Gradient from downstream [batch_size, seq_len, num_heads]\n        dt_with_bias: Saved tensor dt + dt_bias from forward [batch_size, seq_len, num_heads]\n        dt_activated: Saved tensor softplus(dt + dt_bias) from forward [batch_size, seq_len, num_heads]\n        time_step_min: Minimum clamp value (0.001)\n        time_step_max: Maximum clamp value (0.1)\n    \n    Returns:\n        grad_dt: Gradient w.r.t. dt input [batch_size, seq_len, num_heads]\n        grad_dt_bias: Gradient w.r.t. dt_bias [num_heads]\n    \"\"\"\n    # Convert to float32 for numerical stability\n    grad = grad_output.to(torch.float32)\n    dt_with_bias_f32 = dt_with_bias.to(torch.float32)\n    dt_activated_f32 = dt_activated.to(torch.float32)\n    \n    # Step 1: Gradient through clamp operation\n    # Gradient passes through only if value is strictly within bounds\n    # If clamped to min or max, gradient is zero (non-differentiable boundary)\n    clamp_mask = (dt_activated_f32 > time_step_min) & (dt_activated_f32 < time_step_max)\n    grad = grad * clamp_mask.to(grad.dtype)\n    \n    # Step 2: Gradient through softplus operation\n    # d/dx softplus(x) = sigmoid(x) = 1 / (1 + exp(-x))\n    softplus_grad = torch.sigmoid(dt_with_bias_f32)\n    grad = grad * softplus_grad\n    \n    # Step 3: Gradient through bias addition\n    # For dt input: gradient passes through directly (d(x+b)/dx = 1)\n    grad_dt = grad.to(torch.bfloat16)\n    \n    # For dt_bias: sum gradients over batch and sequence dimensions\n    # dt_bias shape: [num_heads]\n    # grad shape: [batch, seq_len, num_heads] -> [num_heads]\n    grad_dt_bias = grad.sum(dim=(0, 1)).to(torch.bfloat16)\n    \n    return grad_dt, grad_dt_bias\n"
+}

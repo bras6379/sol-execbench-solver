@@ -1,0 +1,292 @@
+{
+    "name": "072_region_aware_self_attention_with_edit_bias_backward",
+    "hf_id": "stepfun-ai/Step1X-Edit-v1p2",
+    "description": "Backward pass for region-aware self-attention with edit bias. Computes gradients through QKV projection, scaled dot-product attention with position-based and edit-region biases, softmax, dropout, and output projection.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 1024,
+            "description": "Hidden dimension size"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per attention head"
+        },
+        "max_position_embeddings": {
+            "type": "const",
+            "value": 1024,
+            "description": "Maximum position embeddings for bias"
+        },
+        "qkv_size": {
+            "type": "expr",
+            "expression": "3 * hidden_size",
+            "description": "Combined QKV projection size"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. attention output"
+        },
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states from forward pass"
+        },
+        "edit_region_mask": {
+            "shape": [
+                "batch_size",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Binary mask indicating edit regions"
+        },
+        "qkv_weight": {
+            "shape": [
+                "qkv_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection weight matrix"
+        },
+        "qkv_bias": {
+            "shape": [
+                "qkv_size"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection bias"
+        },
+        "out_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight matrix"
+        },
+        "out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "edit_region_bias": {
+            "shape": [
+                "num_attention_heads",
+                "max_position_embeddings",
+                "max_position_embeddings"
+            ],
+            "dtype": "float32",
+            "description": "Position-based edit region bias"
+        },
+        "within_edit_bias": {
+            "shape": [
+                "num_attention_heads",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Bias for within-edit attention"
+        },
+        "cross_edit_bias": {
+            "shape": [
+                "num_attention_heads",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Bias for cross-edit attention"
+        },
+        "attention_mask": {
+            "shape": [
+                "batch_size",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Attention mask (1 for valid, 0 for masked)"
+        },
+        "query": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query tensor from forward pass"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key tensor from forward pass"
+        },
+        "value": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Value tensor from forward pass"
+        },
+        "attention_scores": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Attention scores from forward pass"
+        },
+        "attention_probs": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Attention probabilities from forward pass"
+        },
+        "attention_probs_dropped": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Attention probabilities after dropout"
+        },
+        "attention_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Attention output before final projection"
+        },
+        "dropout_mask": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Dropout mask from forward pass"
+        },
+        "scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention score scaling factor"
+        },
+        "dropout_p": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Dropout probability"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hidden states"
+        },
+        "grad_qkv_weight": {
+            "shape": [
+                "qkv_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV weight"
+        },
+        "grad_qkv_bias": {
+            "shape": [
+                "qkv_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV bias"
+        },
+        "grad_out_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output weight"
+        },
+        "grad_out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output bias"
+        },
+        "grad_edit_region_bias": {
+            "shape": [
+                "num_attention_heads",
+                "max_position_embeddings",
+                "max_position_embeddings"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. edit region bias"
+        },
+        "grad_within_edit_bias": {
+            "shape": [
+                "num_attention_heads",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. within-edit bias"
+        },
+        "grad_cross_edit_bias": {
+            "shape": [
+                "num_attention_heads",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. cross-edit bias"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = 1024\n    num_attention_heads = 16\n    head_dim = 64\n    max_position_embeddings = 1024\n    qkv_size = 3 * hidden_size\n    \n    # Gradients from upstream\n    grad_output = torch.randn(batch_size, seq_len, hidden_size, device=device, dtype=torch.float32)\n    \n    # Forward pass inputs\n    hidden_states = torch.randn(batch_size, seq_len, hidden_size, device=device, dtype=torch.float32)\n    \n    # Edit region mask - binary mask\n    edit_region_mask = (torch.rand(batch_size, seq_len, device=device) > 0.5).float()\n    \n    # Projection weights\n    qkv_weight = torch.randn(qkv_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    qkv_bias = torch.zeros(qkv_size, device=device, dtype=torch.float32)\n    out_weight = torch.randn(hidden_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    out_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    \n    # Bias parameters\n    edit_region_bias = torch.randn(num_attention_heads, max_position_embeddings, max_position_embeddings, device=device, dtype=torch.float32) * 0.02\n    within_edit_bias = torch.randn(num_attention_heads, 1, 1, device=device, dtype=torch.float32) * 0.02\n    cross_edit_bias = torch.randn(num_attention_heads, 1, 1, device=device, dtype=torch.float32) * 0.02\n    \n    # Attention mask - 1 for valid positions\n    attention_mask = torch.ones(batch_size, seq_len, device=device, dtype=torch.float32)\n    \n    # Compute forward pass to get saved tensors\n    scale = 1.0 / (head_dim ** 0.5)\n    dropout_p = 0.1\n    \n    # QKV projection\n    qkv = F.linear(hidden_states, qkv_weight, qkv_bias)\n    qkv = qkv.reshape(batch_size, seq_len, 3, num_attention_heads, head_dim)\n    qkv = qkv.permute(2, 0, 3, 1, 4)\n    query, key, value = qkv[0], qkv[1], qkv[2]\n    \n    # Attention scores\n    attention_scores = torch.matmul(query, key.transpose(-2, -1)) * scale\n    \n    # Add biases\n    if seq_len <= max_position_embeddings:\n        position_bias = edit_region_bias[:, :seq_len, :seq_len]\n        attention_scores = attention_scores + position_bias.unsqueeze(0)\n    \n    edit_mask_q = edit_region_mask.unsqueeze(2)\n    edit_mask_k = edit_region_mask.unsqueeze(1)\n    within_edit = (edit_mask_q * edit_mask_k).unsqueeze(1)\n    attention_scores = attention_scores + within_edit_bias * within_edit\n    cross_edit = (edit_mask_q * (1 - edit_mask_k) + (1 - edit_mask_q) * edit_mask_k).unsqueeze(1)\n    attention_scores = attention_scores + cross_edit_bias * cross_edit\n    \n    # Apply attention mask\n    attention_mask_expanded = attention_mask.unsqueeze(1).unsqueeze(2)\n    attention_scores_masked = attention_scores.masked_fill(attention_mask_expanded == 0, float('-inf'))\n    \n    # Softmax\n    attention_probs = F.softmax(attention_scores_masked, dim=-1, dtype=torch.float32)\n    \n    # Dropout\n    dropout_mask = (torch.rand_like(attention_probs) > dropout_p).float()\n    attention_probs_dropped = attention_probs * dropout_mask / (1 - dropout_p)\n    \n    # Attention output\n    attn_out = torch.matmul(attention_probs_dropped, value)\n    attn_out = attn_out.transpose(1, 2).contiguous()\n    attention_output = attn_out.reshape(batch_size, seq_len, hidden_size)\n    \n    return {\n        \"grad_output\": grad_output,\n        \"hidden_states\": hidden_states,\n        \"edit_region_mask\": edit_region_mask,\n        \"qkv_weight\": qkv_weight,\n        \"qkv_bias\": qkv_bias,\n        \"out_weight\": out_weight,\n        \"out_bias\": out_bias,\n        \"edit_region_bias\": edit_region_bias,\n        \"within_edit_bias\": within_edit_bias,\n        \"cross_edit_bias\": cross_edit_bias,\n        \"attention_mask\": attention_mask,\n        \"query\": query.contiguous(),\n        \"key\": key.contiguous(),\n        \"value\": value.contiguous(),\n        \"attention_scores\": attention_scores_masked.contiguous(),\n        \"attention_probs\": attention_probs.contiguous(),\n        \"attention_probs_dropped\": attention_probs_dropped.contiguous(),\n        \"attention_output\": attention_output.contiguous(),\n        \"dropout_mask\": dropout_mask.contiguous(),\n        \"scale\": scale,\n        \"dropout_p\": dropout_p,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    edit_region_mask: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    qkv_bias: torch.Tensor,\n    out_weight: torch.Tensor,\n    out_bias: torch.Tensor,\n    edit_region_bias: torch.Tensor,\n    within_edit_bias: torch.Tensor,\n    cross_edit_bias: torch.Tensor,\n    attention_mask: torch.Tensor,\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    attention_scores: torch.Tensor,\n    attention_probs: torch.Tensor,\n    attention_probs_dropped: torch.Tensor,\n    attention_output: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    scale: float,\n    dropout_p: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 16\n    head_dim = 64\n    max_position_embeddings = 1024\n    \n    # Gradient through output projection\n    grad_attention_output = torch.matmul(grad_output, out_weight)\n    grad_out_weight = torch.matmul(\n        grad_output.reshape(-1, hidden_size).t(),\n        attention_output.reshape(-1, hidden_size)\n    )\n    grad_out_bias = grad_output.sum(dim=[0, 1])\n    \n    # Reshape gradient back to multi-head format\n    grad_attention_output = grad_attention_output.reshape(\n        batch_size, seq_len, num_attention_heads, head_dim\n    )\n    grad_attention_output = grad_attention_output.transpose(1, 2)\n    \n    # Gradient through attention-value multiplication\n    grad_attention_probs_dropped = torch.matmul(\n        grad_attention_output, value.transpose(-2, -1)\n    )\n    grad_value = torch.matmul(\n        attention_probs_dropped.transpose(-2, -1), grad_attention_output\n    )\n    \n    # Gradient through dropout\n    if dropout_p > 0:\n        grad_attention_probs = grad_attention_probs_dropped * dropout_mask / (1 - dropout_p)\n    else:\n        grad_attention_probs = grad_attention_probs_dropped\n    \n    # Gradient through softmax\n    sum_grad = (grad_attention_probs * attention_probs).sum(dim=-1, keepdim=True)\n    grad_attention_scores = attention_probs * (grad_attention_probs - sum_grad)\n    \n    # Handle masked positions\n    attention_mask_expanded = attention_mask.unsqueeze(1).unsqueeze(2)\n    grad_attention_scores = grad_attention_scores.masked_fill(\n        attention_mask_expanded == 0, 0.0\n    )\n    \n    # Gradient for cross_edit_bias\n    edit_mask_q = edit_region_mask.unsqueeze(2)\n    edit_mask_k = edit_region_mask.unsqueeze(1)\n    cross_edit = (edit_mask_q * (1 - edit_mask_k) + (1 - edit_mask_q) * edit_mask_k).unsqueeze(1)\n    grad_cross_edit_bias = (grad_attention_scores * cross_edit).sum(dim=[0, 2, 3], keepdim=True)\n    grad_cross_edit_bias = grad_cross_edit_bias.squeeze(0).unsqueeze(-1).unsqueeze(-1)\n    grad_cross_edit_bias = grad_cross_edit_bias.reshape(num_attention_heads, 1, 1)\n    \n    # Gradient for within_edit_bias\n    within_edit = (edit_mask_q * edit_mask_k).unsqueeze(1)\n    grad_within_edit_bias = (grad_attention_scores * within_edit).sum(dim=[0, 2, 3], keepdim=True)\n    grad_within_edit_bias = grad_within_edit_bias.squeeze(0).unsqueeze(-1).unsqueeze(-1)\n    grad_within_edit_bias = grad_within_edit_bias.reshape(num_attention_heads, 1, 1)\n    \n    # Gradient for edit_region_bias\n    grad_edit_region_bias = torch.zeros_like(edit_region_bias)\n    if seq_len <= max_position_embeddings:\n        grad_edit_region_bias[:, :seq_len, :seq_len] = grad_attention_scores.sum(dim=0)\n    \n    # Gradient through scaled Q @ K^T\n    grad_attention_scores_scaled = grad_attention_scores * scale\n    grad_query = torch.matmul(grad_attention_scores_scaled, key)\n    grad_key = torch.matmul(grad_attention_scores_scaled.transpose(-2, -1), query)\n    \n    # Combine gradients for Q, K, V\n    grad_qkv = torch.stack([grad_query, grad_key, grad_value], dim=0)\n    grad_qkv = grad_qkv.permute(1, 3, 0, 2, 4)\n    grad_qkv = grad_qkv.reshape(batch_size, seq_len, 3 * hidden_size)\n    \n    # Gradient through QKV projection\n    grad_hidden_states = torch.matmul(grad_qkv, qkv_weight)\n    grad_qkv_weight = torch.matmul(\n        grad_qkv.reshape(-1, 3 * hidden_size).t(),\n        hidden_states.reshape(-1, hidden_size)\n    )\n    grad_qkv_bias = grad_qkv.sum(dim=[0, 1])\n    \n    return (\n        grad_hidden_states,\n        grad_qkv_weight,\n        grad_qkv_bias,\n        grad_out_weight,\n        grad_out_bias,\n        grad_edit_region_bias,\n        grad_within_edit_bias,\n        grad_cross_edit_bias,\n    )\n"
+}

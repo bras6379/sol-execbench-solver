@@ -1,0 +1,153 @@
+{
+    "name": "062_kv_cache_update_with_rope_backward",
+    "hf_id": "mistralai/Devstral-Small-2507",
+    "description": "Backward pass for KV cache update with RoPE. Computes gradients for key_states, value_states, cos, sin, and input caches given gradients from downstream attention operations.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key-value heads"
+        },
+        "new_seq_len": {
+            "type": "var",
+            "description": "Length of new sequence being added to cache"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per head"
+        },
+        "half_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Half of head dimension for rotation"
+        },
+        "max_seq_len": {
+            "type": "var",
+            "description": "Maximum sequence length of the cache"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_key_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "max_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output key cache"
+        },
+        "grad_value_cache": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "max_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output value cache"
+        },
+        "key_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original key states before RoPE"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine component of RoPE embeddings"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine component of RoPE embeddings"
+        },
+        "cache_position": {
+            "shape": [
+                "new_seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Positions in cache that were updated"
+        }
+    },
+    "outputs": {
+        "grad_key_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input key states"
+        },
+        "grad_value_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input value states"
+        },
+        "grad_cos": {
+            "shape": [
+                "batch_size",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. cos embeddings"
+        },
+        "grad_sin": {
+            "shape": [
+                "batch_size",
+                "new_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. sin embeddings"
+        },
+        "grad_key_cache_input": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "max_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input key cache"
+        },
+        "grad_value_cache_input": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "max_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. input value cache"
+        }
+    },
+    "reference": "import torch\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    batch_size = axes_and_scalars['batch_size']\n    num_kv_heads = axes_and_scalars['num_kv_heads']\n    new_seq_len = axes_and_scalars['new_seq_len']\n    head_dim = axes_and_scalars['head_dim']\n    max_seq_len = axes_and_scalars['max_seq_len']\n    \n    grad_key_cache = torch.randn(batch_size, num_kv_heads, max_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    grad_value_cache = torch.randn(batch_size, num_kv_heads, max_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    key_states = torch.randn(batch_size, num_kv_heads, new_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    cos = torch.randn(batch_size, new_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    sin = torch.randn(batch_size, new_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    cache_position = torch.arange(new_seq_len, dtype=torch.int64, device=device)\n    \n    return {\n        'grad_key_cache': grad_key_cache,\n        'grad_value_cache': grad_value_cache,\n        'key_states': key_states,\n        'cos': cos,\n        'sin': sin,\n        'cache_position': cache_position,\n    }\n\n@torch.no_grad()\ndef run(\n    grad_key_cache: torch.Tensor,\n    grad_value_cache: torch.Tensor,\n    key_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    cache_position: torch.Tensor,\n):\n    half_dim = key_states.shape[-1] // 2\n    \n    k1 = key_states[..., :half_dim]\n    k2 = key_states[..., half_dim:]\n    k_rotated_half = torch.cat((-k2, k1), dim=-1)\n    \n    cos_expanded = cos.unsqueeze(1)\n    sin_expanded = sin.unsqueeze(1)\n    \n    grad_key_states_rotated = grad_key_cache[:, :, cache_position]\n    grad_value_states = grad_value_cache[:, :, cache_position]\n    \n    grad_from_cos_term = grad_key_states_rotated * cos_expanded\n    grad_k_rotated_half = grad_key_states_rotated * sin_expanded\n    \n    grad_k_rotated_half_1 = grad_k_rotated_half[..., :half_dim]\n    grad_k_rotated_half_2 = grad_k_rotated_half[..., half_dim:]\n    \n    grad_k2_from_rotate = -grad_k_rotated_half_1\n    grad_k1_from_rotate = grad_k_rotated_half_2\n    \n    grad_k1_total = grad_from_cos_term[..., :half_dim] + grad_k1_from_rotate\n    grad_k2_total = grad_from_cos_term[..., half_dim:] + grad_k2_from_rotate\n    \n    grad_key_states = torch.cat([grad_k1_total, grad_k2_total], dim=-1)\n    \n    grad_cos_expanded = grad_key_states_rotated * key_states\n    grad_cos = grad_cos_expanded.sum(dim=1)\n    \n    grad_sin_expanded = grad_key_states_rotated * k_rotated_half\n    grad_sin = grad_sin_expanded.sum(dim=1)\n    \n    grad_key_cache_input = grad_key_cache.clone()\n    grad_key_cache_input[:, :, cache_position] = 0\n    \n    grad_value_cache_input = grad_value_cache.clone()\n    grad_value_cache_input[:, :, cache_position] = 0\n    \n    return (\n        grad_key_states.to(torch.bfloat16),\n        grad_value_states.to(torch.bfloat16),\n        grad_cos.to(torch.bfloat16),\n        grad_sin.to(torch.bfloat16),\n        grad_key_cache_input.to(torch.bfloat16),\n        grad_value_cache_input.to(torch.bfloat16),\n    )\n"
+}

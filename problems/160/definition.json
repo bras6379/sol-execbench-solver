@@ -1,0 +1,155 @@
+{
+    "name": "066_resnet_block_with_time_embedding",
+    "hf_id": "runwayml/stable-diffusion-v1-5",
+    "description": "ResNet block with time embedding injection for Stable Diffusion UNet. Performs: GroupNorm -> SiLU -> Conv2d -> time_emb projection -> addition -> GroupNorm -> SiLU -> Dropout -> Conv2d -> residual addition. This is a fundamental building block that appears in every down/up block of Stable Diffusion.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "height": {
+            "type": "var",
+            "description": "Spatial height"
+        },
+        "width": {
+            "type": "var",
+            "description": "Spatial width"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 320,
+            "description": "Number of input channels"
+        },
+        "out_channels": {
+            "type": "const",
+            "value": 320,
+            "description": "Number of output channels"
+        },
+        "time_emb_channels": {
+            "type": "const",
+            "value": 1280,
+            "description": "Time embedding dimension"
+        },
+        "norm_num_groups": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of groups for GroupNorm"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "in_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input feature tensor"
+        },
+        "time_emb": {
+            "shape": [
+                "batch_size",
+                "time_emb_channels"
+            ],
+            "dtype": "float32",
+            "description": "Time embedding tensor"
+        },
+        "norm1_weight": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "First GroupNorm weight"
+        },
+        "norm1_bias": {
+            "shape": [
+                "in_channels"
+            ],
+            "dtype": "float32",
+            "description": "First GroupNorm bias"
+        },
+        "conv1_weight": {
+            "shape": [
+                "out_channels",
+                "in_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "First Conv2d weight"
+        },
+        "conv1_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "First Conv2d bias"
+        },
+        "time_emb_proj_weight": {
+            "shape": [
+                "out_channels",
+                "time_emb_channels"
+            ],
+            "dtype": "float32",
+            "description": "Time embedding projection weight"
+        },
+        "time_emb_proj_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "Time embedding projection bias"
+        },
+        "norm2_weight": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "Second GroupNorm weight"
+        },
+        "norm2_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "Second GroupNorm bias"
+        },
+        "conv2_weight": {
+            "shape": [
+                "out_channels",
+                "out_channels",
+                "3",
+                "3"
+            ],
+            "dtype": "float32",
+            "description": "Second Conv2d weight"
+        },
+        "conv2_bias": {
+            "shape": [
+                "out_channels"
+            ],
+            "dtype": "float32",
+            "description": "Second Conv2d bias"
+        },
+        "norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for GroupNorm"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "out_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Output feature tensor"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    time_emb: torch.Tensor,\n    norm1_weight: torch.Tensor,\n    norm1_bias: torch.Tensor,\n    conv1_weight: torch.Tensor,\n    conv1_bias: torch.Tensor,\n    time_emb_proj_weight: torch.Tensor,\n    time_emb_proj_bias: torch.Tensor,\n    norm2_weight: torch.Tensor,\n    norm2_bias: torch.Tensor,\n    conv2_weight: torch.Tensor,\n    conv2_bias: torch.Tensor,\n    norm_eps: float,\n):\n    \"\"\"\n    ResNet block with time embedding injection.\n    \n    Flow:\n    1. GroupNorm + SiLU + Conv2d on input\n    2. SiLU on time_emb, project and add to features\n    3. GroupNorm + SiLU + Conv2d\n    4. Residual connection (in_channels == out_channels, so no shortcut conv needed)\n    \"\"\"\n    # Store input for residual connection\n    residual = x\n    \n    # First conv block: GroupNorm -> SiLU -> Conv2d\n    # GroupNorm with 32 groups\n    h = F.group_norm(x, num_groups=32, weight=norm1_weight, bias=norm1_bias, eps=norm_eps)\n    # SiLU activation: x * sigmoid(x)\n    h = h * torch.sigmoid(h)\n    # Conv2d with 3x3 kernel, padding=1\n    h = F.conv2d(h, conv1_weight, conv1_bias, stride=1, padding=1)\n    \n    # Time embedding injection\n    # Apply SiLU to time embedding\n    t = time_emb * torch.sigmoid(time_emb)\n    # Project time embedding: Linear(time_emb_channels -> out_channels)\n    t = F.linear(t, time_emb_proj_weight, time_emb_proj_bias)\n    # Reshape for broadcasting: (batch, out_channels) -> (batch, out_channels, 1, 1)\n    t = t[:, :, None, None]\n    # Add time embedding to features (default mode, not scale-shift)\n    h = h + t\n    \n    # Second conv block: GroupNorm -> SiLU -> Conv2d\n    h = F.group_norm(h, num_groups=32, weight=norm2_weight, bias=norm2_bias, eps=norm_eps)\n    h = h * torch.sigmoid(h)\n    # Dropout with p=0.0 is identity, so we skip it\n    h = F.conv2d(h, conv2_weight, conv2_bias, stride=1, padding=1)\n    \n    # Residual connection (no shortcut conv needed since in_channels == out_channels)\n    # out_scale_factor = 1.0, so no scaling needed\n    output = h + residual\n    \n    return output\n"
+}

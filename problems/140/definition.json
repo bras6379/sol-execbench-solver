@@ -1,0 +1,137 @@
+{
+    "name": "046_conformer_relative_position_attention",
+    "hf_id": "ibm-granite/granite-speech-3.3-8b",
+    "description": "Conformer attention with Shaw's relative positional embeddings. Processes sequences in fixed-size context blocks (512 tokens), computes scaled dot-product attention within each block, and adds relative positional bias via learned embeddings. Handles dynamic padding and masking for incomplete blocks.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length (will be padded to multiple of context_size)"
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 1024,
+            "description": "Hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of attention heads"
+        },
+        "dim_head": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per head"
+        },
+        "max_pos_emb": {
+            "type": "const",
+            "value": 512,
+            "description": "Maximum position embedding distance"
+        },
+        "context_size": {
+            "type": "const",
+            "value": 512,
+            "description": "Context window size for blocking"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 1024,
+            "description": "Inner dimension (num_heads * dim_head)"
+        },
+        "inner_dim_x2": {
+            "type": "const",
+            "value": 2048,
+            "description": "Inner dimension times 2 for KV projection"
+        },
+        "num_rel_pos": {
+            "type": "const",
+            "value": 1025,
+            "description": "Number of relative position embeddings (2*max_pos_emb+1)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "pre_norm_weight": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "LayerNorm weight"
+        },
+        "pre_norm_bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "LayerNorm bias"
+        },
+        "to_q_weight": {
+            "shape": [
+                "inner_dim",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "to_kv_weight": {
+            "shape": [
+                "inner_dim_x2",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key-Value projection weight"
+        },
+        "to_out_weight": {
+            "shape": [
+                "hidden_dim",
+                "inner_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "to_out_bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection bias"
+        },
+        "rel_pos_emb_weight": {
+            "shape": [
+                "num_rel_pos",
+                "dim_head"
+            ],
+            "dtype": "bfloat16",
+            "description": "Relative position embedding weights"
+        },
+        "scale": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scale factor (1/sqrt(dim_head))"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output hidden states after attention"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pre_norm_weight: torch.Tensor,\n    pre_norm_bias: torch.Tensor,\n    to_q_weight: torch.Tensor,\n    to_kv_weight: torch.Tensor,\n    to_out_weight: torch.Tensor,\n    to_out_bias: torch.Tensor,\n    rel_pos_emb_weight: torch.Tensor,\n    scale: float,\n):\n    # Constants\n    hidden_dim = 1024\n    num_heads = 8\n    dim_head = 128\n    max_pos_emb = 512\n    context_size = 512\n    inner_dim = 1024\n    \n    bsz, num_features, _ = hidden_states.shape\n    \n    # Pre-normalization (LayerNorm)\n    hidden_states = F.layer_norm(hidden_states, (hidden_dim,), pre_norm_weight, pre_norm_bias)\n    \n    # Calculate blocking parameters\n    num_blocks = math.ceil(num_features / context_size)\n    remainder = num_features % context_size\n    \n    # Pad to block boundary if needed\n    if remainder > 0:\n        pad_amount = context_size - remainder\n        hidden_states = F.pad(hidden_states, (0, 0, 0, pad_amount), mode='constant', value=0)\n    \n    # Project to Q, K, V\n    query_states = F.linear(hidden_states, to_q_weight)  # (B, S_padded, inner_dim)\n    key_value_states = F.linear(hidden_states, to_kv_weight)  # (B, S_padded, inner_dim*2)\n    key_states, value_states = key_value_states.chunk(2, dim=-1)\n    \n    # Reshape into blocks: (B, num_blocks, context_size, num_heads, dim_head)\n    query_states = query_states.reshape(\n        bsz, num_blocks, context_size, num_heads, dim_head\n    ).transpose(2, 3)  # (B, num_blocks, num_heads, context_size, dim_head)\n    \n    key_states = key_states.reshape(\n        bsz, num_blocks, context_size, num_heads, dim_head\n    ).transpose(2, 3)\n    \n    value_states = value_states.reshape(\n        bsz, num_blocks, context_size, num_heads, dim_head\n    ).transpose(2, 3)\n    \n    # Compute relative position distances for context window\n    device = hidden_states.device\n    seq = torch.arange(context_size, device=device)\n    relpos_dist = seq.view(-1, 1) - seq.view(1, -1)\n    attention_dists = torch.clamp(relpos_dist, -context_size, context_size) + max_pos_emb\n    \n    # Compute relative positional attention bias\n    # rel_pos_emb: (context_size, context_size, dim_head)\n    rel_pos_emb = F.embedding(attention_dists, rel_pos_emb_weight)\n    \n    # Einsum: query @ rel_pos_emb -> positional attention scores\n    # (B, M, Nh, C, D) @ (C, C, D) -> (B, M, Nh, C, C)\n    pos_attn = torch.einsum(\n        'bmhcd,crd->bmhcr', \n        query_states.float(), \n        rel_pos_emb.float()\n    ) * scale\n    \n    # Apply masking for incomplete final block\n    if remainder > 0:\n        mask = torch.ones(\n            context_size, context_size, \n            dtype=torch.bool, \n            device=device\n        )\n        mask[:remainder, :remainder] = False\n        mask_value = -torch.finfo(pos_attn.dtype).max\n        pos_attn[:, -1, :].masked_fill_(mask, mask_value)\n    \n    pos_attn = pos_attn.to(query_states.dtype)\n    \n    # Scaled dot-product attention with positional bias\n    # Force MATH backend to ensure pos_attn bias is applied correctly\n    with torch.nn.attention.sdpa_kernel(torch.nn.attention.SDPBackend.MATH):\n        out = F.scaled_dot_product_attention(\n            query_states, \n            key_states, \n            value_states, \n            attn_mask=pos_attn,  # Relative position bias\n            scale=scale\n        )\n    \n    # Reshape back: (B, M, Nh, C, D) -> (B, S_padded, inner_dim)\n    out = out.transpose(2, 3).reshape(bsz, num_blocks * context_size, inner_dim)\n    \n    # Remove padding and project to output\n    out = out[:, :num_features, :]\n    out = F.linear(out, to_out_weight, to_out_bias)\n    \n    return out\n"
+}

@@ -1,0 +1,275 @@
+{
+    "name": "032_dual_stream_attention_with_conditional_cross_attention",
+    "hf_id": "briaai/FIBO",
+    "description": "Dual-stream attention block with conditional cross-attention for FIBO model. Implements joint attention between image and text tokens (double layers) or self-attention only (single layers). Includes AdaLN modulation, QKV projection with 24 heads of dimension 128, 3D RoPE positional encoding, attention computation, output projection, and post-attention modulation with residual connection.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Image sequence length (H*W tokens)"
+        },
+        "text_seq_len": {
+            "type": "var",
+            "description": "Text sequence length for cross-attention"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 24
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3072
+        },
+        "joint_attention_dim": {
+            "type": "const",
+            "value": 4096
+        },
+        "modulation_dim": {
+            "type": "expr",
+            "expression": "hidden_size * 6"
+        },
+        "rope_axis0_dim": {
+            "type": "const",
+            "value": 16
+        },
+        "rope_axis1_dim": {
+            "type": "const",
+            "value": 56
+        },
+        "rope_axis2_dim": {
+            "type": "const",
+            "value": 56
+        },
+        "rope_dim_per_axis": {
+            "type": "expr",
+            "expression": "head_dim // 3"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Image tokens"
+        },
+        "timestep_embedding": {
+            "shape": [
+                "batch_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Timestep conditioning embedding"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "text_seq_len",
+                "joint_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Text tokens for cross-attention"
+        },
+        "adaln_linear_weight": {
+            "shape": [
+                "modulation_dim",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "AdaLN modulation linear weight"
+        },
+        "adaln_linear_bias": {
+            "shape": [
+                "modulation_dim"
+            ],
+            "dtype": "float32",
+            "description": "AdaLN modulation linear bias"
+        },
+        "to_q_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection weight"
+        },
+        "to_q_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Query projection bias"
+        },
+        "to_k_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection weight"
+        },
+        "to_k_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Key projection bias"
+        },
+        "to_v_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection weight"
+        },
+        "to_v_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Value projection bias"
+        },
+        "to_k_context_weight": {
+            "shape": [
+                "hidden_size",
+                "joint_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Context key projection weight"
+        },
+        "to_k_context_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Context key projection bias"
+        },
+        "to_v_context_weight": {
+            "shape": [
+                "hidden_size",
+                "joint_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Context value projection weight"
+        },
+        "to_v_context_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Context value projection bias"
+        },
+        "to_out_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "to_out_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "pos_idx_axis0": {
+            "shape": [
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for RoPE axis 0"
+        },
+        "pos_idx_axis1": {
+            "shape": [
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for RoPE axis 1"
+        },
+        "pos_idx_axis2": {
+            "shape": [
+                "seq_len"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for RoPE axis 2"
+        },
+        "rope_cos_axis0": {
+            "shape": [
+                "rope_axis0_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE cosine frequencies for axis 0"
+        },
+        "rope_sin_axis0": {
+            "shape": [
+                "rope_axis0_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE sine frequencies for axis 0"
+        },
+        "rope_cos_axis1": {
+            "shape": [
+                "rope_axis1_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE cosine frequencies for axis 1"
+        },
+        "rope_sin_axis1": {
+            "shape": [
+                "rope_axis1_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE sine frequencies for axis 1"
+        },
+        "rope_cos_axis2": {
+            "shape": [
+                "rope_axis2_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE cosine frequencies for axis 2"
+        },
+        "rope_sin_axis2": {
+            "shape": [
+                "rope_axis2_dim",
+                "rope_dim_per_axis"
+            ],
+            "dtype": "float32",
+            "description": "RoPE sine frequencies for axis 2"
+        },
+        "is_joint_block": {
+            "shape": null,
+            "dtype": "int32",
+            "description": "Whether this is a joint block (1) or single block (0)"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states after attention and modulation"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    text_seq_len = axes_and_scalars[\"text_seq_len\"]\n    hidden_size = 3072\n    joint_attention_dim = 4096\n    modulation_dim = hidden_size * 6\n    rope_axis0_dim = 16\n    rope_axis1_dim = 56\n    rope_axis2_dim = 56\n    head_dim = 128\n    rope_dim_per_axis = head_dim // 3  # 42\n    is_joint_block = axes_and_scalars[\"is_joint_block\"]\n    \n    hidden_states = torch.randn(batch_size, seq_len, hidden_size, device=device, dtype=torch.float32)\n    timestep_embedding = torch.randn(batch_size, hidden_size, device=device, dtype=torch.float32)\n    encoder_hidden_states = torch.randn(batch_size, text_seq_len, joint_attention_dim, device=device, dtype=torch.float32)\n    \n    adaln_linear_weight = torch.randn(modulation_dim, hidden_size, device=device, dtype=torch.float32) * 0.02\n    adaln_linear_bias = torch.zeros(modulation_dim, device=device, dtype=torch.float32)\n    \n    to_q_weight = torch.randn(hidden_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    to_q_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    to_k_weight = torch.randn(hidden_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    to_k_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    to_v_weight = torch.randn(hidden_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    to_v_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    \n    to_k_context_weight = torch.randn(hidden_size, joint_attention_dim, device=device, dtype=torch.float32) * 0.02\n    to_k_context_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    to_v_context_weight = torch.randn(hidden_size, joint_attention_dim, device=device, dtype=torch.float32) * 0.02\n    to_v_context_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    \n    to_out_weight = torch.randn(hidden_size, hidden_size, device=device, dtype=torch.float32) * 0.02\n    to_out_bias = torch.zeros(hidden_size, device=device, dtype=torch.float32)\n    \n    pos_idx_axis0 = torch.randint(0, rope_axis0_dim, (seq_len,), device=device, dtype=torch.int64)\n    pos_idx_axis1 = torch.randint(0, rope_axis1_dim, (seq_len,), device=device, dtype=torch.int64)\n    pos_idx_axis2 = torch.randint(0, rope_axis2_dim, (seq_len,), device=device, dtype=torch.int64)\n    \n    rope_theta = 10000.0\n    inv_freq0 = 1.0 / (rope_theta ** (torch.arange(0, rope_dim_per_axis, dtype=torch.float32, device=device) / rope_dim_per_axis))\n    positions0 = torch.arange(rope_axis0_dim, dtype=torch.float32, device=device)\n    freqs0 = torch.outer(positions0, inv_freq0)\n    rope_cos_axis0 = freqs0.cos()\n    rope_sin_axis0 = freqs0.sin()\n    \n    inv_freq1 = 1.0 / (rope_theta ** (torch.arange(0, rope_dim_per_axis, dtype=torch.float32, device=device) / rope_dim_per_axis))\n    positions1 = torch.arange(rope_axis1_dim, dtype=torch.float32, device=device)\n    freqs1 = torch.outer(positions1, inv_freq1)\n    rope_cos_axis1 = freqs1.cos()\n    rope_sin_axis1 = freqs1.sin()\n    \n    inv_freq2 = 1.0 / (rope_theta ** (torch.arange(0, rope_dim_per_axis, dtype=torch.float32, device=device) / rope_dim_per_axis))\n    positions2 = torch.arange(rope_axis2_dim, dtype=torch.float32, device=device)\n    freqs2 = torch.outer(positions2, inv_freq2)\n    rope_cos_axis2 = freqs2.cos()\n    rope_sin_axis2 = freqs2.sin()\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"timestep_embedding\": timestep_embedding,\n        \"encoder_hidden_states\": encoder_hidden_states,\n        \"adaln_linear_weight\": adaln_linear_weight,\n        \"adaln_linear_bias\": adaln_linear_bias,\n        \"to_q_weight\": to_q_weight,\n        \"to_q_bias\": to_q_bias,\n        \"to_k_weight\": to_k_weight,\n        \"to_k_bias\": to_k_bias,\n        \"to_v_weight\": to_v_weight,\n        \"to_v_bias\": to_v_bias,\n        \"to_k_context_weight\": to_k_context_weight,\n        \"to_k_context_bias\": to_k_context_bias,\n        \"to_v_context_weight\": to_v_context_weight,\n        \"to_v_context_bias\": to_v_context_bias,\n        \"to_out_weight\": to_out_weight,\n        \"to_out_bias\": to_out_bias,\n        \"pos_idx_axis0\": pos_idx_axis0,\n        \"pos_idx_axis1\": pos_idx_axis1,\n        \"pos_idx_axis2\": pos_idx_axis2,\n        \"rope_cos_axis0\": rope_cos_axis0,\n        \"rope_sin_axis0\": rope_sin_axis0,\n        \"rope_cos_axis1\": rope_cos_axis1,\n        \"rope_sin_axis1\": rope_sin_axis1,\n        \"rope_cos_axis2\": rope_cos_axis2,\n        \"rope_sin_axis2\": rope_sin_axis2,\n        \"is_joint_block\": is_joint_block,\n    }\n\n\ndef apply_rope_axis(x_part, pos_idx, rope_cos, rope_sin):\n    \"\"\"Apply RoPE to a single axis portion of the tensor.\n    \n    Args:\n        x_part: (batch, seq_len, num_heads, rope_dim_per_axis)\n        pos_idx: (seq_len,)\n        rope_cos: (max_pos, rope_dim_per_axis)\n        rope_sin: (max_pos, rope_dim_per_axis)\n    \n    Returns:\n        Rotated tensor of same shape as x_part\n    \"\"\"\n    cos_gathered = rope_cos[pos_idx]  # (seq_len, rope_dim_per_axis)\n    sin_gathered = rope_sin[pos_idx]  # (seq_len, rope_dim_per_axis)\n    \n    cos_gathered = cos_gathered.unsqueeze(0).unsqueeze(2)  # (1, seq_len, 1, rope_dim_per_axis)\n    sin_gathered = sin_gathered.unsqueeze(0).unsqueeze(2)\n    \n    rope_dim = x_part.shape[-1]\n    half_dim = rope_dim // 2\n    \n    x_first = x_part[..., :half_dim]\n    x_second = x_part[..., half_dim:]\n    \n    cos_first = cos_gathered[..., :half_dim]\n    sin_first = sin_gathered[..., :half_dim]\n    \n    rotated_first = x_first * cos_first - x_second * sin_first\n    rotated_second = x_first * sin_first + x_second * cos_first\n    \n    return torch.cat([rotated_first, rotated_second], dim=-1)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    timestep_embedding: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    adaln_linear_weight: torch.Tensor,\n    adaln_linear_bias: torch.Tensor,\n    to_q_weight: torch.Tensor,\n    to_q_bias: torch.Tensor,\n    to_k_weight: torch.Tensor,\n    to_k_bias: torch.Tensor,\n    to_v_weight: torch.Tensor,\n    to_v_bias: torch.Tensor,\n    to_k_context_weight: torch.Tensor,\n    to_k_context_bias: torch.Tensor,\n    to_v_context_weight: torch.Tensor,\n    to_v_context_bias: torch.Tensor,\n    to_out_weight: torch.Tensor,\n    to_out_bias: torch.Tensor,\n    pos_idx_axis0: torch.Tensor,\n    pos_idx_axis1: torch.Tensor,\n    pos_idx_axis2: torch.Tensor,\n    rope_cos_axis0: torch.Tensor,\n    rope_sin_axis0: torch.Tensor,\n    rope_cos_axis1: torch.Tensor,\n    rope_sin_axis1: torch.Tensor,\n    rope_cos_axis2: torch.Tensor,\n    rope_sin_axis2: torch.Tensor,\n    is_joint_block: int,\n):\n    batch, seq_len, hidden_size = hidden_states.shape\n    num_heads = 24\n    head_dim = 128\n    rope_dim_per_axis = head_dim // 3  # 42\n    remaining_dim = head_dim - 3 * rope_dim_per_axis  # 128 - 126 = 2\n    \n    residual = hidden_states\n    \n    timestep_activated = timestep_embedding * torch.sigmoid(timestep_embedding)\n    \n    modulation = F.linear(timestep_activated, adaln_linear_weight, adaln_linear_bias)\n    \n    scale_msa, shift_msa, gate_msa, scale_mlp, shift_mlp, gate_mlp = modulation.chunk(6, dim=-1)\n    \n    hidden_states_normalized = F.layer_norm(hidden_states, (hidden_size,))\n    \n    hidden_states_modulated = hidden_states_normalized * (1 + scale_msa.unsqueeze(1)) + shift_msa.unsqueeze(1)\n    \n    q = F.linear(hidden_states_modulated, to_q_weight, to_q_bias)\n    k = F.linear(hidden_states_modulated, to_k_weight, to_k_bias)\n    v = F.linear(hidden_states_modulated, to_v_weight, to_v_bias)\n    \n    q = q.view(batch, seq_len, num_heads, head_dim)\n    k = k.view(batch, seq_len, num_heads, head_dim)\n    v = v.view(batch, seq_len, num_heads, head_dim)\n    \n    q_axis0 = q[..., :rope_dim_per_axis]\n    q_axis1 = q[..., rope_dim_per_axis:2*rope_dim_per_axis]\n    q_axis2 = q[..., 2*rope_dim_per_axis:3*rope_dim_per_axis]\n    q_rest = q[..., 3*rope_dim_per_axis:]\n    \n    k_axis0 = k[..., :rope_dim_per_axis]\n    k_axis1 = k[..., rope_dim_per_axis:2*rope_dim_per_axis]\n    k_axis2 = k[..., 2*rope_dim_per_axis:3*rope_dim_per_axis]\n    k_rest = k[..., 3*rope_dim_per_axis:]\n    \n    q_axis0_rot = apply_rope_axis(q_axis0, pos_idx_axis0, rope_cos_axis0, rope_sin_axis0)\n    q_axis1_rot = apply_rope_axis(q_axis1, pos_idx_axis1, rope_cos_axis1, rope_sin_axis1)\n    q_axis2_rot = apply_rope_axis(q_axis2, pos_idx_axis2, rope_cos_axis2, rope_sin_axis2)\n    \n    k_axis0_rot = apply_rope_axis(k_axis0, pos_idx_axis0, rope_cos_axis0, rope_sin_axis0)\n    k_axis1_rot = apply_rope_axis(k_axis1, pos_idx_axis1, rope_cos_axis1, rope_sin_axis1)\n    k_axis2_rot = apply_rope_axis(k_axis2, pos_idx_axis2, rope_cos_axis2, rope_sin_axis2)\n    \n    q = torch.cat([q_axis0_rot, q_axis1_rot, q_axis2_rot, q_rest], dim=-1)\n    k = torch.cat([k_axis0_rot, k_axis1_rot, k_axis2_rot, k_rest], dim=-1)\n    \n    if is_joint_block == 1:\n        text_seq_len = encoder_hidden_states.shape[1]\n        \n        encoder_hidden_states_normalized = F.layer_norm(encoder_hidden_states, (4096,))\n        \n        k_context = F.linear(encoder_hidden_states_normalized, to_k_context_weight, to_k_context_bias)\n        v_context = F.linear(encoder_hidden_states_normalized, to_v_context_weight, to_v_context_bias)\n        \n        k_context = k_context.view(batch, text_seq_len, num_heads, head_dim)\n        v_context = v_context.view(batch, text_seq_len, num_heads, head_dim)\n        \n        k = torch.cat([k, k_context], dim=1)\n        v = torch.cat([v, v_context], dim=1)\n    \n    q = q.transpose(1, 2)\n    k = k.transpose(1, 2)\n    v = v.transpose(1, 2)\n    \n    scale = 1.0 / math.sqrt(head_dim)\n    attn_scores = torch.matmul(q, k.transpose(-2, -1)) * scale\n    attn_probs = F.softmax(attn_scores, dim=-1)\n    \n    attn_output = torch.matmul(attn_probs, v)\n    \n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch, seq_len, hidden_size)\n    \n    attn_output = F.linear(attn_output, to_out_weight, to_out_bias)\n    \n    output = residual + gate_msa.unsqueeze(1) * attn_output\n    \n    return output\n"
+}

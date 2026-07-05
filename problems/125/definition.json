@@ -1,0 +1,112 @@
+{
+    "name": "031_flux_timestep_guidance_projection_embedding",
+    "hf_id": "black-forest-labs/FLUX.1-dev",
+    "description": "FLUX's combined timestep and text projection embeddings that process timestep through sinusoidal embeddings, then concatenate with pooled text projections and project to inner dimension. This generates the conditioning signal (temb) that modulates all transformer blocks through adaptive layer normalization. The operation involves: (1) timestep scaling by 1000, (2) sinusoidal position embedding generation with frequencies, (3) MLP projection of timestep embeddings, (4) linear projection of pooled text embeddings, (5) addition to produce final conditioning vector.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 3072,
+            "description": "Target embedding dimension"
+        },
+        "pooled_projection_dim": {
+            "type": "const",
+            "value": 768,
+            "description": "Dimension of pooled text embeddings"
+        },
+        "time_embed_dim": {
+            "type": "const",
+            "value": 768,
+            "description": "Sinusoidal timestep embedding dimension (inner_dim // 4)"
+        },
+        "half_time_embed_dim": {
+            "type": "const",
+            "value": 384,
+            "description": "Half of time_embed_dim for sin/cos frequencies"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "timestep": {
+            "shape": [
+                "batch_size"
+            ],
+            "dtype": "float32",
+            "description": "Timestep values"
+        },
+        "pooled_projections": {
+            "shape": [
+                "batch_size",
+                "pooled_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Pooled text embeddings"
+        },
+        "freqs": {
+            "shape": [
+                "half_time_embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "Precomputed frequency tensor for sinusoidal embeddings"
+        },
+        "timestep_linear1_weight": {
+            "shape": [
+                "inner_dim",
+                "time_embed_dim"
+            ],
+            "dtype": "float32",
+            "description": "First linear layer weight in timestep MLP"
+        },
+        "timestep_linear1_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "First linear layer bias in timestep MLP"
+        },
+        "timestep_linear2_weight": {
+            "shape": [
+                "inner_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second linear layer weight in timestep MLP"
+        },
+        "timestep_linear2_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second linear layer bias in timestep MLP"
+        },
+        "text_embedder_weight": {
+            "shape": [
+                "inner_dim",
+                "pooled_projection_dim"
+            ],
+            "dtype": "float32",
+            "description": "Text embedder linear layer weight"
+        },
+        "text_embedder_bias": {
+            "shape": [
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Text embedder linear layer bias"
+        }
+    },
+    "outputs": {
+        "conditioning": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Conditioning embeddings for transformer blocks"
+        }
+    },
+    "reference": "import torch\nimport math\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    batch_size = axes_and_scalars[\"batch_size\"]\n    inner_dim = axes_and_scalars[\"inner_dim\"]\n    pooled_projection_dim = axes_and_scalars[\"pooled_projection_dim\"]\n    time_embed_dim = axes_and_scalars[\"time_embed_dim\"]\n    half_time_embed_dim = axes_and_scalars[\"half_time_embed_dim\"]\n    \n    # Timestep values in [0, 1] range\n    timestep = torch.rand(batch_size, dtype=torch.float32, device=device)\n    \n    # Pooled text projections\n    pooled_projections = torch.randn(batch_size, pooled_projection_dim, dtype=torch.float32, device=device)\n    \n    # Precomputed frequency tensor for sinusoidal embeddings\n    # Frequencies: 10000^(-2i/d) for i in [0, d/2)\n    freqs = torch.exp(\n        -math.log(10000) * torch.arange(0, time_embed_dim, 2, dtype=torch.float32, device=device) / time_embed_dim\n    )\n    \n    # Timestep MLP weights\n    timestep_linear1_weight = torch.randn(inner_dim, time_embed_dim, dtype=torch.float32, device=device) * 0.02\n    timestep_linear1_bias = torch.zeros(inner_dim, dtype=torch.float32, device=device)\n    timestep_linear2_weight = torch.randn(inner_dim, inner_dim, dtype=torch.float32, device=device) * 0.02\n    timestep_linear2_bias = torch.zeros(inner_dim, dtype=torch.float32, device=device)\n    \n    # Text embedder weights\n    text_embedder_weight = torch.randn(inner_dim, pooled_projection_dim, dtype=torch.float32, device=device) * 0.02\n    text_embedder_bias = torch.zeros(inner_dim, dtype=torch.float32, device=device)\n    \n    return {\n        \"timestep\": timestep,\n        \"pooled_projections\": pooled_projections,\n        \"freqs\": freqs,\n        \"timestep_linear1_weight\": timestep_linear1_weight,\n        \"timestep_linear1_bias\": timestep_linear1_bias,\n        \"timestep_linear2_weight\": timestep_linear2_weight,\n        \"timestep_linear2_bias\": timestep_linear2_bias,\n        \"text_embedder_weight\": text_embedder_weight,\n        \"text_embedder_bias\": text_embedder_bias,\n    }\n\n@torch.no_grad()\ndef run(\n    timestep: torch.Tensor,\n    pooled_projections: torch.Tensor,\n    freqs: torch.Tensor,\n    timestep_linear1_weight: torch.Tensor,\n    timestep_linear1_bias: torch.Tensor,\n    timestep_linear2_weight: torch.Tensor,\n    timestep_linear2_bias: torch.Tensor,\n    text_embedder_weight: torch.Tensor,\n    text_embedder_bias: torch.Tensor,\n):\n    # Scale timesteps by 1000 (FLUX convention)\n    timestep_scaled = timestep * 1000.0\n    \n    # Generate sinusoidal embeddings\n    # timestep_scaled shape: (batch_size,)\n    # freqs shape: (half_time_embed_dim,)\n    # Compute arguments: timestep_scaled[:, None] * freqs[None, :]\n    args = timestep_scaled[:, None] * freqs[None, :]  # (batch_size, half_time_embed_dim)\n    \n    # Compute sin and cos\n    sin_embed = torch.sin(args)\n    cos_embed = torch.cos(args)\n    \n    # Concatenate cos and sin: [cos, sin]\n    timestep_embed = torch.cat([cos_embed, sin_embed], dim=-1)  # (batch_size, time_embed_dim)\n    \n    # Timestep MLP: Linear -> SiLU -> Linear\n    # First linear layer\n    x = torch.nn.functional.linear(timestep_embed, timestep_linear1_weight, timestep_linear1_bias)\n    \n    # SiLU activation: x * sigmoid(x)\n    x = x * torch.sigmoid(x)\n    \n    # Second linear layer\n    timestep_embed = torch.nn.functional.linear(x, timestep_linear2_weight, timestep_linear2_bias)\n    \n    # Project pooled text embeddings\n    text_embed = torch.nn.functional.linear(pooled_projections, text_embedder_weight, text_embedder_bias)\n    \n    # Combine timestep and text embeddings\n    conditioning = timestep_embed + text_embed\n    \n    return conditioning\n"
+}

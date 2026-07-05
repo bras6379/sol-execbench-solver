@@ -1,0 +1,265 @@
+{
+  "task_id": 100,
+  "subset": "L2",
+  "collection_index": 6,
+  "name": "006_multimodal_rope_position_calculation",
+  "hf_id": "Qwen/Qwen2.5-VL-7B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T05:28:59.023593Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.0004,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 2,
+          "seq_len": 2048,
+          "total_num_images": 2,
+          "total_num_videos": 2
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1176325
+      },
+      {
+        "index": 1,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 4,
+          "seq_len": 512,
+          "total_num_images": 2,
+          "total_num_videos": 2
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.11864
+      },
+      {
+        "index": 2,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 4,
+          "seq_len": 1024,
+          "total_num_images": 4,
+          "total_num_videos": 0
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1111205
+      },
+      {
+        "index": 3,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 2,
+          "seq_len": 512,
+          "total_num_images": 0,
+          "total_num_videos": 2
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1086405
+      },
+      {
+        "index": 4,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 8,
+          "seq_len": 512,
+          "total_num_images": 0,
+          "total_num_videos": 4
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1365605
+      },
+      {
+        "index": 5,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 16,
+          "seq_len": 373,
+          "total_num_images": 0,
+          "total_num_videos": 4
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.13064
+      },
+      {
+        "index": 6,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 64,
+          "seq_len": 256,
+          "total_num_images": 0,
+          "total_num_videos": 8
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.2160645
+      },
+      {
+        "index": 7,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 32,
+          "seq_len": 256,
+          "total_num_images": 8,
+          "total_num_videos": 0
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1391365
+      },
+      {
+        "index": 8,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 1,
+          "seq_len": 2048,
+          "total_num_images": 1,
+          "total_num_videos": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.09928
+      },
+      {
+        "index": 9,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 32,
+          "seq_len": 512,
+          "total_num_images": 0,
+          "total_num_videos": 8
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.236864
+      },
+      {
+        "index": 10,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 1,
+          "seq_len": 256,
+          "total_num_images": 1,
+          "total_num_videos": 0
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.06016
+      },
+      {
+        "index": 11,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 8,
+          "seq_len": 256,
+          "total_num_images": 4,
+          "total_num_videos": 2
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.112576
+      },
+      {
+        "index": 12,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 4,
+          "seq_len": 256,
+          "total_num_images": 2,
+          "total_num_videos": 0
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0776005
+      },
+      {
+        "index": 13,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 32,
+          "seq_len": 449,
+          "total_num_images": 8,
+          "total_num_videos": 0
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.170272
+      },
+      {
+        "index": 14,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 1,
+          "seq_len": 4096,
+          "total_num_images": 3,
+          "total_num_videos": 2
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1262405
+      },
+      {
+        "index": 15,
+        "axes": {
+          "spatial_merge_size": 2,
+          "image_token_id": 151655,
+          "video_token_id": 151656,
+          "vision_start_token_id": 151652,
+          "batch_size": 8,
+          "seq_len": 691,
+          "total_num_images": 0,
+          "total_num_videos": 4
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.1416965
+      }
+    ]
+  }
+}

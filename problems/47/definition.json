@@ -1,0 +1,153 @@
+{
+    "name": "047_attention_with_qk_norm_and_rope",
+    "hf_id": "google/gemma-3-12b-it",
+    "description": "Gemma3 attention mechanism with query/key RMSNorm normalization, rotary position embeddings (RoPE), grouped-query attention (GQA) with 24 query heads and 8 KV heads, attention logit softcapping at 50.0, and causal masking. Includes Q/K/V/O projections.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3072,
+            "description": "Hidden dimension"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 24,
+            "description": "Number of query/output attention heads"
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key/value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per attention head"
+        },
+        "qkv_out_dim": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim",
+            "description": "Q and O projection output dimension"
+        },
+        "kv_out_dim": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim",
+            "description": "K and V projection output dimension"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cosine values for RoPE"
+        },
+        "sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Sine values for RoPE"
+        },
+        "attention_mask": {
+            "shape": [
+                "batch_size",
+                "1",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Causal attention mask (additive, -inf for masked positions)"
+        },
+        "q_proj_weight": {
+            "shape": [
+                "qkv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_proj_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_out_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "o_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "qkv_out_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        },
+        "q_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query RMSNorm weight (added to 1.0)"
+        },
+        "k_norm_weight": {
+            "shape": [
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key RMSNorm weight (added to 1.0)"
+        },
+        "attn_logit_softcapping": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Softcapping value for attention logits"
+        },
+        "rms_norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for RMSNorm"
+        }
+    },
+    "outputs": {
+        "attn_output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Attention output after output projection"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef rms_norm(x, weight, eps):\n    \"\"\"RMSNorm with (1 + weight) scaling as used in Gemma3.\"\"\"\n    x_float = x.float()\n    variance = x_float.pow(2).mean(-1, keepdim=True)\n    x_normed = x_float * torch.rsqrt(variance + eps)\n    output = x_normed * (1.0 + weight.float())\n    return output.type_as(x)\n\n\ndef rotate_half(x):\n    \"\"\"Rotates half the hidden dims of the input.\"\"\"\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef apply_rotary_pos_emb(q, k, cos, sin):\n    \"\"\"Applies Rotary Position Embedding to the query and key tensors.\"\"\"\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    q_embed = (q * cos) + (rotate_half(q) * sin)\n    k_embed = (k * cos) + (rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef repeat_kv(hidden_states, n_rep):\n    \"\"\"Repeats key/value heads for grouped-query attention.\"\"\"\n    batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n    if n_rep == 1:\n        return hidden_states\n    hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n    return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 24\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n    \n    # Project to Q, K, V using F.linear\n    query_states = F.linear(hidden_states, q_proj_weight)\n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    \n    key_states = F.linear(hidden_states, k_proj_weight)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    value_states = F.linear(hidden_states, v_proj_weight)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    # Apply Q/K normalization (unique to Gemma3)\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n    \n    # Apply RoPE\n    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)\n    \n    # Repeat K/V for GQA (8 KV heads -> 24 query heads)\n    key_states = repeat_kv(key_states, num_key_value_groups)\n    value_states = repeat_kv(value_states, num_key_value_groups)\n    \n    # Compute attention scores with scaling\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    \n    # Apply attention logit softcapping (unique to Gemma3)\n    attn_weights = attn_weights / attn_logit_softcapping\n    attn_weights = torch.tanh(attn_weights)\n    attn_weights = attn_weights * attn_logit_softcapping\n    \n    # Apply causal mask\n    causal_mask = attention_mask[:, :, :, :key_states.shape[-2]]\n    attn_weights = attn_weights + causal_mask\n    \n    # Softmax\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    \n    # Compute attention output\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n    \n    # Output projection\n    attn_output = F.linear(attn_output, o_proj_weight)\n    \n    return attn_output\n"
+}

@@ -1,0 +1,71 @@
+{
+    "name": "034_flux_multi_axis_rope_frequency_computation",
+    "hf_id": "black-forest-labs/FLUX.1-Fill-dev",
+    "description": "Multi-axis rotary position embedding frequency computation that generates cos/sin frequency tensors for 3D position encoding (time, height, width). Computes 1D RoPE for each axis with dimensions [16, 56, 56] and concatenates them. Involves frequency band calculation, outer products, sin/cos evaluation, repeat_interleave operations, and concatenation across axes.",
+    "axes": {
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length (text + image positions)"
+        },
+        "n_axes": {
+            "type": "const",
+            "value": 3,
+            "description": "Number of position axes (time, height, width)"
+        },
+        "axis0_dim": {
+            "type": "const",
+            "value": 16,
+            "description": "Dimension for time axis"
+        },
+        "axis1_dim": {
+            "type": "const",
+            "value": 56,
+            "description": "Dimension for height axis"
+        },
+        "axis2_dim": {
+            "type": "const",
+            "value": 56,
+            "description": "Dimension for width axis"
+        },
+        "total_dim": {
+            "type": "expr",
+            "expression": "axis0_dim + axis1_dim + axis2_dim",
+            "description": "Total output dimension (128)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "ids": {
+            "shape": [
+                "seq_len",
+                "n_axes"
+            ],
+            "dtype": "float32",
+            "description": "Position IDs tensor containing [time, height, width] positions"
+        },
+        "theta": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Base frequency for RoPE computation"
+        }
+    },
+    "outputs": {
+        "freqs_cos": {
+            "shape": [
+                "seq_len",
+                "total_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine frequencies for all axes concatenated"
+        },
+        "freqs_sin": {
+            "shape": [
+                "seq_len",
+                "total_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine frequencies for all axes concatenated"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(ids: torch.Tensor, theta: float):\n    \"\"\"\n    Multi-axis RoPE frequency computation.\n    \n    Args:\n        ids: Position IDs of shape [seq_len, 3] containing [time, height, width] positions\n        theta: Base frequency for RoPE computation\n    \n    Returns:\n        Tuple of (freqs_cos, freqs_sin) each of shape [seq_len, total_dim]\n        where total_dim = 16 + 56 + 56 = 128\n    \"\"\"\n    # Fixed axis dimensions for Flux\n    axes_dim = [16, 56, 56]\n    n_axes = 3\n    \n    seq_len = ids.shape[0]\n    device = ids.device\n    \n    freqs_dtype = torch.float32\n    \n    cos_list = []\n    sin_list = []\n    \n    # Convert ids to float for computation\n    pos = ids.float()\n    \n    # Process each axis independently\n    for axis_idx in range(n_axes):\n        dim = axes_dim[axis_idx]\n        \n        # Get positions for this axis: [seq_len]\n        axis_pos = pos[:, axis_idx]\n        \n        # Compute frequency bands for this dimension\n        # freq_bands shape: [dim // 2]\n        half_dim = dim // 2\n        freq_exponents = torch.arange(half_dim, dtype=freqs_dtype, device=device)\n        freq_bands = 1.0 / (theta ** (freq_exponents / half_dim))\n        \n        # Compute angles: [seq_len, dim // 2]\n        # Outer product of positions and frequency bands\n        angles = axis_pos.unsqueeze(-1).to(freqs_dtype) * freq_bands.unsqueeze(0)\n        \n        # Compute cos and sin\n        cos_angles = torch.cos(angles)  # [seq_len, dim // 2]\n        sin_angles = torch.sin(angles)  # [seq_len, dim // 2]\n        \n        # Repeat interleave to match real RoPE format\n        # Each frequency is repeated twice: [f1, f1, f2, f2, ...]\n        cos_interleaved = torch.repeat_interleave(cos_angles, 2, dim=-1)  # [seq_len, dim]\n        sin_interleaved = torch.repeat_interleave(sin_angles, 2, dim=-1)  # [seq_len, dim]\n        \n        cos_list.append(cos_interleaved)\n        sin_list.append(sin_interleaved)\n    \n    # Concatenate all axes: [seq_len, total_dim]\n    freqs_cos = torch.cat(cos_list, dim=-1)\n    freqs_sin = torch.cat(sin_list, dim=-1)\n    \n    return freqs_cos, freqs_sin\n"
+}

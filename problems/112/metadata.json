@@ -1,0 +1,233 @@
+{
+  "task_id": 112,
+  "subset": "L2",
+  "collection_index": 18,
+  "name": "018_cu_seqlens_variable_length_vision_attention",
+  "hf_id": "Qwen/Qwen-Image-Edit-2509",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:38.336452Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.009737,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 4096,
+          "num_sequences": 64
+        },
+        "sol_ms": 0.0251,
+        "baseline_latency_ms": 0.102896
+      },
+      {
+        "index": 1,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 3719,
+          "num_sequences": 30
+        },
+        "sol_ms": 0.0234,
+        "baseline_latency_ms": 0.159296
+      },
+      {
+        "index": 2,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 512,
+          "num_sequences": 8
+        },
+        "sol_ms": 0.0035,
+        "baseline_latency_ms": 0.15376
+      },
+      {
+        "index": 3,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 373,
+          "num_sequences": 4
+        },
+        "sol_ms": 0.0027,
+        "baseline_latency_ms": 0.1291525
+      },
+      {
+        "index": 4,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 7168,
+          "num_sequences": 28
+        },
+        "sol_ms": 0.0471,
+        "baseline_latency_ms": 0.155392
+      },
+      {
+        "index": 5,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 3089,
+          "num_sequences": 25
+        },
+        "sol_ms": 0.0195,
+        "baseline_latency_ms": 0.148112
+      },
+      {
+        "index": 6,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 1801,
+          "num_sequences": 15
+        },
+        "sol_ms": 0.0115,
+        "baseline_latency_ms": 0.146801
+      },
+      {
+        "index": 7,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 1152,
+          "num_sequences": 6
+        },
+        "sol_ms": 0.0077,
+        "baseline_latency_ms": 0.085312
+      },
+      {
+        "index": 8,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 4093,
+          "num_sequences": 35
+        },
+        "sol_ms": 0.0256,
+        "baseline_latency_ms": 0.1509125
+      },
+      {
+        "index": 9,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 1024,
+          "num_sequences": 4
+        },
+        "sol_ms": 0.0071,
+        "baseline_latency_ms": 0.1809764999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 293,
+          "num_sequences": 3
+        },
+        "sol_ms": 0.0022,
+        "baseline_latency_ms": 0.2707365
+      },
+      {
+        "index": 11,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 2447,
+          "num_sequences": 20
+        },
+        "sol_ms": 0.0155,
+        "baseline_latency_ms": 0.1464165
+      },
+      {
+        "index": 12,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 4096,
+          "num_sequences": 16
+        },
+        "sol_ms": 0.0271,
+        "baseline_latency_ms": 0.24712
+      },
+      {
+        "index": 13,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 541,
+          "num_sequences": 5
+        },
+        "sol_ms": 0.0037,
+        "baseline_latency_ms": 0.2732325
+      },
+      {
+        "index": 14,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 211,
+          "num_sequences": 2
+        },
+        "sol_ms": 0.0017,
+        "baseline_latency_ms": 0.248129
+      },
+      {
+        "index": 15,
+        "axes": {
+          "embed_dim": 1152,
+          "num_heads": 16,
+          "head_dim": 72,
+          "qkv_dim": 3456,
+          "total_seq_len": 2048,
+          "num_sequences": 8
+        },
+        "sol_ms": 0.0137,
+        "baseline_latency_ms": 0.149056
+      }
+    ]
+  }
+}

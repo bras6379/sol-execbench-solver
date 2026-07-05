@@ -1,0 +1,201 @@
+{
+  "task_id": 77,
+  "subset": "L1",
+  "collection_index": 77,
+  "name": "077_whisper_decoder_output_projection",
+  "hf_id": "openai/whisper-large-v3",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:30.014687Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.111398,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 4,
+          "seq_len": 293
+        },
+        "sol_ms": 0.0863,
+        "baseline_latency_ms": 0.1934875
+      },
+      {
+        "index": 1,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 2,
+          "seq_len": 1024
+        },
+        "sol_ms": 0.1505,
+        "baseline_latency_ms": 0.247104
+      },
+      {
+        "index": 2,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 1,
+          "seq_len": 2048
+        },
+        "sol_ms": 0.1505,
+        "baseline_latency_ms": 0.2469275
+      },
+      {
+        "index": 3,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 4,
+          "seq_len": 1
+        },
+        "sol_ms": 0.0178,
+        "baseline_latency_ms": 0.0615845
+      },
+      {
+        "index": 4,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 2,
+          "seq_len": 128
+        },
+        "sol_ms": 0.0212,
+        "baseline_latency_ms": 0.09601599999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 16,
+          "seq_len": 1
+        },
+        "sol_ms": 0.0179,
+        "baseline_latency_ms": 0.081872
+      },
+      {
+        "index": 6,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 32,
+          "seq_len": 128
+        },
+        "sol_ms": 0.3007,
+        "baseline_latency_ms": 0.4168165
+      },
+      {
+        "index": 7,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 32,
+          "seq_len": 541
+        },
+        "sol_ms": 1.2695,
+        "baseline_latency_ms": 1.75237
+      },
+      {
+        "index": 8,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 16,
+          "seq_len": 449
+        },
+        "sol_ms": 0.527,
+        "baseline_latency_ms": 0.6948645
+      },
+      {
+        "index": 9,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 64,
+          "seq_len": 128
+        },
+        "sol_ms": 0.6009,
+        "baseline_latency_ms": 0.7643525
+      },
+      {
+        "index": 10,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 1,
+          "seq_len": 1
+        },
+        "sol_ms": 0.0177,
+        "baseline_latency_ms": 0.050928
+      },
+      {
+        "index": 11,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 1,
+          "seq_len": 128
+        },
+        "sol_ms": 0.0194,
+        "baseline_latency_ms": 0.090976
+      },
+      {
+        "index": 12,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 1,
+          "seq_len": 512
+        },
+        "sol_ms": 0.0379,
+        "baseline_latency_ms": 0.11496
+      },
+      {
+        "index": 13,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 2,
+          "seq_len": 211
+        },
+        "sol_ms": 0.0313,
+        "baseline_latency_ms": 0.116784
+      },
+      {
+        "index": 14,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 64,
+          "seq_len": 613
+        },
+        "sol_ms": 2.8764,
+        "baseline_latency_ms": 4.3687249999999995
+      },
+      {
+        "index": 15,
+        "axes": {
+          "d_model": 1280,
+          "vocab_size": 51866,
+          "batch_size": 16,
+          "seq_len": 256
+        },
+        "sol_ms": 0.3007,
+        "baseline_latency_ms": 0.4170245
+      }
+    ]
+  }
+}

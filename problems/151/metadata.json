@@ -1,0 +1,249 @@
+{
+  "task_id": 151,
+  "subset": "L2",
+  "collection_index": 57,
+  "name": "057_residual_coupling_flow_block",
+  "hf_id": "myshell-ai/OpenVoice",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:47.931619Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.012924,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 2,
+          "time": 293
+        },
+        "sol_ms": 0.0014,
+        "baseline_latency_ms": 0.406655
+      },
+      {
+        "index": 1,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 8,
+          "time": 768
+        },
+        "sol_ms": 0.0104,
+        "baseline_latency_ms": 0.4331985
+      },
+      {
+        "index": 2,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 16,
+          "time": 2447
+        },
+        "sol_ms": 0.0641,
+        "baseline_latency_ms": 0.972333
+      },
+      {
+        "index": 3,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 2,
+          "time": 256
+        },
+        "sol_ms": 0.0012,
+        "baseline_latency_ms": 0.426991
+      },
+      {
+        "index": 4,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 64,
+          "time": 8192
+        },
+        "sol_ms": 0.8541,
+        "baseline_latency_ms": 8.5820545
+      },
+      {
+        "index": 5,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 64,
+          "time": 3637
+        },
+        "sol_ms": 0.3794,
+        "baseline_latency_ms": 4.2416195000000005
+      },
+      {
+        "index": 6,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 16,
+          "time": 2048
+        },
+        "sol_ms": 0.0538,
+        "baseline_latency_ms": 0.8364769999999999
+      },
+      {
+        "index": 7,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 1,
+          "time": 128
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.424799
+      },
+      {
+        "index": 8,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 4,
+          "time": 1087
+        },
+        "sol_ms": 0.0075,
+        "baseline_latency_ms": 0.4345745
+      },
+      {
+        "index": 9,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 16,
+          "time": 1536
+        },
+        "sol_ms": 0.0404,
+        "baseline_latency_ms": 0.73451
+      },
+      {
+        "index": 10,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 2,
+          "time": 691
+        },
+        "sol_ms": 0.0027,
+        "baseline_latency_ms": 0.4161265
+      },
+      {
+        "index": 11,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 4,
+          "time": 384
+        },
+        "sol_ms": 0.0029,
+        "baseline_latency_ms": 0.4214865
+      },
+      {
+        "index": 12,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 8,
+          "time": 1721
+        },
+        "sol_ms": 0.0228,
+        "baseline_latency_ms": 0.5731984999999999
+      },
+      {
+        "index": 13,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 8,
+          "time": 1024
+        },
+        "sol_ms": 0.0137,
+        "baseline_latency_ms": 0.491983
+      },
+      {
+        "index": 14,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 4,
+          "time": 2689
+        },
+        "sol_ms": 0.0179,
+        "baseline_latency_ms": 0.5480145
+      },
+      {
+        "index": 15,
+        "axes": {
+          "channels": 192,
+          "hidden_channels": 192,
+          "half_channels": 96,
+          "kernel_size": 5,
+          "n_layers": 4,
+          "batch_size": 4,
+          "time": 541
+        },
+        "sol_ms": 0.0039,
+        "baseline_latency_ms": 0.4159024999999999
+      }
+    ]
+  }
+}

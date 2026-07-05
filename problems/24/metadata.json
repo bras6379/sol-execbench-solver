@@ -1,0 +1,233 @@
+{
+  "task_id": 24,
+  "subset": "L1",
+  "collection_index": 24,
+  "name": "024_vision_rotary_position_embedding_generation_backward",
+  "hf_id": "Qwen/Qwen-Image-Edit-2509",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L1.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:16.678557Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.000495,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 32,
+          "total_patches": 12288,
+          "max_grid_size": 112
+        },
+        "sol_ms": 0.0011,
+        "baseline_latency_ms": 0.0739519999999999
+      },
+      {
+        "index": 1,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 1,
+          "total_patches": 256,
+          "max_grid_size": 16
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0568
+      },
+      {
+        "index": 2,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 1,
+          "total_patches": 196,
+          "max_grid_size": 14
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.058272
+      },
+      {
+        "index": 3,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 8,
+          "total_patches": 2048,
+          "max_grid_size": 48
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.063744
+      },
+      {
+        "index": 4,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 2,
+          "total_patches": 541,
+          "max_grid_size": 24
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0629599999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 1,
+          "total_patches": 131,
+          "max_grid_size": 12
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.055633
+      },
+      {
+        "index": 6,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 16,
+          "total_patches": 6144,
+          "max_grid_size": 80
+        },
+        "sol_ms": 0.0008,
+        "baseline_latency_ms": 0.066032
+      },
+      {
+        "index": 7,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 4,
+          "total_patches": 1024,
+          "max_grid_size": 32
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.063584
+      },
+      {
+        "index": 8,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 32,
+          "total_patches": 8192,
+          "max_grid_size": 96
+        },
+        "sol_ms": 0.0009,
+        "baseline_latency_ms": 0.06752
+      },
+      {
+        "index": 9,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 2,
+          "total_patches": 768,
+          "max_grid_size": 28
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0625285
+      },
+      {
+        "index": 10,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 4,
+          "total_patches": 773,
+          "max_grid_size": 28
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.060944
+      },
+      {
+        "index": 11,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 2,
+          "total_patches": 1163,
+          "max_grid_size": 36
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.062976
+      },
+      {
+        "index": 12,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 4,
+          "total_patches": 613,
+          "max_grid_size": 26
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.060992
+      },
+      {
+        "index": 13,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 16,
+          "total_patches": 1087,
+          "max_grid_size": 34
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.062816
+      },
+      {
+        "index": 14,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 1,
+          "total_patches": 324,
+          "max_grid_size": 18
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0629754999999999
+      },
+      {
+        "index": 15,
+        "axes": {
+          "head_dim": 72,
+          "head_dim_half": 36,
+          "head_dim_quarter": 18,
+          "num_images": 8,
+          "total_patches": 691,
+          "max_grid_size": 28
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.061312
+      }
+    ]
+  }
+}

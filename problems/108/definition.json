@@ -1,0 +1,199 @@
+{
+    "name": "014_audio_encoder_varlen_attention_with_chunking_backward",
+    "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "description": "Backward pass for variable-length audio encoder attention with chunking. Computes gradients for hidden_states and all projection weights/biases through the attention mechanism, respecting chunk boundaries defined by cu_seqlens.",
+    "axes": {
+        "total_seq_len": {
+            "type": "var",
+            "description": "Total sequence length across all chunks"
+        },
+        "num_chunks": {
+            "type": "var",
+            "description": "Number of chunks in the batch"
+        },
+        "d_model": {
+            "type": "const",
+            "value": 1280,
+            "description": "Model hidden dimension"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 20,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 64,
+            "description": "Dimension per attention head"
+        },
+        "qkv_dim": {
+            "type": "expr",
+            "expression": "num_heads * head_dim",
+            "description": "Total QKV projection dimension"
+        },
+        "num_chunks_plus_one": {
+            "type": "expr",
+            "expression": "num_chunks + 1",
+            "description": "Length of cu_seqlens tensor"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "total_seq_len",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient from upstream layer"
+        },
+        "hidden_states": {
+            "shape": [
+                "total_seq_len",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Original input hidden states (saved for backward)"
+        },
+        "query_states": {
+            "shape": [
+                "1",
+                "num_heads",
+                "total_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved query states from forward pass"
+        },
+        "key_states": {
+            "shape": [
+                "1",
+                "num_heads",
+                "total_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved key states from forward pass"
+        },
+        "value_states": {
+            "shape": [
+                "1",
+                "num_heads",
+                "total_seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Saved value states from forward pass"
+        },
+        "cu_seqlens": {
+            "shape": [
+                "num_chunks_plus_one"
+            ],
+            "dtype": "int32",
+            "description": "Cumulative sequence lengths defining chunk boundaries"
+        },
+        "q_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query projection weight"
+        },
+        "k_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key projection weight"
+        },
+        "v_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight"
+        },
+        "out_weight": {
+            "shape": [
+                "d_model",
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output projection weight"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "total_seq_len",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. hidden_states"
+        },
+        "grad_q_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query projection weight"
+        },
+        "grad_q_bias": {
+            "shape": [
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. query projection bias"
+        },
+        "grad_k_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key projection weight"
+        },
+        "grad_k_bias": {
+            "shape": [
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. key projection bias"
+        },
+        "grad_v_weight": {
+            "shape": [
+                "qkv_dim",
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. value projection weight"
+        },
+        "grad_v_bias": {
+            "shape": [
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. value projection bias"
+        },
+        "grad_out_weight": {
+            "shape": [
+                "d_model",
+                "qkv_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output projection weight"
+        },
+        "grad_out_bias": {
+            "shape": [
+                "d_model"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. output projection bias"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs with valid cu_seqlens for variable-length attention backward.\"\"\"\n    total_seq_len = axes_and_scalars[\"total_seq_len\"]\n    num_chunks = axes_and_scalars[\"num_chunks\"]\n    d_model = axes_and_scalars[\"d_model\"]\n    num_heads = axes_and_scalars[\"num_heads\"]\n    head_dim = axes_and_scalars[\"head_dim\"]\n    qkv_dim = num_heads * head_dim\n    scaling = head_dim ** -0.5\n    \n    # Generate valid cu_seqlens that sum to total_seq_len\n    if num_chunks == 1:\n        chunk_lengths = [total_seq_len]\n    else:\n        # Distribute total_seq_len across chunks\n        base_len = total_seq_len // num_chunks\n        remainder = total_seq_len % num_chunks\n        chunk_lengths = [base_len + (1 if i < remainder else 0) for i in range(num_chunks)]\n    \n    cu_seqlens = torch.zeros(num_chunks + 1, dtype=torch.int32, device=device)\n    for i in range(num_chunks):\n        cu_seqlens[i + 1] = cu_seqlens[i] + chunk_lengths[i]\n    \n    # Generate random tensors\n    grad_output = torch.randn(total_seq_len, d_model, dtype=torch.bfloat16, device=device)\n    hidden_states = torch.randn(total_seq_len, d_model, dtype=torch.bfloat16, device=device)\n    query_states = torch.randn(1, num_heads, total_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    key_states = torch.randn(1, num_heads, total_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    value_states = torch.randn(1, num_heads, total_seq_len, head_dim, dtype=torch.bfloat16, device=device)\n    q_weight = torch.randn(qkv_dim, d_model, dtype=torch.bfloat16, device=device)\n    k_weight = torch.randn(qkv_dim, d_model, dtype=torch.bfloat16, device=device)\n    v_weight = torch.randn(qkv_dim, d_model, dtype=torch.bfloat16, device=device)\n    out_weight = torch.randn(d_model, qkv_dim, dtype=torch.bfloat16, device=device)\n    \n    return {\n        \"grad_output\": grad_output,\n        \"hidden_states\": hidden_states,\n        \"query_states\": query_states,\n        \"key_states\": key_states,\n        \"value_states\": value_states,\n        \"cu_seqlens\": cu_seqlens,\n        \"q_weight\": q_weight,\n        \"k_weight\": k_weight,\n        \"v_weight\": v_weight,\n        \"out_weight\": out_weight,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    query_states: torch.Tensor,\n    key_states: torch.Tensor,\n    value_states: torch.Tensor,\n    cu_seqlens: torch.Tensor,\n    q_weight: torch.Tensor,\n    k_weight: torch.Tensor,\n    v_weight: torch.Tensor,\n    out_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for variable-length audio encoder attention.\n    \n    Computes gradients through:\n    1. Output projection\n    2. Attention mechanism (per chunk)\n    3. QKV projections\n    \n    Args:\n        grad_output: Gradient from upstream (total_seq_len, d_model)\n        hidden_states: Original input (total_seq_len, d_model)\n        query_states: Saved queries (1, num_heads, total_seq_len, head_dim)\n        key_states: Saved keys (1, num_heads, total_seq_len, head_dim)\n        value_states: Saved values (1, num_heads, total_seq_len, head_dim)\n        cu_seqlens: Cumulative sequence lengths (num_chunks + 1,)\n        q_weight: Query projection weight (qkv_dim, d_model)\n        k_weight: Key projection weight (qkv_dim, d_model)\n        v_weight: Value projection weight (qkv_dim, d_model)\n        out_weight: Output projection weight (d_model, qkv_dim)\n    \n    Returns:\n        Tuple of gradients for all differentiable inputs\n    \"\"\"\n    total_seq_len = hidden_states.shape[0]\n    d_model = hidden_states.shape[1]\n    num_heads = query_states.shape[1]\n    head_dim = query_states.shape[3]\n    scaling = head_dim ** -0.5\n    \n    # Convert to float32 for numerical stability\n    grad_output_f32 = grad_output.to(torch.float32)\n    hidden_states_f32 = hidden_states.to(torch.float32)\n    query_states_f32 = query_states.to(torch.float32)\n    key_states_f32 = key_states.to(torch.float32)\n    value_states_f32 = value_states.to(torch.float32)\n    q_weight_f32 = q_weight.to(torch.float32)\n    k_weight_f32 = k_weight.to(torch.float32)\n    v_weight_f32 = v_weight.to(torch.float32)\n    out_weight_f32 = out_weight.to(torch.float32)\n    \n    # Compute chunk lengths from cu_seqlens\n    cu_seqlens_cpu = cu_seqlens.cpu()\n    chunk_lengths = (cu_seqlens_cpu[1:] - cu_seqlens_cpu[:-1]).tolist()\n    \n    # Step 1: Gradient w.r.t. output projection\n    # grad_attn_output = grad_output @ out_weight\n    grad_attn_output = torch.matmul(grad_output_f32, out_weight_f32)  # (total_seq_len, qkv_dim)\n    \n    # Recompute attention outputs for grad_out_weight\n    query_chunks = query_states_f32.split(chunk_lengths, dim=2)\n    key_chunks = key_states_f32.split(chunk_lengths, dim=2)\n    value_chunks = value_states_f32.split(chunk_lengths, dim=2)\n    \n    attn_outputs_recompute = []\n    for q, k, v in zip(query_chunks, key_chunks, value_chunks):\n        # Compute attention weights\n        attn_weights = torch.matmul(q, k.transpose(-2, -1)) * scaling\n        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32)\n        # Compute attention output\n        out = torch.matmul(attn_weights, v)\n        attn_outputs_recompute.append(out)\n    \n    attn_output_recompute = torch.cat(attn_outputs_recompute, dim=2)\n    attn_output_recompute = attn_output_recompute.squeeze(0).transpose(0, 1).reshape(total_seq_len, -1).contiguous()\n    \n    # grad_out_weight = grad_output.T @ attn_output\n    grad_out_weight = torch.matmul(grad_output_f32.t(), attn_output_recompute)\n    grad_out_bias = grad_output_f32.sum(dim=0)\n    \n    # Step 2: Reshape grad_attn_output for attention backward\n    # (total_seq_len, qkv_dim) -> (1, num_heads, total_seq_len, head_dim)\n    grad_attn_output = grad_attn_output.reshape(total_seq_len, num_heads, head_dim)\n    grad_attn_output = grad_attn_output.transpose(0, 1).unsqueeze(0)\n    \n    # Split grad_attn_output by chunks\n    grad_attn_chunks = grad_attn_output.split(chunk_lengths, dim=2)\n    \n    # Step 3: Compute gradients for Q, K, V per chunk\n    grad_query_chunks = []\n    grad_key_chunks = []\n    grad_value_chunks = []\n    \n    for grad_attn, q, k, v in zip(grad_attn_chunks, query_chunks, key_chunks, value_chunks):\n        # Recompute attention weights for this chunk\n        attn_weights = torch.matmul(q, k.transpose(-2, -1)) * scaling\n        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32)\n        \n        # Gradient w.r.t. V: attn_weights^T @ grad_attn\n        grad_v = torch.matmul(attn_weights.transpose(-2, -1), grad_attn)\n        \n        # Gradient w.r.t. attn_weights: grad_attn @ V^T\n        grad_attn_weights = torch.matmul(grad_attn, v.transpose(-2, -1))\n        \n        # Backprop through softmax: d_softmax = softmax * (grad - sum(softmax * grad))\n        grad_attn_weights = attn_weights * (grad_attn_weights - (attn_weights * grad_attn_weights).sum(dim=-1, keepdim=True))\n        \n        # Gradient w.r.t. Q and K\n        grad_q = torch.matmul(grad_attn_weights, k) * scaling\n        grad_k = torch.matmul(grad_attn_weights.transpose(-2, -1), q) * scaling\n        \n        grad_query_chunks.append(grad_q)\n        grad_key_chunks.append(grad_k)\n        grad_value_chunks.append(grad_v)\n    \n    # Concatenate gradients\n    grad_query = torch.cat(grad_query_chunks, dim=2)\n    grad_key = torch.cat(grad_key_chunks, dim=2)\n    grad_value = torch.cat(grad_value_chunks, dim=2)\n    \n    # Reshape: (1, num_heads, total_seq_len, head_dim) -> (total_seq_len, qkv_dim)\n    grad_query = grad_query.squeeze(0).transpose(0, 1).reshape(total_seq_len, -1).contiguous()\n    grad_key = grad_key.squeeze(0).transpose(0, 1).reshape(total_seq_len, -1).contiguous()\n    grad_value = grad_value.squeeze(0).transpose(0, 1).reshape(total_seq_len, -1).contiguous()\n    \n    # Step 4: Gradients w.r.t. QKV projection weights and biases\n    grad_q_weight = torch.matmul(grad_query.t(), hidden_states_f32)\n    grad_q_bias = grad_query.sum(dim=0)\n    \n    grad_k_weight = torch.matmul(grad_key.t(), hidden_states_f32)\n    grad_k_bias = grad_key.sum(dim=0)\n    \n    grad_v_weight = torch.matmul(grad_value.t(), hidden_states_f32)\n    grad_v_bias = grad_value.sum(dim=0)\n    \n    # Step 5: Gradient w.r.t. hidden_states (sum from Q, K, V projections)\n    grad_hidden_states = torch.matmul(grad_query, q_weight_f32) + \\\n                        torch.matmul(grad_key, k_weight_f32) + \\\n                        torch.matmul(grad_value, v_weight_f32)\n    \n    # Convert back to bfloat16\n    return (\n        grad_hidden_states.to(torch.bfloat16),\n        grad_q_weight.to(torch.bfloat16),\n        grad_q_bias.to(torch.bfloat16),\n        grad_k_weight.to(torch.bfloat16),\n        grad_k_bias.to(torch.bfloat16),\n        grad_v_weight.to(torch.bfloat16),\n        grad_v_bias.to(torch.bfloat16),\n        grad_out_weight.to(torch.bfloat16),\n        grad_out_bias.to(torch.bfloat16),\n    )\n"
+}

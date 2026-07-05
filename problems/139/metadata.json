@@ -1,0 +1,345 @@
+{
+  "task_id": 139,
+  "subset": "L2",
+  "collection_index": 45,
+  "name": "045_audio_encoder_to_language_model_multimodal_fusion",
+  "hf_id": "ibm-granite/granite-speech-3.3-8b",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:45.111470Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.076029,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 16,
+          "audio_seq_len": 320,
+          "text_seq_len": 2053,
+          "num_audio_tokens": 40
+        },
+        "sol_ms": 0.1385,
+        "baseline_latency_ms": 0.3763039999999999
+      },
+      {
+        "index": 1,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 32,
+          "audio_seq_len": 320,
+          "text_seq_len": 449,
+          "num_audio_tokens": 40
+        },
+        "sol_ms": 0.1077,
+        "baseline_latency_ms": 0.389072
+      },
+      {
+        "index": 2,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 2,
+          "audio_seq_len": 960,
+          "text_seq_len": 512,
+          "num_audio_tokens": 120
+        },
+        "sol_ms": 0.0185,
+        "baseline_latency_ms": 0.374336
+      },
+      {
+        "index": 3,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 2,
+          "audio_seq_len": 1920,
+          "text_seq_len": 1249,
+          "num_audio_tokens": 240
+        },
+        "sol_ms": 0.0357,
+        "baseline_latency_ms": 0.375552
+      },
+      {
+        "index": 4,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 1,
+          "audio_seq_len": 3200,
+          "text_seq_len": 1721,
+          "num_audio_tokens": 400
+        },
+        "sol_ms": 0.0299,
+        "baseline_latency_ms": 0.3730075
+      },
+      {
+        "index": 5,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 1,
+          "audio_seq_len": 640,
+          "text_seq_len": 256,
+          "num_audio_tokens": 80
+        },
+        "sol_ms": 0.0091,
+        "baseline_latency_ms": 0.372144
+      },
+      {
+        "index": 6,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 2,
+          "audio_seq_len": 2240,
+          "text_seq_len": 1801,
+          "num_audio_tokens": 280
+        },
+        "sol_ms": 0.0418,
+        "baseline_latency_ms": 0.3824005
+      },
+      {
+        "index": 7,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 16,
+          "audio_seq_len": 960,
+          "text_seq_len": 919,
+          "num_audio_tokens": 120
+        },
+        "sol_ms": 0.1418,
+        "baseline_latency_ms": 0.4072795
+      },
+      {
+        "index": 8,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 32,
+          "audio_seq_len": 1280,
+          "text_seq_len": 8192,
+          "num_audio_tokens": 160
+        },
+        "sol_ms": 1.0679,
+        "baseline_latency_ms": 1.2165275
+      },
+      {
+        "index": 9,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 8,
+          "audio_seq_len": 1920,
+          "text_seq_len": 1973,
+          "num_audio_tokens": 240
+        },
+        "sol_ms": 0.1418,
+        "baseline_latency_ms": 0.4063835
+      },
+      {
+        "index": 10,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 4,
+          "audio_seq_len": 1280,
+          "text_seq_len": 1024,
+          "num_audio_tokens": 160
+        },
+        "sol_ms": 0.0478,
+        "baseline_latency_ms": 0.3768964999999999
+      },
+      {
+        "index": 11,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 16,
+          "audio_seq_len": 640,
+          "text_seq_len": 373,
+          "num_audio_tokens": 80
+        },
+        "sol_ms": 0.0953,
+        "baseline_latency_ms": 0.3959675
+      },
+      {
+        "index": 12,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 8,
+          "audio_seq_len": 1280,
+          "text_seq_len": 853,
+          "num_audio_tokens": 160
+        },
+        "sol_ms": 0.0953,
+        "baseline_latency_ms": 0.396096
+      },
+      {
+        "index": 13,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 2,
+          "audio_seq_len": 320,
+          "text_seq_len": 131,
+          "num_audio_tokens": 40
+        },
+        "sol_ms": 0.0092,
+        "baseline_latency_ms": 0.3688154999999999
+      },
+      {
+        "index": 14,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 64,
+          "audio_seq_len": 640,
+          "text_seq_len": 541,
+          "num_audio_tokens": 80
+        },
+        "sol_ms": 0.3798,
+        "baseline_latency_ms": 0.598016
+      },
+      {
+        "index": 15,
+        "axes": {
+          "encoder_input_dim": 80,
+          "encoder_hidden_dim": 512,
+          "encoder_output_dim": 1024,
+          "projector_hidden_size": 1024,
+          "window_size": 15,
+          "num_queries": 40,
+          "text_hidden_size": 4096,
+          "qformer_num_heads": 16,
+          "qformer_head_dim": 64,
+          "batch_size": 64,
+          "audio_seq_len": 320,
+          "text_seq_len": 1087,
+          "num_audio_tokens": 40
+        },
+        "sol_ms": 0.3415,
+        "baseline_latency_ms": 0.532704
+      }
+    ]
+  }
+}

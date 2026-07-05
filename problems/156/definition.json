@@ -1,0 +1,223 @@
+{
+    "name": "062_decoder_complete_layer",
+    "hf_id": "nvidia/canary-qwen-2.5b",
+    "description": "Complete decoder transformer layer combining pre-norm RMSNorm, GQA self-attention with RoPE (16 query heads, 4 KV heads), residual connection, pre-norm RMSNorm for cross-attention, GQA cross-attention (16 query heads, 16 KV heads), residual connection, pre-norm RMSNorm for MLP, SiLU-gated MLP (8192 intermediate), and final residual. This represents the full decoder layer that repeats 18 times.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Decoder sequence length"
+        },
+        "encoder_seq_len": {
+            "type": "var",
+            "description": "Encoder sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 2048
+        },
+        "intermediate_size": {
+            "type": "const",
+            "value": 8192
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 4
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "cross_num_attention_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "cross_num_key_value_heads": {
+            "type": "const",
+            "value": 16
+        },
+        "cross_head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "cross_hidden_size": {
+            "type": "const",
+            "value": 1024
+        },
+        "self_attn_q_dim": {
+            "type": "expr",
+            "expression": "num_attention_heads * head_dim"
+        },
+        "self_attn_kv_dim": {
+            "type": "expr",
+            "expression": "num_key_value_heads * head_dim"
+        },
+        "cross_attn_q_dim": {
+            "type": "expr",
+            "expression": "cross_num_attention_heads * cross_head_dim"
+        },
+        "cross_attn_kv_dim": {
+            "type": "expr",
+            "expression": "cross_num_key_value_heads * cross_head_dim"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input tensor from previous layer"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "encoder_seq_len",
+                "cross_hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Encoder output for cross-attention"
+        },
+        "self_attn_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention RMSNorm weight"
+        },
+        "self_attn_q_weight": {
+            "shape": [
+                "self_attn_q_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention query projection weight"
+        },
+        "self_attn_k_weight": {
+            "shape": [
+                "self_attn_kv_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention key projection weight"
+        },
+        "self_attn_v_weight": {
+            "shape": [
+                "self_attn_kv_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention value projection weight"
+        },
+        "self_attn_o_weight": {
+            "shape": [
+                "hidden_size",
+                "self_attn_q_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Self-attention output projection weight"
+        },
+        "cross_attn_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cross-attention RMSNorm weight"
+        },
+        "cross_attn_q_weight": {
+            "shape": [
+                "cross_attn_q_dim",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cross-attention query projection weight"
+        },
+        "cross_attn_k_weight": {
+            "shape": [
+                "cross_attn_kv_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cross-attention key projection weight"
+        },
+        "cross_attn_v_weight": {
+            "shape": [
+                "cross_attn_kv_dim",
+                "cross_hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cross-attention value projection weight"
+        },
+        "cross_attn_o_weight": {
+            "shape": [
+                "hidden_size",
+                "cross_attn_q_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Cross-attention output projection weight"
+        },
+        "mlp_norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP RMSNorm weight"
+        },
+        "mlp_gate_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP gate projection weight"
+        },
+        "mlp_up_weight": {
+            "shape": [
+                "intermediate_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP up projection weight"
+        },
+        "mlp_down_weight": {
+            "shape": [
+                "hidden_size",
+                "intermediate_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "MLP down projection weight"
+        },
+        "norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RMSNorm epsilon"
+        },
+        "rope_theta": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "RoPE base frequency"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Output tensor"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n\ndef rms_norm(x: torch.Tensor, weight: torch.Tensor, eps: float) -> torch.Tensor:\n    input_dtype = x.dtype\n    x = x.to(torch.float32)\n    variance = x.pow(2).mean(-1, keepdim=True)\n    x = x * torch.rsqrt(variance + eps)\n    return (weight * x).to(input_dtype)\n\n\ndef rotate_half(x: torch.Tensor) -> torch.Tensor:\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat([-x2, x1], dim=-1)\n\n\ndef apply_rope(\n    q: torch.Tensor,\n    k: torch.Tensor,\n    position_ids: torch.Tensor,\n    head_dim: int,\n    rope_theta: float,\n) -> tuple:\n    inv_freq = 1.0 / (rope_theta ** (torch.arange(0, head_dim, 2, dtype=torch.float32, device=q.device) / head_dim))\n    freqs = torch.outer(position_ids.float().flatten(), inv_freq)\n    emb = torch.cat([freqs, freqs], dim=-1)\n    cos = emb.cos().to(q.dtype)\n    sin = emb.sin().to(q.dtype)\n    \n    batch_size, num_heads, seq_len, hd = q.shape\n    cos = cos.view(batch_size, 1, seq_len, hd)\n    sin = sin.view(batch_size, 1, seq_len, hd)\n    \n    q_embed = (q * cos) + (rotate_half(q) * sin)\n    k_embed = (k * cos) + (rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef repeat_kv(hidden_states: torch.Tensor, n_rep: int) -> torch.Tensor:\n    if n_rep == 1:\n        return hidden_states\n    batch_size, num_kv_heads, seq_len, head_dim = hidden_states.shape\n    hidden_states = hidden_states[:, :, None, :, :].expand(\n        batch_size, num_kv_heads, n_rep, seq_len, head_dim\n    )\n    return hidden_states.reshape(batch_size, num_kv_heads * n_rep, seq_len, head_dim)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    self_attn_norm_weight: torch.Tensor,\n    self_attn_q_weight: torch.Tensor,\n    self_attn_k_weight: torch.Tensor,\n    self_attn_v_weight: torch.Tensor,\n    self_attn_o_weight: torch.Tensor,\n    cross_attn_norm_weight: torch.Tensor,\n    cross_attn_q_weight: torch.Tensor,\n    cross_attn_k_weight: torch.Tensor,\n    cross_attn_v_weight: torch.Tensor,\n    cross_attn_o_weight: torch.Tensor,\n    mlp_norm_weight: torch.Tensor,\n    mlp_gate_weight: torch.Tensor,\n    mlp_up_weight: torch.Tensor,\n    mlp_down_weight: torch.Tensor,\n    norm_eps: float,\n    rope_theta: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    encoder_seq_len = encoder_hidden_states.shape[1]\n    \n    num_attention_heads = 16\n    num_key_value_heads = 4\n    head_dim = 128\n    cross_num_attention_heads = 16\n    cross_num_key_value_heads = 16\n    cross_head_dim = 128\n    \n    position_ids = torch.arange(seq_len, device=hidden_states.device).unsqueeze(0).expand(batch_size, -1)\n    \n    residual = hidden_states\n    \n    # Self-Attention Block\n    hidden_states = rms_norm(hidden_states, self_attn_norm_weight, norm_eps)\n    \n    query_states = F.linear(hidden_states, self_attn_q_weight)\n    key_states = F.linear(hidden_states, self_attn_k_weight)\n    value_states = F.linear(hidden_states, self_attn_v_weight)\n    \n    query_states = query_states.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    \n    query_states, key_states = apply_rope(query_states, key_states, position_ids, head_dim, rope_theta)\n    \n    key_states = repeat_kv(key_states, num_attention_heads // num_key_value_heads)\n    value_states = repeat_kv(value_states, num_attention_heads // num_key_value_heads)\n    \n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(head_dim)\n    \n    causal_mask = torch.triu(torch.full((seq_len, seq_len), float('-inf'), device=hidden_states.device), diagonal=1)\n    attn_weights = attn_weights + causal_mask.unsqueeze(0).unsqueeze(0)\n    \n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    attn_output = torch.matmul(attn_weights, value_states)\n    \n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, seq_len, num_attention_heads * head_dim)\n    attn_output = F.linear(attn_output, self_attn_o_weight)\n    \n    hidden_states = residual + attn_output\n    residual = hidden_states\n    \n    # Cross-Attention Block\n    hidden_states = rms_norm(hidden_states, cross_attn_norm_weight, norm_eps)\n    \n    query_states = F.linear(hidden_states, cross_attn_q_weight)\n    key_states = F.linear(encoder_hidden_states, cross_attn_k_weight)\n    value_states = F.linear(encoder_hidden_states, cross_attn_v_weight)\n    \n    query_states = query_states.view(batch_size, seq_len, cross_num_attention_heads, cross_head_dim).transpose(1, 2)\n    key_states = key_states.view(batch_size, encoder_seq_len, cross_num_key_value_heads, cross_head_dim).transpose(1, 2)\n    value_states = value_states.view(batch_size, encoder_seq_len, cross_num_key_value_heads, cross_head_dim).transpose(1, 2)\n    \n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) / math.sqrt(cross_head_dim)\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    attn_output = torch.matmul(attn_weights, value_states)\n    \n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, seq_len, cross_num_attention_heads * cross_head_dim)\n    attn_output = F.linear(attn_output, cross_attn_o_weight)\n    \n    hidden_states = residual + attn_output\n    residual = hidden_states\n    \n    # MLP Block\n    hidden_states = rms_norm(hidden_states, mlp_norm_weight, norm_eps)\n    \n    gate = F.linear(hidden_states, mlp_gate_weight)\n    up = F.linear(hidden_states, mlp_up_weight)\n    hidden_states = F.silu(gate) * up\n    hidden_states = F.linear(hidden_states, mlp_down_weight)\n    \n    output = residual + hidden_states\n    \n    return output\n"
+}

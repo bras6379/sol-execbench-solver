@@ -1,0 +1,86 @@
+{
+    "name": "024_vision_rotary_position_embedding_generation_backward",
+    "hf_id": "Qwen/Qwen-Image-Edit-2509",
+    "description": "Backward pass for vision rotary position embedding generation. Computes gradients through cos/sin operations, concatenation, indexing, and outer product to produce gradient for inverse frequencies.",
+    "axes": {
+        "num_images": {
+            "type": "var",
+            "description": "Number of images in the batch"
+        },
+        "total_patches": {
+            "type": "var",
+            "description": "Total number of patches across all images"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 72,
+            "description": "Dimension of each attention head"
+        },
+        "head_dim_half": {
+            "type": "const",
+            "value": 36,
+            "description": "Half of head dimension for 2D rotary"
+        },
+        "head_dim_quarter": {
+            "type": "const",
+            "value": 18,
+            "description": "Quarter of head dimension for inverse frequencies"
+        },
+        "max_grid_size": {
+            "type": "var",
+            "description": "Maximum grid dimension for frequency table"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_cos": {
+            "shape": [
+                "total_patches",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. cosine output"
+        },
+        "grad_sin": {
+            "shape": [
+                "total_patches",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. sine output"
+        },
+        "pos_ids": {
+            "shape": [
+                "total_patches",
+                "2"
+            ],
+            "dtype": "int64",
+            "description": "Position indices for height and width"
+        },
+        "inv_freq": {
+            "shape": [
+                "head_dim_quarter"
+            ],
+            "dtype": "float32",
+            "description": "Inverse frequency tensor"
+        },
+        "emb": {
+            "shape": [
+                "total_patches",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved embedding tensor from forward pass"
+        }
+    },
+    "outputs": {
+        "grad_inv_freq": {
+            "shape": [
+                "head_dim_quarter"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. inverse frequencies"
+        }
+    },
+    "reference": "import torch\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict[str, torch.Tensor]:\n    \"\"\"Generate inputs for backward pass testing.\"\"\"\n    total_patches = axes_and_scalars['total_patches']\n    head_dim = axes_and_scalars['head_dim']\n    head_dim_quarter = axes_and_scalars['head_dim_quarter']\n    max_grid_size = axes_and_scalars['max_grid_size']\n    \n    # Gradients from upstream\n    grad_cos = torch.randn(total_patches, head_dim, device=device, dtype=torch.float32)\n    grad_sin = torch.randn(total_patches, head_dim, device=device, dtype=torch.float32)\n    \n    # Position IDs - random valid indices into frequency table\n    pos_ids = torch.randint(0, max_grid_size, (total_patches, 2), device=device, dtype=torch.int64)\n    \n    # Inverse frequencies (learnable parameter)\n    inv_freq = torch.randn(head_dim_quarter, device=device, dtype=torch.float32)\n    \n    # Saved embedding from forward pass (random values representing actual embeddings)\n    emb = torch.randn(total_patches, head_dim, device=device, dtype=torch.float32)\n    \n    return {\n        'grad_cos': grad_cos,\n        'grad_sin': grad_sin,\n        'pos_ids': pos_ids,\n        'inv_freq': inv_freq,\n        'emb': emb\n    }\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    pos_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    emb: torch.Tensor\n) -> torch.Tensor:\n    \"\"\"Backward pass for vision rotary position embedding generation.\n    \n    Computes gradient w.r.t. inverse frequencies through:\n    1. Gradient through cos/sin: grad_emb = -grad_cos * sin(emb) + grad_sin * cos(emb)\n    2. Gradient through concatenation: split and sum\n    3. Gradient through indexing: scatter via index_add_\n    4. Gradient through outer product: matrix multiply with seq\n    \n    Args:\n        grad_cos: [total_patches, head_dim] gradient w.r.t. cosine output\n        grad_sin: [total_patches, head_dim] gradient w.r.t. sine output\n        pos_ids: [total_patches, 2] position indices for h and w\n        inv_freq: [head_dim//4] inverse frequency tensor\n        emb: [total_patches, head_dim] saved embedding from forward\n        \n    Returns:\n        grad_inv_freq: [head_dim//4] gradient w.r.t. inverse frequencies\n    \"\"\"\n    total_patches = grad_cos.shape[0]\n    head_dim = grad_cos.shape[1]\n    head_dim_quarter = inv_freq.shape[0]\n    max_grid_size = pos_ids.max().item() + 1\n    \n    # Step 1: Gradient through cos and sin operations\n    # d(cos(x))/dx = -sin(x), d(sin(x))/dx = cos(x)\n    grad_emb = -grad_cos * emb.sin() + grad_sin * emb.cos()\n    \n    # Step 2: Gradient through concatenation\n    # Forward: emb = torch.cat((rotary_pos_emb, rotary_pos_emb), dim=-1)\n    # Backward: split and sum\n    grad_rotary_pos_emb = grad_emb[:, :head_dim//2] + grad_emb[:, head_dim//2:]\n    \n    # Step 3: Gradient through flatten operation\n    # Forward: rotary_pos_emb = freqs[pos_ids].flatten(1)\n    # Backward: unflatten\n    grad_freqs_indexed = grad_rotary_pos_emb.reshape(total_patches, 2, head_dim_quarter)\n    \n    # Step 4: Gradient through indexing operation\n    # Scatter gradients back to full freqs tensor\n    grad_freqs = torch.zeros(\n        max_grid_size, head_dim_quarter,\n        device=inv_freq.device,\n        dtype=inv_freq.dtype\n    )\n    \n    # Scatter gradients for height positions\n    grad_freqs.index_add_(0, pos_ids[:, 0], grad_freqs_indexed[:, 0, :])\n    \n    # Scatter gradients for width positions\n    grad_freqs.index_add_(0, pos_ids[:, 1], grad_freqs_indexed[:, 1, :])\n    \n    # Step 5: Gradient through outer product\n    # Forward: freqs = torch.outer(seq, inv_freq)\n    # Backward: grad_inv_freq = seq^T @ grad_freqs\n    seq = torch.arange(\n        max_grid_size,\n        device=inv_freq.device,\n        dtype=inv_freq.dtype\n    )\n    grad_inv_freq = torch.matmul(seq, grad_freqs)\n    \n    return grad_inv_freq\n"
+}

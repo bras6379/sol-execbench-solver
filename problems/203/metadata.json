@@ -1,0 +1,281 @@
+{
+  "task_id": 203,
+  "subset": "Quant",
+  "collection_index": 27,
+  "name": "027_nvfp4_moe_router_projection",
+  "hf_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-NVFP4",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/Quant.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:59.507047Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.006906,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 2560
+        },
+        "sol_ms": 0.00879443,
+        "baseline_latency_ms": 0.293791
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 2432
+        },
+        "sol_ms": 0.00835471,
+        "baseline_latency_ms": 0.2891669999999999
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 2304
+        },
+        "sol_ms": 0.00791499,
+        "baseline_latency_ms": 0.286639
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 1280
+        },
+        "sol_ms": 0.00439721,
+        "baseline_latency_ms": 0.2732795
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3200
+        },
+        "sol_ms": 0.01099304,
+        "baseline_latency_ms": 0.312863
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 384
+        },
+        "sol_ms": 0.00131916,
+        "baseline_latency_ms": 0.275311
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 1920
+        },
+        "sol_ms": 0.00659582,
+        "baseline_latency_ms": 0.2819505
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3968
+        },
+        "sol_ms": 0.01363136,
+        "baseline_latency_ms": 0.3418225
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3840
+        },
+        "sol_ms": 0.01319164,
+        "baseline_latency_ms": 0.340191
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 640
+        },
+        "sol_ms": 0.00219861,
+        "baseline_latency_ms": 0.2729749999999999
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 1536
+        },
+        "sol_ms": 0.00527666,
+        "baseline_latency_ms": 0.2829105
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3584
+        },
+        "sol_ms": 0.0123122,
+        "baseline_latency_ms": 0.3342549999999999
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3456
+        },
+        "sol_ms": 0.01187248,
+        "baseline_latency_ms": 0.3218705
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 2048
+        },
+        "sol_ms": 0.00703554,
+        "baseline_latency_ms": 0.279887
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 1408
+        },
+        "sol_ms": 0.00483694,
+        "baseline_latency_ms": 0.2749105
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 2688,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 6,
+          "n_group": 1,
+          "topk_group": 1,
+          "sf_vec_size": 16,
+          "hidden_size_half": 1344,
+          "sf_k": 168,
+          "num_tokens": 3072
+        },
+        "sol_ms": 0.01055331,
+        "baseline_latency_ms": 0.4293909999999999
+      }
+    ]
+  }
+}

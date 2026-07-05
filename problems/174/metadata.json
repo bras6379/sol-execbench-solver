@@ -1,0 +1,217 @@
+{
+  "task_id": 174,
+  "subset": "L2",
+  "collection_index": 80,
+  "name": "080_moe_complete_layer_with_shared_expert_backward",
+  "hf_id": "zai-org/GLM-4.5-Air",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:53.157414Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.054632,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 384
+        },
+        "sol_ms": 0.0155,
+        "baseline_latency_ms": 0.244449
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 6144
+        },
+        "sol_ms": 0.2423,
+        "baseline_latency_ms": 0.5510405
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 8192
+        },
+        "sol_ms": 0.3229,
+        "baseline_latency_ms": 0.7027525
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 3719
+        },
+        "sol_ms": 0.1468,
+        "baseline_latency_ms": 0.404352
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 512
+        },
+        "sol_ms": 0.0206,
+        "baseline_latency_ms": 0.238449
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 192
+        },
+        "sol_ms": 0.0087,
+        "baseline_latency_ms": 0.230144
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 211
+        },
+        "sol_ms": 0.0089,
+        "baseline_latency_ms": 0.23136
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 3072
+        },
+        "sol_ms": 0.1213,
+        "baseline_latency_ms": 0.3504485
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 4093
+        },
+        "sol_ms": 0.1615,
+        "baseline_latency_ms": 0.4306885
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 1879
+        },
+        "sol_ms": 0.0744,
+        "baseline_latency_ms": 0.2729765
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 3089
+        },
+        "sol_ms": 0.122,
+        "baseline_latency_ms": 0.356624
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 2053
+        },
+        "sol_ms": 0.0812,
+        "baseline_latency_ms": 0.2785445
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 997
+        },
+        "sol_ms": 0.0396,
+        "baseline_latency_ms": 0.229312
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 1571
+        },
+        "sol_ms": 0.0622,
+        "baseline_latency_ms": 0.251008
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 1321
+        },
+        "sol_ms": 0.0524,
+        "baseline_latency_ms": 0.2371845
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 4096,
+          "moe_intermediate_size": 1408,
+          "n_routed_experts": 128,
+          "num_experts_per_tok": 8,
+          "batch_seq_len": 293
+        },
+        "sol_ms": 0.0119,
+        "baseline_latency_ms": 0.2308805
+      }
+    ]
+  }
+}

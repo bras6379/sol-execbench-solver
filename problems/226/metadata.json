@@ -1,0 +1,298 @@
+{
+  "task_id": 226,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 17,
+  "name": "017_gqa_ragged_prefill_causal_h32_kv8_d128",
+  "hf_id": "",
+  "num_workloads": 21,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:04.828352Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.000951,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 7,
+          "total_kv": 7
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.032512
+      },
+      {
+        "index": 1,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 1,
+          "total_kv": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.028
+      },
+      {
+        "index": 2,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 35,
+          "total_kv": 35
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.032672
+      },
+      {
+        "index": 3,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 3,
+          "total_q": 81,
+          "total_kv": 81
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.227904
+      },
+      {
+        "index": 4,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 26,
+          "total_q": 13557,
+          "total_kv": 13557
+        },
+        "sol_ms": 0.0367,
+        "baseline_latency_ms": 3.249861
+      },
+      {
+        "index": 5,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 37,
+          "total_q": 12845,
+          "total_kv": 12845
+        },
+        "sol_ms": 0.0348,
+        "baseline_latency_ms": 3.667735
+      },
+      {
+        "index": 6,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 7,
+          "total_kv": 7
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0325285
+      },
+      {
+        "index": 7,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 1,
+          "total_kv": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.028
+      },
+      {
+        "index": 8,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 35,
+          "total_kv": 35
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.032704
+      },
+      {
+        "index": 9,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 35,
+          "total_kv": 35
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.032672
+      },
+      {
+        "index": 10,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 18,
+          "total_kv": 18
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.032704
+      },
+      {
+        "index": 11,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 18,
+          "total_kv": 18
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.032608
+      },
+      {
+        "index": 12,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 7,
+          "total_kv": 7
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.032512
+      },
+      {
+        "index": 13,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 1,
+          "total_kv": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.027905
+      },
+      {
+        "index": 14,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 35,
+          "total_kv": 35
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0327034999999999
+      },
+      {
+        "index": 15,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 35,
+          "total_kv": 35
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.032656
+      },
+      {
+        "index": 16,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 16,
+          "total_q": 982,
+          "total_kv": 982
+        },
+        "sol_ms": 0.003,
+        "baseline_latency_ms": 1.448034
+      },
+      {
+        "index": 17,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 71,
+          "total_kv": 71
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.090656
+      },
+      {
+        "index": 18,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 2,
+          "total_q": 71,
+          "total_kv": 71
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.042256
+      },
+      {
+        "index": 19,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 11,
+          "total_q": 12571,
+          "total_kv": 12571
+        },
+        "sol_ms": 0.0341,
+        "baseline_latency_ms": 1.8915235
+      },
+      {
+        "index": 20,
+        "axes": {
+          "num_qo_heads": 32,
+          "num_kv_heads": 8,
+          "head_dim": 128,
+          "len_indptr": 6,
+          "total_q": 92,
+          "total_kv": 92
+        },
+        "sol_ms": 0.0006,
+        "baseline_latency_ms": 0.504881
+      }
+    ]
+  }
+}

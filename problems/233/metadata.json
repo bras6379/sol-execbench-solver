@@ -1,0 +1,88 @@
+{
+  "task_id": 233,
+  "subset": "FlashInfer-Bench",
+  "collection_index": 24,
+  "name": "024_rmsnorm_h2048",
+  "hf_id": "",
+  "num_workloads": 7,
+  "workloads_have_tolerance": false,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/FlashInfer-Bench.parquet"
+  },
+  "fetched_at": "2026-07-05T06:13:06.480387Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.001213,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 6
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.005184
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 1
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.006272
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 34
+        },
+        "sol_ms": 0.0004,
+        "baseline_latency_ms": 0.0051045
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 79
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.005088
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 16254
+        },
+        "sol_ms": 0.0178,
+        "baseline_latency_ms": 0.0401124999999999
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 12383
+        },
+        "sol_ms": 0.0136,
+        "baseline_latency_ms": 0.03184
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2048,
+          "batch_size": 64
+        },
+        "sol_ms": 0.0005,
+        "baseline_latency_ms": 0.0050565
+      }
+    ]
+  }
+}

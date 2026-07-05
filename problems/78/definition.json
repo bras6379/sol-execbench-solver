@@ -1,0 +1,73 @@
+{
+    "name": "078_group_norm_fusion",
+    "hf_id": "runwayml/stable-diffusion-v1-5",
+    "description": "GroupNorm operation for Stable Diffusion UNet. Normalizes features across spatial dimensions within channel groups. Computes mean and variance per group, normalizes, and applies affine transform. With 32 groups and channels of 320/640/1280, this operation appears hundreds of times per forward pass.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_channels": {
+            "type": "var",
+            "description": "Number of input channels (320, 640, 1280)"
+        },
+        "height": {
+            "type": "var",
+            "description": "Spatial height"
+        },
+        "width": {
+            "type": "var",
+            "description": "Spatial width"
+        },
+        "num_groups": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of groups for normalization"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "x": {
+            "shape": [
+                "batch_size",
+                "num_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Input tensor"
+        },
+        "weight": {
+            "shape": [
+                "num_channels"
+            ],
+            "dtype": "float32",
+            "description": "Learnable scale parameter (gamma)"
+        },
+        "bias": {
+            "shape": [
+                "num_channels"
+            ],
+            "dtype": "float32",
+            "description": "Learnable shift parameter (beta)"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Small constant for numerical stability"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "num_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float32",
+            "description": "Normalized output tensor"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor, eps: float) -> torch.Tensor:\n    \"\"\"\n    GroupNorm operation.\n    \n    Args:\n        x: Input tensor of shape (B, C, H, W)\n        weight: Scale parameter of shape (C,)\n        bias: Shift parameter of shape (C,)\n        eps: Small constant for numerical stability\n    \n    Returns:\n        Normalized tensor of shape (B, C, H, W)\n    \"\"\"\n    B, C, H, W = x.shape\n    num_groups = 32\n    \n    # Reshape to separate groups: (B, num_groups, C//num_groups, H, W)\n    x_grouped = x.view(B, num_groups, C // num_groups, H, W)\n    \n    # Compute mean and variance per group using float32 for numerical stability\n    x_grouped_f32 = x_grouped.to(torch.float32)\n    mean = x_grouped_f32.mean(dim=[2, 3, 4], keepdim=True)\n    var = x_grouped_f32.var(dim=[2, 3, 4], keepdim=True, unbiased=False)\n    \n    # Normalize: (x - mean) / sqrt(var + eps)\n    x_normalized = (x_grouped_f32 - mean) / torch.sqrt(var + eps)\n    \n    # Reshape back to (B, C, H, W)\n    x_normalized = x_normalized.view(B, C, H, W)\n    \n    # Apply affine transformation\n    # Reshape weight and bias for broadcasting: (1, C, 1, 1)\n    weight_reshaped = weight.view(1, C, 1, 1)\n    bias_reshaped = bias.view(1, C, 1, 1)\n    output = x_normalized * weight_reshaped + bias_reshaped\n    \n    return output.to(x.dtype)\n"
+}

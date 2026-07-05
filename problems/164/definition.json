@@ -1,0 +1,242 @@
+{
+    "name": "070_basic_transformer_block",
+    "hf_id": "stabilityai/stable-diffusion-xl-refiner-1.0",
+    "description": "Complete BasicTransformerBlock combining self-attention, cross-attention, and feed-forward network with GEGLU activation. This is the fundamental building block in SDXL Refiner's UNet architecture, processing spatial features through self-attention (spatial coherence), cross-attention (text/image conditioning), and MLP with residual connections.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "spatial_seq_len": {
+            "type": "var",
+            "description": "Spatial sequence length (height*width)"
+        },
+        "encoder_seq_len": {
+            "type": "var",
+            "description": "Encoder/conditioning sequence length"
+        },
+        "dim": {
+            "type": "const",
+            "value": 1280,
+            "description": "Hidden dimension"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 160,
+            "description": "Number of attention heads"
+        },
+        "attention_head_dim": {
+            "type": "const",
+            "value": 24,
+            "description": "Dimension per attention head"
+        },
+        "cross_attention_dim": {
+            "type": "const",
+            "value": 1280,
+            "description": "Cross-attention conditioning dimension"
+        },
+        "inner_dim": {
+            "type": "expr",
+            "expression": "num_attention_heads * attention_head_dim",
+            "description": "Inner attention dimension"
+        },
+        "ff_intermediate": {
+            "type": "expr",
+            "expression": "dim * 4",
+            "description": "Feed-forward intermediate dimension"
+        },
+        "ff_gate_dim": {
+            "type": "expr",
+            "expression": "dim * 8",
+            "description": "Feed-forward gate dimension (2x for GEGLU)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "spatial_seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Input spatial features"
+        },
+        "encoder_hidden_states": {
+            "shape": [
+                "batch_size",
+                "encoder_seq_len",
+                "cross_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Conditioning features from text/image encoder"
+        },
+        "norm1_weight": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm1 weight"
+        },
+        "norm1_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm1 bias"
+        },
+        "attn1_to_q_weight": {
+            "shape": [
+                "inner_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Self-attention Q projection weight"
+        },
+        "attn1_to_k_weight": {
+            "shape": [
+                "inner_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Self-attention K projection weight"
+        },
+        "attn1_to_v_weight": {
+            "shape": [
+                "inner_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Self-attention V projection weight"
+        },
+        "attn1_to_out_weight": {
+            "shape": [
+                "dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Self-attention output projection weight"
+        },
+        "attn1_to_out_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Self-attention output projection bias"
+        },
+        "norm2_weight": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm2 weight"
+        },
+        "norm2_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm2 bias"
+        },
+        "attn2_to_q_weight": {
+            "shape": [
+                "inner_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention Q projection weight"
+        },
+        "attn2_to_k_weight": {
+            "shape": [
+                "inner_dim",
+                "cross_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention K projection weight"
+        },
+        "attn2_to_v_weight": {
+            "shape": [
+                "inner_dim",
+                "cross_attention_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention V projection weight"
+        },
+        "attn2_to_out_weight": {
+            "shape": [
+                "dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention output projection weight"
+        },
+        "attn2_to_out_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Cross-attention output projection bias"
+        },
+        "norm3_weight": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm3 weight"
+        },
+        "norm3_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "LayerNorm3 bias"
+        },
+        "ff_linear1_weight": {
+            "shape": [
+                "ff_gate_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Feed-forward first linear weight (includes gate)"
+        },
+        "ff_linear1_bias": {
+            "shape": [
+                "ff_gate_dim"
+            ],
+            "dtype": "float32",
+            "description": "Feed-forward first linear bias"
+        },
+        "ff_linear2_weight": {
+            "shape": [
+                "dim",
+                "ff_intermediate"
+            ],
+            "dtype": "float32",
+            "description": "Feed-forward second linear weight"
+        },
+        "ff_linear2_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Feed-forward second linear bias"
+        },
+        "norm_eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "LayerNorm epsilon"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "spatial_seq_len",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Output spatial features"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    encoder_hidden_states: torch.Tensor,\n    norm1_weight: torch.Tensor,\n    norm1_bias: torch.Tensor,\n    attn1_to_q_weight: torch.Tensor,\n    attn1_to_k_weight: torch.Tensor,\n    attn1_to_v_weight: torch.Tensor,\n    attn1_to_out_weight: torch.Tensor,\n    attn1_to_out_bias: torch.Tensor,\n    norm2_weight: torch.Tensor,\n    norm2_bias: torch.Tensor,\n    attn2_to_q_weight: torch.Tensor,\n    attn2_to_k_weight: torch.Tensor,\n    attn2_to_v_weight: torch.Tensor,\n    attn2_to_out_weight: torch.Tensor,\n    attn2_to_out_bias: torch.Tensor,\n    norm3_weight: torch.Tensor,\n    norm3_bias: torch.Tensor,\n    ff_linear1_weight: torch.Tensor,\n    ff_linear1_bias: torch.Tensor,\n    ff_linear2_weight: torch.Tensor,\n    ff_linear2_bias: torch.Tensor,\n    norm_eps: float,\n):\n    # Constants\n    num_attention_heads = 160\n    attention_head_dim = 24\n    inner_dim = num_attention_heads * attention_head_dim\n    scale = attention_head_dim ** -0.5\n    \n    batch_size = hidden_states.shape[0]\n    spatial_seq_len = hidden_states.shape[1]\n    encoder_seq_len = encoder_hidden_states.shape[1]\n    \n    # ============ Self-Attention Block ============\n    # LayerNorm1\n    mean1 = hidden_states.mean(dim=-1, keepdim=True)\n    var1 = ((hidden_states - mean1) ** 2).mean(dim=-1, keepdim=True)\n    norm_hidden_states = (hidden_states - mean1) / torch.sqrt(var1 + norm_eps)\n    norm_hidden_states = norm_hidden_states * norm1_weight + norm1_bias\n    \n    # QKV projections for self-attention\n    query = F.linear(norm_hidden_states, attn1_to_q_weight)\n    key = F.linear(norm_hidden_states, attn1_to_k_weight)\n    value = F.linear(norm_hidden_states, attn1_to_v_weight)\n    \n    # Reshape to [batch, num_heads, seq_len, head_dim]\n    query = query.view(batch_size, spatial_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    key = key.view(batch_size, spatial_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    value = value.view(batch_size, spatial_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    \n    # Compute attention scores\n    attention_scores = torch.matmul(query, key.transpose(-2, -1)) * scale\n    attention_probs = F.softmax(attention_scores, dim=-1)\n    \n    # Apply attention to values\n    attn_output = torch.matmul(attention_probs, value)\n    \n    # Reshape back\n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, spatial_seq_len, inner_dim)\n    \n    # Output projection\n    attn_output = F.linear(attn_output, attn1_to_out_weight, attn1_to_out_bias)\n    \n    # Residual connection\n    hidden_states = hidden_states + attn_output\n    \n    # ============ Cross-Attention Block ============\n    # LayerNorm2\n    mean2 = hidden_states.mean(dim=-1, keepdim=True)\n    var2 = ((hidden_states - mean2) ** 2).mean(dim=-1, keepdim=True)\n    norm_hidden_states = (hidden_states - mean2) / torch.sqrt(var2 + norm_eps)\n    norm_hidden_states = norm_hidden_states * norm2_weight + norm2_bias\n    \n    # QKV projections for cross-attention\n    query = F.linear(norm_hidden_states, attn2_to_q_weight)\n    key = F.linear(encoder_hidden_states, attn2_to_k_weight)\n    value = F.linear(encoder_hidden_states, attn2_to_v_weight)\n    \n    # Reshape to [batch, num_heads, seq_len, head_dim]\n    query = query.view(batch_size, spatial_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    key = key.view(batch_size, encoder_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    value = value.view(batch_size, encoder_seq_len, num_attention_heads, attention_head_dim).transpose(1, 2)\n    \n    # Compute attention scores\n    attention_scores = torch.matmul(query, key.transpose(-2, -1)) * scale\n    attention_probs = F.softmax(attention_scores, dim=-1)\n    \n    # Apply attention to values\n    attn_output = torch.matmul(attention_probs, value)\n    \n    # Reshape back\n    attn_output = attn_output.transpose(1, 2).contiguous().view(batch_size, spatial_seq_len, inner_dim)\n    \n    # Output projection\n    attn_output = F.linear(attn_output, attn2_to_out_weight, attn2_to_out_bias)\n    \n    # Residual connection\n    hidden_states = hidden_states + attn_output\n    \n    # ============ Feed-Forward Block ============\n    # LayerNorm3\n    mean3 = hidden_states.mean(dim=-1, keepdim=True)\n    var3 = ((hidden_states - mean3) ** 2).mean(dim=-1, keepdim=True)\n    norm_hidden_states = (hidden_states - mean3) / torch.sqrt(var3 + norm_eps)\n    norm_hidden_states = norm_hidden_states * norm3_weight + norm3_bias\n    \n    # First linear (produces 2x intermediate for GEGLU)\n    ff_output = F.linear(norm_hidden_states, ff_linear1_weight, ff_linear1_bias)\n    \n    # GEGLU activation: split and apply gelu to gate\n    x, gate = ff_output.chunk(2, dim=-1)\n    ff_output = x * F.gelu(gate, approximate='tanh')\n    \n    # Second linear\n    ff_output = F.linear(ff_output, ff_linear2_weight, ff_linear2_bias)\n    \n    # Residual connection\n    output = hidden_states + ff_output\n    \n    return output\n"
+}

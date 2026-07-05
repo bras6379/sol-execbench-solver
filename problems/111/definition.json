@@ -1,0 +1,158 @@
+{
+    "name": "017_fused_vision_cu_seqlens_attention_with_2d_rope_backward",
+    "hf_id": "Qwen/Qwen3-VL-4B-Instruct",
+    "description": "Backward pass for fused vision attention with cu_seqlens and 2D rotary position embeddings. Computes gradients for hidden_states, QKV projection weights/biases, and output projection weights/biases.",
+    "axes": {
+        "total_seq_len": {
+            "type": "var",
+            "description": "Total sequence length across all images"
+        },
+        "num_sequences": {
+            "type": "var",
+            "description": "Number of sequences in the batch"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 3584
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 28
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128
+        },
+        "qkv_out_size": {
+            "type": "expr",
+            "expression": "hidden_size * 3"
+        },
+        "num_seqlens": {
+            "type": "expr",
+            "expression": "num_sequences + 1"
+        }
+    },
+    "custom_inputs_entrypoint": "get_inputs",
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "total_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output"
+        },
+        "hidden_states": {
+            "shape": [
+                "total_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Original input hidden states"
+        },
+        "qkv_weight": {
+            "shape": [
+                "qkv_out_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection weight"
+        },
+        "qkv_bias": {
+            "shape": [
+                "qkv_out_size"
+            ],
+            "dtype": "float32",
+            "description": "QKV projection bias"
+        },
+        "proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection weight"
+        },
+        "proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Output projection bias"
+        },
+        "cos": {
+            "shape": [
+                "total_seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Cosine for 2D RoPE"
+        },
+        "sin": {
+            "shape": [
+                "total_seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Sine for 2D RoPE"
+        },
+        "cu_seqlens": {
+            "shape": [
+                "num_seqlens"
+            ],
+            "dtype": "int32",
+            "description": "Cumulative sequence lengths"
+        },
+        "attention_dropout": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Dropout probability"
+        },
+        "scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scaling factor"
+        }
+    },
+    "outputs": {
+        "grad_hidden_states": {
+            "shape": [
+                "total_seq_len",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. hidden_states"
+        },
+        "grad_qkv_weight": {
+            "shape": [
+                "qkv_out_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV weight"
+        },
+        "grad_qkv_bias": {
+            "shape": [
+                "qkv_out_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. QKV bias"
+        },
+        "grad_proj_weight": {
+            "shape": [
+                "hidden_size",
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output projection weight"
+        },
+        "grad_proj_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. output projection bias"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs for backward pass testing.\"\"\"\n    total_seq_len = axes_and_scalars[\"total_seq_len\"]\n    num_sequences = axes_and_scalars[\"num_sequences\"]\n    hidden_size = 3584\n    num_heads = 28\n    head_dim = 128\n    qkv_out_size = hidden_size * 3\n    \n    # Generate grad_output\n    grad_output = torch.randn(total_seq_len, hidden_size, dtype=torch.float32, device=device)\n    \n    # Generate hidden_states\n    hidden_states = torch.randn(total_seq_len, hidden_size, dtype=torch.float32, device=device)\n    \n    # Generate QKV weights and biases\n    qkv_weight = torch.randn(qkv_out_size, hidden_size, dtype=torch.float32, device=device) * 0.02\n    qkv_bias = torch.randn(qkv_out_size, dtype=torch.float32, device=device) * 0.01\n    \n    # Generate projection weights and biases\n    proj_weight = torch.randn(hidden_size, hidden_size, dtype=torch.float32, device=device) * 0.02\n    proj_bias = torch.randn(hidden_size, dtype=torch.float32, device=device) * 0.01\n    \n    # Generate RoPE embeddings\n    cos = torch.randn(total_seq_len, head_dim, dtype=torch.float32, device=device)\n    sin = torch.randn(total_seq_len, head_dim, dtype=torch.float32, device=device)\n    \n    # Generate cu_seqlens with shape (num_sequences + 1,)\n    # Distribute total_seq_len across num_sequences\n    if num_sequences <= 1:\n        cu_seqlens = torch.tensor([0, total_seq_len], dtype=torch.int32, device=device)\n    else:\n        base_len = total_seq_len // num_sequences\n        remainder = total_seq_len % num_sequences\n        lengths = [base_len] * num_sequences\n        for i in range(remainder):\n            lengths[i] += 1\n        cu_seqlens_list = [0]\n        for l in lengths:\n            cu_seqlens_list.append(cu_seqlens_list[-1] + l)\n        cu_seqlens = torch.tensor(cu_seqlens_list, dtype=torch.int32, device=device)\n    \n    return {\n        \"grad_output\": grad_output,\n        \"hidden_states\": hidden_states,\n        \"qkv_weight\": qkv_weight,\n        \"qkv_bias\": qkv_bias,\n        \"proj_weight\": proj_weight,\n        \"proj_bias\": proj_bias,\n        \"cos\": cos,\n        \"sin\": sin,\n        \"cu_seqlens\": cu_seqlens,\n        \"attention_dropout\": 0.0,\n        \"scaling\": head_dim ** -0.5,\n    }\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_states: torch.Tensor,\n    qkv_weight: torch.Tensor,\n    qkv_bias: torch.Tensor,\n    proj_weight: torch.Tensor,\n    proj_bias: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    cu_seqlens: torch.Tensor,\n    attention_dropout: float,\n    scaling: float,\n):\n    \"\"\"Backward pass for fused vision attention with cu_seqlens and 2D RoPE.\n    \n    Computes gradients for:\n    - hidden_states\n    - qkv_weight, qkv_bias\n    - proj_weight, proj_bias\n    \"\"\"\n    seq_length = hidden_states.shape[0]\n    hidden_size = hidden_states.shape[1]\n    num_heads = 28\n    head_dim = 128\n    \n    # ============ Forward recomputation ============\n    # QKV projection\n    qkv = F.linear(hidden_states, qkv_weight, qkv_bias)\n    qkv = qkv.reshape(seq_length, 3, num_heads, head_dim)\n    query_states, key_states, value_states = qkv.permute(1, 0, 2, 3).unbind(0)\n    \n    # Apply 2D RoPE\n    cos_expanded = cos.unsqueeze(-2).float()\n    sin_expanded = sin.unsqueeze(-2).float()\n    \n    def rotate_half(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((-x2, x1), dim=-1)\n    \n    def rotate_half_inverse(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((x2, -x1), dim=-1)\n    \n    query_states_float = query_states.float()\n    key_states_float = key_states.float()\n    \n    query_states_rope = (query_states_float * cos_expanded + rotate_half(query_states_float) * sin_expanded).to(query_states.dtype)\n    key_states_rope = (key_states_float * cos_expanded + rotate_half(key_states_float) * sin_expanded).to(key_states.dtype)\n    \n    # Reshape for attention\n    query_states_attn = query_states_rope.transpose(0, 1).unsqueeze(0)\n    key_states_attn = key_states_rope.transpose(0, 1).unsqueeze(0)\n    value_states_attn = value_states.transpose(0, 1).unsqueeze(0)\n    \n    # Variable-length attention using cu_seqlens\n    lengths = cu_seqlens[1:] - cu_seqlens[:-1]\n    \n    query_splits = torch.split(query_states_attn, lengths.tolist(), dim=2)\n    key_splits = torch.split(key_states_attn, lengths.tolist(), dim=2)\n    value_splits = torch.split(value_states_attn, lengths.tolist(), dim=2)\n    \n    # Compute attention and save weights\n    attn_outputs = []\n    attn_weights_list = []\n    \n    for q, k, v in zip(query_splits, key_splits, value_splits):\n        attn_weights = torch.matmul(q, k.transpose(2, 3)) * scaling\n        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(q.dtype)\n        attn_output = torch.matmul(attn_weights, v)\n        attn_outputs.append(attn_output)\n        attn_weights_list.append(attn_weights)\n    \n    attn_output = torch.cat(attn_outputs, dim=2)\n    attn_output_reshaped = attn_output.squeeze(0).transpose(0, 1).reshape(seq_length, hidden_size).contiguous()\n    \n    # ============ Backward computation ============\n    \n    # Gradient through output projection\n    grad_proj_bias = grad_output.sum(dim=0)\n    grad_proj_weight = grad_output.t() @ attn_output_reshaped\n    grad_attn_output = grad_output @ proj_weight\n    \n    # Reshape gradient\n    grad_attn_output_reshaped = grad_attn_output.reshape(seq_length, num_heads, head_dim)\n    grad_attn_output_reshaped = grad_attn_output_reshaped.transpose(0, 1).unsqueeze(0)\n    \n    # Split gradient by sequence lengths\n    grad_attn_output_splits = torch.split(grad_attn_output_reshaped, lengths.tolist(), dim=2)\n    \n    # Backward through attention for each sequence\n    grad_query_splits = []\n    grad_key_splits = []\n    grad_value_splits = []\n    \n    for grad_attn_out, attn_weights, q, k, v in zip(\n        grad_attn_output_splits, attn_weights_list, query_splits, key_splits, value_splits\n    ):\n        # Gradient through attention output\n        grad_attn_weights = torch.matmul(grad_attn_out, v.transpose(2, 3))\n        grad_v = torch.matmul(attn_weights.transpose(2, 3), grad_attn_out)\n        \n        # Gradient through softmax\n        sum_grad = (grad_attn_weights * attn_weights).sum(dim=-1, keepdim=True)\n        grad_attn_scores = attn_weights * (grad_attn_weights - sum_grad)\n        grad_attn_scores = grad_attn_scores * scaling\n        \n        # Gradient through Q @ K^T\n        grad_q = torch.matmul(grad_attn_scores, k)\n        grad_k = torch.matmul(grad_attn_scores.transpose(2, 3), q)\n        \n        grad_query_splits.append(grad_q)\n        grad_key_splits.append(grad_k)\n        grad_value_splits.append(grad_v)\n    \n    # Concatenate gradients\n    grad_query_states = torch.cat(grad_query_splits, dim=2)\n    grad_key_states = torch.cat(grad_key_splits, dim=2)\n    grad_value_states = torch.cat(grad_value_splits, dim=2)\n    \n    # Reshape\n    grad_query_states = grad_query_states.squeeze(0).transpose(0, 1)\n    grad_key_states = grad_key_states.squeeze(0).transpose(0, 1)\n    grad_value_states = grad_value_states.squeeze(0).transpose(0, 1)\n    \n    # Gradient through 2D RoPE\n    grad_query_states_float = grad_query_states.float()\n    grad_key_states_float = grad_key_states.float()\n    \n    grad_query_pre_rope = (\n        grad_query_states_float * cos_expanded +\n        rotate_half_inverse(grad_query_states_float * sin_expanded)\n    ).to(grad_query_states.dtype)\n    \n    grad_key_pre_rope = (\n        grad_key_states_float * cos_expanded +\n        rotate_half_inverse(grad_key_states_float * sin_expanded)\n    ).to(grad_key_states.dtype)\n    \n    # Stack gradients\n    grad_qkv = torch.stack([grad_query_pre_rope, grad_key_pre_rope, grad_value_states], dim=1)\n    grad_qkv = grad_qkv.reshape(seq_length, 3 * hidden_size)\n    \n    # Gradient through QKV projection\n    grad_hidden_states = grad_qkv @ qkv_weight\n    grad_qkv_weight = grad_qkv.t() @ hidden_states\n    grad_qkv_bias = grad_qkv.sum(dim=0)\n    \n    return grad_hidden_states, grad_qkv_weight, grad_qkv_bias, grad_proj_weight, grad_proj_bias\n"
+}

@@ -1,0 +1,141 @@
+{
+    "name": "026_video_patch_embedding_projection",
+    "hf_id": "Wan-AI/Wan2.2-T2V-A14B",
+    "description": "Video patch embedding projection that converts raw video frames into patch tokens. Applies Conv3D patch projection, adds spatial and temporal positional embeddings, and applies layer normalization. Input video shape is (batch, frames, channels, height, width), output is (batch, num_patches, hidden_size) where num_patches = frames * (height/patch_size) * (width/patch_size).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "num_frames": {
+            "type": "const",
+            "value": 81,
+            "description": "Number of video frames"
+        },
+        "in_channels": {
+            "type": "const",
+            "value": 16,
+            "description": "Input channels (VAE latent)"
+        },
+        "height": {
+            "type": "var",
+            "description": "Video height in pixels"
+        },
+        "width": {
+            "type": "var",
+            "description": "Video width in pixels"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 5120,
+            "description": "Hidden dimension for patch embeddings"
+        },
+        "patch_size": {
+            "type": "const",
+            "value": 2,
+            "description": "Patch size for spatial dimensions"
+        },
+        "num_patches_h": {
+            "type": "expr",
+            "expression": "height // patch_size",
+            "description": "Number of patches along height"
+        },
+        "num_patches_w": {
+            "type": "expr",
+            "expression": "width // patch_size",
+            "description": "Number of patches along width"
+        },
+        "num_spatial_patches": {
+            "type": "expr",
+            "expression": "num_patches_h * num_patches_w",
+            "description": "Total spatial patches per frame"
+        },
+        "total_patches": {
+            "type": "expr",
+            "expression": "num_frames * num_spatial_patches",
+            "description": "Total patches across all frames"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "video": {
+            "shape": [
+                "batch_size",
+                "num_frames",
+                "in_channels",
+                "height",
+                "width"
+            ],
+            "dtype": "float16",
+            "description": "Input video tensor (B, F, C, H, W)"
+        },
+        "patch_projection_weight": {
+            "shape": [
+                "hidden_size",
+                "in_channels",
+                "1",
+                "patch_size",
+                "patch_size"
+            ],
+            "dtype": "float16",
+            "description": "Conv3D weight for patch projection"
+        },
+        "patch_projection_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Conv3D bias for patch projection"
+        },
+        "spatial_pos_embedding": {
+            "shape": [
+                "1",
+                "num_spatial_patches",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Spatial positional embeddings"
+        },
+        "temporal_pos_embedding": {
+            "shape": [
+                "1",
+                "num_frames",
+                "1",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Temporal positional embeddings"
+        },
+        "norm_weight": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Layer norm weight"
+        },
+        "norm_bias": {
+            "shape": [
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Layer norm bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float16",
+            "description": "Layer norm epsilon"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "total_patches",
+                "hidden_size"
+            ],
+            "dtype": "float16",
+            "description": "Patch embeddings (B, num_patches, hidden_size)"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    video: torch.Tensor,\n    patch_projection_weight: torch.Tensor,\n    patch_projection_bias: torch.Tensor,\n    spatial_pos_embedding: torch.Tensor,\n    temporal_pos_embedding: torch.Tensor,\n    norm_weight: torch.Tensor,\n    norm_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Video patch embedding projection.\n    \n    Args:\n        video: (batch, frames, channels, height, width)\n        patch_projection_weight: (hidden_size, in_channels, 1, patch_size, patch_size)\n        patch_projection_bias: (hidden_size,)\n        spatial_pos_embedding: (1, num_spatial_patches, hidden_size)\n        temporal_pos_embedding: (1, num_frames, 1, hidden_size)\n        norm_weight: (hidden_size,)\n        norm_bias: (hidden_size,)\n        eps: layer norm epsilon\n    \n    Returns:\n        output: (batch, total_patches, hidden_size)\n    \"\"\"\n    batch_size, frames, channels, height, width = video.shape\n    hidden_size = patch_projection_weight.shape[0]\n    patch_size = patch_projection_weight.shape[3]\n    \n    # Rearrange to (batch, channels, frames, height, width) for Conv3D\n    video = video.permute(0, 2, 1, 3, 4)\n    \n    # Apply patch projection using Conv3D\n    # (B, C, F, H, W) -> (B, hidden_size, F, H', W')\n    patches = F.conv3d(\n        video,\n        patch_projection_weight,\n        patch_projection_bias,\n        stride=(1, patch_size, patch_size),\n        padding=(0, 0, 0)\n    )\n    \n    # Rearrange to (batch, frames, hidden_size, num_patches_h, num_patches_w)\n    patches = patches.permute(0, 2, 1, 3, 4)\n    \n    # Get spatial dimensions\n    batch_size, frames, hidden_size, num_h, num_w = patches.shape\n    \n    # Flatten spatial dimensions: (B, F, hidden_size, H', W') -> (B, F, H'*W', hidden_size)\n    patches = patches.reshape(batch_size, frames, hidden_size, num_h * num_w)\n    patches = patches.permute(0, 1, 3, 2)  # (B, F, num_spatial_patches, hidden_size)\n    \n    # Add spatial positional embeddings (broadcast across frames)\n    # spatial_pos_embedding: (1, num_spatial_patches, hidden_size) -> broadcast to (B, F, S, H)\n    patches = patches + spatial_pos_embedding.unsqueeze(1)\n    \n    # Add temporal positional embeddings (broadcast across spatial patches)\n    # temporal_pos_embedding: (1, num_frames, 1, hidden_size) -> broadcast to (B, F, S, H)\n    patches = patches + temporal_pos_embedding\n    \n    # Flatten temporal and spatial dimensions: (B, F, S, H) -> (B, F*S, H)\n    patches = patches.reshape(batch_size, frames * num_h * num_w, hidden_size)\n    \n    # Apply layer normalization\n    # Compute mean and variance along last dimension\n    mean = patches.mean(dim=-1, keepdim=True)\n    var = patches.var(dim=-1, keepdim=True, unbiased=False)\n    patches_normalized = (patches - mean) / torch.sqrt(var + eps)\n    output = patches_normalized * norm_weight + norm_bias\n    \n    return output\n"
+}

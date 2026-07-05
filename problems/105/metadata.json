@@ -1,0 +1,201 @@
+{
+  "task_id": 105,
+  "subset": "L2",
+  "collection_index": 11,
+  "name": "011_moe_sparse_routing_and_dispatch_backward",
+  "hf_id": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+  "num_workloads": 16,
+  "workloads_have_tolerance": true,
+  "source": {
+    "dataset": "nvidia/SOL-ExecBench",
+    "revision": "main",
+    "resolved_sha": "63699402f003496acc3af4eb534a5304a8ac1ea9",
+    "subset_parquet": "data/L2.parquet"
+  },
+  "fetched_at": "2026-07-05T06:12:36.372912Z",
+  "sol": {
+    "available": true,
+    "baseline_latency_ms": 0.00243,
+    "latency_unit": "ms",
+    "sol_is_dummy": false,
+    "workload_count_matches": true,
+    "per_workload": [
+      {
+        "index": 0,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1056
+        },
+        "sol_ms": 0.00150187,
+        "baseline_latency_ms": 0.0471205
+      },
+      {
+        "index": 1,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1163
+        },
+        "sol_ms": 0.00160659,
+        "baseline_latency_ms": 0.0439685
+      },
+      {
+        "index": 2,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 65536
+        },
+        "sol_ms": 0.06460774,
+        "baseline_latency_ms": 0.217216
+      },
+      {
+        "index": 3,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1088
+        },
+        "sol_ms": 0.00153319,
+        "baseline_latency_ms": 0.04192
+      },
+      {
+        "index": 4,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1087
+        },
+        "sol_ms": 0.00153221,
+        "baseline_latency_ms": 0.043024
+      },
+      {
+        "index": 5,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1120
+        },
+        "sol_ms": 0.00156451,
+        "baseline_latency_ms": 0.040944
+      },
+      {
+        "index": 6,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1249
+        },
+        "sol_ms": 0.00169076,
+        "baseline_latency_ms": 0.04208
+      },
+      {
+        "index": 7,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1152
+        },
+        "sol_ms": 0.00159583,
+        "baseline_latency_ms": 0.0428319999999999
+      },
+      {
+        "index": 8,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 2048
+        },
+        "sol_ms": 0.00247273,
+        "baseline_latency_ms": 0.044592
+      },
+      {
+        "index": 9,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1184
+        },
+        "sol_ms": 0.00162715,
+        "baseline_latency_ms": 0.043264
+      },
+      {
+        "index": 10,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 3557
+        },
+        "sol_ms": 0.00394958,
+        "baseline_latency_ms": 0.048752
+      },
+      {
+        "index": 11,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1216
+        },
+        "sol_ms": 0.00165846,
+        "baseline_latency_ms": 0.044528
+      },
+      {
+        "index": 12,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1248
+        },
+        "sol_ms": 0.00168978,
+        "baseline_latency_ms": 0.044848
+      },
+      {
+        "index": 13,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 8192
+        },
+        "sol_ms": 0.0084858,
+        "baseline_latency_ms": 0.0553605
+      },
+      {
+        "index": 14,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1280
+        },
+        "sol_ms": 0.0017211,
+        "baseline_latency_ms": 0.047936
+      },
+      {
+        "index": 15,
+        "axes": {
+          "hidden_size": 2048,
+          "num_experts": 128,
+          "top_k": 8,
+          "num_tokens": 1024
+        },
+        "sol_ms": 0.00147056,
+        "baseline_latency_ms": 0.0423199999999999
+      }
+    ]
+  }
+}
