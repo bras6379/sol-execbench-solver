@@ -1,129 +1,320 @@
-# Orchestration Design (forward-looking)
+# Orchestration: the Solver Engine
 
-Design note for the multi-agent optimization loop. **Not built yet** — this
-captures the intended shape so the pieces we build now (fetch, scaffold,
-check, scoring, and the future GPU-run transport) fit it. The core idea:
-drive kernel optimization as a **GEPA-style reflective evolutionary search**
-whose evaluator is a **single-flight, GPU-locked** harness run.
+Single design doc for the multi-agent optimization engine. **Status: design;
+Phase A (Executor stub) built.** Goal: **select problems → optimize each to
+the best kernel we can find → accumulate and transfer knowledge across
+problems.** The GPU is abstracted behind an interface (stub today, real
+harness transport later). The engine *finds* best solutions; it does **not**
+submit to the website (a submit step can be added at the end of the loop
+later — it's one function call).
 
-## The loop (execution graph)
+Design stance: **solid but not over-engineered.** The v1 core below is the
+minimum that is correct, resumable, and observable; everything else lives in
+[Deferred](#deferred-designed-not-built) with its trigger condition.
 
-```
-   plan/scaffold ─▶ [ GPU evaluate ] ─▶ reflect ─▶ mutate ─▶ [ GPU evaluate ] ─▶ …
-                          │(locked)                                │(locked)
-                          ▼                                        ▼
-                    Pareto frontier over workload shapes  ◀────────┘
-```
+---
 
-planning → execution → reflection → execution, matching the user's sketch.
-Execution is the only node that touches the GPU, and it is serialized.
+## 1. Concept: a GEPA loop with a GPU-locked evaluator
 
-## Why GEPA fits (mapping)
+GEPA (Genetic-Pareto reflective text evolution; arXiv 2507.19457, ICLR 2026
+oral) evolves a *text artifact* — for us, a kernel **Solution** — through:
+reflect on execution traces (the "text gradient") → mutate → evaluate →
+keep a **Pareto frontier per instance** (per workload shape, *not* top-k by
+aggregate) → merge specialists. It reaches strong results in 100–500
+evaluations instead of RL's tens of thousands — the reason it fits a world
+where every evaluation is a scarce, serialized GPU run. (GRPO-style RL would
+collapse each rich trace — per-shape statuses, matched-ratio, logs — into a
+scalar and need thousands of runs to learn from it; GEPA turns each trace
+into one targeted fix. We evolve the kernel, not a model.)
 
-GEPA = Genetic-Pareto reflective text evolution (ICLR 2026 oral,
-arXiv 2507.19457; github.com/gepa-ai/gepa). Its `optimize_anything` API takes
-a seed candidate + an evaluator and evolves the candidate via LLM reflection
-on execution traces, keeping a Pareto frontier and minimizing evaluations.
-The mapping to our solver is nearly one-to-one:
-
-| GEPA concept | Our solver |
+| GEPA concept | Here |
 |---|---|
-| Candidate (text artifact) | a kernel **Solution** (`solver/solution.py`) — the source |
-| `evaluate(candidate)` → score | ship Solution to the GPU box, run the SOL-ExecBench harness, return correctness + per-workload latency; score via `solver/scoring.py` (SOL score) |
-| Actionable Side Information (ASI) | harness output: matched_ratio / max error / inf-nan flags, per-workload latency vs SOL & baseline, **+ Nsight profile** if collected |
-| `make_reflective_dataset()` | structure that harness+profile output (plus the design doc & relevant `kb/` slices) for the reflection LLM |
-| Reflect (the "text gradient") | LLM diagnoses *why*: "matched_ratio 0.97 < 0.99 → precision too aggressive, accumulate in fp32"; "40% of SOL, memory-bound, uncoalesced → vectorize" |
-| Mutate | generate an improved Solution from the diagnosis (grounded in `kb/optimization-recipe.md` ladders) |
-| Pareto frontier over instances | **per-workload-shape** frontier — a problem has ~16 shapes; keep candidates each best on a subset |
-| System-aware merge | merge shape-specialist candidates into one **per-shape dispatch** kernel (matches the design skill's per-shape specialization) |
-| "Minimal rollouts" (100–500 vs 25k) | GPU runs are the scarce, serialized resource — this is the whole reason GEPA fits over RL |
+| Candidate | a Solution (`solver/solution.py`) + lineage (parent id) |
+| evaluate() | run in the SOL-ExecBench harness on the GPU → per-workload Traces |
+| Reflection / ASI | diagnosis from statuses, matched_ratio, latency-vs-SOL, logs |
+| Pareto frontier | per-workload-shape non-domination (specialists survive) |
+| Merge | per-shape dispatch kernel from specialists (deferred until data shows specialist-rich frontiers) |
 
-## The GPU lock (the load-bearing constraint)
+## 2. Architecture (v1): a fleet of async loop functions
 
-**All agents run in parallel; the only shared, serialized resource is GPU
-execution — exactly one run at a time.** Every `evaluate()` is a real GPU run
-and must serialize (concurrent GPU work inflates latency ~21% and std ~30×;
-see `kb/benchmarking-discipline.md`). So:
+**Many problems run at the same time.** Concurrency comes from the async
+runtime, not from a framework: each problem is one asyncio task running a
+plain loop function; the only shared, serialized resource is the GPU.
 
-- **Fan out everything except the GPU.** Planning, reflection, and mutation
-  agents (all LLM/CPU) run fully concurrently across many problems and many
-  candidates. Their candidate evaluations all funnel through **one
-  single-flight GPU executor** — a shared lock/queue (à la the old repo's
-  global GPU job daemon). Agents block only when they reach the GPU, and only
-  behind other GPU work, never behind each other's thinking.
-- The executor is the GPU-run transport (next build phase): submit Solution →
-  run harness on the GPU box → return data. GEPA's `evaluate` is a thin client
-  over that queue; it blocks until its turn completes.
-- Correctness + timing happen **only** there; the laptop never runs a workload
-  (see README "Execution model").
+```python
+async def solve_problem(task_id, executor, agent, knowledge):
+    ctx = RunContext.load(task_id)                    # journal replay → resume
+    while not ctx.should_stop():                      # caps / plateau / target
+        parent = ctx.frontier.select()                # Pareto-weighted, with its reflection
+        cand   = await agent.plan(parent, ctx)        # concurrent across problems
+        if not check(cand):        ctx.journal("reject", cand); continue
+        if not await novel(cand):  ctx.journal("dup", cand);    continue
+        result = await executor.evaluate(cand, task_id)   # ← THE GPU LOCK
+        ctx.accept(cand, result)                      # ε-Pareto, journaled delta
+        cand.reflection = await agent.reflect(cand, result)
+        ctx.journal("iter", cand, result)
+    finalize(ctx)                                     # best all-correct → best_solution.json
+    await knowledge.curate(ctx)                       # serialized curator
 
-## Recommended approach
+async def main(ids):
+    executor  = make_executor(cfg)     # one shared instance; awaitable lock inside
+    agent     = make_agent(cfg)        # Claude Agent SDK (or stub); concurrent sessions
+    knowledge = KnowledgeStore()       # curator serialized internally
+    await asyncio.gather(*(guarded(solve_problem(i, executor, agent, knowledge))
+                           for i in ids))             # guarded = crash-isolated + journaled
+```
 
-> **Superseded (2026-07-05):** the engine decision is a **custom lightweight
-> loop** implementing GEPA's concepts (reflection, ε-Pareto frontier, merge)
-> rather than the `gepa` library API — see
-> [orchestrator-engine.md](orchestrator-engine.md) "Decisions". The mapping
-> below remains valid as the conceptual reference.
+Rules that make this work:
 
-Original note — use the `gepa` library's `optimize_anything` + a custom
-`GEPAAdapter`:
+- **Async throughout.** Agent calls and `evaluate` are awaited; blocking work
+  goes to `asyncio.to_thread`; no sync lock ever sits on the event-loop path.
+  (Phase A's `threading.Lock` stub gets converted.)
+- **Two swappable interfaces** — the only abstraction that earns its keep:
+  - `Executor.evaluate(solution, task_id) -> EvalResult` — StubExecutor (now)
+    / GpuQueueExecutor (later). All solvers share ONE instance; single-flight.
+  - `Agent.plan/reflect/judge(...)` — StubAgent (deterministic tests) /
+    Claude Agent SDK on the subscription OAuth token (`claude setup-token` →
+    `CLAUDE_CODE_OAUTH_TOKEN`; no API key). Judge + brief reflections use a
+    cheap model.
+- **Crash isolation:** one solver failing is journaled and stops only that
+  problem.
+- "Nodes" (select/plan/check/novelty/execute/accept/reflect) remain the
+  *vocabulary* — steps of the loop with typed inputs/outputs — but there is
+  **no driver/router/graph framework**; the loop is a function we edit.
 
-- `evaluate` = enqueue on the GPU-locked executor, wait, return
-  `(sol_score, ASI)`.
-- `make_reflective_dataset` = harness result + Nsight section + the problem's
-  design doc + the KB slices the design classified as relevant.
-- `reflection_lm` = a strong model prompted with `kb/optimization-recipe.md`
-  and the family-specific KB, told to propose one concrete change (honoring
-  the keep/revert + time-box discipline already in the KB).
-- seed candidate = `solver scaffold <id>` (the correct PyTorch DPS baseline).
-- budget = a hard cap on GPU evaluations per problem (they are the cost).
+## 3. Candidates
 
-This reuses the design skill (initial candidates + KB grounding), the scoring
-(SOL score as the metric), and the pre-flight `check` (a candidate that fails
-static check never reaches the GPU — saves an evaluation).
+- A candidate is a harness **Solution**: any of the 9 languages (python
+  family: pytorch/triton/cute_dsl/cutile/cudnn_frontend; C++ family:
+  cuda_cpp/cutlass/cudnn/cublas — families can't mix), multi-file `sources`,
+  own `compile_options`/`dependencies`, DPS optional. See
+  [kb/solution-format.md](../kb/solution-format.md).
+- **Clean-artifact invariant:** `solution.json` contains only the kernel.
+  Engine bookkeeping (status, parent, technique, scores, reflection) lives
+  beside it (`meta.json`/`result.json`/journal), never inside.
+- **Seed, not mold:** the seed is `scaffold(id)` — the correct PyTorch DPS
+  reference wrapper (its measured score may be < 0.5; `T_b` is an *optimized*
+  baseline). Generated candidates are free-form; no C++ scaffold needed.
+- **Mutation policy lives in the Plan prompt**, not engine machinery: follow
+  the KB abstraction ladder (torch → Triton → CuTe-DSL/CUTLASS → C++/PTX),
+  escalate only on plateau/evidence/design-doc recommendation; context per
+  call = parent source + parent's own reflection + top-K insights + relevant
+  design-doc section (never full lineage history).
 
-## Open questions (resolve when building)
+## 4. The gates before the GPU
 
-- **Profiling in the eval path**: does each GPU run also return an Nsight
-  section? Reflection quality depends on it, but it costs GPU time — maybe
-  profile only on plateau, not every run.
-- **Pareto → dispatch**: mechanics of merging shape-specialist kernels into
-  one submission with per-shape dispatch (and whether the harness allows it).
-- **Reward-hack posture in the loop**: the reflection LLM must be fenced from
-  gaming the metric; the harness already detects timer/thread/lazy-output
-  hacks, and `solver check` lints statically — keep both in the loop.
-- **Cross-problem memory**: feed durable learnings (per-family what worked)
-  back in, GEPA-merge-style, so problem N+1 starts smarter than N.
-- **Concurrency knobs**: GEPA's rollout parallelism must be pinned to 1 at the
-  GPU executor even if reflection/mutation run many-at-once.
+1. **Check** (static, free): schema + per-language entry validation (DPS
+   names for `.py`; `void run(torch::Tensor…)` shape for C++). Built.
+2. **Novelty** (semantic dedup — the GPU's last gate), two tiers:
+   - exact `Solution.hash()` (the harness's own SHA1) — free;
+   - **LLM judge** (cheap model): materially different implementation
+     (algorithm/layout/fusion/precision/launch config) vs cosmetic variant?
+     A judge call costs orders of magnitude less than the GPU run it
+     protects. `cosmetic` bounces to Plan *with the verdict as feedback*.
+3. Every pass through Plan — including rejects and bounces — **counts as an
+   iteration**, so termination caps always fire (no spin).
 
-## GRPO vs GEPA (why reflection, not RL)
+## 5. Evaluation results
 
-Both improve an LLM system against a reward, but differently:
+```python
+@dataclass
+class WorkloadResult:
+    index: int
+    status: str            # per-workload Trace enum: PASSED | INCORRECT_SHAPE |
+                           # INCORRECT_NUMERICAL | INCORRECT_DTYPE | RUNTIME_ERROR |
+                           # TIMEOUT | REWARD_HACK | INVALID_REFERENCE
+    latency_ms: float | None
+    latency_spread: float | None      # recorded now; adaptive ε later
+    sol_ms: float | None
+    baseline_latency_ms: float | None
+    matched_ratio: float | None
 
-- **GRPO** (Group Relative Policy Optimization, DeepSeek) is RL: it updates
-  the model **weights** via policy gradient. It samples a group of rollouts
-  per input, scores each, and pushes weights toward the above-average ones
-  (advantage = reward minus group mean — no critic network). It's
-  sample-hungry (thousands–tens-of-thousands of rollouts) and the signal is a
-  **scalar** reward.
-- **GEPA** keeps the model **frozen** and evolves the **text candidate**
-  (here: the kernel source) via **natural-language reflection** on execution
-  traces — a rich, per-trace diagnosis instead of a scalar — plus Pareto
-  selection and merge. It reaches better results with **100–500 evaluations
-  vs 25k+** (up to 35× fewer).
+@dataclass
+class EvalResult:
+    solution_status: str | None       # solution-level only: COMPILE_ERROR | REWARD_HACK | None
+    per_workload: list[WorkloadResult]
+    all_passed: bool
+    sol_score: float | None           # mean over shapes; None unless all_passed
+    env: dict                         # fingerprint: GPU/driver/clock/harness (recorded now)
+    asi: dict                         # logs + notes for reflection
+```
 
-For us, each evaluation is a scarce, serialized GPU run, and each run yields a
-trace full of signal (matched_ratio, latency-vs-SOL, profiler output). GEPA
-turns each of those into a targeted fix; GRPO would collapse it to one number
-and need a training loop over thousands of GPU runs. So we **evolve the
-kernel, not a model** — GEPA, not GRPO.
+- **Status is per-workload** (one harness Trace per shape — a kernel can PASS
+  14 and TIMEOUT 2; that partial-specialist signal is what the frontier
+  needs). Only `COMPILE_ERROR` / `REWARD_HACK` are solution-level.
+- **REWARD_HACK → quarantine:** never selected or merged; its trace is *not*
+  fed to reflection (evasion must never be learned); Plan gets a neutral
+  "disallowed pattern, regenerate" note; journaled loudly.
+- **StubExecutor** synthesizes latencies deterministically keyed on
+  `Solution.hash()` (it sees only the clean Solution) + optional noise term +
+  scripted scenarios — enough to test the loop, frontier, and resume.
 
-## References
+## 6. Frontier, budgets, termination
 
-- GEPA paper: arXiv 2507.19457 (ICLR 2026 oral) —
-  "Reflective Prompt Evolution Can Outperform Reinforcement Learning".
-- Library: github.com/gepa-ai/gepa (`optimize_anything`, `GEPAAdapter`).
-- Our KB: `kb/optimization-recipe.md` (the per-problem loop the reflection
-  step should follow), `kb/llm-kernel-generation.md` (reward-hacking failure
-  modes + design rules), `kb/benchmark-grader.md` (what `evaluate` returns).
+- **ε-Pareto frontier over the ~16 shapes.** Vector = per-shape `sol_score`
+  (non-PASSED shape = 0). A ε-dominates B iff A ≥ B−ε everywhere and
+  A > B+ε somewhere. v1: **one configurable relative ε (default ~2%)**;
+  Select samples the frontier weighted by shapes won, and always returns the
+  parent **with its own reflection** (reflections attach to lineage, never
+  float).
+- **Budgets: two enforced caps + one observed metric.**
+  - `max_iterations` per problem (counts everything; guarantees termination);
+  - `max_gpu_evals` per problem (full harness runs — the scarce resource;
+    per-eval cost is already bounded by the harness timeout);
+  - agent tokens/credit: **logged per call**, not enforced — the
+    subscription's non-interactive pool is a hard stop on Anthropic's side;
+    we watch the logs and add enforcement only if needed.
+- **Termination:** caps, or plateau (K iterations of any kind without
+  ε-improvement), or optional score target (off by default).
+- **Deliverable invariant:** `best_solution.json` = argmax mean sol_score
+  **among all-correct candidates** (PASSED on every shape). The seed
+  guarantees one exists. Partially-correct specialists stay on the frontier
+  as genetic material but can't be the deliverable.
+
+## 7. Persistence & resume (journal-only)
+
+**The journal is the single source of truth — and the only persistence
+mechanism.** No separate node-output cache: journal entries carry (or point
+to) each step's output, so replay *is* resume. A crash mid-agent-call
+re-pays one cheap call; GPU work is protected separately (below).
+
+- `runs/<id>/journal.jsonl` — append-only, one fsync'd line per step; every
+  line has a `schema_version`; state changes record **full deltas** (who
+  entered/left the frontier, with scores) so replay is deterministic across
+  engine versions. A crash truncates at most the trailing line (dropped on
+  replay).
+- `runs/<id>/{frontier/, best_solution.json, status.json, candidates/}` —
+  derived, journal-rebuildable views. `candidates/<cand_id>/` materializes
+  the **real source files** (`kernel.py`/`kernel.cu`/…), the clean
+  `solution.json`, `result.json` (per-shape statuses/scores), and
+  `meta.json` (parent, technique, status: frontier | dominated | rejected |
+  duplicate | incorrect | compile_error | runtime_error | timeout |
+  reward_hack).
+- **GPU work is never lost or re-paid:** the (Phase F) executor journals
+  `execute_submitted{job_id, solution_hash}` before waiting; the GPU-side
+  worker persists results durably by job-id (pending→processing→completed).
+  Restart reconciles: completed → recover; processing → wait; lost →
+  resubmit.
+- **Git policy:** run outputs (journal, candidates, frontier, best_solution)
+  are git-visible — check in to snapshot progress. Only regenerable churn is
+  ignored (`.cache/`).
+- Re-running `solver solve` on the same ids **resumes by default**. Pausing =
+  kill the process; resume continues (no pause flag needed).
+
+## 8. Knowledge & transfer
+
+- **Static KB** (`kb/`): read-only priors — B200, kernels, grader,
+  solution format.
+- **Dynamic KB** (`knowledge/`): journal (raw, per problem) → **family
+  learnings** (`knowledge/families/<family>.md` — the transferable unit) →
+  `global.md`. A **serialized curator** (one queue for the fleet) distills a
+  finished problem's journal into family/global files — merge/rewrite,
+  bounded size, no concurrent clobbering.
+- **Transfer, cheapest first:** (1) **sibling templating** — same family +
+  op, different axes (e.g. rmsnorm 230–235) → seed the new frontier from the
+  sibling's best; (2) family learnings + current bests injected at plan
+  time; (3) **design doc at iteration 0** — Plan consumes/produces the
+  `design-kernel` output (op graph, per-shape roofline, ranked approaches);
+  (4) cross-problem technique seeding; (5) curation feedback — solve one
+  exemplar per family first, then its siblings.
+
+## 9. Observability & steering
+
+- **Disk is browsable:** real kernel sources + status per candidate under
+  `runs/<id>/candidates/`.
+- **CLI views** (read-only over journals): `solver status [ids]`
+  (iterations, caps spent, best vs baseline & SOL, frontier size);
+  `solver journal <id>` (timeline incl. bounces + reflections);
+  `solver frontier <id>` (survivors + which shapes each wins);
+  `solver candidates <id> [--status …]`.
+- **Steering:** edit `runs/<id>/hints.md` — the Plan prompt includes it every
+  iteration.
+- HTML dashboard: later, as an Artifact.
+
+## 10. Measurement honesty (v1 posture)
+
+- Frontier admission requires a **full eval** (all shapes) — v1 has no
+  partial evals at all, so this is trivially true (screen mode is deferred).
+- `env` fingerprint (GPU/driver/clock/harness) is **recorded on every
+  result** from day one — comparisons across different pods are flagged;
+  automated re-baselining is deferred.
+- Website calibration: on first contact with a real pod, measure the seed,
+  journal local-vs-`T_b` discrepancy, report raw + calibrated scores
+  (search decisions use local relative numbers).
+
+## 11. Security posture
+
+- Candidates are LLM-generated code. On our GPU box (Phase F) the eval
+  worker runs them **sandboxed**: no network, workdir-only FS, resource
+  limits. Designed now, built with the worker.
+- The Research/web option is **off by default**; when on: allowlisted
+  domains, and web text enters prompts as quoted untrusted data, never
+  instructions (injection chain: web → code-writing agent → our GPU).
+- Agents never modify the harness, the engine, or validation code.
+
+## 12. Acceptance tests (v1, stub-powered)
+
+1. **Kill/resume equivalence** — kill after every journal line; the resumed
+   run converges to the same state as an uninterrupted one.
+2. **Budget exactness** — rejects, bounces, evals, timeouts all count
+   correctly against both caps.
+3. **Frontier correctness** — ε-Pareto set matches brute force on synthetic
+   score sets, including noisy scenarios.
+4. **Plateau termination** — plateaus terminate by cap; no spin (bounces
+   count as iterations).
+
+## 13. Build order
+
+| Phase | Now? | Piece |
+|---|---|---|
+| A | ✅ done (revise) | Executor interface + stub → **async**, per-workload status, hash-keyed stub speed/noise model |
+| B | ✅ | `solve_problem` loop + RunContext + journal/replay + ε-frontier + novelty (hash + judge) + caps/plateau + **tests §12** |
+| C | ✅ | Knowledge store + serialized curator + hints.md + design-doc-at-iter-0 |
+| D | ✅ | Fleet (`main`, crash isolation) + CLI (`solve`, status/journal/frontier/candidates views) |
+| E | ✅ | Sibling templating transfer |
+| F | ⛔ GPU | GpuQueueExecutor: job-id queue, compile-∥-run split, sandbox, calibration; then the deferred items below as data demands |
+
+## Deferred (designed, not built)
+
+Each with its trigger:
+
+- **Screen mode** (subset-of-shapes smoke evals; GEPA minibatch analogue) —
+  when the GPU bill shows full evals dominating; requires the
+  full-eval-only-frontier rule already stated.
+- **Per-shape empirical ε + confirm-before-promote** — when real
+  measurements show per-shape noise profiles (spread field already
+  recorded).
+- **Merge node** (per-shape dispatch; same-family mechanical, cross-family =
+  Plan-rewrite since the harness forbids mixing language families) — when
+  real frontiers hold divergent specialists.
+- **Priority queue + per-problem circuit breaker** — with the real GPU queue
+  (Phase F).
+- **Env re-baselining automation** — when running across multiple pods.
+- **Agent-credit enforcement** — if usage logs show the pool at risk.
+- **Reflection tiering beyond two levels; normalized-hash novelty tier** —
+  if judge/reflect costs show up in logs.
+- **Submit node** — if/when we decide to submit; one function call at the
+  end of `finalize`.
+- **Nsight → ASI profiling in the eval path** — Phase F+; profile on
+  plateau, not every run.
+- **HTML dashboard** — nice-to-have.
+
+## Decision log
+
+1. **Agents:** Claude Agent SDK on subscription OAuth token, behind the
+   `Agent` interface; cheap model for judge/brief-reflections. Credit pool
+   (Pro $20 / Max-5x $100 / Max-20x $200 monthly, non-interactive) is logged,
+   not enforced.
+2. **Search:** custom lightweight loop implementing GEPA's concepts
+   (reflection, ε-Pareto, merge); no gepa-library dependency; **no graph
+   framework** — concurrency comes from asyncio, extensibility from editing
+   a 25-line loop.
+3. **Termination:** maximize sol_score; caps + plateau; optional target off
+   by default; no submission.
+4. **Dedup:** crash-replay = journal replay (exact, mechanical); candidate
+   novelty = semantic (hash → LLM judge).
+5. **Execution model:** async throughout; GPU lock awaitable; compile (Phase
+   F) never holds the GPU lock.
+6. **Persistence:** journal-only; no separate node-output cache (an
+   agent call re-paid after a crash costs cents; GPU work is protected by
+   the job-id queue).
