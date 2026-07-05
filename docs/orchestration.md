@@ -44,14 +44,21 @@ plain loop function; the only shared, serialized resource is the GPU.
 ```python
 async def solve_problem(task_id, executor, agent, knowledge):
     ctx = RunContext.load(task_id)                    # journal replay → resume
+    # ---- bootstrap (consumes GPU evals from the budget) ----
+    if ctx.fresh():
+        ctx.design = await agent.design(task_id)      # design-kernel recipe (or load designs/<name>.md)
+        for seed in [scaffold(task_id), *sibling_templates(task_id, knowledge)]:
+            result = await executor.evaluate(seed, task_id)
+            ctx.accept(seed, result)                  # frontier is now non-empty
+    # ---- the loop ----
     while not ctx.should_stop():                      # caps / plateau / target
         parent = ctx.frontier.select()                # Pareto-weighted, with its reflection
         cand   = await agent.plan(parent, ctx)        # concurrent across problems
         if not check(cand):        ctx.journal("reject", cand); continue
         if not await novel(cand):  ctx.journal("dup", cand);    continue
-        result = await executor.evaluate(cand, task_id)   # ← THE GPU LOCK
-        ctx.accept(cand, result)                      # ε-Pareto, journaled delta
-        cand.reflection = await agent.reflect(cand, result)
+        result  = await executor.evaluate(cand, task_id)  # ← THE GPU LOCK
+        verdict = ctx.accept(cand, result)            # ε-Pareto, journaled delta
+        cand.reflection = await agent.reflect(cand, result, verdict)  # verdict drives tiering
         ctx.journal("iter", cand, result)
     finalize(ctx)                                     # best all-correct → best_solution.json
     await knowledge.curate(ctx)                       # serialized curator
@@ -60,9 +67,24 @@ async def main(ids):
     executor  = make_executor(cfg)     # one shared instance; awaitable lock inside
     agent     = make_agent(cfg)        # Claude Agent SDK (or stub); concurrent sessions
     knowledge = KnowledgeStore()       # curator serialized internally
-    await asyncio.gather(*(guarded(solve_problem(i, executor, agent, knowledge))
-                           for i in ids))             # guarded = crash-isolated + journaled
+    for wave in schedule_by_family(ids):              # exemplar-first staggering (below)
+        await asyncio.gather(*(guarded(solve_problem(i, executor, agent, knowledge))
+                               for i in wave))        # guarded = crash-isolated + journaled
 ```
+
+**Family-staggered scheduling.** Launching all siblings of a family at once
+would defeat transfer (none is finished while the others run — no curated
+learnings, no template to seed from). So the fleet runs **exemplar-first
+waves**: wave 1 = one exemplar per family; later waves = the siblings, which
+then bootstrap from the exemplar's best. Additionally, Plan may **live-read
+sibling runs' current frontier bests** (read-only) so even same-wave overlap
+transfers something.
+
+**Agent failure policy.** Transient agent errors → retry with backoff.
+**Quota-exhausted (subscription credit pool dry) is fleet-wide**, not a
+per-problem crash: the fleet suspends cleanly (`suspended: credit exhausted`
+journaled once), and `solver solve` resumes it later — never twenty
+`solver_error`s from one shared cause.
 
 Rules that make this work:
 
@@ -160,7 +182,9 @@ class EvalResult:
 - **Budgets: two enforced caps + one observed metric.**
   - `max_iterations` per problem (counts everything; guarantees termination);
   - `max_gpu_evals` per problem (full harness runs — the scarce resource;
-    per-eval cost is already bounded by the harness timeout);
+    per-eval cost is already bounded by the harness timeout). Counted when a
+    candidate **reaches the run stage**: check-fails, novelty bounces, and
+    (Phase F) `COMPILE_ERROR`s never touched the GPU and don't consume it;
   - agent tokens/credit: **logged per call**, not enforced — the
     subscription's non-interactive pool is a hard stop on Anthropic's side;
     we watch the logs and add enforcement only if needed.
@@ -171,25 +195,34 @@ class EvalResult:
   guarantees one exists. Partially-correct specialists stay on the frontier
   as genetic material but can't be the deliverable.
 
-## 7. Persistence & resume (journal-only)
+## 7. Persistence & resume (journal + results store)
 
-**The journal is the single source of truth — and the only persistence
-mechanism.** No separate node-output cache: journal entries carry (or point
-to) each step's output, so replay *is* resume. A crash mid-agent-call
-re-pays one cheap call; GPU work is protected separately (below).
+**The journal is the source of truth for *what happened*; an append-only
+results store holds the *irreplaceable measurements*.** No node-output
+cache: replay *is* resume. A crash mid-agent-call re-pays one cheap call;
+GPU work is protected separately (below).
+
+Storage rule — three classes, no ambiguity:
+
+1. **Inline in the journal**: small artifacts — Solutions (few KB of text),
+   check/novelty verdicts, reflections, frontier deltas, budget deltas.
+2. **`runs/<id>/results/` — append-only, AUTHORITATIVE** (referenced from the
+   journal by hash): raw harness Traces/logs. These are measurements — the
+   one thing that **cannot be rebuilt without re-paying a GPU run** — so
+   they are never classed as a derived view.
+3. **Derived views, journal-rebuildable**: `frontier/`, `best_solution.json`,
+   `status.json`, `candidates/`. `candidates/<cand_id>/` materializes the
+   **real source files** (`kernel.py`/`kernel.cu`/…), the clean
+   `solution.json`, `result.json` (per-shape statuses/scores), and
+   `meta.json` (parent, technique, status: frontier | dominated | rejected |
+   duplicate | incorrect | compile_error | runtime_error | timeout |
+   reward_hack).
 
 - `runs/<id>/journal.jsonl` — append-only, one fsync'd line per step; every
   line has a `schema_version`; state changes record **full deltas** (who
   entered/left the frontier, with scores) so replay is deterministic across
   engine versions. A crash truncates at most the trailing line (dropped on
   replay).
-- `runs/<id>/{frontier/, best_solution.json, status.json, candidates/}` —
-  derived, journal-rebuildable views. `candidates/<cand_id>/` materializes
-  the **real source files** (`kernel.py`/`kernel.cu`/…), the clean
-  `solution.json`, `result.json` (per-shape statuses/scores), and
-  `meta.json` (parent, technique, status: frontier | dominated | rejected |
-  duplicate | incorrect | compile_error | runtime_error | timeout |
-  reward_hack).
 - **GPU work is never lost or re-paid:** the (Phase F) executor journals
   `execute_submitted{job_id, solution_hash}` before waiting; the GPU-side
   worker persists results durably by job-id (pending→processing→completed).
@@ -210,13 +243,19 @@ re-pays one cheap call; GPU work is protected separately (below).
   `global.md`. A **serialized curator** (one queue for the fleet) distills a
   finished problem's journal into family/global files — merge/rewrite,
   bounded size, no concurrent clobbering.
+- **Family mapping is concrete, not conceptual:** a checked-in
+  `knowledge/families.json` maps every task id → family id, generated from
+  definition-name/description keywords (the taxonomy in
+  `kb/benchmark-problems.md`) and **human-overridable**. Sibling detection
+  and `families/<family>.md` both key on it.
 - **Transfer, cheapest first:** (1) **sibling templating** — same family +
   op, different axes (e.g. rmsnorm 230–235) → seed the new frontier from the
   sibling's best; (2) family learnings + current bests injected at plan
-  time; (3) **design doc at iteration 0** — Plan consumes/produces the
-  `design-kernel` output (op graph, per-shape roofline, ranked approaches);
-  (4) cross-problem technique seeding; (5) curation feedback — solve one
-  exemplar per family first, then its siblings.
+  time (including **live-reads of running siblings' frontiers**); (3)
+  **design doc at bootstrap** — Plan consumes/produces the `design-kernel`
+  output (op graph, per-shape roofline, ranked approaches); (4)
+  cross-problem technique seeding; (5) curation feedback — enforced by the
+  fleet's **exemplar-first waves** (§2).
 
 ## 9. Observability & steering
 
@@ -254,8 +293,13 @@ re-pays one cheap call; GPU work is protected separately (below).
 
 ## 12. Acceptance tests (v1, stub-powered)
 
-1. **Kill/resume equivalence** — kill after every journal line; the resumed
-   run converges to the same state as an uninterrupted one.
+1. **Kill/resume safety** — kill after every journal line. With
+   **deterministic stubs**: the resumed run is *identical* to an
+   uninterrupted one (bitwise state equivalence). With real agents resume is
+   legitimately nondeterministic (an in-flight agent call re-runs and may
+   differ), so the guarantee tested is **no-loss / no-double-pay**: every
+   journaled GPU result and result-store trace is retained, budgets are
+   exact, and no completed GPU eval is ever re-run.
 2. **Budget exactness** — rejects, bounces, evals, timeouts all count
    correctly against both caps.
 3. **Frontier correctness** — ε-Pareto set matches brute force on synthetic
