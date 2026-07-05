@@ -22,6 +22,23 @@ S(T_k) = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))
   problem's `metadata.json` (`sol.per_workload[i].baseline_latency_ms` and
   `sol_ms`) after `solver fetch`.
 
+## Aggregation (how 16 workloads → one number → the leaderboard)
+
+- **Benchmark level (paper, ✅):** arithmetic mean of per-problem scores,
+  correctness-gated — `S̄ = (1/N) Σ C_j·S_j` (C_j ∈ {0,1}).
+- **Per-problem latency (empirical, ✅):** the leaderboard's per-kernel
+  latency is the **geometric mean over the ~16 per-workload latencies** —
+  verified on kernel 1: the "SOL Bound" row's latency (0.08172 ms) equals
+  the geomean of the 16 `sol_ms` values exactly.
+- **Per-problem sol_score (⚠️ open):** the paper doesn't specify whether it's
+  the mean of per-workload S values or S applied to geomean latencies; on
+  kernel 1's rank-1 row, S-of-geomeans gives 0.7354 vs the published 0.7237
+  (~1.6% off), suggesting **mean-of-per-workload-S** — our engine uses that
+  (already what `solver/scoring.score_from_metadata` computes) and treats
+  the exact website formula as a calibration question for the real harness.
+- Dashboard conventions: score ↑ toward 1.0 (0.5 = baseline); latency-side
+  view = geomean(T_k)/geomean(T_SOL) ↓ toward 1.0.
+
 ## Timing (`core/bench/timing.py`)
 
 - **CUPTI per-iteration GPU timing**; `warmup = 10` (untimed) then `rep`

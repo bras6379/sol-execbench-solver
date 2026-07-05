@@ -303,7 +303,31 @@ Storage rule — three classes, no ambiguity:
   `solver candidates <id> [--status …]`.
 - **Steering:** edit `runs/<id>/hints.md` — the Plan prompt includes it every
   iteration.
-- HTML dashboard: later, as an Artifact.
+
+### Instrumentation (built now; the loop emits these from day one)
+
+Every journal event carries `{v, ts, task, ev, …}` (ISO-8601 UTC, fsync'd).
+The v1 event vocabulary — pinned here so Phase B implements against it:
+
+`run_started{agent} · design_done{dur_s} · plan_done{cand, parent, model,
+dur_s, tok_in, tok_out} · check{cand, ok} · novelty{cand, verdict} ·
+exec_enqueued{job, cand} · exec_started{job} · exec_done{job, cand, gpu_s,
+all_passed, sol_score, statuses} · accept{cand, verdict, best, frontier} ·
+reflect_done{cand, tier, dur_s} · agent_changed{model} · terminated{reason}`
+
+The executor lifecycle triple (`exec_enqueued/started/done`) is the
+measurement backbone: queue wait = started−enqueued, GPU busy = done−started;
+merging these across all journals yields the global GPU timeline and
+utilization — no separate metrics file needed.
+
+**`solver report`** renders a **self-contained static HTML dashboard** (no
+server, no CDN; light/dark) from the journals: convergence per problem (best
+sol_score vs GPU evals), GPU busy % + job timeline colored by problem, queue
+wait percentiles, iteration-outcome mix (accepted/dominated/rejected/dup/…),
+agent call/token spend, and a per-problem status table. Flags: `--out`,
+`--runs-dir`, `--refresh N` (meta-refresh), `--watch N` (regenerate loop),
+`--demo` (synthetic runs under `.cache/demo/` to preview the dashboard
+without the engine).
 
 ## 10. Measurement honesty (v1 posture)
 

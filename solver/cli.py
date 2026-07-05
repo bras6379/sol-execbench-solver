@@ -103,6 +103,29 @@ def _print_report(report, path) -> None:
           + (f" ({len(report.warnings)} warning(s))" if report.warnings else ""))
 
 
+def _cmd_report(args) -> None:
+    import time
+
+    from . import report as report_mod
+
+    runs_dir = Path(args.runs_dir)
+    if args.demo:
+        from . import demo_data
+        runs_dir = Path(".cache/demo/runs")
+        if not runs_dir.exists():
+            demo_data.build_demo(runs_dir)
+            print(f"demo journals -> {runs_dir}")
+    out = Path(args.out) if args.out else runs_dir.parent / "report.html" \
+        if args.demo else runs_dir / "report.html"
+    if args.watch:
+        print(f"watching: regenerating {out} every {args.watch}s (Ctrl-C to stop)")
+        while True:
+            report_mod.render(runs_dir, out, refresh=args.refresh or args.watch)
+            time.sleep(args.watch)
+    path = report_mod.render(runs_dir, out, refresh=args.refresh)
+    print(f"dashboard -> {path}")
+
+
 def _add_selection_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("tasks", nargs="*", help="task ids or ranges, e.g. 1 2 5-10")
     p.add_argument("--all", action="store_true", help="select all 235 problems")
@@ -140,6 +163,15 @@ def main(argv: list[str] | None = None) -> None:
     p_check.add_argument("path", help="path to a Solution JSON")
     p_check.add_argument("--out-dir-problems", default=str(fetch_mod.DEFAULT_OUT_DIR))
     p_check.set_defaults(func=_cmd_check)
+
+    p_report = sub.add_parser("report", help="render the run dashboard (static HTML)")
+    p_report.add_argument("--runs-dir", default="runs")
+    p_report.add_argument("--out", default=None, help="output HTML (default <runs-dir>/report.html)")
+    p_report.add_argument("--refresh", type=int, default=None, help="meta auto-refresh seconds")
+    p_report.add_argument("--watch", type=int, default=None, help="regenerate every N seconds")
+    p_report.add_argument("--demo", action="store_true",
+                          help="render synthetic demo runs under .cache/demo/")
+    p_report.set_defaults(func=_cmd_report)
 
     args = parser.parse_args(argv)
     try:

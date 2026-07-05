@@ -32,6 +32,19 @@ def sol_score(t_k: float, t_b: float, t_sol: float) -> float:
     return 1.0 / (1.0 + (t_k - t_sol) / denom_gap)
 
 
+def geomean(values: list[float]) -> float | None:
+    """Geometric mean — the benchmark's per-problem latency aggregation
+    (verified: the leaderboard SOL-row latency equals the geomean of the
+    per-workload sol_ms). Benchmark-level score is the arithmetic mean of
+    per-problem scores, correctness-gated (paper). See
+    kb/benchmark-grader.md § Aggregation."""
+    import math
+    vals = [v for v in values if v and v > 0]
+    if not vals:
+        return None
+    return math.exp(sum(math.log(v) for v in vals) / len(vals))
+
+
 def score_from_metadata(candidate_ms: list[float], sol: dict) -> dict:
     """Score a candidate's per-workload latencies against a problem's SOL data.
 
