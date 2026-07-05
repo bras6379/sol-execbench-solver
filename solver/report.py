@@ -301,6 +301,12 @@ button.link{background:none;border:none;color:var(--s1);cursor:pointer;font:inhe
 button.link:hover{text-decoration:underline}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:flex;
 align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+.modal[hidden]{display:none}
+.filterbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px}
+.chip-btn{border:1px solid var(--grid);background:var(--panel);color:var(--ink2);
+border-radius:16px;padding:4px 11px;font-size:12px;cursor:pointer}
+.chip-btn.on{color:#fff;border-color:transparent}
+.fcount{color:var(--ink3);font-size:12px;margin-left:4px}
 .modal-card{background:var(--panel);border:1px solid var(--grid);border-radius:12px;
 width:min(920px,100%);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.35)}
 .modal-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;
@@ -358,13 +364,159 @@ if(modal){
 """
 
 
-def _shell(title: str, sub: str, body: str, refresh: int | None) -> str:
+_HUB_JS = r"""
+const D = JSON.parse(document.getElementById('data').textContent);
+const RECS = D.recs, OC = D.outcomes, DETAIL = D.detail;
+const OCC = {accepted:'--o-accepted',dominated:'--o-dominated',incorrect:'--o-incorrect',
+             rejected:'--o-rejected',duplicate:'--o-duplicate',error:'--o-error'};
+const sel = new Set();          // selected families
+let query = '';
+const SL = i => 'var(--s'+(i%8+1)+')';
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fs = s => s==null?'–':(s<90?s.toFixed(1)+'s':(s<5400?(s/60).toFixed(1)+'m':(s/3600).toFixed(1)+'h'));
+const pct=(a,p)=>{if(!a.length)return null;const v=[...a].sort((x,y)=>x-y);return v[Math.min(v.length-1,Math.max(0,Math.round(p*(v.length-1))))]};
+const idx = {}; RECS.forEach((r,i)=>idx[r.t]=i);   // stable color slot by task order
+
+function matches(r){
+  if(sel.size && !sel.has(r.f)) return false;
+  if(!query) return true;
+  const hay = ('#'+r.t+' '+r.n+' '+r.f+' '+r.a).toLowerCase();
+  return query.split(',').map(s=>s.trim()).filter(Boolean).some(tok=>hay.includes(tok));
+}
+
+// ---- SVG builders (mirror the server's; identity color = task's stable slot) ----
+function lineChart(series,{xTime=false,xLabel='',right=150,height=300}={}){
+  const W=960,H=height,L=46,R=right,T=14,B=30,pw=W-L-R,ph=H-T-B;
+  const xs=series.flatMap(s=>s.pts.map(p=>p[0])); if(!xs.length) return '<p class="muted">no data</p>';
+  let x0=Math.min(...xs),x1=Math.max(...xs); if(x1<=x0)x1=x0+1;
+  const X=x=>L+pw*(x-x0)/(x1-x0), Y=y=>T+ph*(1-y);
+  let g=''; [0,.25,.5,.75,1].forEach(v=>g+=`<line x1="${L}" y1="${Y(v)}" x2="${L+pw}" y2="${Y(v)}" class="grid"/><text x="${L-8}" y="${Y(v)+4}" class="ax" text-anchor="end">${v.toFixed(2)}</text>`);
+  g+=`<line x1="${L}" y1="${Y(.5)}" x2="${L+pw}" y2="${Y(.5)}" class="ref"/><text x="${L+pw+6}" y="${Y(.5)+4}" class="ax">baseline 0.5</text>`;
+  g+=`<line x1="${L}" y1="${Y(1)}" x2="${L+pw}" y2="${Y(1)}" class="ref sol"/><text x="${L+pw+6}" y="${Y(1)+4}" class="ax">SOL 1.0</text>`;
+  let body='',lab='';
+  series.forEach(s=>{
+    const p=s.pts; let d='';
+    p.forEach((pt,i)=>{d+= i===0?`M ${X(pt[0]).toFixed(1)} ${Y(pt[1]).toFixed(1)} `:`H ${X(pt[0]).toFixed(1)} V ${Y(pt[1]).toFixed(1)} `;});
+    body+=`<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round"/>`;
+    const [lx,ly]=p[p.length-1];
+    lab+=`<circle cx="${X(lx).toFixed(1)}" cy="${Y(ly).toFixed(1)}" r="3.5" fill="${s.color}"/><text x="${(X(lx)+7).toFixed(1)}" y="${(Y(ly)-6).toFixed(1)}" class="dl" fill="${s.color}">${esc(s.label)} ${ly.toFixed(2)}</text>`;
+  });
+  let tk='';
+  if(xTime){[0,.25,.5,.75,1].forEach(f=>{const t=new Date((x0+f*(x1-x0))*1000);tk+=`<text x="${L+pw*f}" y="${H-10}" class="ax" text-anchor="middle">${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')}</text>`;});}
+  else {const n=Math.floor(x1),st=Math.max(1,Math.floor(n/8)); for(let v=Math.ceil(x0);v<=n;v+=st)tk+=`<text x="${X(v)}" y="${H-10}" class="ax" text-anchor="middle">${v}</text>`;}
+  return `<svg viewBox="0 0 ${W} ${H}">${g}${body}${lab}${tk}<text x="${W-4}" y="${H-10}" class="ax" text-anchor="end">${esc(xLabel)} →</text></svg>`;
+}
+function histChart(sub){
+  const bins=20,c=Array(bins).fill(0);
+  sub.forEach(r=>{if(r.b!=null)c[Math.min(bins-1,Math.floor(Math.max(0,Math.min(r.b,.9999))*bins))]++;});
+  if(!c.some(x=>x))return '<p class="muted">no scored problems</p>';
+  const W=960,H=190,L=46,R=20,T=12,B=34,pw=W-L-R,ph=H-T-B,mx=Math.max(...c),bw=pw/bins;
+  let bars=''; c.forEach((v,i)=>{if(!v)return;const h=ph*v/mx,x=L+i*bw;bars+=`<rect x="${(x+1).toFixed(1)}" y="${(T+ph-h).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="var(--seq)" class="seg" data-tip="score ${(i/bins).toFixed(2)}–${((i+1)/bins).toFixed(2)}: ${v}"/><text x="${(x+bw/2).toFixed(1)}" y="${(T+ph-h-5).toFixed(1)}" class="dl2" text-anchor="middle">${v}</text>`;});
+  let tk=''; [0,.25,.5,.75,1].forEach(v=>tk+=`<text x="${(L+pw*v).toFixed(1)}" y="${H-10}" class="ax" text-anchor="middle">${v.toFixed(1)}</text>`);
+  return `<svg viewBox="0 0 ${W} ${H}"><line x1="${L}" y1="${T+ph}" x2="${L+pw}" y2="${T+ph}" class="grid"/>${bars}${tk}</svg>`;
+}
+function waitsChart(sub){
+  const rows=sub.filter(r=>r.w5!=null).sort((a,b)=>(b.w9||b.w5)-(a.w9||a.w5)).slice(0,10);
+  if(!rows.length)return '<p class="muted">no queue data</p>';
+  const W=960,L=170,R=60,RH=26,H=16+RH*rows.length+8,mx=Math.max(...rows.map(r=>r.w9||r.w5))||1,pw=W-L-R;
+  let o=''; rows.forEach((r,i)=>{const y=12+i*RH,w50=pw*(r.w5/mx),w95=pw*((r.w9||r.w5)/mx);
+    o+=`<text x="${L-8}" y="${y+13}" class="ax" text-anchor="end">#${r.t} ${esc(r.n.slice(0,16))}</text><line x1="${L}" y1="${y+9}" x2="${(L+w95).toFixed(1)}" y2="${y+9}" class="whisk"/><rect x="${L}" y="${y+2}" width="${Math.max(w50,1.5).toFixed(1)}" height="14" rx="3" fill="${SL(idx[r.t])}" class="seg" data-tip="#${r.t} p50 ${fs(r.w5)} • p95 ${fs(r.w9)}"/><text x="${(L+w95+6).toFixed(1)}" y="${y+13}" class="dl2">${fs(r.w5)}</text>`;});
+  return `<svg viewBox="0 0 ${W} ${H}">${o}</svg>`;
+}
+function ocChart(sub){
+  const rows=sub.filter(r=>r.o.reduce((a,b)=>a+b,0)).sort((a,b)=>b.o.reduce((x,y)=>x+y)-a.o.reduce((x,y)=>x+y)).slice(0,10);
+  if(!rows.length)return '<p class="muted">no iterations</p>';
+  const W=960,L=170,R=60,RH=26,H=16+RH*rows.length+8,mx=Math.max(...rows.map(r=>r.o.reduce((a,b)=>a+b,0))),pw=W-L-R;
+  let o=''; rows.forEach((r,i)=>{const y=12+i*RH; let x=L,tot=r.o.reduce((a,b)=>a+b,0);
+    r.o.forEach((n,k)=>{if(!n)return;const w=pw*n/mx;o+=`<rect x="${x.toFixed(1)}" y="${y+2}" width="${Math.max(w-2,1.2).toFixed(1)}" height="14" rx="3" fill="var(${OCC[OC[k]]})" class="seg" data-tip="#${r.t} ${OC[k]}: ${n}"/>`;x+=w;});
+    o+=`<text x="${L-8}" y="${y+13}" class="ax" text-anchor="end">#${r.t} ${esc(r.n.slice(0,16))}</text><text x="${(x+6).toFixed(1)}" y="${y+13}" class="dl2">${tot}</text>`;});
+  return `<svg viewBox="0 0 ${W} ${H}">${o}</svg>`;
+}
+function fleetSeries(sub){
+  const ev=[]; sub.forEach(r=>r.ac.forEach(([ts,b])=>ev.push([ts,r.t,b])));
+  ev.sort((a,b)=>a[0]-b[0]); const cur={},out=[];
+  ev.forEach(([ts,t,b])=>{cur[t]=b;let s=0,n=0;for(const k in cur){s+=cur[k];n++;}out.push([ts,s/n]);});
+  return out;
+}
+function famRollup(sub){
+  const m={}; sub.forEach(r=>{(m[r.f]=m[r.f]||[]).push(r);});
+  return Object.entries(m).map(([f,rs])=>{const bs=rs.filter(r=>r.b!=null).map(r=>r.b);
+    return {f,n:rs.length,done:rs.filter(r=>r.s!=='running').length,
+      mb:bs.length?bs.reduce((a,b)=>a+b)/bs.length:null,ev:rs.reduce((a,r)=>a+r.e,0)};})
+    .sort((a,b)=>(b.mb||0)-(a.mb||0));
+}
+function tile(l,v,s){return `<div class="tile"><div class="tile-v">${v}</div><div class="tile-l">${esc(l)}</div>${s?`<div class="tile-s">${esc(s)}</div>`:''}</div>`;}
+
+function render(){
+  const sub=RECS.filter(matches);
+  document.getElementById('fcount').textContent=`${sub.length} / ${RECS.length} problems`;
+  const bs=sub.filter(r=>r.b!=null).map(r=>r.b);
+  const mb=bs.length?(bs.reduce((a,b)=>a+b)/bs.length):null;
+  const w5=pct(sub.filter(r=>r.w5!=null).map(r=>r.w5),.5), w9=pct(sub.filter(r=>r.w9!=null).map(r=>r.w9),.95);
+  const scoped = sub.length!==RECS.length;
+  document.getElementById('tiles').innerHTML=[
+    tile('SOL score (mean of best)', mb==null?'–':mb.toFixed(3),'0.5 baseline · 1.0 SOL'),
+    tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
+    tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
+    tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
+    tile('problems', sub.filter(r=>r.s==='running').length+' active · '+sub.filter(r=>r.s!=='running').length+' done'),
+    tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+sub.reduce((a,r)=>a+r.ak,0).toLocaleString()),
+  ].join('');
+  // fleet-score-over-time (scoped)
+  const fsr=fleetSeries(sub);
+  document.getElementById('c-fleet').innerHTML=fsr.length?lineChart([{label:'mean',color:'var(--seq)',pts:fsr}],{xTime:true,height:240}):'<p class="muted">no accepted results</p>';
+  // convergence — top movers in the selection
+  const mv=sub.filter(r=>r.c.length).sort((a,b)=>(b.li-a.li)||(b.e-a.e)).slice(0,8);
+  document.getElementById('c-conv').innerHTML=mv.length?lineChart(mv.map(r=>({label:'#'+r.t,color:SL(idx[r.t]),pts:r.c})),{xLabel:'GPU evals'}):'<p class="muted">no data</p>';
+  document.getElementById('lg-conv').innerHTML=mv.map(r=>`<span class="lg"><i style="background:${SL(idx[r.t])}"></i>#${r.t} ${esc(r.n.slice(0,22))}</span>`).join('');
+  const more=sub.filter(r=>r.c.length).length-mv.length;
+  document.getElementById('note-conv').textContent=more>0?`top ${mv.length} most-recently-improving of the selection; ${more} more in the table`:'';
+  // histogram / families / waits / outcomes
+  document.getElementById('c-hist').innerHTML=histChart(sub);
+  document.getElementById('t-fam').innerHTML=(()=>{const r=famRollup(sub);
+    return '<table class="sortable"><thead><tr><th>family</th><th>problems</th><th>done</th><th>mean best</th><th>evals</th></tr></thead><tbody>'
+    +r.map(f=>`<tr><td>${esc(f.f)}</td><td>${f.n}</td><td>${f.done}</td><td data-v="${f.mb??-1}">${f.mb==null?'–':f.mb.toFixed(3)}</td><td>${f.ev}</td></tr>`).join('')+'</tbody></table>';})();
+  document.getElementById('c-waits').innerHTML=waitsChart(sub);
+  document.getElementById('c-oc').innerHTML=ocChart(sub);
+  // problems table
+  document.getElementById('t-prob').innerHTML=(()=>{
+    const rows=sub.map(r=>{const i=idx[r.t];const bar=r.b==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.b,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}${bar}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>best SOL score</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+  bindSort();
+}
+function bindSort(){
+  document.querySelectorAll('table.sortable').forEach(tb=>{
+    tb.querySelectorAll('th').forEach((th,ci)=>{if(th._b)return;th._b=1;th.addEventListener('click',()=>{
+      const rows=[...tb.tBodies[0].rows],dir=th.dataset.dir=th.dataset.dir==='a'?'d':'a';
+      rows.sort((r1,r2)=>{const a=r1.cells[ci].dataset.v??r1.cells[ci].textContent.trim(),b=r2.cells[ci].dataset.v??r2.cells[ci].textContent.trim();const na=parseFloat(a),nb=parseFloat(b);const c=(!isNaN(na)&&!isNaN(nb))?na-nb:String(a).localeCompare(b);return dir==='a'?c:-c;});
+      rows.forEach(r=>tb.tBodies[0].appendChild(r));});});});
+}
+document.getElementById('q').addEventListener('input',e=>{query=e.target.value.toLowerCase();render();});
+document.getElementById('clearf').addEventListener('click',()=>{sel.clear();query='';document.getElementById('q').value='';document.querySelectorAll('.chip-btn[data-fam]').forEach(b=>b.classList.remove('on'));render();});
+function toggleFam(f,on){
+  const b=document.querySelector('.chip-btn[data-fam="'+CSS.escape(f)+'"]'); if(!b)return;
+  if(on){sel.add(f);b.classList.add('on');b.style.background=b.style.getPropertyValue('--c');}
+  else{sel.delete(f);b.classList.remove('on');b.style.background='';}
+}
+document.querySelectorAll('.chip-btn[data-fam]').forEach(b=>b.addEventListener('click',()=>{
+  toggleFam(b.dataset.fam,!sel.has(b.dataset.fam));render();}));
+// deep-link / screenshot support: ?fam=a,b  ?q=text
+const up=new URLSearchParams(location.search);
+if(up.get('fam'))up.get('fam').split(',').map(s=>s.trim()).filter(Boolean).forEach(f=>toggleFam(f,true));
+if(up.get('q')){query=up.get('q').toLowerCase();document.getElementById('q').value=up.get('q');}
+render();
+"""
+
+
+def _shell(title: str, sub: str, body: str, refresh: int | None,
+           extra_js: str = "") -> str:
     meta = f'<meta http-equiv="refresh" content="{refresh}">' if refresh else ""
     return f"""<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">{meta}
 <title>{_esc(title)}</title><style>{_CSS}</style></head><body>
 <h1>{_esc(title)}</h1><div class="sub">{sub}</div>{body}
-<script>{_JS}</script></body></html>"""
+<script>{_JS}</script>{f'<script>{extra_js}</script>' if extra_js else ''}</body></html>"""
 
 
 def _problem_table(problems: list[dict], order: dict[int, int], detail_dir: str) -> str:
@@ -411,66 +563,68 @@ def _family_table(families: list[dict]) -> str:
             f"<tbody>{''.join(rows)}</tbody></table>")
 
 
-def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "problems_html") -> str:
+def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     problems, fleet = data["problems"], data["fleet"]
     order = {p["task"]: i for i, p in enumerate(problems)}
-    movers = data["movers"]
     gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    tiles = "".join([
-        _tile("fleet SOL score (mean of best)",
-              "–" if fleet["mean_best"] is None else f"{fleet['mean_best']:.3f}",
-              "0.5 = baseline · 1.0 = SOL"),
-        _tile(f"GPU utilization (of {fleet['util_basis']})",
-              f"{fleet['gpu_util'] * 100:.0f}%",
-              f"busy {_fmt_s(fleet['busy_s'])}"
-              + (f" of rented {_fmt_s(fleet['rented_s'])}" if fleet["rented_s"]
-                 else f" of {_fmt_s(fleet['span_s'])}")),
-        _tile("queue wait p50 / p95",
-              f"{_fmt_s(fleet['wait_p50'])} / {_fmt_s(fleet['wait_p95'])}"),
-        _tile("GPU evals", str(fleet["total_evals"])),
-        _tile("problems", f"{fleet['active']} active · {fleet['done']} done"),
-        _tile("agent calls / tokens",
-              f"{fleet['agent_calls']} / {fleet['agent_tokens']:,}"),
-    ])
+    # compact per-problem records for the client-side filter/renderer
+    recs = [{
+        "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
+        "b": p["best"], "s": p["terminated"] or "running", "e": p["evals"],
+        "it": p["iters"], "fr": p["frontier"],
+        "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
+        "c": [[x, round(y, 4)] for x, y in p["convergence"]],
+        "ac": [[round(ts, 1), round(y, 4)] for ts, y in p["accept_times"]],
+        "o": [p["outcomes"][k] for k in OUTCOME_KEYS],
+        "an": sum(p["agent"][k]["n"] for k in p["agent"]),
+        "ak": sum(p["agent"][k]["tok"] for k in p["agent"]),
+    } for p in problems]
+    fams = [f["family"] for f in data["families"]]
+    fam_chips = "".join(
+        f'<button class="chip-btn" data-fam="{_esc(f)}" '
+        f'style="--c:{_slot(fams.index(f))}">{_esc(f)}</button>' for f in fams)
 
-    fleet_line = _line_chart(
-        [{"label": "fleet mean", "color": "var(--seq)",
-          "points": data["fleet_series"]}],
-        x_label="wall time", x_is_time=True, height=240) \
-        if data["fleet_series"] else '<p class="muted">no accepted results yet</p>'
+    import json as _json
+    payload = _json.dumps({
+        "recs": recs, "outcomes": list(OUTCOME_KEYS),
+        "detail": detail_dir,
+        "gpu_util": fleet["gpu_util"], "util_basis": fleet["util_basis"],
+        "busy_s": fleet["busy_s"], "rented_s": fleet["rented_s"], "span_s": fleet["span_s"],
+    }, separators=(",", ":")).replace("<", "\\u003c")
 
-    mv_series = [{"label": f"#{p['task']}", "color": _slot(order[p["task"]]),
-                  "points": p["convergence"]} for p in movers]
-    mv_legend = "".join(
-        f'<span class="lg"><i style="background:{_slot(order[p["task"]])}"></i>'
-        f"#{p['task']} {_esc(p['name'][:22])}</span>" for p in movers)
-    more = len([p for p in problems if p["convergence"]]) - len(movers)
-    mv_note = (f'<div class="sub">top {len(movers)} most-recently-improving; '
-               f'{more} more in the table below</div>' if more > 0 else "")
+    filterbar = (
+        '<div class="filterbar">'
+        '<input id="q" class="flt" placeholder="filter: task id, name, family, agent — comma = OR (e.g. 67, 231, rmsnorm)">'
+        f'{fam_chips}'
+        '<button id="clearf" class="chip-btn">clear</button>'
+        '<span id="fcount" class="fcount"></span></div>')
 
     body = f"""
-<div class="tiles">{tiles}</div>
-<div class="panel"><h2>Fleet SOL score over time (mean of per-problem best, ↑)</h2>{fleet_line}</div>
-<div class="panel"><h2>Convergence — top movers (best SOL score vs GPU evals)</h2>
-{mv_note}<div class="legend">{mv_legend}</div>
-{_line_chart(mv_series, x_label="GPU evals") if mv_series else '<p class="muted">no data yet</p>'}</div>
-<div class="panel"><h2>GPU occupancy — rented windows, one job at a time</h2>
+{filterbar}
+<div id="tiles" class="tiles"></div>
+<div class="panel"><h2 id="h-fleet">Fleet SOL score over time (mean of per-problem best, ↑)</h2>
+<div id="c-fleet"></div></div>
+<div class="panel"><h2 id="h-conv">Convergence — top movers (best SOL score vs GPU evals)</h2>
+<div id="note-conv" class="sub"></div><div id="lg-conv" class="legend"></div><div id="c-conv"></div></div>
+<div class="panel"><h2>GPU occupancy — rented windows, one job at a time <span class="fcount">(fleet-wide)</span></h2>
 {_timeline_svg(fleet, order)}</div>
 <div class="cols">
-<div class="panel"><h2>Best-score distribution (all problems)</h2>{_histogram_svg(data["histogram"])}</div>
-<div class="panel"><h2>Families</h2>{_family_table(data["families"])}</div>
+<div class="panel"><h2 id="h-hist">Best-score distribution</h2><div id="c-hist"></div></div>
+<div class="panel"><h2>Families</h2><div id="t-fam"></div></div>
 </div>
-<div class="panel"><h2>Queue wait — slowest 10 (bar = p50, whisker = p95)</h2>
-{_waits_svg(sorted([p for p in problems if p["wait_p50"]], key=lambda p: -(p["wait_p95"] or 0))[:10], order)}</div>
+<div class="panel"><h2>Queue wait — slowest 10 (bar = p50, whisker = p95)</h2><div id="c-waits"></div></div>
 <div class="panel"><h2>Iteration outcomes — 10 most-iterated</h2>
-{_outcomes_svg(sorted(problems, key=lambda p: -sum(p["outcomes"].values()))[:10], order)}</div>
-<div class="panel"><h2>All problems</h2>{_problem_table(problems, order, detail_dir)}</div>
+<div class="legend">{"".join(f'<span class="lg"><i style="background:var(--o-{k})"></i>{k}</span>' for k in OUTCOME_KEYS)}</div>
+<div id="c-oc"></div></div>
+<div class="panel"><h2 id="h-tbl">Problems</h2><div id="t-prob"></div></div>
+<script id="data" type="application/json">{payload}</script>
 """
     sub = (f"generated {gen}"
            + (f" · auto-refresh {refresh}s" if refresh else "")
-           + " · click a problem name for its detail page")
-    return _shell("SOL-ExecBench solver — run dashboard", sub, body, refresh)
+           + " · filter with the bar above · click a problem name to deep-dive")
+    return _shell("SOL-ExecBench solver — run dashboard", sub, body, refresh,
+                  extra_js=_HUB_JS)
 
 
 _STATUS_CHIP = {

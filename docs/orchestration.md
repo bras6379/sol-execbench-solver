@@ -342,6 +342,14 @@ line; hand-written now, executor-written later) scopes GPU-utilization to
 **rented time only** and draws the occupancy timeline per rental window with
 un-rented gaps compressed.
 
+**Filtering:** the hub is rendered client-side from an embedded per-problem
+data blob, so a filter bar (family chips + a task/name/family/agent search,
+comma = OR) **scopes the whole view** — fleet-score-over-time, convergence
+top-movers, tiles, histogram, family rollup, waits, outcomes, and table all
+recompute for the selected subset (GPU occupancy stays fleet-wide). Deep-
+linkable via `?fam=…&q=…`. Candidate code opens in an in-page **modal**
+(inline `<template>`, `?code=<cand>` deep-link) — static-safe under `file://`.
+
 **Aggregation note (does the mean change the engine? No):** Accept/Select
 consume the per-shape score *vector*; the mean-of-S is derived — used only
 for reporting and the finalize argmax. At finalize both aggregates

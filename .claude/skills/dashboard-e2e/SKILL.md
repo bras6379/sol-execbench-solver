@@ -32,10 +32,20 @@ strokes, label collisions, overflow, and theme bugs before a human sees them.
    # + ?theme=dark ; a problem page ($O/p/<task>.html) ; the modal
    # ($O/p/<task>.html?theme=dark&code=<cand>). Bugs live in every page type.
    ```
-   Tall pages (the 235-problem hub) need `--window-size=1440,3200`. Ignore
-   Chrome's "Failed parsing certificate policies" stderr noise. Current
-   targets: `dashboard-light/dark.png`, `problem-detail.png`,
-   `candidate-modal.png`.
+   The hub is **JS-rendered from embedded data** and **filterable**: pages
+   honor `?fam=a,b` (select families) and `?q=text` (task/name/family/agent,
+   comma = OR) to pre-apply a filter — use these to screenshot a *scoped*
+   state (fleet score, convergence, tiles, tables all recompute for the
+   subset). Tall pages (the 235-problem hub) need `--window-size=1440,3200`.
+   Ignore Chrome's "Failed parsing certificate policies" stderr. Targets:
+   `dashboard-light/dark.png`, `dashboard-filtered.png`,
+   `problem-detail.png`, `candidate-modal.png`.
+
+   **Watch for `[hidden]` overridden by `display:`** — a `.modal{display:flex}`
+   beats the UA `[hidden]{display:none}` (specificity), so a hidden modal
+   renders as an empty overlay. The screenshot loop caught exactly this; the
+   fix is an explicit `.modal[hidden]{display:none}`. Always screenshot a
+   problem page *without* `?code=` to confirm no stray overlay.
 
 3. **Actually look at the PNGs** (Read tool renders them). Check every item:
    - every mark visible — a CSS class with no fill/stroke renders as
