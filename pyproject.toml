@@ -1,0 +1,32 @@
+[project]
+name = "sol-execbench-solver"
+version = "0.1.0"
+description = "Solver engine for the SOL-ExecBench GPU-kernel benchmark (B200)"
+requires-python = ">=3.12"
+dependencies = [
+    "pyarrow>=17",
+]
+
+# The official SOL-ExecBench harness (the real grader) runs on a Linux +
+# CUDA-13 + Blackwell GPU box, NOT the laptop — its deps are torch(cu130),
+# cupti-python, cuda-tile, nvidia-cutlass-dsl[cu13]. Install it only where it
+# can run:  uv pip install -e '.[bench]'
+# Pinned so the grader (which defines our score) can't drift under us.
+[project.optional-dependencies]
+bench = [
+    "sol-execbench @ git+https://github.com/NVIDIA/SOL-ExecBench.git@2d852a30914d4ef7f9fac92696e7fc8eea630f52",
+]
+
+[project.scripts]
+solver = "solver.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["solver"]
+
+# Allow the git URL in the `bench` optional dependency (the harness).
+[tool.hatch.metadata]
+allow-direct-references = true
