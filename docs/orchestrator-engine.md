@@ -262,6 +262,18 @@ idempotent on replay.
 - **`frontier/`, `best_solution.json`, `status.json` — derived snapshots**,
   rebuildable from the journal; written atomically (temp + `os.replace`) for
   fast startup, never authoritative.
+- **`candidates/<cand_id>/` — browsable per candidate** (not opaque JSON):
+  `kernel.py` (the source, materialized from the Solution so you can just
+  *open and read it*), `solution.json` (the canonical artifact),
+  `result.json` (per-shape scores, sol_score, correctness, ASI), `meta.json`
+  (parent, technique tag, and **status**: `frontier` | `dominated` |
+  `rejected` (failed static check, never ran) | `incorrect` (ran, wrong) |
+  `error`).
+
+**Git policy:** run outputs (`journal.jsonl`, `candidates/`, `frontier/`,
+`best_solution.json`, `status.json`) are **git-visible** — check them in when
+you want to snapshot/share progress. Only regenerable churn is ignored:
+`.cache/` (parquet) and `runs/*/cache/` (the content-addressed dedup blobs).
 
 ### The resumable driver
 
@@ -309,13 +321,39 @@ dirs to reconstruct the active set (done / in-progress / pending) and resumes
 the in-progress ones; its own allocation state is a small journaled file,
 likewise rebuildable.
 
-## 7b. Knowledge store & CLI
+## 7c. Observability (watch the search happen)
 
-- `knowledge/`: families/*.md, global.md — the dynamic KB (§4), curated
-  writes are also journaled so a crash mid-curation is recoverable.
-- CLI: `solver solve <ids|--all> [--budget N] [--resume] [--executor stub|gpu]`
-  and `solver status` (reads the journals). `--resume` is the default;
-  re-running `solve` on the same ids continues rather than restarts.
+A first-class requirement: you should be able to *see* the optimization
+progressing — every kernel tried, which were kept, which were beaten, and the
+live Pareto frontier. Three surfaces, all reading the journal:
+
+- **Browse on disk.** `runs/<id>/candidates/*/kernel.py` are readable source
+  files; each `meta.json` carries the candidate's status
+  (`frontier`/`dominated`/`rejected`/`incorrect`). Sort by `result.json`
+  sol_score, grep by status — no tooling required.
+- **CLI views** (read-only over the journal):
+  - `solver status [ids]` — per problem: iterations, GPU-evals spent/budget,
+    best sol_score vs baseline & SOL, frontier size, terminated?.
+  - `solver journal <id>` — the timeline: each candidate as it was created →
+    checked → evaluated → accepted/dominated/rejected, with the reflection.
+  - `solver frontier <id>` — the current Pareto set: each surviving candidate
+    and which workload shapes it wins (the "why it's kept").
+  - `solver candidates <id> [--status dominated|frontier|rejected]` — list/
+    filter every kernel tried, so "what got ignored" is one query.
+- **Report (optional, later).** Render a self-contained HTML progress
+  dashboard (score-over-iterations, the frontier, per-shape heatmap, diffs
+  between a candidate and its parent) as an Artifact.
+
+Everything is derived from `journal.jsonl`, so these are pure read views — safe
+to run against a live or a finished run.
+
+## 7d. Knowledge store & CLI
+
+- `knowledge/`: families/*.md, global.md — the dynamic KB (§4); curated writes
+  are journaled so a crash mid-curation is recoverable.
+- Run CLI: `solver solve <ids|--all> [--budget N] [--resume] [--executor stub|gpu]`.
+  `--resume` is the default; re-running `solve` on the same ids continues
+  rather than restarts. View CLI is in §7c.
 
 ## 8. Build order (laptop-first)
 

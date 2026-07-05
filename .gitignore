@@ -6,8 +6,8 @@ __pycache__/
 build/
 dist/
 
-# Solver caches (regenerable)
+# Regenerable caches only. NOTE: engine run outputs are intentionally NOT
+# ignored — journals, candidates, frontier, and best_solution are git-visible
+# so optimization progress can be checked in and browsed.
 .cache/
-
-# Generated candidate solutions (regenerable via `solver scaffold`)
-problems/*/candidates/
+runs/*/cache/
