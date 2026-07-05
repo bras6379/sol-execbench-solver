@@ -49,7 +49,8 @@ async def solve_problem(task_id, executor, agent, knowledge):
         ctx.design = await agent.design(task_id)      # design-kernel recipe (or load designs/<name>.md)
         for seed in [scaffold(task_id), *sibling_templates(task_id, knowledge)]:
             result = await executor.evaluate(seed, task_id)
-            ctx.accept(seed, result)                  # frontier is now non-empty
+            ctx.accept(seed, result)                  # frontier now non-empty; seed eval doubles
+                                                      # as the §10 calibration probe (local vs T_b)
     # ---- the loop ----
     while not ctx.should_stop():                      # caps / plateau / target
         parent = ctx.frontier.select()                # Pareto-weighted, with its reflection
@@ -63,22 +64,27 @@ async def solve_problem(task_id, executor, agent, knowledge):
     finalize(ctx)                                     # best all-correct → best_solution.json
     await knowledge.curate(ctx)                       # serialized curator
 
+async def solve_family(chain, executor, agent, knowledge):
+    for task_id in chain:              # exemplar first, then its siblings, in order
+        await guarded(solve_problem(task_id, executor, agent, knowledge))
+
 async def main(ids):
     executor  = make_executor(cfg)     # one shared instance; awaitable lock inside
     agent     = make_agent(cfg)        # Claude Agent SDK (or stub); concurrent sessions
     knowledge = KnowledgeStore()       # curator serialized internally
-    for wave in schedule_by_family(ids):              # exemplar-first staggering (below)
-        await asyncio.gather(*(guarded(solve_problem(i, executor, agent, knowledge))
-                               for i in wave))        # guarded = crash-isolated + journaled
+    chains    = chains_by_family(ids)  # one ordered chain per family
+    await asyncio.gather(*(solve_family(c, executor, agent, knowledge)
+                           for c in chains))   # families concurrent; NO cross-family barrier
 ```
 
-**Family-staggered scheduling.** Launching all siblings of a family at once
-would defeat transfer (none is finished while the others run — no curated
-learnings, no template to seed from). So the fleet runs **exemplar-first
-waves**: wave 1 = one exemplar per family; later waves = the siblings, which
-then bootstrap from the exemplar's best. Additionally, Plan may **live-read
-sibling runs' current frontier bests** (read-only) so even same-wave overlap
-transfers something.
+**Family-chain scheduling.** Launching all siblings of a family at once would
+defeat transfer (none is finished while the others run — nothing curated to
+seed from). But a global "wave" barrier would be worse: family A's siblings
+stalling on family B's slow exemplar is exactly the cross-problem blocking
+this design forbids. So: **each family is a sequential chain (exemplar →
+siblings); all chains run concurrently.** Dependencies exist only where
+transfer creates them. Plan may additionally **live-read sibling runs'
+current frontier bests** (read-only) for any deliberate same-family overlap.
 
 **Agent failure policy.** Transient agent errors → retry with backoff.
 **Quota-exhausted (subscription credit pool dry) is fleet-wide**, not a
@@ -94,10 +100,10 @@ Rules that make this work:
 - **Two swappable interfaces** — the only abstraction that earns its keep:
   - `Executor.evaluate(solution, task_id) -> EvalResult` — StubExecutor (now)
     / GpuQueueExecutor (later). All solvers share ONE instance; single-flight.
-  - `Agent.plan/reflect/judge(...)` — StubAgent (deterministic tests) /
-    Claude Agent SDK on the subscription OAuth token (`claude setup-token` →
-    `CLAUDE_CODE_OAUTH_TOKEN`; no API key). Judge + brief reflections use a
-    cheap model.
+  - `Agent.design/plan/reflect/judge(...)` — StubAgent (deterministic tests)
+    / Claude Agent SDK on the subscription OAuth token (`claude setup-token`
+    → `CLAUDE_CODE_OAUTH_TOKEN`; no API key). Judge + brief reflections use
+    a cheap model.
 - **Crash isolation:** one solver failing is journaled and stops only that
   problem.
 - "Nodes" (select/plan/check/novelty/execute/accept/reflect) remain the
@@ -127,12 +133,17 @@ Rules that make this work:
 
 1. **Check** (static, free): schema + per-language entry validation (DPS
    names for `.py`; `void run(torch::Tensor…)` shape for C++). Built.
-2. **Novelty** (semantic dedup — the GPU's last gate), two tiers:
-   - exact `Solution.hash()` (the harness's own SHA1) — free;
-   - **LLM judge** (cheap model): materially different implementation
-     (algorithm/layout/fusion/precision/launch config) vs cosmetic variant?
-     A judge call costs orders of magnitude less than the GPU run it
-     protects. `cosmetic` bounces to Plan *with the verdict as feedback*.
+2. **Novelty** (semantic dedup — the GPU's last gate), two tiers with
+   distinct scopes:
+   - exact `Solution.hash()` (the harness's own SHA1) checked against **the
+     full journal history** — free set-lookup; a candidate identical to
+     *anything ever evaluated* (including long-dominated ones) never re-pays
+     a GPU run;
+   - **LLM judge** (cheap model) against **parent + current frontier**:
+     materially different implementation (algorithm/layout/fusion/precision/
+     launch config) vs cosmetic variant? A judge call costs orders of
+     magnitude less than the GPU run it protects. `cosmetic` bounces to Plan
+     *with the verdict as feedback*.
 3. Every pass through Plan — including rejects and bounces — **counts as an
    iteration**, so termination caps always fire (no spin).
 
@@ -359,6 +370,7 @@ Each with its trigger:
    novelty = semantic (hash → LLM judge).
 5. **Execution model:** async throughout; GPU lock awaitable; compile (Phase
    F) never holds the GPU lock.
-6. **Persistence:** journal-only; no separate node-output cache (an
-   agent call re-paid after a crash costs cents; GPU work is protected by
-   the job-id queue).
+6. **Persistence:** journal (what happened, small artifacts inline) + an
+   append-only authoritative results store (irreplaceable GPU traces); no
+   node-output cache (an agent call re-paid after a crash costs cents; GPU
+   work is protected by the job-id queue).
