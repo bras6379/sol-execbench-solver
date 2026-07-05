@@ -14,22 +14,23 @@ strokes, label collisions, overflow, and theme bugs before a human sees them.
 
 1. **Render from demo data** (deterministic, no engine/GPU needed):
    ```bash
-   .venv/bin/solver report --demo        # -> .cache/demo/report.html
+   .venv/bin/solver report --demo        # site -> .cache/demo/out/
    ```
    To force fresh demo journals: `rm -rf .cache/demo` first. Real runs:
-   `solver report --runs-dir runs`.
+   `solver report --runs-dir runs` → publishable static site in `out/`
+   (`index.html`, `p/<task>.html`, `p/<task>/<cand>.html`).
 
-2. **Screenshot BOTH themes** with headless Chrome. The page honors a
-   `?theme=light|dark` query override (JS sets `data-theme`), so no CDP
-   media-emulation is needed:
+2. **Screenshot BOTH themes and EVERY page type** with headless Chrome. The
+   pages honor a `?theme=light|dark` query override (JS sets `data-theme`),
+   so no CDP media-emulation is needed:
    ```bash
    CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
    "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
-     --window-size=1440,2000 \
+     --window-size=1440,2300 \
      --screenshot=docs/screenshots/dashboard-light.png \
-     "file://$PWD/.cache/demo/report.html?theme=light"
-   "$CHROME" --headless=new ... --screenshot=docs/screenshots/dashboard-dark.png \
-     "file://$PWD/.cache/demo/report.html?theme=dark"
+     "file://$PWD/.cache/demo/out/index.html?theme=light"
+   # repeat with ?theme=dark; then a problem detail page (p/69.html) and a
+   # candidate code page (p/69/c004.html) — bugs live in every page type.
    ```
    (Ignore Chrome's "Failed parsing certificate policies" stderr noise.
    Bump `--window-size` height if the page grows taller than the capture.)

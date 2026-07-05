@@ -310,24 +310,44 @@ Every journal event carries `{v, ts, task, ev, …}` (ISO-8601 UTC, fsync'd).
 The v1 event vocabulary — pinned here so Phase B implements against it:
 
 `run_started{agent} · design_done{dur_s} · plan_done{cand, parent, model,
-dur_s, tok_in, tok_out} · check{cand, ok} · novelty{cand, verdict} ·
-exec_enqueued{job, cand} · exec_started{job} · exec_done{job, cand, gpu_s,
-all_passed, sol_score, statuses} · accept{cand, verdict, best, frontier} ·
-reflect_done{cand, tier, dur_s} · agent_changed{model} · terminated{reason}`
+dur_s, tok_in, tok_out, strategy, solution} · check{cand, ok} ·
+novelty{cand, verdict} · exec_enqueued{job, cand} · exec_started{job} ·
+exec_done{job, cand, gpu_s, all_passed, sol_score, statuses} ·
+accept{cand, verdict, best, frontier} · reflect_done{cand, tier, dur_s} ·
+agent_changed{model} · terminated{reason}`
+
+`plan_done.strategy` is a one-line TL;DR of the approach and
+`plan_done.solution` is the full (clean) Solution inline — together they make
+the dashboard's per-problem "solution progression" and per-candidate code
+pages renderable from the journal alone.
 
 The executor lifecycle triple (`exec_enqueued/started/done`) is the
 measurement backbone: queue wait = started−enqueued, GPU busy = done−started;
 merging these across all journals yields the global GPU timeline and
 utilization — no separate metrics file needed.
 
-**`solver report`** renders a **self-contained static HTML dashboard** (no
-server, no CDN; light/dark) from the journals: convergence per problem (best
-sol_score vs GPU evals), GPU busy % + job timeline colored by problem, queue
-wait percentiles, iteration-outcome mix (accepted/dominated/rejected/dup/…),
-agent call/token spend, and a per-problem status table. Flags: `--out`,
-`--runs-dir`, `--refresh N` (meta-refresh), `--watch N` (regenerate loop),
-`--demo` (synthetic runs under `.cache/demo/` to preview the dashboard
-without the engine).
+**`solver report`** renders a **publishable static site into `out/`** (no
+server, no CDN; light/dark): `index.html` = fleet hub (SOL-score tiles,
+fleet-score-over-time, top-movers convergence, GPU occupancy per rental
+window, score histogram, family rollup, sortable/filterable problems table —
+scales to all 235 problems by showing distributions + top-K, never 235
+lines), `p/<task>.html` = per-problem deep-dive (convergence + **solution
+progression**: every candidate in order with strategy TL;DR, status, score),
+`p/<task>/<cand>.html` = the candidate's **code page**. Flags: `--out-dir`,
+`--runs-dir`, `--refresh N`, `--watch N`, `--demo` (synthetic runs under
+`.cache/demo/`).
+
+**GPU rentals:** `<runs>/gpu_rentals.jsonl` (one `{start, end, label}` per
+line; hand-written now, executor-written later) scopes GPU-utilization to
+**rented time only** and draws the occupancy timeline per rental window with
+un-rented gaps compressed.
+
+**Aggregation note (does the mean change the engine? No):** Accept/Select
+consume the per-shape score *vector*; the mean-of-S is derived — used only
+for reporting and the finalize argmax. At finalize both aggregates
+(mean-of-S and S-of-geomean-latencies) are recorded, so the open question
+about the website's exact per-problem formula (kb/benchmark-grader.md
+§Aggregation) can relabel the winner but can never alter the search.
 
 ## 10. Measurement honesty (v1 posture)
 

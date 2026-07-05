@@ -3,13 +3,21 @@
 Pure read-side: consumes `journal.read_all()` output, produces plain dicts.
 The exec_enqueued/started/done triple is the measurement backbone:
 queue wait = started - enqueued; GPU busy = done - started; the merged,
-sorted job list across problems gives the global GPU timeline + utilization.
+sorted job list across problems gives the global GPU timeline.
+
+GPU rentals: if `<runs_dir>/gpu_rentals.jsonl` exists (one JSON per line:
+{"start": iso, "end": iso|null, "label": str}), utilization is computed
+against RENTED time only and the timeline is drawn per rental window
+(un-rented gaps compressed). Written by hand for now; later the
+GpuQueueExecutor can append these automatically on pod connect/disconnect.
 """
 
 from __future__ import annotations
 
 import datetime as dt
+import json
 import statistics
+from pathlib import Path
 from typing import Any
 
 OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "error")
@@ -27,9 +35,30 @@ def _pct(values: list[float], p: float) -> float | None:
     return vals[idx]
 
 
+def load_rentals(runs_dir: Path) -> list[dict]:
+    """Rental windows [{start, end, label}] (epoch seconds), sorted."""
+    path = Path(runs_dir) / "gpu_rentals.jsonl"
+    if not path.exists():
+        return []
+    out = []
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+            out.append({"start": _t(r["start"]),
+                        "end": _t(r["end"]) if r.get("end") else None,
+                        "label": r.get("label", "")})
+        except (json.JSONDecodeError, KeyError, ValueError):
+            continue
+    return sorted(out, key=lambda r: r["start"])
+
+
 def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     jobs: dict[str, dict] = {}
     convergence: list[tuple[int, float]] = []   # (gpu_eval_index, best_so_far)
+    accept_times: list[tuple[float, float]] = []  # (ts, best) for fleet-over-time
     outcomes = {k: 0 for k in OUTCOMES}
     agent = {"plan": {"n": 0, "dur": 0.0, "tok": 0},
              "reflect": {"n": 0, "dur": 0.0, "tok": 0},
@@ -38,8 +67,10 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     best = None
     frontier = 0
     terminated = None
+    last_improve_ts = None
     name = family = model = ""
     first_ts = last_ts = None
+    candidates: dict[str, dict] = {}   # cand id -> progression record
 
     for e in events:
         ts = e.get("ts")
@@ -59,10 +90,20 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             agent["plan"]["n"] += 1
             agent["plan"]["dur"] += e.get("dur_s", 0.0)
             agent["plan"]["tok"] += e.get("tok_in", 0) + e.get("tok_out", 0)
+            candidates[e["cand"]] = {
+                "cand": e["cand"], "ts": ts, "model": e.get("model", model),
+                "parent": e.get("parent"), "strategy": e.get("strategy", ""),
+                "solution": e.get("solution"), "status": "planned",
+                "sol_score": None,
+            }
         elif ev == "check" and not e.get("ok", True):
             outcomes["rejected"] += 1
+            if e.get("cand") in candidates:
+                candidates[e["cand"]]["status"] = "rejected"
         elif ev == "novelty" and e.get("verdict") != "materially-new":
             outcomes["duplicate"] += 1
+            if e.get("cand") in candidates:
+                candidates[e["cand"]]["status"] = "duplicate"
         elif ev == "exec_enqueued":
             jobs[e["job"]] = {"task": task_id, "enq": _t(ts)}
         elif ev == "exec_started":
@@ -72,18 +113,43 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             j["done"] = _t(ts)
             j["gpu_s"] = e.get("gpu_s")
             evals += 1
+            c = candidates.get(e.get("cand"))
+            if c is None and e.get("cand"):   # seeds evaluate without plan_done
+                c = candidates[e["cand"]] = {
+                    "cand": e["cand"], "ts": ts, "model": model, "parent": None,
+                    "strategy": e.get("strategy", "seed: reference wrapper baseline"),
+                    "solution": e.get("solution"), "status": "planned",
+                    "sol_score": None,
+                }
             if e.get("solution_status") == "error":
                 outcomes["error"] += 1
+                if c:
+                    c["status"] = "error"
             elif not e.get("all_passed", False):
                 outcomes["incorrect"] += 1
+                if c:
+                    c["status"] = "incorrect"
+            if c:
+                c["sol_score"] = e.get("sol_score")
         elif ev == "accept":
+            c = candidates.get(e.get("cand"))
             if e.get("verdict") == "entered":
                 outcomes["accepted"] += 1
+                if ts:
+                    last_improve_ts = _t(ts)
+                if c and c["status"] not in ("incorrect", "error"):
+                    c["status"] = "accepted"
             elif e.get("verdict") == "dominated":
                 outcomes["dominated"] += 1
+                if c and c["status"] == "planned":
+                    c["status"] = "dominated"
             if e.get("best") is not None:
                 best = e["best"]
                 convergence.append((evals, best))
+                if ts:
+                    accept_times.append((_t(ts), best))
+            if c:
+                c["best_after"] = best
             frontier = e.get("frontier", frontier)
         elif ev == "reflect_done":
             agent["reflect"]["n"] += 1
@@ -96,13 +162,15 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
         "task": task_id, "name": name, "family": family, "model": model,
         "iters": iters, "evals": evals, "best": best, "frontier": frontier,
         "terminated": terminated, "convergence": convergence,
+        "accept_times": accept_times, "last_improve_ts": last_improve_ts,
         "outcomes": outcomes, "agent": agent, "jobs": list(jobs.values()),
+        "candidates": sorted(candidates.values(), key=lambda c: c["ts"] or ""),
         "wait_p50": _pct(waits, 0.5), "wait_p95": _pct(waits, 0.95),
         "first_ts": first_ts, "last_ts": last_ts,
     }
 
 
-def fleet_metrics(per_problem: list[dict]) -> dict[str, Any]:
+def fleet_metrics(per_problem: list[dict], rentals: list[dict] | None = None) -> dict[str, Any]:
     jobs = [j for p in per_problem for j in p["jobs"]
             if "start" in j and "done" in j]
     jobs.sort(key=lambda j: j["start"])
@@ -113,11 +181,22 @@ def fleet_metrics(per_problem: list[dict]) -> dict[str, Any]:
         span = max(span_end - span_start, 1e-9)
     else:
         span_start = span_end = span = 0.0
+
+    # resolve rentals: open-ended windows close at span_end
+    windows = []
+    for r in (rentals or []):
+        end = r["end"] if r["end"] is not None else max(span_end, r["start"])
+        if end > r["start"]:
+            windows.append({"start": r["start"], "end": end, "label": r["label"]})
+    rented_s = sum(w["end"] - w["start"] for w in windows)
+
     waits = [j["start"] - j["enq"] for j in jobs if "enq" in j]
     return {
         "jobs": jobs, "busy_s": busy, "span_s": span,
         "span_start": span_start, "span_end": span_end,
-        "gpu_util": (busy / span) if span else 0.0,
+        "windows": windows, "rented_s": rented_s,
+        "gpu_util": (busy / rented_s) if rented_s else ((busy / span) if span else 0.0),
+        "util_basis": "rented" if rented_s else "observed span",
         "wait_p50": _pct(waits, 0.5), "wait_p95": _pct(waits, 0.95),
         "total_evals": len(jobs),
         "agent_calls": sum(p["agent"][k]["n"] for p in per_problem for k in p["agent"]),
@@ -129,6 +208,64 @@ def fleet_metrics(per_problem: list[dict]) -> dict[str, Any]:
     }
 
 
-def collect(journals: dict[int, list[dict]]) -> dict[str, Any]:
+def fleet_score_series(per_problem: list[dict]) -> list[tuple[float, float]]:
+    """Stepwise fleet mean-of-best over wall time (problems count once seen)."""
+    events = []
+    for p in per_problem:
+        for ts, best in p["accept_times"]:
+            events.append((ts, p["task"], best))
+    events.sort()
+    cur: dict[int, float] = {}
+    series = []
+    for ts, task, best in events:
+        cur[task] = best
+        series.append((ts, sum(cur.values()) / len(cur)))
+    return series
+
+
+def score_histogram(per_problem: list[dict], bins: int = 20) -> list[int]:
+    counts = [0] * bins
+    for p in per_problem:
+        if p["best"] is None:
+            continue
+        b = min(bins - 1, int(max(0.0, min(p["best"], 0.9999)) * bins))
+        counts[b] += 1
+    return counts
+
+
+def family_rollup(per_problem: list[dict]) -> list[dict]:
+    fams: dict[str, list[dict]] = {}
+    for p in per_problem:
+        fams.setdefault(p["family"] or "?", []).append(p)
+    out = []
+    for fam, ps in sorted(fams.items()):
+        bests = [p["best"] for p in ps if p["best"] is not None]
+        out.append({
+            "family": fam, "n": len(ps),
+            "done": sum(1 for p in ps if p["terminated"]),
+            "mean_best": statistics.mean(bests) if bests else None,
+            "evals": sum(p["evals"] for p in ps),
+        })
+    out.sort(key=lambda r: -(r["mean_best"] or 0))
+    return out
+
+
+def top_movers(per_problem: list[dict], k: int = 8) -> list[dict]:
+    """The k most-recently-improving problems (for the convergence chart)."""
+    ranked = sorted(per_problem,
+                    key=lambda p: (p["last_improve_ts"] or 0, p["evals"]),
+                    reverse=True)
+    return [p for p in ranked if p["convergence"]][:k]
+
+
+def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> dict[str, Any]:
     per_problem = [problem_metrics(t, evs) for t, evs in sorted(journals.items())]
-    return {"problems": per_problem, "fleet": fleet_metrics(per_problem)}
+    rentals = load_rentals(runs_dir) if runs_dir else []
+    return {
+        "problems": per_problem,
+        "fleet": fleet_metrics(per_problem, rentals),
+        "fleet_series": fleet_score_series(per_problem),
+        "histogram": score_histogram(per_problem),
+        "families": family_rollup(per_problem),
+        "movers": top_movers(per_problem),
+    }

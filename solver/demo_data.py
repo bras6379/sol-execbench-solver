@@ -29,6 +29,35 @@ def _iso(t: float) -> str:
     return dt.datetime.fromtimestamp(t, dt.timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+_STRATEGIES = [
+    ("triton fused single-pass", "triton",
+     "import triton\nimport triton.language as tl\n\n@triton.jit\ndef _k(X, R, W, Y, H: tl.constexpr, BLOCK: tl.constexpr):\n    row = tl.program_id(0)\n    off = tl.arange(0, BLOCK)\n    x = tl.load(X + row * H + off).to(tl.float32)\n    r = tl.load(R + row * H + off).to(tl.float32)\n    x = x + r\n    var = tl.sum(x * x) / H\n    y = x * tl.rsqrt(var + 1e-5) * tl.load(W + off)\n    tl.store(Y + row * H + off, y)\n\ndef run(hidden_states, residual, weight, eps, output):\n    n = hidden_states.numel() // hidden_states.shape[-1]\n    _k[(n,)](hidden_states, residual, weight, output,\n             hidden_states.shape[-1], BLOCK=1024)\n"),
+    ("vectorized 128-bit loads + fp32 accum", "triton",
+     "# v2: 8-wide vector loads, fp32 accumulator, weight cached in smem\n# (same structure as v1; BLOCK tuned per H, num_warps=8)\n"),
+    ("torch.compile fused baseline", "pytorch",
+     "import torch\n\n@torch.compile(mode='max-autotune')\ndef _fused(h, r, w, eps):\n    x = (h + r).float()\n    return (x * torch.rsqrt(x.pow(2).mean(-1, keepdim=True) + eps)).to(h.dtype) * w\n\ndef run(hidden_states, residual, weight, eps, output):\n    output[:] = _fused(hidden_states, residual, weight, eps)\n"),
+    ("two-pass smem reduction, per-shape BLOCK dispatch", "triton",
+     "# v4: per-shape BLOCK dispatch table {131:128, 2048:1024, 8192:2048}\n"),
+    ("cuda_cpp warp-shuffle reduction", "cuda_cpp",
+     "#include <torch/extension.h>\n// warp-shuffle rowwise rmsnorm; float4 loads; grid-stride\nvoid run(torch::Tensor h, torch::Tensor r, torch::Tensor w,\n         double eps, torch::Tensor out) { /* kernel launch */ }\n"),
+    ("online-softmax tiling + TF32 dot", "triton",
+     "# flash-style online softmax; tl.dot(allow_tf32=True); fp32 accum\n"),
+]
+
+
+def _solution(lang: str, code: str, name: str) -> dict:
+    entry = "kernel.cu::run" if lang == "cuda_cpp" else "kernel.py::run"
+    path = "kernel.cu" if lang == "cuda_cpp" else "kernel.py"
+    return {"name": name, "definition": "demo", "author": "demo",
+            "spec": {"languages": [lang], "target_hardware": ["B200"],
+                     "entry_point": entry, "destination_passing_style": True},
+            "sources": [{"path": path, "content": code}]}
+
+
+_SEED_CODE = ("import torch\n\n# DPS wrapper delegating to the inlined reference (seed)\n"
+              "def run(*args):\n    out = args[-1]\n    out[:] = _reference_run(*args[:-1])\n")
+
+
 def build_demo(runs_dir: Path, seed: int = 7) -> Path:
     rng = random.Random(seed)
     runs_dir = Path(runs_dir)
@@ -51,10 +80,15 @@ def build_demo(runs_dir: Path, seed: int = 7) -> Path:
         states[task] = {"best": None, "start": start, "ceil": ceil, "evals_left": evals,
                         "eval_i": 0, "frontier": 0, "cand_i": 0, "agent": agent}
 
+    # two rental windows with an un-rented gap between them
+    gap_start, gap_end = base + 1500, base + 2400
+
     def run_gpu(task: int, gpu_s: float) -> tuple[float, float, float]:
         nonlocal gpu_free
         enq = clocks[task]
         start_t = max(enq, gpu_free) + rng.uniform(0.3, 1.2)
+        if gap_start <= start_t < gap_end or start_t + gpu_s > gap_start > start_t:
+            start_t = max(start_t, gap_end)   # GPU not rented during the gap
         done_t = start_t + gpu_s
         gpu_free = done_t
         return enq, start_t, done_t
@@ -73,7 +107,9 @@ def build_demo(runs_dir: Path, seed: int = 7) -> Path:
         st["best"] = st["start"]
         j.append("exec_done", ts=_iso(d), job=job, cand=cand, gpu_s=round(gpu_s, 1),
                  all_passed=True, sol_score=st["best"],
-                 statuses={"PASSED": 16})
+                 statuses={"PASSED": 16},
+                 strategy="seed: reference wrapper baseline (DPS)",
+                 solution=_solution("pytorch", _SEED_CODE, f"{task}-seed"))
         st["frontier"] = 1
         j.append("accept", ts=_iso(d + 0.5), cand=cand, verdict="entered",
                  best=round(st["best"], 4), frontier=1)
@@ -95,9 +131,12 @@ def build_demo(runs_dir: Path, seed: int = 7) -> Path:
             cand = f"c{st['cand_i']:03d}"
             dur = rng.uniform(25, 90)
             clocks[task] += dur
+            strat_name, lang, code = _STRATEGIES[(st["cand_i"] - 2) % len(_STRATEGIES)]
             j.append("plan_done", ts=_iso(clocks[task]), cand=cand, parent="frontier",
                      model=st["agent"], dur_s=round(dur, 1),
-                     tok_in=rng.randint(4000, 12000), tok_out=rng.randint(800, 3000))
+                     tok_in=rng.randint(4000, 12000), tok_out=rng.randint(800, 3000),
+                     strategy=strat_name,
+                     solution=_solution(lang, code, f"{task}-{cand}"))
             roll = rng.random()
             if roll < 0.08:
                 j.append("check", ts=_iso(clocks[task]), cand=cand, ok=False)
@@ -146,4 +185,11 @@ def build_demo(runs_dir: Path, seed: int = 7) -> Path:
             st["evals_left"] -= 1
             clocks[task] = d + rng.uniform(5, 20)
 
+    # rental windows file (later: written automatically by the GPU executor)
+    import json
+    (runs_dir / "gpu_rentals.jsonl").write_text(
+        json.dumps({"start": _iso(base - 60), "end": _iso(gap_start),
+                    "label": "pod-A"}) + "\n" +
+        json.dumps({"start": _iso(gap_end), "end": _iso(gpu_free + 60),
+                    "label": "pod-B"}) + "\n")
     return runs_dir
