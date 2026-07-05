@@ -36,7 +36,72 @@ gauge how competitive our best is.
                  └───────────────────────┘   └──────────────────┘
 ```
 
-## 1. Executor — the GPU lock (interface, swappable)
+## Nodes: the unit of composition
+
+Every step is a **Node**: a typed transform `run(ctx, inputs) -> outputs`
+whose **role** (its input/output contract) is separate from its
+**implementation** (how the work is done). The per-problem loop is a *cyclic
+graph* of nodes; the Orchestrator runs many such graphs in parallel. Adding a
+capability later — submission, a new profiler, a different planner — means
+**add a node (or swap an implementation) and wire an edge**; no existing node
+changes. This is why "add submission later" is safe by construction.
+
+### Edge types (the typed artifacts that flow)
+
+Nodes share a `RunContext` (problem, Pareto frontier, journal, knowledge
+handles, budget) and pass typed artifacts:
+
+- `Candidate` — a Solution (`solver/solution.py`)
+- `CheckReport` (`solver/check.py`)
+- `EvalResult` — per-workload score + ASI (`solver/engine`)
+- `Reflection` — diagnosis + next-step hint
+- `KnowledgeContext` — retrieved kb slices + family learnings + sibling bests
+- `TerminationDecision`
+
+### Node catalog (role → implementations)
+
+| Node (role) | inputs → outputs | implementations |
+|---|---|---|
+| Select | frontier → parent(s) | Pareto / random |
+| Plan / Mutate | parent, reflection, knowledge → Candidate | StubAgent / Claude Agent SDK |
+| Check | Candidate → CheckReport | static check (built) — cheap gate |
+| **Execute (GPU LOCK)** | Candidate → EvalResult | **StubExecutor (built)** / GpuQueueExecutor (later) |
+| Reflect | Candidate, EvalResult → Reflection | Stub / Claude Agent SDK |
+| Research | problem, reflection → KnowledgeContext | kb retrieval / sibling lookup / web |
+| Accept | Candidate, EvalResult, frontier → frontier′ | Pareto-accept |
+| Route | state → next node | budget / plateau / optional target |
+| Curate | journal → knowledge′ | Claude Agent SDK curator |
+| **Submit (LATER)** | best_solution + score → receipt | website submit — *just add this node* |
+
+### The graph (per problem)
+
+```
+  select ─▶ plan ─▶ check ──fail──▶ plan
+                      └──pass──▶ execute ─▶ accept ─▶ reflect ─▶ route
+                                  (GPU lock)                       │
+                          ┌──────────── continue ──────────────────┤
+                          ▼                                    stop │
+                        select                                      ▼
+                                                          curate ─▶ (submit?)
+```
+
+Cyclic control flow. A small **Driver** runs a node, then a **router** picks
+the next node from `(node, output, ctx)` — no heavyweight framework. A config
+**binds each role to an implementation**, so the *same graph* runs as
+`{StubExecutor + StubAgent}` on the laptop or `{GpuQueueExecutor + Claude
+Agent SDK}` for real, with no change to the graph itself.
+
+### Submission, later
+
+`Submit` is a terminal node: input = `best_solution` + score, output = a
+receipt. Wire it after `curate` (or as an opt-in branch). Nothing upstream
+changes — that is the whole point of the node-graph shape. We still don't
+build it now; the graph just leaves a socket for it.
+
+`Executor` (Phase A) is exactly the **Execute** node's role with its first two
+implementations. Every other role follows the same interface-per-role pattern.
+
+## 1. Execute node — the GPU lock (interface, swappable)
 
 The one serialized resource. Everything else fans out.
 
@@ -164,14 +229,15 @@ the engine.
 
 ## 8. Build order (laptop-first)
 
-| Phase | Buildable now? | Piece |
+| Phase | Buildable now? | Piece (nodes) |
 |---|---|---|
-| A | ✅ | Executor interface + StubExecutor; EvalResult model |
-| B | ✅ | ProblemSolver loop + Pareto frontier + journal/state |
-| C | ✅ | Knowledge store (dynamic KB) + retrieval + curator |
+| A | ✅ done | Node/edge-type base + **Execute** node (StubExecutor); EvalResult |
+| B | ✅ | Driver + router + **Select/Plan/Check/Accept/Reflect/Route** nodes (Stub agent), Pareto frontier, journal/state |
+| C | ✅ | **Research/Curate** nodes + knowledge store (dynamic KB) |
 | D | ✅ | Orchestrator fleet + budget + CLI (`solve`, `status`) |
-| E | ✅ | Transfer: sibling detection + templating |
-| F | ⛔ later | GpuQueueExecutor (real GPU transport + harness) |
+| E | ✅ | Transfer: sibling detection + templating (a Research-node strategy) |
+| F | ⛔ later | GpuQueueExecutor (real Execute-node impl: GPU transport + harness) |
+| —  | ⛔ later | **Submit** node (website) — add node + edge, no loop change |
 | G | ⛔ later | Profiling in the eval path (Nsight → ASI) |
 
 A–E give a fully testable engine against the stub; F swaps in the GPU with no
