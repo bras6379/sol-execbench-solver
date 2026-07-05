@@ -237,13 +237,85 @@ Best correct candidate (or merged per-shape dispatch) becomes
 latencies recorded. What happens to it afterward (submit or not) is outside
 the engine.
 
-## 7. State & CLI
+## 7. Durability & resume
 
-- `runs/<id>/`: journal.jsonl, frontier/, best_solution.json, status.json —
-  fully resumable.
-- `knowledge/`: families/*.md, global.md.
-- CLI: `solver solve <ids|--all> [--budget N] [--target ...] [--executor stub|gpu]`
-  and `solver status`.
+**Principle: the journal is the single source of truth; everything else is a
+rebuildable cache.** The engine may be killed at any instant; on restart it
+replays the journal and continues from the last completed step, **never
+re-paying for GPU or agent work it already did.** This falls out of the
+node-graph shape: persist at every node boundary, and make each node
+idempotent on replay.
+
+### What's persisted (per problem, `runs/<id>/`)
+
+- **`journal.jsonl` — append-only, the authority.** One line per transition,
+  written and **fsync'd before the engine acts on it** (write-ahead):
+  `node_start`, `node_done` (with an output ref), `frontier_update`,
+  `budget`, `route`, `terminated`. A crash truncates at most the last line,
+  which is dropped on parse error during replay.
+- **`cache/<hash>.json` — content-addressed node outputs**, keyed by
+  `hash(node_role, impl_version, inputs)`. Memoizes every node result →
+  idempotent replay: a node whose inputs already have a cached output is
+  **not** re-run. This is what prevents re-spending a GPU evaluation or an
+  agent call. `impl_version` in the key invalidates stale outputs when a node
+  implementation changes.
+- **`frontier/`, `best_solution.json`, `status.json` — derived snapshots**,
+  rebuildable from the journal; written atomically (temp + `os.replace`) for
+  fast startup, never authoritative.
+
+### The resumable driver
+
+```
+restart:  state = replay(journal); node = state.next or graph.start
+loop:
+  key = hash(node, impl_version, inputs)
+  if cache.has(key): output = cache.get(key)                 # already done → reuse
+  else:
+    append(journal, node_start{node, key})                   # write-ahead intent
+    output = node.run(ctx, inputs)
+    cache.put(key, output); append(journal, node_done{key})  # + fsync
+  ctx.apply(output)                                           # frontier/budget (journaled)
+  node, inputs = router.next(node, output, ctx); append(journal, route{node})
+```
+
+A crash leaves at most a trailing `node_start` with no `node_done`. On restart
+that node is simply re-run — safe because content-addressed caching makes
+every node idempotent, **except** the GPU node, which is reconciled by job-id.
+
+### The GPU node — the one non-idempotent, expensive step
+
+The Execute node must never silently re-run an evaluation we already paid for,
+and must survive a crash *during* a run. It is backed by a durable queue with
+**stable job-ids** (the old repo's `gpu_jobs/` pending→processing→completed
+pattern):
+
+- enqueue: write `gpu_jobs/pending/<job_id>` (candidate + task) and journal
+  `execute_submitted{job_id, candidate_hash}` **before** waiting.
+- the GPU-side worker moves it to `completed/<job_id>.json` durably —
+  **independently of the engine process**.
+- on restart, for any `execute_submitted` with no `execute_done`: find
+  `job_id` in `completed/` → recover the result (no re-run); if still in
+  `processing/` → wait; if lost → resubmit. `candidate_hash` also dedups
+  identical candidate sources so the same kernel is never evaluated twice.
+
+Because results are persisted queue-side, killing the engine mid-evaluation
+loses no GPU work. (`StubExecutor` today is in-process/cheap, so its "queue"
+is trivial; this matters when `GpuQueueExecutor` lands.)
+
+### The fleet
+
+Each `runs/<id>/` is self-contained. On restart the Orchestrator scans run
+dirs to reconstruct the active set (done / in-progress / pending) and resumes
+the in-progress ones; its own allocation state is a small journaled file,
+likewise rebuildable.
+
+## 7b. Knowledge store & CLI
+
+- `knowledge/`: families/*.md, global.md — the dynamic KB (§4), curated
+  writes are also journaled so a crash mid-curation is recoverable.
+- CLI: `solver solve <ids|--all> [--budget N] [--resume] [--executor stub|gpu]`
+  and `solver status` (reads the journals). `--resume` is the default;
+  re-running `solve` on the same ids continues rather than restarts.
 
 ## 8. Build order (laptop-first)
 
