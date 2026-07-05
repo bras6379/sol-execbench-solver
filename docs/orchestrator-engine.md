@@ -101,6 +101,37 @@ build it now; the graph just leaves a socket for it.
 `Executor` (Phase A) is exactly the **Execute** node's role with its first two
 implementations. Every other role follows the same interface-per-role pattern.
 
+### Candidate discipline (clean artifact, any language)
+
+Two invariants for the Solutions the loop generates (the "pareto iterations"):
+
+1. **The Solution stays clean — engine bookkeeping never leaks in.** A
+   `Candidate`'s `spec`/`sources` are *only* the kernel the harness runs.
+   Status tags, parent, technique, scores, and reflections live in the
+   engine's own `meta.json`/`result.json`/journal *beside* the solution, never
+   inside `solution.json`. What ships to the GPU is exactly a kernel, nothing
+   of ours.
+2. **The baseline is a seed, not a mold.** `scaffold` produces one starting
+   candidate — a correct PyTorch DPS wrapper that delegates to the inlined
+   reference (`_reference_run`, score ≈ 0.5). Generated candidates do **not**
+   inherit that shape: they drop the reference delegation and are free-form
+   real kernels, in **any language the harness supports** — pytorch, triton,
+   cute_dsl, cutile, cudnn_frontend, or C++ (`cuda_cpp`/`cutlass`/`cudnn`/
+   `cublas`), including **multi-file** `sources` with `compile_options` /
+   `dependencies`. Only the seed is Python-and-reference-shaped; the search is
+   not. (So no C++ scaffold is needed — the seed is always the Python
+   baseline; mutations cross into C++.)
+
+Consequences the nodes must honour:
+- **Check** validates *by language*: DPS parameter names for python entries;
+  the `void run(torch::Tensor …)` signature + compilable structure for C++.
+- **Execute** for C++ has a **compile step**, so `EvalResult` distinguishes
+  `compile_error` / `runtime_error` / `incorrect` / `correct` — each drives a
+  different reflection (a compile error is a code fix, not a perf idea).
+- **Observability** materializes the *actual* entry file(s) (`kernel.cu`,
+  `kernel.cpp`, or `kernel.py`) and every `source`, not a hardcoded
+  `kernel.py`.
+
 ## 1. Execute node — the GPU lock (interface, swappable)
 
 The one serialized resource. Everything else fans out.
@@ -111,12 +142,16 @@ class Executor(Protocol):
 
 @dataclass
 class EvalResult:
-    correct: bool
-    sol_score: float | None                 # via solver/scoring.py
+    status: str                              # correct | incorrect | compile_error | runtime_error
+    sol_score: float | None                 # via solver/scoring.py; None unless correct
     per_workload: list[WorkloadResult]       # matched_ratio, latency_ms, sol_ms, error
     asi: dict                                # actionable side info: errors, profile, notes
     raw: dict                                # full harness payload
 ```
+
+(The stub only produces `correct`/`incorrect` since it doesn't compile; the
+`compile_error`/`runtime_error` states appear with the real GPU executor and
+C++ candidates. `correct` is a convenience for `status == "correct"`.)
 
 - `StubExecutor` (now): validates via `solver.check`, returns mock latencies
   (e.g. baseline × a factor drawn from the candidate's declared technique) so
@@ -263,12 +298,13 @@ idempotent on replay.
   rebuildable from the journal; written atomically (temp + `os.replace`) for
   fast startup, never authoritative.
 - **`candidates/<cand_id>/` — browsable per candidate** (not opaque JSON):
-  `kernel.py` (the source, materialized from the Solution so you can just
-  *open and read it*), `solution.json` (the canonical artifact),
-  `result.json` (per-shape scores, sol_score, correctness, ASI), `meta.json`
-  (parent, technique tag, and **status**: `frontier` | `dominated` |
-  `rejected` (failed static check, never ran) | `incorrect` (ran, wrong) |
-  `error`).
+  the **actual entry source file(s)** materialized from the Solution
+  (`kernel.cu` / `kernel.cpp` / `kernel.py` — whatever the candidate is — so
+  you can just *open and read it*), `solution.json` (the canonical artifact,
+  kernel-only, no engine bookkeeping), `result.json` (per-shape scores,
+  sol_score, correctness, ASI), `meta.json` (parent, technique tag, and
+  **status**: `frontier` | `dominated` | `rejected` (failed static check) |
+  `incorrect` | `compile_error` | `runtime_error`).
 
 **Git policy:** run outputs (`journal.jsonl`, `candidates/`, `frontier/`,
 `best_solution.json`, `status.json`) are **git-visible** — check them in when
