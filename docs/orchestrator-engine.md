@@ -171,9 +171,18 @@ change to the loop, KB, or transfer logic.
 
 Picked to unblock the foundation; revisit before the agent layer is built.
 
-1. **Agent substrate** → **Anthropic API direct**, behind a swappable `Agent`
-   interface (StubAgent for deterministic tests). Standalone engine; not
-   coupled to the Claude Code runtime.
+1. **Agent substrate** → **Claude Agent SDK (Python) on a subscription OAuth
+   token**, behind a swappable `Agent` interface (StubAgent for deterministic
+   tests; API-key and CLI options also pluggable). `pip install
+   claude-agent-sdk`; async `query()` + `ClaudeAgentOptions`; run the fleet
+   with `asyncio.gather()`. Auth WITHOUT an API key / API billing: `claude
+   setup-token` → `export CLAUDE_CODE_OAUTH_TOKEN=<token>`; the SDK uses it
+   automatically and draws from the subscription. **Caveat (live since
+   2026-06-15):** programmatic use draws a separate monthly non-interactive
+   credit pool (Pro $20 / Max-5x $100 / Max-20x $200); past it, API rates
+   apply. → keep the loop GEPA-frugal (few high-value agent calls per problem;
+   budget/time-box already enforce this). Standalone engine, not coupled to
+   the Claude Code runtime; tmux-of-CLIs is an equivalent-but-messier fallback.
 2. **Search driver** → **custom lightweight loop**. Small, full control over
    the GPU lock / per-shape Pareto / cross-problem transfer; no library to bend.
 3. **"Win" definition** → **beat leaderboard rank-1** (fetch the public
