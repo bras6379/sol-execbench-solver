@@ -72,6 +72,7 @@ Every fact in these files carries a tag:
 |---|---|
 | [benchmark-problems.md](benchmark-problems.md) | SOL-ExecBench problem taxonomy: op families, dtypes, collections, solver implications |
 | [benchmark-grader.md](benchmark-grader.md) | The official grader (read from source): SOL score formula, cold-L2 timing, correctness/tolerance rules, input heuristics, reward-hack defenses |
+| [solution-format.md](solution-format.md) | How a solution is submitted & run: the Solution schema, 9 languages (Python + C++ families), DPS, multi-file sources, the compile→eval pipeline, and the Trace result |
 | [sources.md](sources.md) | All sources from all research passes with quality ratings |
 
 ## The 30-second summary

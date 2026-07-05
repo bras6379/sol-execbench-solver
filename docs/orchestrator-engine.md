@@ -142,23 +142,32 @@ class Executor(Protocol):
 
 @dataclass
 class EvalResult:
-    status: str                              # correct | incorrect | compile_error | runtime_error
-    sol_score: float | None                 # via solver/scoring.py; None unless correct
-    per_workload: list[WorkloadResult]       # matched_ratio, latency_ms, sol_ms, error
-    asi: dict                                # actionable side info: errors, profile, notes
-    raw: dict                                # full harness payload
+    status: str            # mirrors the harness Trace status enum (below)
+    sol_score: float | None                 # via solver/scoring.py; None unless PASSED
+    per_workload: list[WorkloadResult]       # per-shape status, matched_ratio, latency_ms, sol_ms
+    asi: dict                                # actionable side info: logs, profile, notes
+    raw: dict                                # full Trace payload
 ```
 
-(The stub only produces `correct`/`incorrect` since it doesn't compile; the
-`compile_error`/`runtime_error` states appear with the real GPU executor and
-C++ candidates. `correct` is a convenience for `status == "correct"`.)
+`status` mirrors the real per-workload **Trace** enum (see
+[kb/solution-format.md](../kb/solution-format.md)): `PASSED |
+INCORRECT_SHAPE | INCORRECT_NUMERICAL | INCORRECT_DTYPE | RUNTIME_ERROR |
+COMPILE_ERROR | TIMEOUT | REWARD_HACK | INVALID_REFERENCE`. Each drives a
+different reflection (a `COMPILE_ERROR` is a code fix; `INCORRECT_NUMERICAL` is
+a precision/tolerance issue; `TIMEOUT` a perf/hang issue). The stub only emits
+`PASSED`/`INCORRECT_NUMERICAL` (it doesn't compile); the rest appear with the
+real executor and C++ candidates.
 
 - `StubExecutor` (now): validates via `solver.check`, returns mock latencies
   (e.g. baseline × a factor drawn from the candidate's declared technique) so
   the whole loop + KB + transfer can be built and tested without a GPU.
-- `GpuQueueExecutor` (later): enqueues on a single-flight queue to the GPU box
-  running the real SOL-ExecBench harness; blocks for the result. Concurrency
-  pinned to **1**. This is the future "GPU-run transport" phase.
+- `GpuQueueExecutor` (later): enqueues on a single-flight queue and **drives
+  the real harness** — for C++ candidates a **compile sub-stage**
+  (`build_ext.py` → `cpp_extension.load` → `.so`, may `COMPILE_ERROR`/timeout),
+  then the eval subprocess (`eval_driver.py`) — and parses the emitted **Trace
+  JSONL** into `EvalResult`. Dedup/build-cache by `Solution.hash()`.
+  Concurrency pinned to **1**. Details: [kb/solution-format.md](../kb/solution-format.md).
+  This is the future "GPU-run transport" phase.
 
 All ProblemSolvers share **one** Executor instance → the lock is structural.
 
