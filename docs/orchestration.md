@@ -59,8 +59,14 @@ see `kb/benchmarking-discipline.md`). So:
 
 ## Recommended approach
 
-Don't reinvent the evolutionary search — **use the `gepa` library's
-`optimize_anything` + a custom `GEPAAdapter`**:
+> **Superseded (2026-07-05):** the engine decision is a **custom lightweight
+> loop** implementing GEPA's concepts (reflection, ε-Pareto frontier, merge)
+> rather than the `gepa` library API — see
+> [orchestrator-engine.md](orchestrator-engine.md) "Decisions". The mapping
+> below remains valid as the conceptual reference.
+
+Original note — use the `gepa` library's `optimize_anything` + a custom
+`GEPAAdapter`:
 
 - `evaluate` = enqueue on the GPU-locked executor, wait, return
   `(sol_score, ASI)`.
