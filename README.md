@@ -19,6 +19,45 @@ uv venv --python 3.12
 uv pip install -e .          # laptop base: just the fetcher + scoring (pyarrow)
 ```
 
+## Execution model
+
+The laptop **never runs a workload**. Local tooling prepares candidates and,
+later, ingests results; the actual run (correctness + timing) happens on a
+GPU via the official harness, which returns data we then handle.
+
+```
+  laptop                                   GPU box
+  ------                                   -------
+  fetch problems         ─────────────▶
+  design (design-kernel skill)
+  scaffold candidate  ──┐
+  check (static, no GPU)│
+                        └── solution ────▶  run in SOL-ExecBench harness
+                                            (correctness + cold-L2 timing)
+  handle results / score  ◀────────────    returns latencies + correctness
+  iterate
+```
+
+The GPU-run transport (submit solution → run harness → return data) is a
+later build phase; everything below runs on the laptop today.
+
+## Candidates
+
+A **candidate** is a *Solution* (the harness's JSON: build `spec` + `sources`,
+called in Destination Passing Style — inputs then pre-allocated outputs,
+written in place). See `docs/solution.md` in the upstream repo; the format is
+captured in `solver/solution.py`.
+
+```bash
+solver scaffold 69                 # correct PyTorch DPS baseline for task 69
+solver scaffold 69 --lang triton   # signature-correct Triton stub to build from
+solver check <solution.json>       # static pre-flight (schema, DPS signature, reward-hack lints)
+```
+
+`scaffold` writes to `problems/<id>/candidates/<name>.json` (git-ignored;
+regenerable). `check` runs no GPU and executes no candidate code — it only
+AST-parses — so it's the cheap gate before spending a GPU run.
+
 ## Scoring and the grader
 
 The score is `S = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))` — 0.5 when a
