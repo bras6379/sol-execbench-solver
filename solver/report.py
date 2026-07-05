@@ -125,8 +125,10 @@ def _timeline_svg(fleet: dict, order: dict[int, int]) -> str:
     for wi, w in enumerate(windows):
         wpx = (w["end"] - w["start"]) * scale
         lanes.append(f'<rect x="{xoff:.1f}" y="{T}" width="{wpx:.1f}" height="{BH}" class="lane"/>')
-        ticks.append(f'<text x="{xoff:.1f}" y="{T - 8}" class="ax">'
-                     f'{_esc(w["label"] or "rental")} · {_hm(w["start"])}–{_hm(w["end"])}</text>')
+        if wpx > 70:   # only label windows wide enough to avoid overlap
+            lbl = (f'{_esc(w["label"] or "rental")} · {_hm(w["start"])}–{_hm(w["end"])}'
+                   if wpx > 150 else _esc(w["label"] or "rental"))
+            ticks.append(f'<text x="{xoff + 2:.1f}" y="{T - 8}" class="ax">{lbl}</text>')
         for j in jobs:
             if j["start"] >= w["start"] and j["start"] <= w["end"]:
                 x0 = xoff + (j["start"] - w["start"]) * scale
@@ -293,8 +295,19 @@ color:var(--ink);padding:6px 10px;font-size:13px;margin-bottom:10px;width:260px}
 padding:5px 9px;border-radius:6px;font-size:12px;opacity:0;transition:opacity .08s;z-index:9;max-width:420px;white-space:normal}
 .chip{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;font-weight:600;color:#fff}
 td.strat{white-space:normal;max-width:380px;color:var(--ink2)}
-pre{margin:0;overflow-x:auto}
+pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+button.link{background:none;border:none;color:var(--s1);cursor:pointer;font:inherit;padding:0}
+button.link:hover{text-decoration:underline}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:flex;
+align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+.modal-card{background:var(--panel);border:1px solid var(--grid);border-radius:12px;
+width:min(920px,100%);max-height:90vh;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+.modal-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;
+padding:14px 18px;border-bottom:1px solid var(--grid);position:sticky;top:0;background:var(--panel);border-radius:12px 12px 0 0}
+#modal-body{padding:16px 18px;overflow:auto}
+.modal-meta{display:flex;gap:14px;align-items:center;color:var(--ink2);font-size:12px;margin-bottom:12px;flex-wrap:wrap}
+.src-h{font-size:12px;font-weight:600;color:var(--ink2);margin:4px 0}
 """
 
 _JS = """
@@ -324,6 +337,24 @@ if(flt)flt.addEventListener('input',()=>{
   const v=flt.value.toLowerCase();
   document.querySelectorAll('table.sortable tbody tr').forEach(r=>
     r.style.display=r.textContent.toLowerCase().includes(v)?'':'none');});
+// candidate code modal (inline templates -> no fetch; works under file://)
+const modal=document.getElementById('modal');
+function openCode(id){
+  const tpl=document.querySelector('template[data-code="'+CSS.escape(id)+'"]');
+  if(!tpl||!modal)return;
+  document.getElementById('modal-title').textContent=tpl.dataset.title||id;
+  document.getElementById('modal-body').replaceChildren(tpl.content.cloneNode(true));
+  modal.hidden=false;history.replaceState(null,'','?code='+encodeURIComponent(id));}
+function closeCode(){if(modal){modal.hidden=true;history.replaceState(null,'',location.pathname);}}
+if(modal){
+  document.addEventListener('click',e=>{
+    const b=e.target.closest('[data-code]');
+    if(b&&b.tagName==='BUTTON'){openCode(b.dataset.code);}
+    else if(e.target===modal||e.target.id==='modal-x'){closeCode();}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCode();});
+  const pre=new URLSearchParams(location.search).get('code');
+  if(pre)openCode(pre);
+}
 """
 
 
@@ -449,6 +480,33 @@ _STATUS_CHIP = {
 }
 
 
+def _code_blocks(p: dict) -> str:
+    """Hidden per-candidate code, revealed by the modal (inline = static-safe,
+    works under file://). One <template> per candidate, keyed by cand id."""
+    out = []
+    for c in p["candidates"]:
+        sol = c.get("solution")
+        if not sol:
+            continue
+        spec = sol.get("spec", {})
+        score = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
+        chip = _STATUS_CHIP.get(c["status"], "o-dominated")
+        meta = (f'<div class="modal-meta">'
+                f'<span class="chip" style="background:var(--{chip})">{_esc(c["status"])}</span>'
+                f'<span>score <b>{score}</b></span>'
+                f'<span>{_esc(", ".join(spec.get("languages", ["?"])))}</span>'
+                f'<span>{_esc(c.get("model") or "")}</span></div>')
+        srcs = "".join(
+            f'<div class="src-h">{_esc(s.get("path", "?"))}</div>'
+            f'<pre><code>{_esc(s.get("content", ""))}</code></pre>'
+            for s in sol.get("sources", []))
+        out.append(
+            f'<template data-code="{_esc(c["cand"])}" '
+            f'data-title="{_esc(c["cand"])} — {_esc(c.get("strategy") or "")}">'
+            f'{meta}{srcs}</template>')
+    return "".join(out)
+
+
 def _progression_table(p: dict) -> str:
     """Solution progression over time: strategy TL;DR + status + score + code link."""
     if not p["candidates"]:
@@ -460,7 +518,7 @@ def _progression_table(p: dict) -> str:
                 f'{_esc(c["status"])}</span>')
         score = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
         best = "" if c.get("best_after") is None else f"{c['best_after']:.3f}"
-        code = (f'<a href="{p["task"]}/{_esc(c["cand"])}.html">view code</a>'
+        code = (f'<button class="link" data-code="{_esc(c["cand"])}">view code</button>'
                 if c.get("solution") else '<span class="muted">–</span>')
         rows.append(
             "<tr>"
@@ -488,41 +546,25 @@ def build_detail(p: dict, slot_i: int) -> str:
         _tile("wait p50 / p95", f"{_fmt_s(p['wait_p50'])} / {_fmt_s(p['wait_p95'])}"),
         _tile("agent", p["model"] or "–"),
     ])
+    modal = ('<div id="modal" class="modal" hidden><div class="modal-card">'
+             '<div class="modal-bar"><b id="modal-title"></b>'
+             '<button id="modal-x" class="link" aria-label="close">✕ close</button></div>'
+             '<div id="modal-body"></div></div></div>')
     body = f"""
 <div class="tiles">{stats}</div>
 <div class="panel"><h2>Convergence</h2>{conv}</div>
 <div class="panel"><h2>Solution progression — every candidate, in order</h2>
 {_progression_table(p)}</div>
 <div class="panel"><h2>Iteration outcomes</h2>{_outcomes_svg([p], order)}</div>
+{_code_blocks(p)}{modal}
 """
     sub = f'{_esc(p["family"])} · <a href="../index.html">← back to fleet dashboard</a>'
     return _shell(f"#{p['task']} {p['name']}", sub, body, None)
 
 
-def build_code_page(p: dict, c: dict) -> str:
-    sol = c.get("solution") or {}
-    spec = sol.get("spec", {})
-    srcs = "".join(
-        f'<div class="panel"><h2>{_esc(s.get("path", "?"))}</h2>'
-        f'<pre><code>{_esc(s.get("content", ""))}</code></pre></div>'
-        for s in sol.get("sources", []))
-    meta = "".join([
-        _tile("status", c["status"]),
-        _tile("score", "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"),
-        _tile("language", ", ".join(spec.get("languages", ["?"]))),
-        _tile("agent", c.get("model") or "–"),
-    ])
-    body = (f'<div class="tiles">{meta}</div>'
-            f'<div class="panel"><h2>Strategy</h2>'
-            f'<p>{_esc(c.get("strategy") or "–")}</p></div>' + srcs)
-    sub = (f'candidate <b>{_esc(c["cand"])}</b> of #{p["task"]} {_esc(p["name"])} · '
-           f'<a href="../{p["task"]}.html">← back to problem</a>')
-    return _shell(f"{c['cand']} — #{p['task']}", sub, body, None)
-
-
 def render(runs_dir: Path, out_dir: Path, *, refresh: int | None = None) -> Path:
-    """Render the full static site into out_dir (publishable as-is):
-    out_dir/index.html, out_dir/p/<task>.html, out_dir/p/<task>/<cand>.html."""
+    """Render the publishable static site into out_dir (as-is):
+    out_dir/index.html + out_dir/p/<task>.html (code shown in-page via modal)."""
     runs_dir = Path(runs_dir)
     journals = journal_mod.read_all(runs_dir)
     data = metrics_mod.collect(journals, runs_dir=runs_dir)
@@ -533,12 +575,6 @@ def render(runs_dir: Path, out_dir: Path, *, refresh: int | None = None) -> Path
     order = {p["task"]: i for i, p in enumerate(data["problems"])}
     for p in data["problems"]:
         (p_dir / f"{p['task']}.html").write_text(build_detail(p, order[p["task"]]))
-        cand_dir = p_dir / str(p["task"])
-        if any(c.get("solution") for c in p["candidates"]):
-            cand_dir.mkdir(exist_ok=True)
-        for c in p["candidates"]:
-            if c.get("solution"):
-                (cand_dir / f"{c['cand']}.html").write_text(build_code_page(p, c))
 
     index = out_dir / "index.html"
     tmp = index.with_suffix(".tmp")

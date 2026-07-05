@@ -20,20 +20,22 @@ strokes, label collisions, overflow, and theme bugs before a human sees them.
    `solver report --runs-dir runs` → publishable static site in `out/`
    (`index.html`, `p/<task>.html`, `p/<task>/<cand>.html`).
 
-2. **Screenshot BOTH themes and EVERY page type** with headless Chrome. The
-   pages honor a `?theme=light|dark` query override (JS sets `data-theme`),
-   so no CDP media-emulation is needed:
+2. **Screenshot BOTH themes and EVERY page type** with headless Chrome. Pages
+   honor `?theme=light|dark` (JS sets `data-theme`) and problem pages honor
+   `?code=<cand>` to auto-open the candidate **code modal** — both make the
+   modal and theme states screenshot-able without CDP:
    ```bash
    CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-   "$CHROME" --headless=new --disable-gpu --hide-scrollbars \
-     --window-size=1440,2300 \
-     --screenshot=docs/screenshots/dashboard-light.png \
-     "file://$PWD/.cache/demo/out/index.html?theme=light"
-   # repeat with ?theme=dark; then a problem detail page (p/69.html) and a
-   # candidate code page (p/69/c004.html) — bugs live in every page type.
+   S=docs/screenshots; O="file://$PWD/.cache/demo/out"
+   "$CHROME" --headless=new --disable-gpu --hide-scrollbars --window-size=1440,3200 \
+     --screenshot=$S/dashboard-light.png "$O/index.html?theme=light"
+   # + ?theme=dark ; a problem page ($O/p/<task>.html) ; the modal
+   # ($O/p/<task>.html?theme=dark&code=<cand>). Bugs live in every page type.
    ```
-   (Ignore Chrome's "Failed parsing certificate policies" stderr noise.
-   Bump `--window-size` height if the page grows taller than the capture.)
+   Tall pages (the 235-problem hub) need `--window-size=1440,3200`. Ignore
+   Chrome's "Failed parsing certificate policies" stderr noise. Current
+   targets: `dashboard-light/dark.png`, `problem-detail.png`,
+   `candidate-modal.png`.
 
 3. **Actually look at the PNGs** (Read tool renders them). Check every item:
    - every mark visible — a CSS class with no fill/stroke renders as
