@@ -77,14 +77,19 @@ async def main(ids):
                            for c in chains))   # families concurrent; NO cross-family barrier
 ```
 
-**Family-chain scheduling.** Launching all siblings of a family at once would
-defeat transfer (none is finished while the others run — nothing curated to
-seed from). But a global "wave" barrier would be worse: family A's siblings
-stalling on family B's slow exemplar is exactly the cross-problem blocking
-this design forbids. So: **each family is a sequential chain (exemplar →
-siblings); all chains run concurrently.** Dependencies exist only where
-transfer creates them. Plan may additionally **live-read sibling runs'
-current frontier bests** (read-only) for any deliberate same-family overlap.
+**Work-conserving family chains.** There are **no global rounds**: all
+families run concurrently, always. Within a family, chain order (exemplar →
+siblings) is a **priority, not a gate** — it exists purely for GPU-budget
+economics: a sibling started after its exemplar tunes a template (~3–5
+evals) instead of searching from scratch (~20–50), and since the GPU is
+single-flight, redundant sibling exploration burns shared budget without
+finishing anything sooner. But the chain never holds work back while
+capacity is free: **if the GPU would otherwise idle** (few families
+selected, everyone mid-think), the scheduler starts the next pending problem
+early. Late starters bootstrap from whatever knowledge exists at start time
+and **live-read running siblings' frontier bests** mid-run, so any
+same-family overlap still transfers continuously. Net behavior: everything
+runs whenever there's capacity; ordering only shapes who gets started first.
 
 **Agent failure policy.** Transient agent errors → retry with backoff.
 **Quota-exhausted (subscription credit pool dry) is fleet-wide**, not a
