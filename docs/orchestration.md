@@ -116,7 +116,14 @@ Rules that make this work:
   (Phase A's `threading.Lock` stub gets converted.)
 - **Two swappable interfaces** — the only abstraction that earns its keep:
   - `Executor.evaluate(solution, task_id) -> EvalResult` — StubExecutor (now)
-    / GpuQueueExecutor (later). All solvers share ONE instance; single-flight.
+    / GpuQueueExecutor (later). All solvers share ONE instance; strictly one
+    job on the GPU at a time, dispatched **fair round-robin across
+    problems**: per-problem FIFO queues, one job per problem per turn. This
+    prevents a fast-thinking problem (or a multi-seed bootstrap) from
+    monopolizing the GPU while other problems' evals wait — each solver has
+    ≤1 eval in flight, so RR over problems is exact fairness. (Phase F's
+    priority refinements — screens first, circuit breaker — extend this same
+    dispatcher.)
   - `Agent.design/plan/reflect/judge(...)` — StubAgent (deterministic tests)
     / Claude Agent SDK on the subscription OAuth token (`claude setup-token`
     → `CLAUDE_CODE_OAUTH_TOKEN`; no API key). Judge + brief reflections use
