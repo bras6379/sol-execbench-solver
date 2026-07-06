@@ -1,12 +1,20 @@
 # GPU execution (Phase F): running kernels in the harness on a rented B200
 
-**Status: F1 + F2-core built** (laptop-tested, no GPU): the `GpuQueueExecutor` +
-file-queue + idempotent-job durability (`tests/test_gpu.py`), the pod lifecycle
-+ **guaranteed teardown** (`tests/test_pod.py`, MockProvider — no spend), and the
-harness **Trace→EvalResult mapping** (`tests/test_harness.py`, real metadata + a
-fake driver). The **pod-integration** — SSH transport, bootstrap, the real
-`eval_driver` driver, and `solver solve --gpu` wiring — needs only a RunPod API
-key + credit (no manual pod, no SSH to hand over).
+**Status: F1 + F2 built and VALIDATED LIVE on a rented B200 (RunPod).** The full
+path works autonomously: `solver solve --gpu 230 --agent claude --model haiku`
+auto-provisioned a CUDA-13 B200, bootstrapped the pinned harness (`uv sync`
+torch/cu13 + cutlass + cupti), scored candidates through the real `sol-execbench`
+CLI, and terminated the pod — no orphans. The naive reference rmsnorm scored
+~0.05; a fused Triton kernel (the agent found the same one) scored **0.54** at
+26× the speed, so scoring tracks real performance. Covered by 42 laptop tests
+(durability, teardown, Trace→EvalResult mapping, the solution/​trace helpers, and
+the `SshExecutor` control flow against a fake pod) plus the live run above.
+Real-GPU pieces: `SshExecutor` + `PodConn` (`ssh_exec.py`), `bootstrap` +
+`solve_on_gpu` (`gpu_run.py`), the harness-format helpers (`harness.py`), and the
+`RunPodProvider` create args (`pod.py`). Deferred (not needed for a working run):
+network-volume harness caching (fresh `uv sync` each run, ~5 min), Nsight/​ncu
+deep-profiling (§8b Tier 2), and the pod-side dead-man's-switch (laptop-side
+teardown is the proven primary; §6).
 The engine already treats the GPU as an interface (`Executor.evaluate`), stubbed
 on the laptop. This is the *real* executor: get a
 GPU (RunPod, over SSH), run each candidate in the SOL-ExecBench harness, return
@@ -408,8 +416,8 @@ laptop.
 |---|---|
 | F1 | `GpuQueueExecutor` + file-queue transport + hash-keyed idempotent jobs + resume-based recovery + **LocalPod fake-harness tests (§10)** — all laptop-testable, no GPU |
 | F2a ✅ | Pod lifecycle + **guaranteed teardown** (§6; `PodSession`/`MockProvider`, laptop-tested) + harness **Trace→EvalResult mapping** (§4b; metadata + fake driver) |
-| F2b | On a pod: **SSH transport** + **bootstrap** (§3b) + `init-volume` + the real `eval_driver` driver + **`solver solve --gpu`** wiring + RunPod health/cost monitor + pod-side dead-man's-switch |
-| F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
+| F2b ✅ | **Live on a B200.** `SshExecutor` + `PodConn` (rsync/ssh, single-flight, idempotent job dirs) instead of a pod-side worker — all scoring laptop-authoritative; `bootstrap` (§3b, validated recipe); the real driver = the `sol-execbench` **CLI** (`run_eval.sh`) + `solution_to_harness_json`/`traces_from_jsonl`; **`solver solve --gpu`** (`solve_on_gpu`: provision→bootstrap→run→terminate). Deferred: `init-volume` caching, RunPod cost monitor, pod-side dead-man's-switch (laptop teardown is primary) |
+| F3 | Timing calibration vs the leaderboard (§8; cold-L2/clock-lock, our CLI latency vs the published `sol_ms`/`baseline`), network-volume harness caching, ncu deep-profiling (§8b), compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
 ## Decision log
 

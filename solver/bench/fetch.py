@@ -39,7 +39,9 @@ def _build_definition(row: dict) -> dict:
     """Assemble definition.json exactly as the official downloader does."""
     return {
         "name": row["name"],
-        "hf_id": row.get("hf_id"),
+        # harness Definition validates hf_id as Optional[NonEmptyString]: "" is
+        # rejected, null is fine. The dataset ships "" for the FlashInfer subset.
+        "hf_id": row.get("hf_id") or None,
         "description": row["description"],
         "axes": row["axes"],
         "custom_inputs_entrypoint": row.get("custom_inputs_entrypoint"),
