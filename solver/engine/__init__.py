@@ -32,6 +32,7 @@ from .knowledge import KnowledgeStore
 from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
 from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
 from .ssh_exec import PodConn, SshExecutor
+from . import store
 
 __all__ = [
     "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
@@ -48,4 +49,5 @@ __all__ = [
     "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
     "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
     "PodConn", "SshExecutor",
+    "store",
 ]

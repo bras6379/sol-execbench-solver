@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Awaitable, Callable
 
 from .. import journal as journal_mod
+from . import store
 from .agent import Agent, solution_hash
 from .config import Config, Perspective
 from .context import RunContext
@@ -72,6 +73,20 @@ def _statuses(result: EvalResult) -> list[str]:
     return [("PASSED" if w.correct else (w.error or "FAILED")) for w in result.per_workload]
 
 
+def _persist(ctx: RunContext, task_id: int, cid: str, solution: dict | None,
+             result: EvalResult, *, runs_dir, problems_dir, family: str, name: str,
+             **meta) -> None:
+    """Best-effort durable store: the candidate + the refreshed frontier/best.
+    A store failure warns but never aborts the solve."""
+    try:
+        store.record_candidate(runs_dir, task_id, cid, solution, result,
+                               problems_dir=problems_dir, **meta)
+        store.record_frontier(runs_dir, task_id, ctx.frontier,
+                              problems_dir=problems_dir, family=family, name=name)
+    except Exception as exc:                       # pragma: no cover - defensive
+        ctx.record("store_error", cand=cid, error=repr(exc)[:200])
+
+
 async def solve_problem(
     task_id: int,
     executor: Executor,
@@ -108,7 +123,9 @@ async def solve_problem(
             ctx.record("exec_done", job=cid, cand=cid, ts=result.raw.get("ended"),
                        gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
                        sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
-            ctx.accept_candidate(cid)
+            verdict = ctx.accept_candidate(cid)
+            _persist(ctx, task_id, cid, sol, result, runs_dir=runs_dir, problems_dir=problems_dir,
+                     family=family, name=name, strategy="seed", verdict=verdict)
         ctx.record("bootstrapped")
 
     # ---- the loop ----
@@ -150,6 +167,10 @@ async def solve_problem(
                    gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
                    sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
         verdict = ctx.accept_candidate(cand.cand_id)
+        _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
+                 problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
+                 agent=persp.agent, model=persp.model, parent=cand.parent,
+                 verdict=verdict, trajectory=cand.trajectory)
         await agent.reflect(cand, result, verdict)
         ctx.record("reflect_done", cand=cand.cand_id, dur_s=0.0)
         ctx.record("iter", n=ctx.iters, outcome=verdict)
@@ -162,6 +183,12 @@ async def solve_problem(
         else:
             reason = "converged:last-tier"
         ctx.record("terminated", reason=reason)
+
+    try:                                                   # final flush: frontier.json + best_solution.json
+        store.record_frontier(runs_dir, task_id, ctx.frontier,
+                              problems_dir=problems_dir, family=family, name=name)
+    except Exception:                                      # pragma: no cover - defensive
+        pass
 
     if knowledge is not None:                              # serialized curator (§8)
         await knowledge.curate(ctx, family, name)

@@ -236,6 +236,37 @@ def _cmd_frontier(args) -> None:
     for c in accepted:
         sc = f"{c['sol_score']:.3f}" if c["sol_score"] is not None else "  -  "
         print(f"  {c['cand'][:10]}  score={sc}  {c['model']:<6}  {c['strategy']}")
+    base = Path(args.runs_dir) / str(args.task)
+    for label, f in (("frontier", base / "frontier.json"),
+                     ("submit  ", base / "best_solution.json"),
+                     ("candidates", base / "candidates")):
+        if f.exists():
+            print(f"  {label}: {f}")
+
+
+def _cmd_export(args) -> None:
+    """Collect every problem's best_solution.json into one submission dir + manifest."""
+    import shutil
+
+    runs_dir = Path(args.runs_dir)
+    out = Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    manifest = []
+    for best in sorted(runs_dir.glob("*/best_solution.json"), key=lambda p: int(p.parent.name)):
+        task = int(best.parent.name)
+        fr = best.parent / "frontier.json"
+        meta = json.loads(fr.read_text()) if fr.exists() else {}
+        name = meta.get("name") or f"task-{task}"
+        dest = out / f"{task:03d}_{Path(name).name}.json"
+        shutil.copyfile(best, dest)
+        manifest.append({"task": task, "name": name, "family": meta.get("family"),
+                         "best_score": meta.get("best_score"), "best_cand": meta.get("best_cand"),
+                         "frontier_size": meta.get("size"), "solution": dest.name})
+        print(f"{task:>3}  {name:<28} score={meta.get('best_score')}  -> {dest}")
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=2))
+    scored = [m["best_score"] for m in manifest if m["best_score"] is not None]
+    mean = sum(scored) / len(scored) if scored else 0.0
+    print(f"\n{len(manifest)} solution(s) -> {out}/  ·  mean best {mean:.3f}  ·  manifest.json written")
 
 
 def _cmd_candidates(args) -> None:
@@ -349,6 +380,11 @@ def main(argv: list[str] | None = None) -> None:
     p_cand.add_argument("--status", default=None, help="filter by status (accepted/dominated/rejected/...)")
     p_cand.add_argument("--runs-dir", default="runs")
     p_cand.set_defaults(func=_cmd_candidates)
+
+    p_export = sub.add_parser("export", help="collect each problem's best_solution.json into a submission dir")
+    p_export.add_argument("--runs-dir", default="runs")
+    p_export.add_argument("--out-dir", default="submissions", help="where to write the bundle (default: submissions/)")
+    p_export.set_defaults(func=_cmd_export)
 
     p_report = sub.add_parser("report", help="render the run dashboard (static site)")
     p_report.add_argument("--runs-dir", default="runs")

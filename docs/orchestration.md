@@ -392,27 +392,29 @@ Storage rule — three classes, no ambiguity:
    journal by hash): raw harness Traces/logs. These are measurements — the
    one thing that **cannot be rebuilt without re-paying a GPU run** — so
    they are never classed as a derived view.
-3. **Journal-rebuildable, but materialized eagerly + checked in**:
-   `frontier/`, `best_solution.json`, `status.json`, and — **first-class in
-   practice** — `candidates/<cand_id>/`, the durable, browsable home for each
-   (expensive-to-produce) kernel **and** its measured perf:
-   - the **real source files** (`kernel.py`/`kernel.cu`/… — the multi-file
-     `sources` as written);
-   - `solution.json` — the clean Solution (+ its `Solution.hash()`);
-   - `result.json` — **the GPU/metrics perf after it runs**: per-shape
-     `status` / `latency_ms` / `sol_ms` / `baseline_latency_ms` /
-     `matched_ratio` / `latency_spread`; solution-level `all_passed` +
-     `sol_score`; the `gpu_s` wall time; and the `env` fingerprint (GPU/driver/
-     clock/harness) — so a stored kernel carries exactly how fast it ran and
-     against what;
-   - `meta.json` — parent lineage, strategy TL;DR, producing `(agent, model)`,
-     and status (frontier | dominated | rejected | duplicate | incorrect |
-     compile_error | runtime_error | timeout | reward_hack).
+3. **Journal-rebuildable, but materialized eagerly + checked in** — ✅ built
+   (`engine/store.py`, written live by `solve_problem` at every eval + accept):
+   - `candidates/<cand_id>.json` — the durable, browsable home for each
+     (expensive-to-produce) kernel **and** its measured perf, in one record:
+     the raw engine candidate (`solution`, the multi-file `sources` as written);
+     `per_workload` (per-shape `status`/`latency_ms`/`sol_ms`/`baseline`/
+     `sol_score`), solution-level `correct` + `sol_score` + `vector`, `gpu_s`,
+     `job_id`, `asi`; lineage/strategy/`(agent, model)`/`verdict`; **and
+     `submit`** — a ready-to-submit harness `solution.json` (so *any* candidate,
+     not just the best, can go straight to the leaderboard). Seed solutions are
+     captured here (the journal doesn't carry them), making the store the
+     authoritative candidate archive.
+   - `candidates/index.jsonl` — one compact line per candidate (fast listing).
+   - `frontier.json` — the current ε-Pareto set: each member's mean `sol_score`,
+     `vector`, `shapes_won` (why it survives), `(agent, model)`, strategy, and a
+     pointer to its candidate file; plus `best_cand`/`best_score`.
+   - `best_solution.json` — the submittable harness solution of the best member.
+   - `solver export` gathers every problem's `best_solution.json` into a
+     `submissions/` bundle + `manifest.json` (a whole-benchmark submission).
 
-   Rebuildable *in principle* (source is also inline-authoritative in the
-   journal, raw traces in `results/`), so "replay is resume" still holds — but
-   written **eagerly and git-checked-in** so an expensive kernel + its numbers
-   is never lost and is always laid out on disk to inspect and reuse.
+   Rebuildable *in principle* (source is inline-authoritative in the journal),
+   so "replay is resume" still holds — but written **eagerly and git-checked-in**
+   so an expensive kernel + its numbers is never lost.
 
 - `runs/<id>/journal.jsonl` — append-only, one fsync'd line per step; every
   line has a `schema_version`; state changes record **full deltas** (who
