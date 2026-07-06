@@ -224,6 +224,62 @@ The eval worker runs LLM-generated code (orchestration.md §11):
 - **`env` fingerprint** (GPU / driver / clock / harness commit) on **every**
   result; cross-pod comparisons flagged; automated re-baselining deferred.
 
+## 8b. GPU observability & profiling — what we capture, and when
+
+Latency says a kernel is slow; **profiling says *why*** — and "why" is what makes
+`reflect()` (the text gradient) actionable ("memory-bound at 45% of peak BW,
+register-limited occupancy → vectorize loads, cut registers" ≫ "it's slow").
+Two rules from `kb/profiling-guide.md` shape the design:
+
+- **`ncu` times ≠ leaderboard latency** (it locks clocks + flushes caches) — the
+  **harness scores, `ncu` only diagnoses**. Never score off a profiler run.
+- **`ncu` replay is slow** (10–100×) — profile **one representative shape, on
+  demand**, not every eval.
+
+So GPU-side data is **two cost tiers**:
+
+**Tier 1 — every eval (cheap; rides `EvalResult.asi`):**
+- *Score data* (built): per-shape `status`, `latency_ms`, `matched_ratio`, sol_score.
+- *Timing quality*: per-shape latency **variance** (std / CV, p50/p95/p99,
+  n_trials) from the harness iters — so the engine knows if a 1–3% delta is real
+  or noise (`kb/benchmarking-discipline.md`); what a future per-shape ε /
+  confirm-before-promote keys on (`latency_spread` field already reserved).
+- *Clock/thermal*: SM clock, power, temperature during the run (`nvidia-smi`) —
+  catch a "slow" result that's actually throttling, not the kernel.
+- *Correctness detail* (when not PASSED): max abs/rel error, ULP, mismatch
+  fraction, which output — turns a bare `INCORRECT_NUMERICAL` into "off by 1e-3
+  (bf16 accumulation order)" vs "wrong shape/dtype" vs "NaN".
+- *Build info* (C++): `ptxas -v` — registers/thread, shared-mem/block, **spills**,
+  warnings, nvcc time; + static launch dims → theoretical occupancy + wave/tile
+  quantization (do we fill the 148 SMs?). All from `build_ext`, no profiler.
+
+**Tier 2 — deep profile, on demand (expensive; a separate profile job):**
+`ncu --set detailed -o report.ncu-rep` on **one representative shape**, then the
+top-down triage (`kb/profiling-guide.md`):
+- **SOL**: SM% vs MEM% → the **bottleneck class** (compute- / memory- /
+  latency-bound).
+- Achieved **DRAM bandwidth %** (vs ~7.5 TB/s), **tensor-pipe %** (TC-bound),
+  **L2 hit rate**.
+- **Achieved occupancy** + limiter (registers / shared / blocks).
+- **Warp-stall** breakdown (top reason) — second-order, only if issue-starved.
+- `ncu`'s own **Recommendations** with *Est. Speedup* — the ranked "try next".
+- B200: **TMEM / TMA / cluster** usage, tile-quantization flags.
+We **digest** this into a compact, agent-readable summary (the ASI), not the raw
+report; the raw `.ncu-rep` is persisted to the candidate dir for the human.
+
+**Into the loop:**
+- Tier 1 rides every `EvalResult.asi` → `reflect()` gets rich why-signal, and the
+  variance gates promotion.
+- Tier 2 is **profile-on-plateau** (orchestration.md deferred): when a problem
+  stalls, profile its frontier-best → the bottleneck digest enters the next
+  `plan()`'s context and family knowledge → the agent targets the actual ceiling.
+  Gated because `ncu` is slow.
+- `ncu` joins the pod-bootstrap install (§3b) when Tier 2 lands.
+
+**v1 posture**: **Tier 1 in F2** (cheap, always-on, high-value for reflection);
+**Tier 2 (`ncu`) deferred** to F3+/on-plateau — the existing "Nsight → ASI"
+deferred item, now specified.
+
 ## 9. Transport mechanism
 
 - **rsync/ssh file-queue** (chosen): `jobs/`/`results/` synced over SSH. Robust,
