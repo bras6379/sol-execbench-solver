@@ -69,6 +69,8 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     terminated = None
     last_improve_ts = None
     name = family = model = ""
+    best_model = ""            # producer of the best candidate (who actually won)
+    best_model_score = -1.0
     first_ts = last_ts = None
     candidates: dict[str, dict] = {}   # cand id -> progression record
 
@@ -139,6 +141,9 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                     last_improve_ts = _t(ts)
                 if c and c["status"] not in ("incorrect", "error"):
                     c["status"] = "accepted"
+                if c and c.get("sol_score") is not None and c["sol_score"] >= best_model_score:
+                    best_model_score = c["sol_score"]
+                    best_model = c.get("model") or model
             elif e.get("verdict") == "dominated":
                 outcomes["dominated"] += 1
                 if c and c["status"] == "planned":
@@ -159,7 +164,7 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
 
     waits = [j["start"] - j["enq"] for j in jobs.values() if "start" in j and "enq" in j]
     return {
-        "task": task_id, "name": name, "family": family, "model": model,
+        "task": task_id, "name": name, "family": family, "model": best_model or model,
         "iters": iters, "evals": evals, "best": best, "frontier": frontier,
         "terminated": terminated, "convergence": convergence,
         "accept_times": accept_times, "last_improve_ts": last_improve_ts,

@@ -16,7 +16,9 @@ locked, async executor from day one.
 from __future__ import annotations
 
 import asyncio
+import datetime as dt
 import json
+import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol
@@ -132,14 +134,29 @@ class StubExecutor:
         self.max_concurrent = 0          # observed peak; must stay ≤ 1
 
     async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False) -> EvalResult:
+        # NB: the timed window opens *after* the lock is acquired, so `gpu_s` /
+        # started..ended measure actual GPU work — never lock-wait. The loop
+        # journals these as exec_started/exec_done ts, keeping queue-wait and
+        # busy-time cleanly separated on the dashboard.
         async with self._lock:           # single-flight, like the GPU
             assert not self._in_flight, "GPU re-entered: single-flight violated"
             self._in_flight = True
             self.max_concurrent = max(self.max_concurrent, 1)
             try:
+                started = dt.datetime.now(dt.timezone.utc)
+                t0 = time.perf_counter()
                 if self._delay:
                     await asyncio.sleep(self._delay)   # force interleavings in concurrency tests
                 self.calls += 1
-                return self._outcome(solution, task_id)
+                result = self._outcome(solution, task_id)
+                result.raw = {**(result.raw or {}),
+                              "started": _iso(started),
+                              "ended": _iso(dt.datetime.now(dt.timezone.utc)),
+                              "gpu_s": round(time.perf_counter() - t0, 6)}
+                return result
             finally:
                 self._in_flight = False
+
+
+def _iso(t: dt.datetime) -> str:
+    return t.isoformat().replace("+00:00", "Z")

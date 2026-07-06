@@ -51,6 +51,7 @@ async def solve_problem(
     seed: int = 0,
     seeds_fn: SeedsFn | None = None,
     check_fn: CheckFn | None = None,
+    knowledge=None,
     family: str = "",
     name: str = "",
 ) -> RunContext:
@@ -63,12 +64,15 @@ async def solve_problem(
         ctx.record("run_started", agent=str(cfg.design_model), name=name, family=family)
         design = await agents[cfg.design_model].design(task_id)
         ctx.record("design_done", text=design, dur_s=0.0)
-        for sol in seeds_fn(task_id):
+        # sibling seeding (best same-family Solution so far) then the scaffold seed
+        seeds = (knowledge.sibling_seed(task_id, family) if knowledge else []) + seeds_fn(task_id)
+        for sol in seeds:
             cid = solution_hash(sol)[:12]
             ctx.record("exec_enqueued", job=cid, cand=cid)
-            ctx.record("exec_started", job=cid)
             result = await executor.evaluate(sol, task_id)
-            ctx.record("exec_done", job=cid, cand=cid, gpu_s=0.0, all_passed=result.correct,
+            ctx.record("exec_started", job=cid, ts=result.raw.get("started"))
+            ctx.record("exec_done", job=cid, cand=cid, ts=result.raw.get("ended"),
+                       gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
                        sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
             ctx.accept_candidate(cid)
         ctx.record("bootstrapped")
@@ -104,11 +108,11 @@ async def solve_problem(
             continue
 
         ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
-        ctx.record("exec_started", job=cand.cand_id)
         result = await executor.evaluate(cand.solution, task_id)
-        ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, gpu_s=0.0,
-                   all_passed=result.correct, sol_score=result.sol_score,
-                   scores=result.vector(), statuses=_statuses(result))
+        ctx.record("exec_started", job=cand.cand_id, ts=result.raw.get("started"))
+        ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, ts=result.raw.get("ended"),
+                   gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
+                   sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
         verdict = ctx.accept_candidate(cand.cand_id)
         await agent.reflect(cand, result, verdict)
         ctx.record("reflect_done", cand=cand.cand_id, dur_s=0.0)
@@ -122,6 +126,9 @@ async def solve_problem(
         else:
             reason = "converged:last-tier"
         ctx.record("terminated", reason=reason)
+
+    if knowledge is not None:                              # serialized curator (§8)
+        await knowledge.curate(ctx, family, name)
     return ctx
 
 
@@ -140,15 +147,18 @@ async def run_fleet(
     seed: int = 0,
     seeds_fn: SeedsFn | None = None,
     check_fn: CheckFn | None = None,
+    knowledge=None,
     families: dict[int, str] | None = None,
+    names: dict[int, str] | None = None,
 ) -> None:
     families = families or {}
+    names = names or {}
 
     async def guarded(t: int) -> None:
         try:
             await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
-                                seeds_fn=seeds_fn, check_fn=check_fn,
-                                family=families.get(t, ""), name=f"task-{t}")
+                                seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
+                                family=families.get(t, ""), name=names.get(t, f"task-{t}"))
         except Exception as exc:  # crash isolation: one problem's failure is journaled, not fatal
             journal_mod.Journal(Path(runs_dir) / str(t) / "journal.jsonl", t).append(
                 "solver_error", error=repr(exc))

@@ -1,8 +1,9 @@
 # Orchestration: the Solver Engine
 
 Single design doc for the multi-agent optimization engine. **Status: Phases
-A + B built (engine core: loop, frontier, tiers, resume, §12 tests — all
-laptop/stub); Phases C–F designed.** Goal: **select problems → optimize each to
+A–E built (engine, knowledge, fleet, `solver solve`/views, sibling seeding —
+all laptop/stub, dashboard-verified on real runs); Phase F (GPU) designed.**
+Goal: **select problems → optimize each to
 the best kernel we can find → accumulate and transfer knowledge across
 problems.** The GPU is abstracted behind an interface (stub today, real
 harness transport later). The engine *finds* best solutions; it does **not**
@@ -612,9 +613,9 @@ exists today; B–E are v1 scope, not yet written.**
 |---|---|---|
 | A | ✅ built | Executor interface + **async** StubExecutor (scenario API + re-entrancy assertion, §12) |
 | B | ✅ built | `solve_problem` loop + RunContext + journal/replay + ε-frontier + novelty (hash + judge) + caps/plateau + **tier ladder / headroom-gated escalate (§6b)** + StubAgent + **§12 tests (12 passing)** |
-| C | ⬜ v1 | Knowledge store + serialized curator (per-finished-problem) + design-doc-at-iter-0 |
-| D | ⬜ v1 | Fleet (`main`, crash isolation, **static exemplar-first launch order**) + CLI (`solve`, status/journal/frontier/candidates views) |
-| E | ⬜ v1 | **Bootstrap** sibling-templating transfer (§2) |
+| C | ✅ built | KnowledgeStore + serialized per-finished-problem curator (stub distiller) + design-at-bootstrap |
+| D | ✅ built | Fleet (`run_fleet`, crash isolation) + CLI `solve` + `status`/`journal`/`frontier`/`candidates` views; a deterministic `sim` agent drives real runs (launch order = passthrough until families mature) |
+| E | ✅ built | Bootstrap sibling seeding (best same-family Solution; §8) |
 | F | ⛔ GPU | GpuQueueExecutor: job-id queue, compile-∥-run split, sandbox, calibration; then the deferred items below as data demands |
 
 ## Deferred (designed, not built)

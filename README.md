@@ -68,10 +68,20 @@ uv pip install -e '.[dev]'   # pytest
 python -m pytest tests/      # the §12 acceptance tests (no GPU, no API)
 ```
 
-Status: **Phases A + B built** — the engine core (`solver/engine/`): the async
+Drive real runs through the engine (stub sim agent, no GPU/model) and view them:
+
+```bash
+solver solve 1-40 --runs-dir runs      # run the fleet → runs/<id>/journal.jsonl
+solver status --runs-dir runs          # per-problem summary
+solver report --runs-dir runs          # → out/ dashboard site
+```
+
+Status: **Phases A–E built** — the engine (`solver/engine/`): the async
 `solve_problem` loop, RunContext with journal replay/resume, the ε-Pareto
-frontier, the tier ladder with headroom-gated escalation, novelty gates, and
-the fleet, all covered by the §12 stub tests. Next: the real Agent backends
+frontier, the tier ladder with headroom-gated escalation, novelty gates, the
+fleet, the serialized knowledge curator, and bootstrap sibling seeding — all
+covered by the §12 stub tests and verified end-to-end on the dashboard
+(`docs/screenshots/real-*.png`). Next: the real Agent backends
 (`docs/agent.md`) and GPU execution (`docs/gpu-execution.md`).
 
 Run progress is inspectable as a static dashboard (no server/CDN):

@@ -126,6 +126,90 @@ def _cmd_report(args) -> None:
     print(f"dashboard site -> {path}")
 
 
+def _cmd_solve(args) -> None:
+    import asyncio
+
+    from . import journal as J
+    from .dashboard import metrics
+    from .engine import (Config, KnowledgeStore, Perspective, StubExecutor, Tier,
+                         run_fleet, sim, stub_agents)
+
+    ids = _resolve_ids(args)
+    cfg = Config(
+        tiers=[Tier("cheap", [Perspective("claude", "haiku"), Perspective("openai", "gpt")]),
+               Tier("strong", [Perspective("claude", "opus")])],
+        plateau_cycles=2, escalate_ceiling=0.9, epsilon=0.02,
+        max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
+    )
+    agents = stub_agents(cfg.perspectives, sim.sim_planner)
+    families = {t: sim.family_of(t) for t in ids}
+    names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
+    runs_dir = Path(args.runs_dir)
+    knowledge = KnowledgeStore(args.knowledge_dir)
+    print(f"solving {len(ids)} problem(s) with the stub sim agent (no GPU/model) -> {runs_dir}/")
+    executor = StubExecutor(delay=args.delay)   # delay simulates GPU busy time → a real timeline
+    asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
+                          seeds_fn=sim.sim_seeds, knowledge=knowledge,
+                          families=families, names=names))
+    js = J.read_all(runs_dir)
+    ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
+    scored = [m["best"] for m in ms if m["best"] is not None]
+    mean = sum(scored) / len(scored) if scored else 0.0
+    esc = sum(1 for m in ms if any(e.get("ev") == "agent_changed" for e in js.get(m["task"], [])))
+    print(f"done: {len(ms)} runs · fleet mean best {mean:.3f} · {esc} escalated to a stronger tier")
+    print(f"view: solver report --runs-dir {runs_dir}   |   solver status --runs-dir {runs_dir}")
+
+
+def _run_metrics(runs_dir: Path, task_id: int):
+    from . import journal as J
+    from .dashboard import metrics
+    return metrics.problem_metrics(task_id, J.read(runs_dir / str(task_id) / "journal.jsonl"))
+
+
+def _cmd_status(args) -> None:
+    from . import journal as J
+    runs_dir = Path(args.runs_dir)
+    js = J.read_all(runs_dir)
+    ids = pb.parse_specs(args.tasks) if args.tasks else sorted(js)
+    from .dashboard import metrics
+    print(f"{'task':>4}  {'family':<11} {'best':>6} {'iters':>5} {'evals':>5} {'front':>5}  status")
+    for t in ids:
+        if t not in js:
+            continue
+        m = metrics.problem_metrics(t, js[t])
+        best = f"{m['best']:.3f}" if m["best"] is not None else "  -  "
+        print(f"{t:>4}  {m['family']:<11} {best:>6} {m['iters']:>5} {m['evals']:>5} "
+              f"{m['frontier']:>5}  {m['terminated'] or 'running'}")
+
+
+def _cmd_journal(args) -> None:
+    from . import journal as J
+    evs = J.read(Path(args.runs_dir) / str(args.task) / "journal.jsonl")
+    keys = ("cand", "model", "verdict", "ok", "best", "outcome", "tier", "trigger", "reason", "strategy")
+    for e in evs:
+        bits = " ".join(f"{k}={e[k]}" for k in keys if k in e and e[k] not in (None, ""))
+        print(f"{(e.get('ts') or '')[:19]}  {e.get('ev',''):<14} {bits}")
+
+
+def _cmd_frontier(args) -> None:
+    m = _run_metrics(Path(args.runs_dir), args.task)
+    accepted = [c for c in m["candidates"] if c["status"] == "accepted"]
+    print(f"task {args.task} ({m['family']}) — best {m['best']:.3f}, frontier size {m['frontier']}, "
+          f"{len(accepted)} candidate(s) entered")
+    for c in accepted:
+        sc = f"{c['sol_score']:.3f}" if c["sol_score"] is not None else "  -  "
+        print(f"  {c['cand'][:10]}  score={sc}  {c['model']:<6}  {c['strategy']}")
+
+
+def _cmd_candidates(args) -> None:
+    m = _run_metrics(Path(args.runs_dir), args.task)
+    for c in m["candidates"]:
+        if args.status and c["status"] != args.status:
+            continue
+        sc = f"{c['sol_score']:.3f}" if c["sol_score"] is not None else "  -  "
+        print(f"{c['cand'][:10]}  {c['status']:<10} score={sc}  {c['model']:<6}  {c['strategy']}")
+
+
 def _add_selection_args(p: argparse.ArgumentParser) -> None:
     p.add_argument("tasks", nargs="*", help="task ids or ranges, e.g. 1 2 5-10")
     p.add_argument("--all", action="store_true", help="select all 235 problems")
@@ -163,6 +247,37 @@ def main(argv: list[str] | None = None) -> None:
     p_check.add_argument("path", help="path to a Solution JSON")
     p_check.add_argument("--out-dir-problems", default=str(fetch_mod.DEFAULT_OUT_DIR))
     p_check.set_defaults(func=_cmd_check)
+
+    p_solve = sub.add_parser("solve", help="run the engine over selected tasks (stub sim agent; no GPU)")
+    _add_selection_args(p_solve)
+    p_solve.add_argument("--runs-dir", default="runs")
+    p_solve.add_argument("--knowledge-dir", default="knowledge")
+    p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
+    p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
+    p_solve.add_argument("--delay", type=float, default=0.006,
+                         help="simulated per-eval GPU time (spreads the timeline)")
+    p_solve.set_defaults(func=_cmd_solve)
+
+    p_stat = sub.add_parser("status", help="per-problem summary over a runs dir")
+    p_stat.add_argument("tasks", nargs="*", help="task ids/ranges (default: all in runs dir)")
+    p_stat.add_argument("--runs-dir", default="runs")
+    p_stat.set_defaults(func=_cmd_status)
+
+    p_jrnl = sub.add_parser("journal", help="print a problem's event timeline")
+    p_jrnl.add_argument("task", type=int)
+    p_jrnl.add_argument("--runs-dir", default="runs")
+    p_jrnl.set_defaults(func=_cmd_journal)
+
+    p_front = sub.add_parser("frontier", help="print a problem's frontier (accepted candidates)")
+    p_front.add_argument("task", type=int)
+    p_front.add_argument("--runs-dir", default="runs")
+    p_front.set_defaults(func=_cmd_frontier)
+
+    p_cand = sub.add_parser("candidates", help="list a problem's candidates")
+    p_cand.add_argument("task", type=int)
+    p_cand.add_argument("--status", default=None, help="filter by status (accepted/dominated/rejected/...)")
+    p_cand.add_argument("--runs-dir", default="runs")
+    p_cand.set_defaults(func=_cmd_candidates)
 
     p_report = sub.add_parser("report", help="render the run dashboard (static site)")
     p_report.add_argument("--runs-dir", default="runs")

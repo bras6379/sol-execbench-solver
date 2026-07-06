@@ -19,6 +19,7 @@ from .executor import (
     metadata_outcome,
 )
 from .frontier import Frontier, Member
+from .knowledge import KnowledgeStore
 from .loop import exemplar_first, run_fleet, solve_problem
 
 __all__ = [
@@ -28,5 +29,6 @@ __all__ = [
     "EvalResult", "Executor", "StubExecutor", "WorkloadResult",
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
+    "KnowledgeStore",
     "exemplar_first", "run_fleet", "solve_problem",
 ]
