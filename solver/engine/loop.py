@@ -24,9 +24,37 @@ CheckFn = Callable[[dict, int], "tuple[bool, list[str]]"]
 
 
 def _default_seeds(task_id: int) -> list[dict]:
-    """Fallback seed: a single baseline shape. Real runs seed from `scaffold(id)`
-    + the best sibling Solution (Phase E)."""
+    """Fallback seed: a single baseline shape (used only when no reference is
+    available, e.g. unit tests)."""
     return [{"__eval__": {"scores": [0.5]}}]
+
+
+def reference_seed(problems_dir: str | Path = "problems") -> SeedsFn:
+    """Seed the frontier with the real PyTorch **reference** (the DPS baseline),
+    so the reference impl is candidate #0 and always sits on/beside the frontier.
+    Falls back to `_default_seeds` if the reference isn't fetched."""
+    problems_dir = Path(problems_dir)
+
+    def seeds_fn(task_id: int) -> list[dict]:
+        ref = problems_dir / str(task_id) / "reference.py"
+        if not ref.exists():
+            return _default_seeds(task_id)
+        return [{"spec": {"languages": ["pytorch"]},
+                 "sources": [{"path": "reference.py", "content": ref.read_text()}]}]
+
+    return seeds_fn
+
+
+def _persist_reference(runs_dir: str | Path, task_id: int, problems_dir: str | Path) -> None:
+    """Copy the reference impl into the run dir so the ground truth always sits
+    beside the frontier kernels (runs/<task>/reference.py + definition.json)."""
+    pdir = Path(problems_dir) / str(task_id)
+    dest = Path(runs_dir) / str(task_id)
+    dest.mkdir(parents=True, exist_ok=True)
+    for fname in ("reference.py", "definition.json"):
+        src = pdir / fname
+        if src.exists():
+            (dest / fname).write_text(src.read_text())
 
 
 def _default_check(solution: dict, task_id: int) -> tuple[bool, list[str]]:
@@ -55,6 +83,7 @@ async def solve_problem(
     seeds_fn: SeedsFn | None = None,
     check_fn: CheckFn | None = None,
     knowledge=None,
+    problems_dir: str | Path = "problems",
     family: str = "",
     name: str = "",
 ) -> RunContext:
@@ -66,6 +95,7 @@ async def solve_problem(
     # ---- bootstrap (consumes GPU evals; committed by the `bootstrapped` marker) ----
     if ctx.fresh():
         ctx.record("run_started", agent=str(cfg.design_model), name=name, family=family)
+        _persist_reference(runs_dir, task_id, problems_dir)   # ground truth beside the frontier
         design = await agents[cfg.design_model].design(task_id)
         ctx.record("design_done", text=design, dur_s=0.0)
         # sibling seeding (best same-family Solution so far) then the scaffold seed
@@ -154,6 +184,7 @@ async def run_fleet(
     seeds_fn: SeedsFn | None = None,
     check_fn: CheckFn | None = None,
     knowledge=None,
+    problems_dir: str | Path = "problems",
     families: dict[int, str] | None = None,
     names: dict[int, str] | None = None,
 ) -> None:
@@ -164,6 +195,7 @@ async def run_fleet(
         try:
             await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
                                 seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
+                                problems_dir=problems_dir,
                                 family=families.get(t, ""), name=names.get(t, f"task-{t}"))
         except Exception as exc:  # crash isolation: one problem's failure is journaled, not fatal
             journal_mod.Journal(Path(runs_dir) / str(t) / "journal.jsonl", t).append(

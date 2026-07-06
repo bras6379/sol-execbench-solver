@@ -21,7 +21,7 @@ from .executor import (
 )
 from .frontier import Frontier, Member
 from .knowledge import KnowledgeStore
-from .loop import exemplar_first, run_fleet, solve_problem
+from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
 
 __all__ = [
     "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
@@ -32,5 +32,5 @@ __all__ = [
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
     "KnowledgeStore",
-    "exemplar_first", "run_fleet", "solve_problem",
+    "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
 ]

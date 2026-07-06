@@ -133,7 +133,7 @@ def _cmd_solve(args) -> None:
     from . import journal as J
     from .dashboard import metrics
     from .engine import (Config, KnowledgeStore, Perspective, StubExecutor, Tier,
-                         make_agents, run_fleet, sim, stub_agents)
+                         make_agents, reference_seed, run_fleet, sim, stub_agents)
 
     ids = _resolve_ids(args)
     runs_dir = Path(args.runs_dir)
@@ -158,7 +158,7 @@ def _cmd_solve(args) -> None:
             max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
-        seeds_fn = None       # _default_seeds; a real scaffold seed lands with the GPU executor
+        seeds_fn = reference_seed()   # seed the frontier with the real reference impl
         print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} "
               f"(StubExecutor — no GPU scoring yet) -> {runs_dir}/")
 

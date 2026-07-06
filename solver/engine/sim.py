@@ -63,7 +63,13 @@ def _ceilings(task_id: int) -> tuple[float, float]:
 
 
 def sim_seeds(task_id: int) -> list[dict]:
-    return [{"__eval__": {"scores": [0.5] * N_SHAPES}}]
+    """Seed = the real reference impl (so it sits on the frontier), scored at
+    the N-shape baseline to match sim candidates."""
+    import pathlib
+    ref = pathlib.Path("problems") / str(task_id) / "reference.py"
+    sources = [{"path": "reference.py", "content": ref.read_text()}] if ref.exists() else []
+    return [{"spec": {"languages": ["pytorch"]}, "sources": sources,
+             "__eval__": {"scores": [0.5] * N_SHAPES}}]
 
 
 def _lang(strategy: str) -> tuple[str, str]:

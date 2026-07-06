@@ -157,9 +157,12 @@ Rules that make this work:
 - **Clean-artifact invariant:** `solution.json` contains only the kernel.
   Engine bookkeeping (status, parent, technique, scores, reflection) lives
   beside it (`meta.json`/`result.json`/journal), never inside.
-- **Seed, not mold:** the seed is `scaffold(id)` — the correct PyTorch DPS
-  reference wrapper (its measured score may be < 0.5; `T_b` is an *optimized*
-  baseline). Generated candidates are free-form; no C++ scaffold needed.
+- **Seed, not mold:** the seed is the correct PyTorch DPS **reference** (its
+  measured score may be < 0.5; `T_b` is an *optimized* baseline), so the
+  reference impl is candidate #0 on the frontier. It is also copied to
+  `runs/<task>/reference.py` at bootstrap — the ground truth **always sits
+  beside the frontier kernels**, independent of frontier churn. Generated
+  candidates are free-form; no C++ scaffold needed.
 - **Mutation policy lives in the Plan prompt**, not engine machinery: follow
   the KB abstraction ladder (torch → Triton → CuTe-DSL/CUTLASS → C++/PTX),
   escalating language only on plateau/evidence. The exact context a `plan()`
