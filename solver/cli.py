@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from .bench import check as check_mod
@@ -233,7 +234,26 @@ def _add_selection_args(p: argparse.ArgumentParser) -> None:
     )
 
 
+def _load_dotenv(path: str = ".env") -> None:
+    """Load KEY=VALUE lines from .env into os.environ (never overrides an
+    already-set var; skips blanks/comments/empty values). Agent CLIs inherit it."""
+    p = Path(path)
+    if not p.exists():
+        return
+    for line in p.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if line.startswith("export "):
+            line = line[len("export "):]
+        key, sep, val = line.partition("=")
+        key, val = key.strip(), val.strip().strip('"').strip("'")
+        if sep and key and val and key not in os.environ:
+            os.environ[key] = val
+
+
 def main(argv: list[str] | None = None) -> None:
+    _load_dotenv()
     parser = argparse.ArgumentParser(prog="solver", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
 
