@@ -20,6 +20,7 @@ from .executor import (
     metadata_outcome,
 )
 from .frontier import Frontier, Member
+from .gpu import FileQueueTransport, GpuQueueExecutor, Worker
 from .knowledge import KnowledgeStore
 from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
 
@@ -31,6 +32,7 @@ __all__ = [
     "EvalResult", "Executor", "StubExecutor", "WorkloadResult",
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
+    "FileQueueTransport", "GpuQueueExecutor", "Worker",
     "KnowledgeStore",
     "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
 ]
