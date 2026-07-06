@@ -1,7 +1,10 @@
 # GPU execution (Phase F): running kernels in the harness on a rented B200
 
-**Status: design.** The engine already treats the GPU as an interface
-(`Executor.evaluate`), stubbed on the laptop. This is the *real* executor: get a
+**Status: F1 built** (`GpuQueueExecutor` + file-queue + idempotent jobs +
+durability — laptop-tested with a LocalPod fake harness, `tests/test_gpu.py`);
+**F2** (real SSH bootstrap + RunPod API on an actual pod) awaits a rented GPU.
+The engine already treats the GPU as an interface (`Executor.evaluate`), stubbed
+on the laptop. This is the *real* executor: get a
 GPU (RunPod, over SSH), run each candidate in the SOL-ExecBench harness, return
 measured latencies. Nothing in the engine changes — that's the point of the
 interface (orchestration.md §2).
