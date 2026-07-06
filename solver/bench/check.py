@@ -28,9 +28,11 @@ class CheckReport:
         return not self.errors
 
 
-def _dps_expected_params(definition: dict) -> list[str]:
+def _dps_expected_params(definition: dict, dps: bool = True) -> list[str]:
     ins, outs = sol_mod.input_output_names(definition)
-    return ins + outs
+    # destination-passing style: outputs are pre-allocated + passed as trailing
+    # args. Without DPS, `run` takes only the inputs and *returns* the outputs.
+    return ins + outs if dps else ins
 
 
 def check_solution(sol: dict, definition: dict | None = None) -> CheckReport:
@@ -76,14 +78,16 @@ def check_solution(sol: dict, definition: dict | None = None) -> CheckReport:
     # --- entry function signature (python only) ---
     if entry_file.endswith(".py"):
         src = next((s["content"] for s in sources if s.get("path") == entry_file), "")
-        r_sig = _check_python_entry(src, entry_fn, definition)
+        dps = spec.get("destination_passing_style", True)   # harness default is True
+        r_sig = _check_python_entry(src, entry_fn, definition, dps)
         r.errors += r_sig.errors
         r.warnings += r_sig.warnings
 
     return r
 
 
-def _check_python_entry(src: str, fn_name: str, definition: dict | None) -> CheckReport:
+def _check_python_entry(src: str, fn_name: str, definition: dict | None,
+                        dps: bool = True) -> CheckReport:
     r = CheckReport()
     try:
         tree = ast.parse(src)
@@ -100,13 +104,14 @@ def _check_python_entry(src: str, fn_name: str, definition: dict | None) -> Chec
         return r
 
     if definition is not None:
-        expected = _dps_expected_params(definition)
+        expected = _dps_expected_params(definition, dps)
         actual = [a.arg for a in fn.args.args]
         has_kwargs = fn.args.kwarg is not None  # **kwargs allowed and ignored
         if actual != expected and not (has_kwargs and actual == expected[: len(actual)]):
+            order = "inputs+outputs" if dps else "inputs (outputs are returned)"
             r.errors.append(
-                f"DPS signature mismatch: {fn_name}({', '.join(actual)}) "
-                f"but expected inputs+outputs order ({', '.join(expected)})"
+                f"signature mismatch: {fn_name}({', '.join(actual)}) "
+                f"but expected {order} order ({', '.join(expected)})"
             )
 
     # --- reward-hack lints (whole module) ---
