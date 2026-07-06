@@ -23,7 +23,8 @@ class GpuQueueExecutor:                       # swaps in for StubExecutor
 ```
 
 The loop, frontier, tiers, journal, dashboard, and §12 stub tests are untouched.
-`solver solve` gains `--gpu <pod-config>`; without it, the StubExecutor path.
+`solver solve --gpu` (a boolean; reads pod creds from `.env`, §3b) selects it;
+without it, the StubExecutor path.
 
 ## 2. Topology
 
@@ -88,47 +89,59 @@ reachability + the live pod details from the API; `solver gpu setup` (re)provisi
 
 ## 4. Job queue + durability (no-loss / no-double-pay)
 
-The design's guarantee (orchestration.md §7): a candidate that reached the GPU
-is never lost and never re-run.
+The guarantee (orchestration.md §7): a candidate that reached the GPU is never
+lost or re-run. It falls out of **hash-keyed idempotent jobs** + the engine's
+existing resume — **no separate reconciliation pass, no new events**.
 
-- **Hash-keyed, idempotent jobs.** `job_id = <task_id>-<Solution.hash()>`. The
-  worker checks `results/<job_id>.json` *before* running — if present, it
-  returns it without re-executing. So a resubmit (after any crash) is free.
-- **State by directory** on the pod (`~/solver-gpu/`):
-  `jobs/<id>.json` (pending) → atomic-rename → `processing/<id>` (claimed) →
-  `results/<id>.json` (**fsync'd**, completed).
-- **Laptop protocol** (inside `evaluate`): journal `execute_submitted{job_id,
-  hash}` → push `jobs/<id>.json` → poll `results/<id>.json` → pull it into
-  `runs/<id>/results/` (authoritative) → journal `exec_done`.
-- **Reconciliation on (re)connect**, for every `execute_submitted` without an
-  `exec_done`: result already local → recover (journal exec_done); result on pod
-  → pull; job still `jobs/`/`processing/` → wait; none of these (pod wiped) →
-  **resubmit** (idempotent, so at most a re-run of an *incomplete* eval).
-- **Ephemeral caveat.** A completed result lives on the pod until pulled; the
-  tight poll pulls it immediately, so a pod death after completion but before
-  pull is the only re-pay window (rare). A **persistent volume** closes it
-  (results survive pod restart).
+- **Idempotent job.** `job_id = <task_id>-<Solution.hash()>`. Both the executor
+  (before pushing) and the worker (before running) check for an existing
+  `results/<job_id>.json`; if present it's reused, never recomputed.
+- **State by directory** on the pod (`~/solver-gpu/`): `jobs/<id>.json` (queued)
+  → worker claims → `results/<id>.json` (**fsync'd**). Single-flight ⇒ ≤1 job in
+  flight, so the "queue" is shallow (a real queue only matters at the deferred
+  multi-GPU stage).
+- **`evaluate`**: push `jobs/<id>` (skip if job/result already there) → poll
+  `results/<id>` → pull into `runs/<id>/results/` (authoritative) → return.
+- **Recovery is the resume path, for free.** The loop already journals
+  `exec_enqueued` *before* awaiting `evaluate` — that is the durable "submitted"
+  marker (no separate event). On a **laptop crash** mid-eval, resume
+  re-evaluates the same candidate → same `job_id` → the cached pod result is
+  recovered, **not re-run**. On a **pod death**, the result is gone → the same
+  re-evaluate re-runs it fresh (**resubmit**). Deterministic agents make this
+  exact; a real-agent re-plan may differ (a new job, the old result orphaned on
+  the expendable pod) — the §12.1 *no-double-pay-of-the-same-eval* guarantee
+  still holds.
+- **Ephemeral caveat.** A completed result lives on the pod until the tight poll
+  pulls it; a pod death in that narrow window re-runs. A persistent volume
+  closes it (deferred).
 
-## 5. Single-flight + compile off the GPU lock
+**Result contract** — `results/<job_id>.json` deserializes into `EvalResult`:
+```
+{ task_id, solution_status: COMPILE_ERROR|REWARD_HACK|null, all_passed,
+  sol_score, per_workload:[{index, status, latency_ms, sol_ms,
+  baseline_latency_ms, matched_ratio}], env:{gpu,driver,cuda,harness_commit},
+  asi:{logs, compile_log?} }
+```
+Per-shape `status` is what the frontier needs for specialists (non-PASSED → 0).
 
-The single GPU serializes **eval**, not compile (orchestration.md decision-log
-#5). nvcc is CPU-bound and slow (seconds–minutes); holding the GPU lock through
-it wastes the GPU.
+## 5. Single-flight, and compile
 
-- The executor's **asyncio single-flight lock wraps only the eval submit+poll**.
-- **Compile runs off the lock**: a candidate's C++ build is submitted to a
-  parallel build pool on the pod (N concurrent nvcc) *before* it takes the GPU
-  lock; by the time it acquires the lock, the `.so` is ready. Python-family
-  skips straight to eval.
-- **`COMPILE_ERROR` never touches the GPU** → doesn't consume `max_gpu_evals`
-  (already stated in §6). Build failures return early with the compiler log in
-  `asi` for reflection.
+The single GPU serializes **eval**. In **v1, build+eval are one job under the
+single-flight lock** — the worker builds (C++) then evals in one shot. Simple
+and correct.
 
-**v1: combined** (build+eval as one job under the lock) for simplicity — the
-worker builds then evals in one shot. The split (compile in a parallel off-lock
-build pool) is **Deferred**, triggered when the logs show nvcc time dominating
-GPU-idle. Python-family (torch/triton) has no build step, so the waste only
-applies to C++-family candidates.
+- The executor's **asyncio single-flight lock** (re-entrancy-asserted, reused
+  from the stub) keeps ≤1 job in flight → one GPU run at a time.
+- **`COMPILE_ERROR` never reaches the eval** → it doesn't consume
+  `max_gpu_evals` (orchestration.md §6); the build failure returns early with the
+  compiler log in `asi` for reflection. Python-family (torch/triton) has no
+  build step.
+
+**Deferred — compile off the lock.** nvcc is CPU-bound and slow, so holding the
+GPU lock through a C++ build wastes the GPU. The refinement is a **parallel
+off-lock build pool** on the pod (pre-compile a candidate's `.so` before it
+takes the eval lock; orchestration.md decision-log #5). Triggered when logs show
+nvcc time dominating GPU-idle; only C++-family candidates are affected.
 
 ## 6. Pod lifecycle, rentals & health (RunPod API)
 
@@ -152,7 +165,8 @@ applies to C++-family candidates.
   create/destroy. Auto-provisioning (RunPod API create/terminate, spot bidding)
   is Deferred.
 - `gpu_rentals.jsonl` is now **executor-written** from the API's uptime/status
-  → the dashboard's rented-window utilization becomes real.
+  → the dashboard's rented-window utilization becomes real, and rental windows ×
+  `costPerHr` give the real **GPU $ spent** (tracked alongside agent tokens).
 
 ## 7. Sandbox — untrusted kernels on the GPU box
 
@@ -177,13 +191,17 @@ The eval worker runs LLM-generated code (orchestration.md §11):
 
 ## 9. Transport mechanism
 
-- **Primary: rsync file-queue** (`jobs/`, `results/` dirs synced over SSH).
-  Robust, reconnect-safe, no custom protocol — just a polling worker + rsync.
-- **Latency option: a persistent SSH session** running the worker with a
-  line-protocol (job JSON in, result JSON out), *plus* the durable `results/`
-  dir as the crash-recovery source of truth. Adopt if rsync-poll latency
-  (~seconds) shows up against sub-second evals.
-- sshfs (mount the pod dir) is possible but flaky under disconnect — not primary.
+- **rsync/ssh file-queue** (chosen): `jobs/`/`results/` synced over SSH. Robust,
+  reconnect-safe, no custom protocol — a polling laptop + a polling worker.
+- **SSH `ControlMaster` (connection multiplexing) is essential.** Without it a
+  fresh SSH handshake per poll/pull is seconds of GPU-idle *per eval* on the one
+  GPU. With a persistent master socket, poll via `ssh cat results/<id>` and pull
+  via rsync are both cheap; tune the poll interval to the eval time.
+- **Two timeout layers**: the harness's per-workload `TIMEOUT` (a slow kernel),
+  and the executor's **per-eval wall-clock timeout** (a hung worker/kernel that
+  never writes `results/`) → the job is declared stuck → resubmit/fail.
+- **Deferred**: a persistent-SSH line-protocol RPC (job in / result out) if even
+  multiplexed poll latency dominates; sshfs (flaky under disconnect).
 
 ## 10. Testability — no real pod, no CUDA
 
@@ -206,7 +224,7 @@ laptop.
 
 | Phase | Piece |
 |---|---|
-| F1 | `GpuQueueExecutor` + rsync file-queue + hash-keyed idempotent jobs + reconciliation + **LocalPod fake-harness tests (§10)** |
+| F1 | `GpuQueueExecutor` + file-queue transport + hash-keyed idempotent jobs + resume-based recovery + **LocalPod fake-harness tests (§10)** — all laptop-testable, no GPU |
 | F2 | **Idempotent SSH bootstrap (§3b)** (rsync worker + problems, install harness, start `gpu-worker`) + **RunPod API health/rental monitor (§6)** + `.env` config + `solver gpu setup`/`status` |
 | F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
@@ -216,7 +234,8 @@ laptop.
    GPU-agnostic. Stub ↔ real is a config swap.
 2. **Durability = hash-keyed idempotent jobs + laptop-authoritative results**;
    the pod is expendable. Reconcile on connect; resubmit only incomplete evals.
-3. **Single-flight = eval only**; compile runs off the lock in a build pool.
+3. **Single-flight**: ≤1 eval at a time (re-entrancy-asserted lock); **v1
+   combines build+eval** under it — the off-lock compile split is deferred.
 4. **Transport = rsync file-queue** (chosen); persistent-SSH RPC deferred as a
    latency upgrade.
 5. **Ephemeral pods** (chosen — cheapest); a persistent volume is the deferred
@@ -227,8 +246,8 @@ laptop.
    (§6) for the rental log + death-detection. Auto-provisioning deferred.
 7. **Workloads rsync'd** to the pod at bootstrap (chosen — network-free eval
    sandbox), not fetched pod-side.
-8. **Build+eval combined** under the lock for v1 (chosen); off-lock compile
-   split deferred.
+8. **GPU cost** tracked from the RunPod API `costPerHr` × rental windows
+   (`gpu_rentals`), reported alongside agent tokens.
 
 ## Deferred (with trigger)
 
