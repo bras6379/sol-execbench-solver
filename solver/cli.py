@@ -132,24 +132,38 @@ def _cmd_solve(args) -> None:
     from . import journal as J
     from .dashboard import metrics
     from .engine import (Config, KnowledgeStore, Perspective, StubExecutor, Tier,
-                         run_fleet, sim, stub_agents)
+                         make_agents, run_fleet, sim, stub_agents)
 
     ids = _resolve_ids(args)
-    cfg = Config(
-        tiers=[Tier("cheap", [Perspective("claude", "haiku"), Perspective("openai", "gpt")]),
-               Tier("strong", [Perspective("claude", "opus")])],
-        plateau_cycles=2, escalate_ceiling=0.9, epsilon=0.02,
-        max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
-    )
-    agents = stub_agents(cfg.perspectives, sim.sim_planner)
-    families = {t: sim.family_of(t) for t in ids}
-    names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
     runs_dir = Path(args.runs_dir)
     knowledge = KnowledgeStore(args.knowledge_dir)
-    print(f"solving {len(ids)} problem(s) with the stub sim agent (no GPU/model) -> {runs_dir}/")
+    families = {t: sim.family_of(t) for t in ids}
+    names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
+
+    if args.agent == "sim":
+        cfg = Config(
+            tiers=[Tier("cheap", [Perspective("claude", "haiku"), Perspective("openai", "gpt")]),
+                   Tier("strong", [Perspective("claude", "opus")])],
+            plateau_cycles=2, escalate_ceiling=0.9, epsilon=0.02,
+            max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
+        )
+        agents = stub_agents(cfg.perspectives, sim.sim_planner)
+        seeds_fn = sim.sim_seeds
+        print(f"solving {len(ids)} problem(s) with the stub sim agent (no GPU/model) -> {runs_dir}/")
+    else:
+        cfg = Config(
+            tiers=[Tier(args.agent, [Perspective(args.agent, args.model)])],
+            plateau_cycles=2, escalate_ceiling=0.9, epsilon=0.02,
+            max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
+        )
+        agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
+        seeds_fn = None       # _default_seeds; a real scaffold seed lands with the GPU executor
+        print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} "
+              f"(StubExecutor — no GPU scoring yet) -> {runs_dir}/")
+
     executor = StubExecutor(delay=args.delay)   # delay simulates GPU busy time → a real timeline
     asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
-                          seeds_fn=sim.sim_seeds, knowledge=knowledge,
+                          seeds_fn=seeds_fn, knowledge=knowledge,
                           families=families, names=names))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
@@ -248,12 +262,16 @@ def main(argv: list[str] | None = None) -> None:
     p_check.add_argument("--out-dir-problems", default=str(fetch_mod.DEFAULT_OUT_DIR))
     p_check.set_defaults(func=_cmd_check)
 
-    p_solve = sub.add_parser("solve", help="run the engine over selected tasks (stub sim agent; no GPU)")
+    p_solve = sub.add_parser("solve", help="run the engine over selected tasks")
     _add_selection_args(p_solve)
+    p_solve.add_argument("--agent", default="sim",
+                         help="sim (deterministic, no GPU) | codex | claude | <any CliSpec>")
+    p_solve.add_argument("--model", default="gpt-5.5", help="model for a real --agent (e.g. gpt-5.5)")
     p_solve.add_argument("--runs-dir", default="runs")
     p_solve.add_argument("--knowledge-dir", default="knowledge")
     p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
     p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
+    p_solve.add_argument("--timeout", type=float, default=600.0, help="per agent-call timeout (s)")
     p_solve.add_argument("--delay", type=float, default=0.006,
                          help="simulated per-eval GPU time (spreads the timeline)")
     p_solve.set_defaults(func=_cmd_solve)

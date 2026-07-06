@@ -30,10 +30,13 @@ def _default_seeds(task_id: int) -> list[dict]:
 
 
 def _default_check(solution: dict, task_id: int) -> tuple[bool, list[str]]:
-    """Stub gate: honour the agent's `__invalid__` marker. The real gate wraps
+    """Stub gate: honour the agent's `__invalid__` marker and reject an empty
+    Solution (a CLI agent that wrote no kernel). The real gate wraps
     `solver.check.check_solution` against the problem definition."""
     if solution.get("__invalid__"):
         return False, ["stub: marked invalid"]
+    if "sources" in solution and not solution.get("sources"):
+        return False, ["no source files produced"]
     return True, []
 
 
