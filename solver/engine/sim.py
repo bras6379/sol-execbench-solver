@@ -11,7 +11,30 @@ on ints), so runs are reproducible and resumable.
 
 from __future__ import annotations
 
+import hashlib
+import json
+
 N_SHAPES = 6
+
+
+def hash_score_outcome(n_shapes: int = N_SHAPES):
+    """Fake GPU scoring for *real* agent kernels: a deterministic per-shape score
+    derived from the kernel's content hash (0.55–0.95, slight per-shape spread).
+    Different kernels get different scores, so the frontier / convergence /
+    escalation logic exercises end-to-end without a GPU."""
+    from .executor import EvalResult, WorkloadResult
+
+    def outcome(solution: dict, task_id: int) -> "EvalResult":
+        src = json.dumps(solution.get("sources", []), sort_keys=True).encode()
+        h = hashlib.sha1(src).digest()
+        base = 0.55 + (h[0] / 255) * 0.40
+        scores = [round(min(0.99, max(0.0, base + ((h[(i + 1) % len(h)] / 255) - 0.5) * 0.08)), 4)
+                  for i in range(n_shapes)]
+        rows = [WorkloadResult(index=i, correct=True, score=s) for i, s in enumerate(scores)]
+        return EvalResult(task_id=task_id, correct=True, sol_score=sum(scores) / len(scores),
+                          per_workload=rows, asi={"stage": "fake-score"})
+
+    return outcome
 
 _FAMILIES = ["rmsnorm", "rope", "softmax", "layernorm", "gemm", "attention",
              "moe", "elementwise", "reduction", "conv"]

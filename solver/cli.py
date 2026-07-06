@@ -162,7 +162,10 @@ def _cmd_solve(args) -> None:
         print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} "
               f"(StubExecutor — no GPU scoring yet) -> {runs_dir}/")
 
-    executor = StubExecutor(delay=args.delay)   # delay simulates GPU busy time → a real timeline
+    # --fake-scores: score real agent kernels by content hash so the frontier /
+    # convergence exercises without a GPU (real agents have no embedded scores).
+    outcome = sim.hash_score_outcome() if args.fake_scores else None
+    executor = StubExecutor(outcome, delay=args.delay)   # delay → a real timeline
     asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
                           seeds_fn=seeds_fn, knowledge=knowledge,
                           families=families, names=names))
@@ -292,6 +295,8 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
     p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
     p_solve.add_argument("--timeout", type=float, default=600.0, help="per agent-call timeout (s)")
+    p_solve.add_argument("--fake-scores", action="store_true",
+                         help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,
                          help="simulated per-eval GPU time (spreads the timeline)")
     p_solve.set_defaults(func=_cmd_solve)
