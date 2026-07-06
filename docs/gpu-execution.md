@@ -83,6 +83,21 @@ Every step is **checkpointed** (`~/solver-gpu/state/<step>.done`), so a dropped
 connection resumes where it left off and a warm pod (volume) jumps to step 5.
 Logged to `runs/gpu-setup.log`.
 
+**What lives where** (this is why warm starts are seconds and per-eval payloads
+are tiny):
+- **Network volume** (set up once by `solver gpu init-volume`, survives every
+  pod): the **installed harness venv** (`sol-execbench[bench]` + torch cu130 +
+  cutlass + cupti + `ncu`) *and* the static **`problems/`** packs. Big,
+  unchanging — never re-installed.
+- **Per run** (rsync'd fresh, ~KB): just the `gpu-worker` module, so code
+  updates land without re-initing the volume.
+- **Per eval** (rides `jobs/<id>.json`, a few KB): just **the kernel** — the
+  candidate's Solution sources. The worker materializes them into a workdir and
+  runs them against *that* problem's workloads from the volume.
+
+So a warm pod = attach volume → activate venv → start worker → ready in seconds;
+`init-volume` (the slow pip install + problem sync) is a one-time cost.
+
 **Config — `.env` (gitignored):**
 ```
 RUNPOD_API_KEY=...            # auto-provision (create/terminate); the only thing you must set
@@ -389,7 +404,7 @@ laptop.
 | Phase | Piece |
 |---|---|
 | F1 | `GpuQueueExecutor` + file-queue transport + hash-keyed idempotent jobs + resume-based recovery + **LocalPod fake-harness tests (§10)** — all laptop-testable, no GPU |
-| F2 | **Auto-provision lifecycle (§6)**: RunPod API create → **SSH bootstrap (§3b)** → run → terminate (`finally` + pod-side dead-man's-switch + lifetime/idle caps + `reap`) + health/cost monitor + `.env` + `solver gpu status`/`reap` |
+| F2 | **Auto-provision lifecycle (§6)**: RunPod API create → **SSH bootstrap (§3b)** → run → terminate (`finally` + pod-side dead-man's-switch + lifetime/idle caps + `reap`) + health/cost monitor + `.env` + `solver gpu init-volume`/`status`/`reap` |
 | F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
 ## Decision log
