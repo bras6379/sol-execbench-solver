@@ -49,9 +49,42 @@ The pod is **ephemeral and expendable**; the **laptop is the durable store**
   10 warmup / 50 iters / seed 200, 99% matched-ratio, reward-hack defenses →
   one `Trace` per shape (status, latency, sol_ms, baseline, matched_ratio).
 
-The **workloads/tolerances** come from each problem's dataset pack. Sync the
-problems once at bootstrap (`rsync problems/ pod:`), or let the pod fetch from
-HF at bootstrap and cache them — so the sandboxed eval needs no network.
+The **workloads/tolerances** come from each problem's dataset pack; we
+**`rsync problems/` to the pod at bootstrap** (§3b) rather than fetch on the
+pod, so the sandboxed eval never needs the network.
+
+## 3b. Pod bootstrap & provisioning (setting up the GPU)
+
+Provisioning is **manual** — you rent the pod on RunPod and drop its SSH details
+in `.env`; the engine **sets the pod up over SSH**, **idempotently**, so first
+contact does a full install and every reconnect is a fast verify. `solver gpu
+setup` (also run automatically on first connect) does:
+
+1. **Connect** — SSH creds + RunPod API key/pod-id from `.env`; verify SSH
+   reachability *and* that the RunPod API reports the pod `RUNNING` (§6).
+2. **Transfer** — `rsync` the self-contained `gpu-worker` module + the problem
+   packs (`problems/`) to `~/solver-gpu/` on the pod. (No repo clone needed; the
+   worker is one module. `git clone` of the solver repo is an alternative if the
+   worker ever grows.)
+3. **Install** — `pip install 'sol-execbench @ …'` with the `[bench]` extras
+   (torch cu130, cutlass-dsl, cupti). Slow once; guarded by a version marker so
+   warm pods skip it. One-time extension builds happen here (pip compiles).
+4. **Start** — launch `gpu-worker` as a durable daemon (tmux/nohup/systemd)
+   polling `jobs/`, with a heartbeat file for health.
+5. **Ready** — append `gpu_rentals.jsonl{start}` and **reconcile** in-flight
+   jobs (§4).
+
+Every step is **checkpointed** (`~/solver-gpu/state/<step>.done`), so a dropped
+connection resumes setup where it left off and a warm pod jumps to step 5.
+Bootstrap is logged to `runs/gpu-setup.log`.
+
+**Config — `.env` (gitignored; you fill it after renting):**
+```
+GPU_SSH_HOST=...            GPU_SSH_PORT=...       GPU_SSH_USER=root
+GPU_SSH_KEY=~/.ssh/runpod   RUNPOD_API_KEY=...     RUNPOD_POD_ID=...
+```
+Loaded like the agent keys (`_load_dotenv`). `solver gpu status` prints SSH
+reachability + the live pod details from the API; `solver gpu setup` (re)provisions.
 
 ## 4. Job queue + durability (no-loss / no-double-pay)
 
@@ -91,21 +124,35 @@ it wastes the GPU.
   (already stated in §6). Build failures return early with the compiler log in
   `asi` for reflection.
 
-*v1 may start combined* (build+eval as one job under the lock) for simplicity;
-split it once logs show compile time dominating GPU-idle. (Deferred trigger.)
+**v1: combined** (build+eval as one job under the lock) for simplicity — the
+worker builds then evals in one shot. The split (compile in a parallel off-lock
+build pool) is **Deferred**, triggered when the logs show nvcc time dominating
+GPU-idle. Python-family (torch/triton) has no build step, so the waste only
+applies to C++-family candidates.
 
-## 6. Pod lifecycle & rentals
+## 6. Pod lifecycle, rentals & health (RunPod API)
 
-- **Connect / bootstrap**: provision a pod (RunPod API or manual), read SSH
-  creds; install the harness, sync problems, start `gpu-worker`; append
-  `gpu_rentals.jsonl{start,label}`; **reconcile** in-flight jobs (§4).
-- **Run**: submit / poll.
-- **Disconnect** (rental ends / pod dies): append `gpu_rentals.jsonl{end}`; the
-  fleet **suspends** (no GPU) and resumes on the next pod — same clean suspend
-  as credit-exhaustion (§2). A pod death mid-run is crash-isolated; reconcile on
-  the next pod.
-- `gpu_rentals.jsonl` becomes **executor-written** (was hand-written) → the
-  dashboard's rented-window utilization is finally real.
+- **Connect** → §3b bootstrap → `gpu_rentals.jsonl{start}` → reconcile (§4).
+- **Run**: submit / poll evals.
+- **Health monitor (RunPod API)**: a background poller hits the RunPod API
+  (`RUNPOD_API_KEY` from `.env`) every ~30s for the pod's **live state** —
+  `desiredStatus`/`RUNNING`, `runtime.uptimeInSeconds`, GPU type, cost/hr. This
+  is how we notice an **ephemeral/spot pod being preempted or stopped** *before*
+  an SSH timeout would: the API status flips → we suspend cleanly rather than
+  hang on a dead socket. (RunPod pods have no fixed expiry; the signal is
+  status-change + uptime, not a countdown.)
+- **Disconnect / death** (preemption, manual stop, SSH loss): append
+  `gpu_rentals.jsonl{end}`; the fleet **suspends** (no GPU — the same clean
+  suspend as credit-exhaustion, §2) and resumes when a new pod's `.env` is set
+  and `solver gpu setup` runs. In-flight evals are reconciled / resubmitted on
+  the next pod (§4); a death mid-run is crash-isolated.
+- **Manual provisioning, API for reads only**: you rent/stop the pod on RunPod
+  and fill `.env`; the API is used only to **read** instance state (status,
+  uptime, GPU, cost) for the rental log and death-detection — never to
+  create/destroy. Auto-provisioning (RunPod API create/terminate, spot bidding)
+  is Deferred.
+- `gpu_rentals.jsonl` is now **executor-written** from the API's uptime/status
+  → the dashboard's rented-window utilization becomes real.
 
 ## 7. Sandbox — untrusted kernels on the GPU box
 
@@ -160,8 +207,8 @@ laptop.
 | Phase | Piece |
 |---|---|
 | F1 | `GpuQueueExecutor` + rsync file-queue + hash-keyed idempotent jobs + reconciliation + **LocalPod fake-harness tests (§10)** |
-| F2 | Real pod bootstrap (RunPod: provision, install harness, sync problems, `gpu-worker`) + `eval_driver` result parsing + calibration + `gpu_rentals` writing |
-| F3 | Compile-off-lock split (§5) + sandbox hardening (§7) + rental automation / suspend-resume |
+| F2 | **Idempotent SSH bootstrap (§3b)** (rsync worker + problems, install harness, start `gpu-worker`) + **RunPod API health/rental monitor (§6)** + `.env` config + `solver gpu setup`/`status` |
+| F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
 ## Decision log
 
@@ -170,10 +217,18 @@ laptop.
 2. **Durability = hash-keyed idempotent jobs + laptop-authoritative results**;
    the pod is expendable. Reconcile on connect; resubmit only incomplete evals.
 3. **Single-flight = eval only**; compile runs off the lock in a build pool.
-4. **Transport = rsync file-queue** first; persistent-SSH RPC as a latency
-   upgrade.
-5. **Ephemeral pods** by default (cheapest); a persistent volume is the upgrade
-   for zero re-pay across pod restarts.
+4. **Transport = rsync file-queue** (chosen); persistent-SSH RPC deferred as a
+   latency upgrade.
+5. **Ephemeral pods** (chosen — cheapest); a persistent volume is the deferred
+   upgrade for zero re-pay across pod restarts.
+6. **Provisioning manual, API read-only**: you rent the pod and fill `.env`
+   (SSH creds + `RUNPOD_API_KEY` + `RUNPOD_POD_ID`); the executor **sets it up
+   over SSH idempotently** (§3b) and **reads** live pod state via the RunPod API
+   (§6) for the rental log + death-detection. Auto-provisioning deferred.
+7. **Workloads rsync'd** to the pod at bootstrap (chosen — network-free eval
+   sandbox), not fetched pod-side.
+8. **Build+eval combined** under the lock for v1 (chosen); off-lock compile
+   split deferred.
 
 ## Deferred (with trigger)
 
