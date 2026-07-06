@@ -16,6 +16,9 @@ dependencies = [
 bench = [
     "sol-execbench @ git+https://github.com/NVIDIA/SOL-ExecBench.git@2d852a30914d4ef7f9fac92696e7fc8eea630f52",
 ]
+dev = [
+    "pytest>=8",
+]
 
 [project.scripts]
 solver = "solver.cli:main"

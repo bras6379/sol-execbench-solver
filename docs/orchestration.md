@@ -1,7 +1,8 @@
 # Orchestration: the Solver Engine
 
-Single design doc for the multi-agent optimization engine. **Status: design;
-Phase A (Executor stub) built.** Goal: **select problems → optimize each to
+Single design doc for the multi-agent optimization engine. **Status: Phases
+A + B built (engine core: loop, frontier, tiers, resume, §12 tests — all
+laptop/stub); Phases C–F designed.** Goal: **select problems → optimize each to
 the best kernel we can find → accumulate and transfer knowledge across
 problems.** The GPU is abstracted behind an interface (stub today, real
 harness transport later). The engine *finds* best solutions; it does **not**
@@ -609,8 +610,8 @@ exists today; B–E are v1 scope, not yet written.**
 
 | Phase | Status | Piece |
 |---|---|---|
-| A | ✅ built | Executor interface + stub (async, per-workload status, hash-keyed stub speed/noise model) |
-| B | ⬜ v1, next | `solve_problem` loop + RunContext + journal/replay + ε-frontier + novelty (hash + judge) + caps/plateau + **tier ladder / headroom-gated escalate (§6b)** + **test-ready StubAgent + StubExecutor scenario API + tests §12** |
+| A | ✅ built | Executor interface + **async** StubExecutor (scenario API + re-entrancy assertion, §12) |
+| B | ✅ built | `solve_problem` loop + RunContext + journal/replay + ε-frontier + novelty (hash + judge) + caps/plateau + **tier ladder / headroom-gated escalate (§6b)** + StubAgent + **§12 tests (12 passing)** |
 | C | ⬜ v1 | Knowledge store + serialized curator (per-finished-problem) + design-doc-at-iter-0 |
 | D | ⬜ v1 | Fleet (`main`, crash isolation, **static exemplar-first launch order**) + CLI (`solve`, status/journal/frontier/candidates views) |
 | E | ⬜ v1 | **Bootstrap** sibling-templating transfer (§2) |

@@ -1,10 +1,32 @@
 """Orchestrator engine for optimizing SOL-ExecBench problems.
 
-See docs/orchestrator-engine.md. Phase A (this): the Executor abstraction —
-the single serialized GPU-lock boundary — plus a StubExecutor for building and
-testing the loop without a GPU.
+See docs/orchestration.md. Phase A: the Executor abstraction (the single
+serialized GPU-lock boundary). Phase B: the async solve loop — RunContext +
+journal replay/resume, the ε-Pareto frontier, the tier ladder with
+headroom-gated escalation, the novelty gates, and the fleet. Everything runs
+against StubExecutor + StubAgent (no GPU, no API); see the §12 stub contract.
 """
 
-from .executor import EvalResult, Executor, StubExecutor, WorkloadResult
+from .agent import Agent, Candidate, StubAgent, solution_hash, stub_agents
+from .config import Config, Perspective, Tier, default_config
+from .context import RunContext
+from .executor import (
+    EvalResult,
+    Executor,
+    StubExecutor,
+    WorkloadResult,
+    embedded_outcome,
+    metadata_outcome,
+)
+from .frontier import Frontier, Member
+from .loop import exemplar_first, run_fleet, solve_problem
 
-__all__ = ["EvalResult", "Executor", "StubExecutor", "WorkloadResult"]
+__all__ = [
+    "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
+    "Config", "Perspective", "Tier", "default_config",
+    "RunContext",
+    "EvalResult", "Executor", "StubExecutor", "WorkloadResult",
+    "embedded_outcome", "metadata_outcome",
+    "Frontier", "Member",
+    "exemplar_first", "run_fleet", "solve_problem",
+]

@@ -59,8 +59,16 @@ replay).
 routing / frontier / budget / escalation / resume invariant deterministically
 assertable. Real agents and GPU transport are later phases.
 
-Status: **Phase A** (executor stub) built; **Phase B** (the loop + frontier +
-tiers + stub tests) in progress.
+```bash
+uv pip install -e '.[dev]'   # pytest
+python -m pytest tests/      # the §12 acceptance tests (no GPU, no API)
+```
+
+Status: **Phases A + B built** — the engine core (`solver/engine/`): the async
+`solve_problem` loop, RunContext with journal replay/resume, the ε-Pareto
+frontier, the tier ladder with headroom-gated escalation, novelty gates, and
+the fleet, all covered by the §12 stub tests. Next: the real Agent backends
+(`docs/agent.md`) and GPU execution (`docs/gpu-execution.md`).
 
 Run progress is inspectable as a static dashboard (no server/CDN):
 
