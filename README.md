@@ -84,8 +84,10 @@ fleet, the serialized knowledge curator, and bootstrap sibling seeding — all
 covered by the §12 stub tests and verified end-to-end on the dashboard
 (`docs/screenshots/real-*.png`). **Real agents** plug in by shelling out to
 existing coding-agent CLIs (`CliAgent`; `docs/agent.md`) — a `CliSpec` per CLI,
-no per-agent code. Next: **GPU execution** (`docs/gpu-execution.md`) to actually
-score kernels in the harness on a B200.
+no per-agent code. Next: **GPU execution** (`docs/gpu-execution.md`, designed) —
+a `GpuQueueExecutor` that runs kernels in the harness on a rented B200 over SSH;
+Phase F1 (transport + durability) is testable on-laptop with a fake harness
+before renting a GPU.
 
 Run progress is inspectable as a static dashboard (no server/CDN):
 
