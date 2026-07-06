@@ -21,6 +21,7 @@ from .executor import (
 )
 from .frontier import Frontier, Member
 from .gpu import FileQueueTransport, GpuQueueExecutor, Worker
+from .harness import map_traces_to_result, pod_harness
 from .knowledge import KnowledgeStore
 from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
 from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
@@ -34,6 +35,7 @@ __all__ = [
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
     "FileQueueTransport", "GpuQueueExecutor", "Worker",
+    "map_traces_to_result", "pod_harness",
     "KnowledgeStore",
     "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
     "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
