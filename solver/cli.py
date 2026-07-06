@@ -13,11 +13,11 @@ import argparse
 import json
 from pathlib import Path
 
-from . import check as check_mod
-from . import dataset as ds
-from . import fetch as fetch_mod
-from . import problems as pb
-from . import solution as sol_mod
+from .bench import check as check_mod
+from .bench import dataset as ds
+from .bench import fetch as fetch_mod
+from .bench import problems as pb
+from .bench import solution as sol_mod
 
 
 def _resolve_ids(args) -> list[int]:
@@ -106,11 +106,11 @@ def _print_report(report, path) -> None:
 def _cmd_report(args) -> None:
     import time
 
-    from . import report as report_mod
+    from .dashboard import report as report_mod
 
     runs_dir = Path(args.runs_dir)
     if args.demo:
-        from . import demo_data
+        from .dashboard import demo_data
         runs_dir = Path(".cache/demo/runs")
         if not runs_dir.exists():
             demo_data.build_demo(runs_dir)

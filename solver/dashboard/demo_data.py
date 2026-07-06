@@ -15,7 +15,7 @@ import json
 import random
 from pathlib import Path
 
-from .journal import Journal
+from ..journal import Journal
 
 _AGENTS = ["sonnet", "haiku", "opus"]
 

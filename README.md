@@ -9,7 +9,11 @@ the current stage.
 - `.claude/skills/design-kernel/` — recipe for turning a problem's PyTorch
   reference into optimized kernel candidate designs.
 - `designs/` — per-problem design docs.
-- `solver/` — the engine (Python package).
+- `solver/` — the Python package, organized by concern:
+  - `engine/` — the optimization engine (loop, frontier, tiers, resume).
+  - `bench/` — problem fetching + candidate Solution model/validation.
+  - `dashboard/` — the static performance site (`solver report`).
+  - `journal.py` / `scoring.py` — shared primitives; `cli.py` — the entry point.
 - `docs/orchestration.md` — the orchestrator engine design (see **Engine** below).
 - `problems/<N>/` — fetched problem packs (see below).
 
@@ -82,7 +86,7 @@ solver report             # a real run under runs/ -> publishable out/ site
 A **candidate** is a *Solution* (the harness's JSON: build `spec` + `sources`,
 called in Destination Passing Style — inputs then pre-allocated outputs,
 written in place). See `docs/solution.md` in the upstream repo; the format is
-captured in `solver/solution.py`.
+captured in `solver/bench/solution.py`.
 
 ```bash
 solver scaffold 69                 # correct PyTorch DPS baseline for task 69

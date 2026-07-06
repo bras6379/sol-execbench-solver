@@ -1,11 +1,11 @@
 ---
 name: dashboard-e2e
-description: E2E visual test loop for the solver run dashboard (solver report). Use whenever the dashboard HTML/CSS/SVG in solver/report.py changes, or when asked to verify/screenshot the dashboard. Renders demo data, screenshots light+dark with headless Chrome, inspects the images, and iterates until clean.
+description: E2E visual test loop for the solver run dashboard (solver report). Use whenever the dashboard HTML/CSS/SVG in solver/dashboard/report.py changes, or when asked to verify/screenshot the dashboard. Renders demo data, screenshots light+dark with headless Chrome, inspects the images, and iterates until clean.
 ---
 
 # Dashboard E2E: render → screenshot → look → fix → repeat
 
-The dashboard is a self-contained static HTML (`solver/report.py`). The only
+The dashboard is a self-contained static HTML (`solver/dashboard/report.py`). The only
 trustworthy test is *looking at the rendered pixels* — the palette validator
 checks color, not layout. This skill is the loop that catches invisible
 strokes, label collisions, overflow, and theme bugs before a human sees them.
@@ -58,7 +58,7 @@ strokes, label collisions, overflow, and theme bugs before a human sees them.
    - numbers sane vs the demo data (score in [0,1], baseline tick at 0.5,
      utilization plausible, table consistent with charts).
 
-4. **Fix `solver/report.py`, go to 1.** Iterate until a pass finds nothing.
+4. **Fix `solver/dashboard/report.py`, go to 1.** Iterate until a pass finds nothing.
 
 5. **Commit the final screenshots** to `docs/screenshots/` — they are the
    visual record for review (git-visible on purpose).
@@ -68,7 +68,7 @@ strokes, label collisions, overflow, and theme bugs before a human sees them.
 - Hover tooltips are JS-driven and invisible in static screenshots — verify
   them by opening the file in a real browser (`open .cache/demo/report.html`)
   when tooltip code changes.
-- The demo generator is `solver/demo_data.py` (seeded, deterministic). If a
+- The demo generator is `solver/dashboard/demo_data.py` (seeded, deterministic). If a
   new chart needs a data shape the demo doesn't produce (e.g. errors,
   suspended problems), extend the generator so the visual state is testable.
 - Palette changes must re-run the dataviz validator (see the dataviz skill)

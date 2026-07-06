@@ -21,7 +21,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Protocol
 
-from .. import check as check_mod
+from ..bench import check as check_mod
 from .. import scoring
 
 

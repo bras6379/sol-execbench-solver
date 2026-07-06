@@ -16,7 +16,7 @@ import datetime as dt
 import html
 from pathlib import Path
 
-from . import journal as journal_mod
+from .. import journal as journal_mod
 from . import metrics as metrics_mod
 
 SERIES_N = 8

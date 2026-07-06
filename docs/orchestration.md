@@ -30,7 +30,7 @@ into one targeted fix. We evolve the kernel, not a model.)
 
 | GEPA concept | Here |
 |---|---|
-| Candidate | a Solution (`solver/solution.py`) + lineage (parent id) |
+| Candidate | a Solution (`solver/bench/solution.py`) + lineage (parent id) |
 | evaluate() | run in the SOL-ExecBench harness on the GPU → per-workload Traces |
 | Reflection / ASI | diagnosis from statuses, matched_ratio, latency-vs-SOL, logs |
 | Pareto frontier | per-workload-shape non-domination (specialists survive) |
