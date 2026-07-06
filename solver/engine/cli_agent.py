@@ -47,15 +47,16 @@ SPECS: dict[str, CliSpec] = {"codex": CODEX, "claude": CLAUDE}
 
 
 _PLAN = (
-    "You are optimizing a CUDA kernel for NVIDIA B200 (SOL-ExecBench).\n"
-    "Read DESIGN.md and CONTEXT.md in this directory. Improve on the current kernel\n"
-    "and write your implementation to kernel.<ext> (e.g. kernel.cu or kernel.py).\n"
-    "Follow the abstraction ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate\n"
+    "You are optimizing a GPU kernel for NVIDIA B200 (SOL-ExecBench).\n"
+    "reference.py is the PyTorch reference you must stay numerically equivalent to;\n"
+    "definition.json is the spec; DESIGN.md and CONTEXT.md hold the plan and prior\n"
+    "attempts. Write a faster, equivalent implementation to kernel.<ext> (kernel.cu or\n"
+    "kernel.py). Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate\n"
     "only when needed. Write ONLY the kernel file(s); print one line 'STRATEGY: <summary>'."
 )
 _DESIGN = (
-    "Analyze this SOL-ExecBench problem for NVIDIA B200. Produce a short design as\n"
-    "markdown: op graph, per-shape roofline (memory- vs compute-bound), and 3 ranked\n"
+    "Analyze reference.py and definition.json for NVIDIA B200. Produce a short markdown\n"
+    "design: op graph, per-shape roofline (memory- vs compute-bound), and 3 ranked\n"
     "candidate approaches. Output only the design text."
 )
 
@@ -78,17 +79,20 @@ class CliAgent:
     """An Agent that drives an existing coding-agent CLI via subprocess."""
 
     def __init__(self, spec: CliSpec, model: str, *, runs_dir: str | Path = "runs",
-                 timeout: float = 600.0, env: dict | None = None) -> None:
+                 problems_dir: str | Path = "problems", timeout: float = 600.0,
+                 env: dict | None = None) -> None:
         self.spec = spec
         self.model = model
         self.perspective = Perspective(spec.name, model)
         self.runs_dir = Path(runs_dir)
+        self.problems_dir = Path(problems_dir)
         self.timeout = timeout
         self.env = {**os.environ, **(env or {})}
         self._seq = 0
 
     async def design(self, task_id: int) -> str:
         wd = self._workdir(task_id, "design")
+        self._write_problem(wd, task_id)
         out, _err, _rc = await self._run(self.spec.ask, wd, _DESIGN)
         return out.strip() or "(no design produced)"
 
@@ -124,9 +128,17 @@ class CliAgent:
     def _seed_workdir(self, wd: Path, parent, ctx) -> None:
         (wd / "DESIGN.md").write_text(getattr(ctx, "design", "") or "")
         (wd / "CONTEXT.md").write_text(_context_md(parent, ctx))
+        self._write_problem(wd, getattr(ctx, "task_id", ""))
         psol = getattr(parent, "solution", None)
         for s in (psol or {}).get("sources", []):     # starting point = the parent's kernel
             (wd / s["path"]).write_text(s.get("content", ""))
+
+    def _write_problem(self, wd: Path, task_id) -> None:
+        pdir = self.problems_dir / str(task_id)
+        for fname in ("reference.py", "definition.json"):
+            src = pdir / fname
+            if src.exists():
+                (wd / fname).write_text(src.read_text())
 
     def _collect(self, wd: Path, stdout: str) -> tuple[dict, str]:
         files = [f for f in sorted(wd.glob(self.spec.kernels)) if f.is_file()]
