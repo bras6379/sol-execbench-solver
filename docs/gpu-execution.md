@@ -1,9 +1,12 @@
 # GPU execution (Phase F): running kernels in the harness on a rented B200
 
-**Status: F1 built** (`GpuQueueExecutor` + file-queue + idempotent jobs +
-durability — laptop-tested with a LocalPod fake harness, `tests/test_gpu.py`);
-**F2** (auto-provision an ephemeral pod + real harness) needs only a RunPod API
-key + credit — no manual pod, no SSH to hand over.
+**Status: F1 + F2-core built** (laptop-tested, no GPU): the `GpuQueueExecutor` +
+file-queue + idempotent-job durability (`tests/test_gpu.py`), the pod lifecycle
++ **guaranteed teardown** (`tests/test_pod.py`, MockProvider — no spend), and the
+harness **Trace→EvalResult mapping** (`tests/test_harness.py`, real metadata + a
+fake driver). The **pod-integration** — SSH transport, bootstrap, the real
+`eval_driver` driver, and `solver solve --gpu` wiring — needs only a RunPod API
+key + credit (no manual pod, no SSH to hand over).
 The engine already treats the GPU as an interface (`Executor.evaluate`), stubbed
 on the laptop. This is the *real* executor: get a
 GPU (RunPod, over SSH), run each candidate in the SOL-ExecBench harness, return
@@ -404,7 +407,8 @@ laptop.
 | Phase | Piece |
 |---|---|
 | F1 | `GpuQueueExecutor` + file-queue transport + hash-keyed idempotent jobs + resume-based recovery + **LocalPod fake-harness tests (§10)** — all laptop-testable, no GPU |
-| F2 | **Auto-provision lifecycle (§6)**: RunPod API create → **SSH bootstrap (§3b)** → run → terminate (`finally` + pod-side dead-man's-switch + lifetime/idle caps + `reap`) + health/cost monitor + `.env` + `solver gpu init-volume`/`status`/`reap` |
+| F2a ✅ | Pod lifecycle + **guaranteed teardown** (§6; `PodSession`/`MockProvider`, laptop-tested) + harness **Trace→EvalResult mapping** (§4b; metadata + fake driver) |
+| F2b | On a pod: **SSH transport** + **bootstrap** (§3b) + `init-volume` + the real `eval_driver` driver + **`solver solve --gpu`** wiring + RunPod health/cost monitor + pod-side dead-man's-switch |
 | F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
 ## Decision log
