@@ -2,7 +2,8 @@
 
 **Status: F1 built** (`GpuQueueExecutor` + file-queue + idempotent jobs +
 durability — laptop-tested with a LocalPod fake harness, `tests/test_gpu.py`);
-**F2** (real SSH bootstrap + RunPod API on an actual pod) awaits a rented GPU.
+**F2** (auto-provision an ephemeral pod + real harness) needs only a RunPod API
+key + credit — no manual pod, no SSH to hand over.
 The engine already treats the GPU as an interface (`Executor.evaluate`), stubbed
 on the laptop. This is the *real* executor: get a
 GPU (RunPod, over SSH), run each candidate in the SOL-ExecBench harness, return
@@ -59,36 +60,38 @@ pod, so the sandboxed eval never needs the network.
 
 ## 3b. Pod bootstrap & provisioning (setting up the GPU)
 
-Provisioning is **manual** — you rent the pod on RunPod and drop its SSH details
-in `.env`; the engine **sets the pod up over SSH**, **idempotently**, so first
-contact does a full install and every reconnect is a fast verify. `solver gpu
-setup` (also run automatically on first connect) does:
+Provisioning is **automatic** (assuming credit on the account): `solver solve
+--gpu` calls the RunPod API to **create an ephemeral pod for the run**, sets it
+up over SSH **idempotently**, and **terminates it when done** (§6) — you never
+touch the console, and you pay only for the run (per-second billing). First use
+does a full install; with a network volume every start is a fast verify. Bootstrap:
 
-1. **Connect** — SSH creds + RunPod API key/pod-id from `.env`; verify SSH
-   reachability *and* that the RunPod API reports the pod `RUNNING` (§6).
+1. **Connect** — the API `create_pod` returns the pod's SSH host/port; connect
+   with your key. Verify SSH reachability *and* API status `RUNNING`. (Manual
+   BYO fallback: set `GPU_SSH_*` in `.env` and skip create/terminate.)
 2. **Transfer** — `rsync` the self-contained `gpu-worker` module + the problem
-   packs (`problems/`) to `~/solver-gpu/` on the pod. (No repo clone needed; the
-   worker is one module. `git clone` of the solver repo is an alternative if the
-   worker ever grows.)
+   packs (`problems/`) to `~/solver-gpu/`. (No repo clone; the worker is one
+   module.)
 3. **Install** — `pip install 'sol-execbench @ …'` with the `[bench]` extras
-   (torch cu130, cutlass-dsl, cupti). Slow once; guarded by a version marker so
-   warm pods skip it. One-time extension builds happen here (pip compiles).
-4. **Start** — launch `gpu-worker` as a durable daemon (tmux/nohup/systemd)
-   polling `jobs/`, with a heartbeat file for health.
-5. **Ready** — append `gpu_rentals.jsonl{start}` and **reconcile** in-flight
-   jobs (§4).
+   (torch cu130, cutlass-dsl, cupti; `ncu` when Tier-2 profiling lands, §8b).
+   Slow once; a version marker + a **network volume** skip it on warm starts.
+4. **Start** — launch `gpu-worker` as a daemon polling `jobs/`, with a
+   **heartbeat** the laptop feeds (the dead-man's-switch, §6).
+5. **Ready** — append `gpu_rentals.jsonl{start}` and reconcile in-flight jobs (§4).
 
 Every step is **checkpointed** (`~/solver-gpu/state/<step>.done`), so a dropped
-connection resumes setup where it left off and a warm pod jumps to step 5.
-Bootstrap is logged to `runs/gpu-setup.log`.
+connection resumes where it left off and a warm pod (volume) jumps to step 5.
+Logged to `runs/gpu-setup.log`.
 
-**Config — `.env` (gitignored; you fill it after renting):**
+**Config — `.env` (gitignored):**
 ```
-GPU_SSH_HOST=...            GPU_SSH_PORT=...       GPU_SSH_USER=root
-GPU_SSH_KEY=~/.ssh/runpod   RUNPOD_API_KEY=...     RUNPOD_POD_ID=...
+RUNPOD_API_KEY=...            # auto-provision (create/terminate); the only thing you must set
+GPU_TYPE="NVIDIA B200"        GPU_IMAGE=...            NETWORK_VOLUME_ID=...   # optional (fast starts)
+GPU_MAX_LIFETIME_MIN=120      GPU_IDLE_TIMEOUT_MIN=15  GPU_SSH_KEY=~/.ssh/runpod
+# manual BYO fallback: GPU_SSH_HOST / GPU_SSH_PORT / GPU_SSH_USER  (then create/terminate is skipped)
 ```
-Loaded like the agent keys (`_load_dotenv`). `solver gpu status` prints SSH
-reachability + the live pod details from the API; `solver gpu setup` (re)provisions.
+Loaded like the agent keys (`_load_dotenv`). `solver gpu status` shows the live
+pod; `solver gpu reap` terminates stragglers (§6).
 
 ## 4. Job queue + durability (no-loss / no-double-pay)
 
@@ -178,30 +181,46 @@ off-lock build pool** on the pod (pre-compile a candidate's `.so` before it
 takes the eval lock; orchestration.md decision-log #5). Triggered when logs show
 nvcc time dominating GPU-idle; only C++-family candidates are affected.
 
-## 6. Pod lifecycle, rentals & health (RunPod API)
+## 6. Pod lifecycle — auto-provision, run, self-terminate (RunPod API)
 
-- **Connect** → §3b bootstrap → `gpu_rentals.jsonl{start}` → reconcile (§4).
-- **Run**: submit / poll evals.
-- **Health monitor (RunPod API)**: a background poller hits the RunPod API
-  (`RUNPOD_API_KEY` from `.env`) every ~30s for the pod's **live state** —
-  `desiredStatus`/`RUNNING`, `runtime.uptimeInSeconds`, GPU type, cost/hr. This
-  is how we notice an **ephemeral/spot pod being preempted or stopped** *before*
-  an SSH timeout would: the API status flips → we suspend cleanly rather than
-  hang on a dead socket. (RunPod pods have no fixed expiry; the signal is
-  status-change + uptime, not a countdown.)
-- **Disconnect / death** (preemption, manual stop, SSH loss): append
-  `gpu_rentals.jsonl{end}`; the fleet **suspends** (no GPU — the same clean
-  suspend as credit-exhaustion, §2) and resumes when a new pod's `.env` is set
-  and `solver gpu setup` runs. In-flight evals are reconciled / resubmitted on
-  the next pod (§4); a death mid-run is crash-isolated.
-- **Manual provisioning, API for reads only**: you rent/stop the pod on RunPod
-  and fill `.env`; the API is used only to **read** instance state (status,
-  uptime, GPU, cost) for the rental log and death-detection — never to
-  create/destroy. Auto-provisioning (RunPod API create/terminate, spot bidding)
-  is Deferred.
-- `gpu_rentals.jsonl` is now **executor-written** from the API's uptime/status
-  → the dashboard's rented-window utilization becomes real, and rental windows ×
-  `costPerHr` give the real **GPU $ spent** (tracked alongside agent tokens).
+`solver solve --gpu` owns the whole GPU lifecycle; you never open the console:
+
+1. **Reap** — terminate any orphaned pods tagged from a prior crashed run
+   (`solver gpu reap`, run on startup).
+2. **Create** — `runpod.create_pod(gpu_type=GPU_TYPE, image=GPU_IMAGE,
+   network_volume=…, name=<run-tag>)` → poll `get_pod` until `RUNNING` + SSH
+   ready. B200 on-demand ~$5–6/hr, **per-second billing** — you pay only for the run.
+3. **Bootstrap** (§3b) — fast if a volume holds the installed harness; full
+   install only first time. `gpu_rentals.jsonl{start}`.
+4. **Run** the fleet; pull each result to `runs/<id>/results/` (authoritative)
+   as it lands.
+5. **Terminate** — `runpod.terminate_pod()` in a `finally`; `gpu_rentals.jsonl{end}`.
+   **Billing stops.**
+
+**Never strand a pod** (a leaked pod silently drains credit). Layered teardown,
+belt-and-suspenders:
+- `finally` + `atexit` + SIGINT/SIGTERM handlers → terminate on *any* laptop exit.
+- A **pod-side dead-man's-switch**: the `gpu-worker` self-terminates (via the
+  RunPod API from the pod, or `shutdown`) if it hasn't seen a laptop **heartbeat**
+  in `N` min — so even a hard laptop crash can't leave the pod running.
+- **Caps**: `GPU_MAX_LIFETIME_MIN` (hard stop) and `GPU_IDLE_TIMEOUT_MIN`
+  (no jobs → terminate) — a hung run auto-stops.
+- **`solver gpu reap`** terminates stragglers by run-tag (recovery after a crash
+  that skipped `finally`).
+
+**Health monitor**: a background poller reads the RunPod API every ~30s
+(`RUNNING`?, uptime, GPU, `costPerHr`) to detect a stop/preemption *before* an
+SSH timeout would and to write rentals; on unexpected death the fleet **suspends**
+cleanly (§2) and in-flight evals reconcile/resubmit on the next pod (§4).
+
+**Cost**: create/terminate timestamps × the API's `costPerHr` = exact **GPU $
+per run**, in `gpu_rentals.jsonl` + the dashboard (alongside agent tokens). A
+cheap **network volume** ($0.07/GB·mo) optionally persists the installed env +
+results for fast, cheap restarts; without it the pod is fully ephemeral (results
+already pulled to the laptop before terminate, so nothing is lost).
+
+**Manual BYO** (fallback): set `GPU_SSH_*` in `.env`; create/terminate/reap are
+skipped, everything else identical.
 
 ## 7. Sandbox — untrusted kernels on the GPU box
 
@@ -370,7 +389,7 @@ laptop.
 | Phase | Piece |
 |---|---|
 | F1 | `GpuQueueExecutor` + file-queue transport + hash-keyed idempotent jobs + resume-based recovery + **LocalPod fake-harness tests (§10)** — all laptop-testable, no GPU |
-| F2 | **Idempotent SSH bootstrap (§3b)** (rsync worker + problems, install harness, start `gpu-worker`) + **RunPod API health/rental monitor (§6)** + `.env` config + `solver gpu setup`/`status` |
+| F2 | **Auto-provision lifecycle (§6)**: RunPod API create → **SSH bootstrap (§3b)** → run → terminate (`finally` + pod-side dead-man's-switch + lifetime/idle caps + `reap`) + health/cost monitor + `.env` + `solver gpu status`/`reap` |
 | F3 | Real `eval_driver` result parsing + calibration (§8) on an actual B200; then compile-off-lock split (§5) + sandbox hardening (§7) as data demands |
 
 ## Decision log
@@ -385,10 +404,11 @@ laptop.
    latency upgrade.
 5. **Ephemeral pods** (chosen — cheapest); a persistent volume is the deferred
    upgrade for zero re-pay across pod restarts.
-6. **Provisioning manual, API read-only**: you rent the pod and fill `.env`
-   (SSH creds + `RUNPOD_API_KEY` + `RUNPOD_POD_ID`); the executor **sets it up
-   over SSH idempotently** (§3b) and **reads** live pod state via the RunPod API
-   (§6) for the rental log + death-detection. Auto-provisioning deferred.
+6. **Auto-provisioned, self-terminating pods** (default): `solver solve --gpu`
+   creates an ephemeral pod via the RunPod API, bootstraps it (§3b), runs, and
+   **terminates it in a `finally`** — with a pod-side dead-man's-switch +
+   lifetime/idle caps + `reap` so a crash never strands a paid pod (§6). You pay
+   only for the run. Manual BYO (`GPU_SSH_*`) is the fallback.
 7. **Workloads rsync'd** to the pod at bootstrap (chosen — network-free eval
    sandbox), not fetched pod-side.
 8. **GPU cost** tracked from the RunPod API `costPerHr` × rental windows
@@ -401,7 +421,8 @@ laptop.
   single-flight into per-GPU single-flight).
 - **Persistent-SSH RPC transport** — when rsync-poll latency dominates.
 - **Compile/eval split** — when build time shows up as GPU-idle in the logs.
-- **Auto-provisioning** (RunPod API create/destroy on demand, spot bidding) —
-  when manual pod management is the bottleneck.
+- **Spot / interruptible pods** (cheaper than on-demand but preemptible
+  mid-run) — auto-provisioning already does on-demand create/terminate;
+  spot-bidding is the cost cut once the reconcile path is battle-tested.
 - **Nsight profiling in the eval path** (orchestration.md deferred) — profile on
   plateau, on the pod.
