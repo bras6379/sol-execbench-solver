@@ -292,6 +292,48 @@ report; the raw `.ncu-rep` is persisted to the candidate dir for the human.
 **Tier 2 (`ncu`) deferred** to F3+/on-plateau — the existing "Nsight → ASI"
 deferred item, now specified.
 
+## 8c. The `asi` schema — every-eval diagnostic bundle (F2 checklist)
+
+Per-shape *scored* fields stay on `WorkloadResult` (index · status · `latency_ms`
+· `latency_spread` · `sol_ms` · `baseline_latency_ms` · `matched_ratio`); `asi`
+carries the cheap Tier-1 diagnostics `reflect()` reads. The worker fills what's
+available and leaves the rest null.
+
+```
+asi = {
+  stage:  "gpu",
+  env:    { gpu, driver, cuda, harness_commit },        # the §10 fingerprint (§4 lists it top-level; F2 picks)
+  timing: { n_trials, cv, cold_l2: true },              # per-shape std → WorkloadResult.latency_spread
+  memory: { peak_alloc_mb, peak_reserved_mb },          # max_memory_allocated / nvidia-smi — NOT scored
+  device: { sm_clock_mhz, mem_clock_mhz, power_w, temp_c, clock_locked },   # throttle detection
+  launch: { grid, block, registers_per_thread, theoretical_occupancy,
+            sm_fill_frac, tile_quantized },             # static; no profiler; do we fill 148 SMs?
+  build:  { registers_per_thread, shared_mem_bytes, spill_stores, spill_loads,
+            ptxas_warnings:[…], nvcc_seconds } | null,  # C++ only (ptxas -v)
+  correctness: [ { index, kind:"numerical|shape|dtype|nan|inf",
+                   max_abs_err, max_rel_err, mismatch_frac } ],   # only non-PASSED shapes; else []
+  logs:   { stdout_tail, stderr_tail, compile_log },    # bounded (~KB) — rides the journal
+  profile: null,                                        # Tier 2 (§8b), filled only on profile-on-plateau
+}
+```
+- **Always**: `env`, `timing`, `memory`, `device`, `launch`, `logs`.
+  **Conditional**: `build` (C++), `correctness` (failed shapes), `profile`
+  (plateau). Everything **bounded** so it fits the journal.
+- The bundle is what the loop feeds `reflect()`; the family curator distills
+  recurring patterns ("rmsnorm keeps spilling at tile 256").
+
+**Tier-2 `profile` sub-schema** (populated by the on-plateau `ncu` job):
+```
+profile = {
+  bottleneck: "memory|compute|latency|mixed",           # the SOL classifier
+  sm_pct, mem_pct, dram_bw_pct, l2_hit_pct, tensor_pipe_pct,
+  achieved_occupancy, occupancy_limiter: "registers|shared|blocks",
+  top_stall: "long_scoreboard|barrier|mio|…",
+  recommendations: [ { rule, est_speedup } ],           # ncu's ranked "try next"
+  ncu_report: "candidates/<cand>/report.ncu-rep",       # raw, for the human
+}
+```
+
 ## 9. Transport mechanism
 
 - **rsync/ssh file-queue** (chosen): `jobs/`/`results/` synced over SSH. Robust,
