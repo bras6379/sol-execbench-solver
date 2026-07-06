@@ -21,10 +21,17 @@ from .executor import (
 )
 from .frontier import Frontier, Member
 from .gpu import FileQueueTransport, GpuQueueExecutor, Worker
-from .harness import map_traces_to_result, pod_harness
+from .gpu_run import bootstrap, harness_ref, solve_on_gpu
+from .harness import (
+    map_traces_to_result,
+    pod_harness,
+    solution_to_harness_json,
+    traces_from_jsonl,
+)
 from .knowledge import KnowledgeStore
 from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
 from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
+from .ssh_exec import PodConn, SshExecutor
 
 __all__ = [
     "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
@@ -35,8 +42,10 @@ __all__ = [
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
     "FileQueueTransport", "GpuQueueExecutor", "Worker",
-    "map_traces_to_result", "pod_harness",
+    "bootstrap", "harness_ref", "solve_on_gpu",
+    "map_traces_to_result", "pod_harness", "solution_to_harness_json", "traces_from_jsonl",
     "KnowledgeStore",
     "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
     "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
+    "PodConn", "SshExecutor",
 ]

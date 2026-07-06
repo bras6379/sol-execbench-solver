@@ -73,8 +73,12 @@ _PLAN = (
     "definition.json is the spec; DESIGN.md and CONTEXT.md hold the plan and prior\n"
     "attempts. Write your optimized implementation to a file named kernel.py or\n"
     "kernel.cu (one language), and a one-line summary of the approach to strategy.txt.\n"
-    "Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate only when\n"
-    "needed. Do not print the code — only write the files."
+    "CONTRACT: the kernel file MUST define a top-level function named `run` with the\n"
+    "SAME parameter names and order as reference.py's `run`, and it MUST RETURN the\n"
+    "output tensor(s) (do not write in place). It is the entry point the grader calls\n"
+    "(kernel.py::run); a mismatch scores zero. Any imports (triton, torch) go in that\n"
+    "file. Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate only\n"
+    "when needed. Do not print the code — only write the files."
 )
 _DESIGN = (
     "Analyze reference.py and definition.json for NVIDIA B200. Write a short markdown\n"

@@ -142,6 +142,8 @@ def _cmd_solve(args) -> None:
     names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
 
     if args.agent == "sim":
+        if args.gpu:
+            raise SystemExit("--gpu needs a real --agent (codex/claude), not the sim agent")
         cfg = Config(
             tiers=[Tier("cheap", [Perspective("claude", "haiku"), Perspective("openai", "gpt")]),
                    Tier("strong", [Perspective("claude", "opus")])],
@@ -159,16 +161,33 @@ def _cmd_solve(args) -> None:
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
-        print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} "
-              f"(StubExecutor — no GPU scoring yet) -> {runs_dir}/")
 
-    # --fake-scores: score real agent kernels by content hash so the frontier /
-    # convergence exercises without a GPU (real agents have no embedded scores).
-    outcome = sim.hash_score_outcome() if args.fake_scores else None
-    executor = StubExecutor(outcome, delay=args.delay)   # delay → a real timeline
-    asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
-                          seeds_fn=seeds_fn, knowledge=knowledge,
-                          families=families, names=names))
+    if args.gpu:
+        # Real end-to-end: rent an ephemeral B200, bootstrap the harness, score
+        # every candidate on the GPU, then terminate the pod (guaranteed teardown).
+        from .engine.gpu_run import solve_on_gpu
+        from .engine.pod import PodSpec, RunPodProvider
+        api = os.environ.get("RUNPOD_API_KEY")
+        if not api:
+            raise SystemExit("RUNPOD_API_KEY not set (add it to .env)")
+        spec = PodSpec(gpu_type=args.gpu_type, cloud_type=args.gpu_cloud)
+        hcfg = {"warmup_runs": 10, "iterations": args.gpu_iterations,
+                "lock_clocks": args.gpu_lock_clocks, "seed": 200}
+        print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} on a rented "
+              f"{args.gpu_type} via RunPod (auto-provision → bootstrap → run → terminate) -> {runs_dir}/")
+        asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
+                                 knowledge=knowledge, families=families, names=names,
+                                 provider=RunPodProvider(api), spec=spec, config=hcfg))
+    else:
+        if args.agent != "sim":
+            print(f"  (StubExecutor — no GPU scoring; add --gpu for real B200 evaluation)")
+        # --fake-scores: score real agent kernels by content hash so the frontier /
+        # convergence exercises without a GPU (real agents have no embedded scores).
+        outcome = sim.hash_score_outcome() if args.fake_scores else None
+        executor = StubExecutor(outcome, delay=args.delay)   # delay → a real timeline
+        asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
+                              seeds_fn=seeds_fn, knowledge=knowledge,
+                              families=families, names=names))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -299,6 +318,15 @@ def main(argv: list[str] | None = None) -> None:
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,
                          help="simulated per-eval GPU time (spreads the timeline)")
+    p_solve.add_argument("--gpu", action="store_true",
+                         help="rent an ephemeral B200 on RunPod, score candidates for real, then terminate it")
+    p_solve.add_argument("--gpu-type", default="NVIDIA B200", help="RunPod GPU type id")
+    p_solve.add_argument("--gpu-cloud", default="SECURE", choices=["SECURE", "COMMUNITY", "ALL"],
+                         help="RunPod cloud type (SECURE supports the public IP we SSH over)")
+    p_solve.add_argument("--gpu-iterations", type=int, default=50,
+                         help="harness timed iterations per workload (lower = cheaper/faster, noisier)")
+    p_solve.add_argument("--gpu-lock-clocks", action="store_true",
+                         help="ask the harness to lock GPU clocks (steadier timing; needs nvidia-smi perms)")
     p_solve.set_defaults(func=_cmd_solve)
 
     p_stat = sub.add_parser("status", help="per-problem summary over a runs dir")

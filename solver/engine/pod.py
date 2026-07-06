@@ -21,13 +21,35 @@ from dataclasses import dataclass
 from typing import Protocol
 
 
+# Custom-image SSH bootstrap (validated live, docs/gpu-execution.md §3b). The base
+# CUDA image ships no sshd; this start command installs it, injects the account
+# key RunPod exposes as $PUBLIC_KEY, and keeps the container alive. NOTE: **no
+# double-quotes** — the runpod SDK wraps dockerArgs in unescaped GraphQL quotes,
+# so a literal " would close the string and expose $. An SSH key has no
+# consecutive spaces, so unquoted `echo $PUBLIC_KEY` is safe.
+SSH_START = ("bash -c 'apt-get update -qq; "
+             "DEBIAN_FRONTEND=noninteractive apt-get install -y -qq openssh-server >/dev/null 2>&1; "
+             "mkdir -p /run/sshd /root/.ssh; chmod 700 /root/.ssh; "
+             "echo $PUBLIC_KEY >> /root/.ssh/authorized_keys; chmod 600 /root/.ssh/authorized_keys; "
+             "service ssh start; sleep infinity'")
+
+# The pinned harness runs on CUDA 13 + Blackwell; this devel image has nvcc 13.1
+# and cuDNN. Bootstrap adds build-essential + python3-dev (Triton's runtime cc).
+DEFAULT_IMAGE = "nvidia/cuda:13.1.1-cudnn-devel-ubuntu24.04"
+
+
 @dataclass
 class PodSpec:
     gpu_type: str = "NVIDIA B200"
-    image: str = ""
+    image: str = DEFAULT_IMAGE
     network_volume_id: str | None = None
     tag: str = "sol-solver"                 # every pod we create carries this → reap can find them
     name: str = ""
+    cloud_type: str = "SECURE"              # SECURE supports the public IP we SSH over
+    container_disk_gb: int = 60             # torch(cu13)+cutlass+cudnn ≈ 25GB installed
+    ports: str = "22/tcp"
+    start_cmd: str = SSH_START
+    support_public_ip: bool = True
 
 
 @dataclass
@@ -110,9 +132,14 @@ class RunPodProvider:
         self._rp = runpod
 
     async def create(self, spec: PodSpec) -> PodHandle:
-        pod = await asyncio.to_thread(
-            self._rp.create_pod, name=spec.name or spec.tag, image_name=spec.image,
-            gpu_type_id=spec.gpu_type, network_volume_id=spec.network_volume_id)
+        kw = dict(name=spec.name or spec.tag, image_name=spec.image,
+                  gpu_type_id=spec.gpu_type, cloud_type=spec.cloud_type,
+                  support_public_ip=spec.support_public_ip, start_ssh=True,
+                  container_disk_in_gb=spec.container_disk_gb, ports=spec.ports,
+                  docker_args=spec.start_cmd)
+        if spec.network_volume_id:           # persistent harness volume (optional)
+            kw["network_volume_id"] = spec.network_volume_id
+        pod = await asyncio.to_thread(self._rp.create_pod, **kw)
         return _from_runpod(pod, spec.tag)
 
     async def status(self, pod_id: str) -> PodHandle:
