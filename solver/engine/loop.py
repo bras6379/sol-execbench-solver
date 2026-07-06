@@ -56,6 +56,7 @@ async def solve_problem(
     name: str = "",
 ) -> RunContext:
     ctx = RunContext.load(task_id, cfg, runs_dir, seed=seed)
+    ctx.reopen_if_capped()             # a cap-terminated run continues if the caps now allow it
     seeds_fn = seeds_fn or _default_seeds
     check_fn = check_fn or _default_check
 

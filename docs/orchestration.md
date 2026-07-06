@@ -244,6 +244,7 @@ class EvalResult:
   a score with no headroom left** (`best ≥ escalate_ceiling`). Otherwise the
   plateau *escalates* to the next tier (§6b) rather than terminating — so a
   near-optimal problem stops instead of climbing to the expensive tier.
+  `budget:*` terminations are **reopenable** (§6c); `converged:*`/`target` are final.
 - **Deliverable invariant:** `best_solution.json` = argmax mean sol_score
   **among all-correct candidates** (PASSED on every shape). The seed
   guarantees one exists. Partially-correct specialists stay on the frontier
@@ -335,6 +336,43 @@ configure a second tier or a bigger pool. The one-shot bootstrap `design()`
 call uses `design_model` (default: the strongest configured), decoupled from
 the round-robin: it sets the whole search trajectory, so it's worth a strong
 model even on an otherwise-cheap run.
+
+## 6c. Work-conserving fleet budget — reallocate freed capacity to the improvable tail
+
+Per-problem caps (§6) guarantee *termination*, but on their own they leave GPU
+time unspent: when easy problems converge, the single-flight capacity they free
+should flow to the problems with the most headroom — and the run should not end
+while rental time remains and any problem can still improve.
+
+- **Two budget levels.** Per-problem `max_iterations`/`max_gpu_evals` are a
+  **floor guarantee** (no problem spins forever). A **fleet budget** — a
+  GPU-rental window (wall-clock) and/or a total-eval ceiling — governs when the
+  *run* ends. The per-problem cap stops a problem; the fleet budget stops the
+  fleet.
+- **Termination reasons are not equal.** `converged:*` (headroom gate or
+  last-tier plateau, §6b) is genuinely done — a different prior won't help.
+  `budget:*` is a problem cut off by its *own* cap while it may still have
+  headroom. Only the former is final; **`budget:*` is reopenable** — built:
+  resuming with raised caps journals a `reopened` event and continues, while
+  `converged:*`/`target` stay done (`solver solve <ids> --max-evals N`).
+- **Work-conserving reallocation** (designed). The GPU never idles — and the run
+  never ends — while the fleet budget has capacity *and* some problem still has
+  headroom (`best < escalate_ceiling`). When a problem hits a per-problem cap,
+  if fleet capacity remains it is **extended** instead of stopped; freed capacity
+  goes to the **highest-headroom** problems first (largest gap to SOL = where a
+  marginal eval buys the most), cheap-first and escalating per the §6b ladder.
+- **The fleet ends** when every problem is `converged:*`, or the fleet budget /
+  rental window is exhausted — *not* when per-problem caps trip.
+- **It's the automatic form of "raise the cap on the stuck-but-improvable
+  tail."** Manually you re-`solve` with a bigger cap; the scheduler does it
+  continuously against the rental budget and picks *which* problems by headroom
+  rather than by hand.
+
+Built now: reopen-on-raised-cap. Designed, not built: the fleet-budget scheduler
++ headroom priority — it extends the §2 single-flight round-robin dispatcher and
+**subsumes the Deferred "priority queue + circuit breaker"** (the circuit
+breaker is already the plateau/converged detection; the priority queue is the
+headroom ordering).
 
 ## 7. Persistence & resume (journal + results store)
 
@@ -631,7 +669,10 @@ Each with its trigger:
 - **Merge node** (per-shape dispatch; same-family mechanical, cross-family =
   Plan-rewrite since the harness forbids mixing language families) — when
   real frontiers hold divergent specialists.
-- **Priority queue + per-problem circuit breaker** — with the real GPU queue
+- **Fleet-budget work-conserving scheduler + headroom priority** (§6c) —
+  reallocate freed single-flight capacity to the highest-headroom problems and
+  keep the run going while rental time + headroom remain (per-problem circuit
+  breaking is already the plateau/converged detection). With the real GPU queue
   (Phase F).
 - **Env re-baselining automation** — when running across multiple pods.
 - **Agent-credit enforcement** — logged not enforced for the Claude
@@ -704,3 +745,8 @@ Each with its trigger:
    evidence trigger Deferred.
 8. **Autonomous:** no in-loop human steering (no `hints.md`); operators tune by
    config between runs. Observability views (§9) are read-only.
+9. **Budgets, two levels (§6c):** per-problem caps are a floor guarantee;
+   `budget:*` terminations are **reopenable** (built — resume with raised caps),
+   `converged:*`/`target` are final. A fleet-budget work-conserving scheduler
+   that reallocates freed capacity to the highest-headroom problems is designed
+   (subsumes the Deferred priority queue).

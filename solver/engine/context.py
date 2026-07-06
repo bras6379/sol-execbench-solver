@@ -24,7 +24,7 @@ from .frontier import Frontier, Member
 
 # Events that end a committed unit of work; everything after the last one is a
 # partial iteration and is dropped on resume.
-_BOUNDARIES = {"bootstrapped", "iter", "agent_changed", "terminated"}
+_BOUNDARIES = {"bootstrapped", "iter", "agent_changed", "terminated", "reopened"}
 
 
 class RunContext:
@@ -160,6 +160,8 @@ class RunContext:
                 self.planned_since_gain = 0
         elif ev == "terminated":
             self.terminated_reason = e.get("reason")
+        elif ev == "reopened":
+            self.terminated_reason = None                 # a cap-terminated run resumes
         # iter / check / novelty / exec_enqueued / exec_started / reflect_done /
         # run_started / solver_error carry no core-state delta.
 
@@ -168,6 +170,17 @@ class RunContext:
         return Member(cand_id=cand_id, vector=tuple(p["scores"]), all_passed=p["all_passed"],
                       solution=p.get("solution"), strategy=p.get("strategy", ""),
                       agent=p.get("agent", ""), model=p.get("model", ""))
+
+    def reopen_if_capped(self) -> bool:
+        """A `budget:*`-terminated run continues when the caps now allow more
+        work (e.g. resumed with a higher `--max-evals`); `converged:*`/`target`
+        runs stay done. Journals `reopened` so replay reconstructs it."""
+        if (self.terminated_reason and self.terminated_reason.startswith("budget:")
+                and self.iters < self.cfg.max_iterations
+                and self.evals < self.cfg.max_gpu_evals):
+            self.record("reopened", from_reason=self.terminated_reason)
+            return True
+        return False
 
     def accept_candidate(self, cand_id: str) -> str:
         """Live-accept a candidate whose scores are already recorded (exec_done)."""

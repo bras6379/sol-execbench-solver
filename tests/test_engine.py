@@ -119,6 +119,33 @@ def test_budget_evals_cap(tmp_path):
     assert ctx.done_reason() == "budget:evals"
 
 
+def test_cap_terminated_reopens_but_converged_does_not(tmp_path):
+    # a budget-capped run continues when the eval cap is raised...
+    d = tmp_path / "capped"
+    c1 = one_tier(max_iterations=99, max_gpu_evals=4, plateau_cycles=999, escalate_ceiling=1.1)
+    ctx1 = run(solve_problem(1, StubExecutor(),
+                             stub_agents(c1.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]})),
+                             c1, runs_dir=d))
+    assert ctx1.done_reason() == "budget:evals" and ctx1.evals == 4
+    c2 = one_tier(max_iterations=99, max_gpu_evals=8, plateau_cycles=999, escalate_ceiling=1.1)
+    ctx2 = run(solve_problem(1, StubExecutor(),
+                             stub_agents(c2.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]})),
+                             c2, runs_dir=d))
+    assert ctx2.evals == 8                       # reopened and continued 4 → 8
+    assert "reopened" in events(ctx2.path)
+
+    # ...but a converged run stays done even with headroom in the caps.
+    d2 = tmp_path / "converged"
+    script = {"claude:haiku": [{"scores": [0.95]}, {"scores": [0.9]}, {"scores": [0.9]}, {"scores": [0.9]}],
+              "claude:opus": [{"scores": [0.99]}]}
+    cc = two_tier(plateau_cycles=2, escalate_ceiling=0.9, max_iterations=99, max_gpu_evals=99)
+    x1 = run(solve_problem(5, StubExecutor(), stub_agents(cc.perspectives, scripted(script)), cc, runs_dir=d2))
+    assert x1.terminated_reason == "converged:ceiling"
+    x2 = run(solve_problem(5, StubExecutor(), stub_agents(cc.perspectives, scripted(script)), cc, runs_dir=d2))
+    assert x2.evals == x1.evals                  # did NOT reopen
+    assert "reopened" not in events(x2.path)
+
+
 # --------------------------------------------------------------------------- #
 # test 5 — gates never touch the executor
 # --------------------------------------------------------------------------- #
