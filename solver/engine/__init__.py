@@ -23,6 +23,7 @@ from .frontier import Frontier, Member
 from .gpu import FileQueueTransport, GpuQueueExecutor, Worker
 from .knowledge import KnowledgeStore
 from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
+from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
 
 __all__ = [
     "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
@@ -35,4 +36,5 @@ __all__ = [
     "FileQueueTransport", "GpuQueueExecutor", "Worker",
     "KnowledgeStore",
     "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
+    "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
 ]

@@ -19,6 +19,9 @@ bench = [
 dev = [
     "pytest>=8",
 ]
+gpu = [
+    "runpod>=1.6",              # auto-provision pods (docs/gpu-execution.md §6); laptop-side only
+]
 
 [project.scripts]
 solver = "solver.cli:main"
