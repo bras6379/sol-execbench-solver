@@ -127,6 +127,38 @@ existing resume — **no separate reconciliation pass, no new events**.
 ```
 Per-shape `status` is what the frontier needs for specialists (non-PASSED → 0).
 
+## 4b. The metric round-trip — what runs, what returns, how it pipes in
+
+**On the GPU (per job `{task_id, solution}`):** the worker loads
+`problems/<task>/` — `workload.jsonl` (~16 shapes: axes + inputs + tolerance),
+`reference.py`, `metadata.json` — then `build_ext` (C++) → `eval_driver`, which
+per shape does cold-L2 timing (10 warmup / 50 iters / seed 200) + correctness vs
+the reference (matched-ratio ≥ 99% within tolerance) → one **Trace**:
+`{status, latency_ms (T_k), matched_ratio}`. The **SOL targets are not measured**
+— `sol_ms` (T_SOL) and `baseline_latency_ms` (T_b) are known dataset values in
+`metadata.json` (e.g. task 230 shape 0: `sol_ms=0.0004`, `baseline=0.003712`).
+
+**Scoring (worker-side; the formula already exists):** per shape
+`S = 1/(1 + (T_k−T_SOL)/(T_b−T_SOL))` (`solver/scoring.py::sol_score`;
+`score_from_metadata` maps measured latencies + the metadata `sol` block →
+per-shape scores + mean). So a shape at `T_k=0.001ms` scores ≈0.85; matching the
+baseline = 0.5; SOL = 1.0; a non-PASSED shape = 0.
+
+**→ `EvalResult`** (`results/<job>.json`, §4), then **into the orchestrator —
+identical to the stub path (already built + §12-tested):**
+```
+EvalResult ─.vector()─▶ per-shape sol_score (non-PASSED→0) ─▶ frontier.accept(Member)   ← specialists
+   ├─ all_passed, sol_score ─▶ journal exec_done{…,scores,statuses} + accept{best,verdict,frontier}
+   └───────────────────────▶ metrics.problem_metrics → dashboard (convergence · best · per-shape)
+```
+The per-shape **vector** is the ε-Pareto specialist signal; the **mean-of-S** is
+the reported best/deliverable; **geomean-of-latencies** is recorded at finalize
+(orchestration.md §9 aggregation). **Nothing downstream of `EvalResult` knows or
+cares whether it came from the stub or the GPU** — the GPU only fills in the
+measured `latency_ms`. F2's only new metric code is the pod-side worker turning
+raw Traces + metadata into that `EvalResult` (≈ `eval_driver` +
+`score_from_metadata`).
+
 ## 5. Single-flight, and compile
 
 The single GPU serializes **eval**. In **v1, build+eval are one job under the
