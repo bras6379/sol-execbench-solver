@@ -236,6 +236,13 @@ Two rules from `kb/profiling-guide.md` shape the design:
 - **`ncu` replay is slow** (10–100×) — profile **one representative shape, on
   demand**, not every eval.
 
+The leaderboard scores **latency** (geomean, §4b) — that's what we optimize
+*for*. Everything below is what the agent needs to *get there*, plus what the
+score never shows (memory footprint, *how* wrong a failure is, measurement
+noise). This mirrors 2026 kernel-agent practice — roofline-first bottleneck
+classification then profiling-guided edits (KernelPro, AutoKernel; "micro-
+profiling as expert surrogate for LLM kernel optimization", arXiv 2606.26453).
+
 So GPU-side data is **two cost tiers**:
 
 **Tier 1 — every eval (cheap; rides `EvalResult.asi`):**
@@ -249,6 +256,11 @@ So GPU-side data is **two cost tiers**:
 - *Correctness detail* (when not PASSED): max abs/rel error, ULP, mismatch
   fraction, which output — turns a bare `INCORRECT_NUMERICAL` into "off by 1e-3
   (bf16 accumulation order)" vs "wrong shape/dtype" vs "NaN".
+- *Memory footprint*: peak GPU memory (`torch.cuda.max_memory_allocated`, reset
+  per iter; `nvidia-smi` for the true peak incl. allocator fragmentation).
+  **Not scored** by SOL-ExecBench (latency is), but a **constraint** (OOM →
+  `RUNTIME_ERROR`) and a **lever** — excess intermediates flag a fusion
+  opportunity, and a smaller footprint buys bigger tiles / higher occupancy.
 - *Build info* (C++): `ptxas -v` — registers/thread, shared-mem/block, **spills**,
   warnings, nvcc time; + static launch dims → theoretical occupancy + wave/tile
   quantization (do we fill the 148 SMs?). All from `build_ext`, no profiler.
