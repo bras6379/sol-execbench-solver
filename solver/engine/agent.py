@@ -26,6 +26,8 @@ class Candidate:
     model: str
     strategy: str = ""
     reflection: str | None = None
+    tokens: dict | None = None          # {in, out, reasoning, cached, cost_usd} from the agent stream
+    trajectory: str | None = None       # path to the persisted agent trajectory (jsonl)
 
 
 def solution_hash(solution: dict) -> str:

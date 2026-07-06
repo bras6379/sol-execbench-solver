@@ -92,9 +92,11 @@ async def solve_problem(
         cand = await agent.plan(parent, ctx)
 
         is_dup_hash = cand.cand_id in ctx.seen
+        tok = cand.tokens or {}
         ctx.record("plan_done", cand=cand.cand_id, parent=cand.parent, agent=persp.agent,
                    model=persp.model, strategy=cand.strategy, solution=cand.solution,
-                   dur_s=0.0, tok_in=0, tok_out=0)
+                   dur_s=0.0, tok_in=(tok.get("in") or 0), tok_out=(tok.get("out") or 0),
+                   trajectory=cand.trajectory)
 
         ok, _errs = check_fn(cand.solution, task_id)
         ctx.record("check", cand=cand.cand_id, ok=ok)

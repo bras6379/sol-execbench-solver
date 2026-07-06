@@ -1,95 +1,96 @@
-# Agent backends: shell out to existing coding-agent CLIs
+# Agent backends: drive the codex & claude CLIs
 
-**Status: `CliAgent` adapter built (laptop-verified with a fake CLI); real
-`codex`/`claude` drop in behind a spec once installed + authed.**
+**Status: `CliAgent` built (laptop-verified with a fake CLI). Scoped to codex
+and claude only** — other agent types would be integrated separately, not by
+adding a spec here.
 
-We don't implement an agent — we **abstract existing agent CLIs** behind the
-engine's `Agent` interface (docs/orchestration.md §2). Every CLI already has a
-non-interactive mode; our adapter drives it as a subprocess, so the agent's
-implementation language is irrelevant and sandboxing is just "run the subprocess
-in a container" (Phase F).
+We don't implement an agent; we shell out to one (`solver/engine/cli_agent.py`).
+`CliAgent` seeds a workdir with the §8 context, runs the CLI, and turns its
+output into a `Candidate`.
 
 ```
-Perspective(agent="codex", model="gpt-5.5")   →   CliAgent(CODEX_spec, "gpt-5.5")
-Perspective(agent="claude", model="opus")     →   CliAgent(CLAUDE_spec, "opus")
+Perspective("codex", "gpt-5.5")   →   CliAgent(CODEX, "gpt-5.5")
+Perspective("claude", "opus")     →   CliAgent(CLAUDE, "opus")
 ```
 
-## One class, CLIs are data
+## Two disciplines that make it robust
 
-`CliAgent` implements `design/plan/reflect/judge`. Each CLI is a `CliSpec` — two
-command templates (`{model}`/`{prompt}` substituted, exec-form so no shell
-injection) and a glob for the files it writes:
+**1. Results come from known files — never parsed stdout.** The prompt tells the
+agent exactly which file to write; we read that file. The model's prose is never
+parsed for the answer.
+
+| Method | Agent writes | We read |
+|---|---|---|
+| `plan` | `kernel.<ext>` (+ `strategy.txt`) | glob `kernel.*` → Solution; `strategy.txt` |
+| `design` | `design.md` | `design.md` |
+| `reflect` | `reflection.txt` | `reflection.txt` |
+| `judge` | `verdict.txt` (`materially-new`/`cosmetic`) | `verdict.txt` |
+
+A `plan` that writes no kernel raises (exit code + stderr) → the fleet journals a
+`solver_error` for that problem; the default `check` gate also rejects an empty
+Solution. Loud, never a silent baseline candidate.
+
+**2. The event stream is the trajectory.** Each CLI runs in **streaming JSON
+mode** (`codex exec --json`, `claude -p --output-format stream-json --verbose`).
+We persist the raw stream as `trajectory.jsonl`, render a readable
+`trajectory.txt` via the vendored `solver/agent_helpers/{codex,claude}_stream.sh`
+jq wrappers, and parse it **only for token usage** (`turn.completed` / `result`).
+Each plan's workdir is renamed to its `cand_id`, so the kernel, its trajectory,
+and its inputs persist together:
+
+```
+runs/<task>/work/<cand_id>/
+  kernel.py | kernel.cu        the produced kernel (→ Solution.sources)
+  strategy.txt                 one-line approach (→ Candidate.strategy)
+  trajectory.jsonl             raw agent event stream (how the kernel was made)
+  trajectory.txt               readable render (jq wrapper)
+  reference.py definition.json the problem it optimized
+  DESIGN.md CONTEXT.md         the §8 context it was given
+```
+
+`plan_done` journals `tok_in`/`tok_out` and the `trajectory` path, so every
+kernel is linked to its trajectory and cost.
+
+## CliSpec — one command template per CLI
 
 ```python
-CODEX  = CliSpec("codex",   # from `codex exec --help`: -m model, -s sandbox, positional prompt
-    edit=["codex","exec","-m","{model}","-s","workspace-write","--skip-git-repo-check","{prompt}"],
-    ask =["codex","exec","-m","{model}","-s","read-only","--skip-git-repo-check","{prompt}"])
+CODEX  = CliSpec("codex",
+    cmd=["codex","exec","--json","-m","{model}","-s","workspace-write","--skip-git-repo-check","{prompt}"],
+    stream="codex")
 CLAUDE = CliSpec("claude",
-    edit=["claude","-p","{prompt}","--model","{model}","--dangerously-skip-permissions"],
-    ask =["claude","-p","{prompt}","--model","{model}"])
+    cmd=["claude","-p","{prompt}","--model","{model}","--output-format","stream-json","--verbose","--dangerously-skip-permissions"],
+    stream="claude")
 ```
 
-Adding an agent = add a `CliSpec`. Zero new code. (`codex exec`'s
-`workspace-write` sandbox lets it write the kernel into the workdir but nowhere
-else — the sandboxing we want, for free. Verify each CLI's exact flags with its
-own `--help`; the `claude` spec above is illustrative.)
+One write-capable, streaming command; `{model}`/`{prompt}` substituted (exec
+form, no shell). codex's `workspace-write` sandbox lets it write into the workdir
+but nowhere else — the sandboxing we want, for free.
 
-**Failures are loud, not silent.** If a `plan` run produces no kernel file (bad
-model id, auth failure, non-zero exit), `CliAgent.plan` raises with the exit
-code + stderr → the fleet journals a `solver_error` for that problem (the rest
-keep running) instead of accepting an empty baseline candidate. The default
-`check` gate also rejects an empty Solution as a backstop.
+## Gotchas (handled)
 
-## The workdir contract (the whole integration)
-
-```
-plan / design  →  _run(spec.edit) in a per-candidate workdir seeded with:
-                    DESIGN.md   (ctx.design)            } the §8 context,
-                    CONTEXT.md  (parent reflection,     } as files the agent
-                                 frontier capsules,     } reads
-                                 top-K insights)        }
-                    <parent kernel files>  (the starting point)
-                  the prompt tells it to write kernel.<ext>
-                  →  collect kernel.*  →  Solution{spec.languages, sources}  →  check() gate
-reflect / judge →  _run(spec.ask)  →  read stdout  (judge parses "materially-new"/"cosmetic")
-```
-
-The engine stays the loop: it seeds the workdir with curated context (never raw
-journals), the `check` gate validates the produced Solution, and reflection/
-frontier/escalation are the engine's, not the CLI's. So an `Agent` call is one
-targeted generation, not a second autonomous loop.
-
-## Four gotchas (handled)
-
-1. **Non-interactive/permissions** — each CLI needs its auto-approve flag
-   (`codex --full-auto`, `claude --dangerously-skip-permissions`); safe because
-   Phase F runs the subprocess sandboxed.
-2. **Output collection** — two channels: files-in-workdir (kernels, `plan`/
-   `design`) vs stdout (text, `reflect`/`judge`). The prompt names the file to
-   write; the spec globs it back.
-3. **Auth** — env / logged-in CLI (`codex login` or `OPENAI_API_KEY`;
-   `claude setup-token`), per perspective; passed through `env`.
-4. **Timeout/retry** — subprocess timeout (kill on expiry → the engine
-   retries/replans); a run that writes nothing valid → `check` rejects → replan.
+- **Non-interactive** — `stdin=DEVNULL` so the CLI never waits on stdin; codex
+  `exec`/claude `-p` + auto-approve flags run headless.
+- **Auth** — env / logged-in CLI, per perspective (`.env` → `OPENAI_API_KEY` for
+  codex; `claude setup-token` for claude). `codex doctor` verifies.
+- **Timeout/retry** — per-call subprocess timeout (kill → the fleet
+  retries/replans). Reasoning models are slow on hard kernels — set `--timeout`
+  generously.
 
 ## Determinism & resume
 
 Real CLIs are nondeterministic, so resume is **no-loss / no-double-pay**, not
-bitwise (docs/orchestration.md §12.1). The producing `(agent, model)` is
-journaled per candidate, so the dashboard still attributes every win.
+bitwise (orchestration.md §12.1). Producing `(agent, model)` + trajectory are
+journaled per candidate, so the dashboard attributes every win.
 
-## Testability (laptop, no real CLI)
+## Testability
 
-The adapter is verified against a **fake CLI** — a tiny script that writes a
-`kernel.*` (edit) or echoes a verdict (ask). This exercises workdir setup → run
-→ collect → Solution → `check` deterministically, no network/auth/GPU. Real
-`codex`/`claude` slot behind the identical spec. Kernel *quality* is only
-scorable once the real GPU executor lands (Phase F); until then a real-agent run
-on `StubExecutor` verifies plumbing (candidates score at the baseline).
+Verified with a **fake CLI** — a script that writes the known files and emits a
+codex-style JSON stream — exercising workdir → run → collect → Solution,
+trajectory persistence, and token parsing with no network/auth/GPU.
 
 ## Wiring
 
 `make_agents(cfg, specs)` maps each `Perspective` to `CliAgent(specs[p.agent],
 p.model)`. `solver solve --agent codex --model gpt-5.5` runs the real engine
-against a codex/GPT-5.5 tier (needs `codex` installed + authed); the default
-`--agent sim` keeps the GPU-free deterministic demo.
+against codex (needs it installed + authed; StubExecutor → no GPU scoring yet).
+Default `--agent sim` is the GPU-free deterministic demo.
