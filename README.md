@@ -10,6 +10,7 @@ the current stage.
   reference into optimized kernel candidate designs.
 - `designs/` — per-problem design docs.
 - `solver/` — the engine (Python package).
+- `docs/orchestration.md` — the orchestrator engine design (see **Engine** below).
 - `problems/<N>/` — fetched problem packs (see below).
 
 ## Setup
@@ -40,6 +41,33 @@ GPU via the official harness, which returns data we then handle.
 
 The GPU-run transport (submit solution → run harness → return data) is a
 later build phase; everything below runs on the laptop today.
+
+## Engine (orchestrator)
+
+`docs/orchestration.md` is the full design for the optimization engine: a
+GEPA-style reflective loop per problem (reflect on the harness trace → mutate
+the kernel → evaluate → keep a per-shape **ε-Pareto frontier**), a fleet of
+these running concurrently over one single-flight GPU, with knowledge
+transferred across problems (sibling seeding + curated family learnings).
+Diverse `(agent, model)` **tiers** (Claude / GPT / DeepSeek / GLM / … pools)
+round-robin for exploration and escalate cheap→strong when a problem plateaus
+with headroom left. It runs autonomously and is fully resumable (journal
+replay).
+
+**Laptop-first:** the loop is built and tested entirely against a StubExecutor
+(no GPU) and StubAgent (no API / credits) — the §12 stub contract makes every
+routing / frontier / budget / escalation / resume invariant deterministically
+assertable. Real agents and GPU transport are later phases.
+
+Status: **Phase A** (executor stub) built; **Phase B** (the loop + frontier +
+tiers + stub tests) in progress.
+
+Run progress is inspectable as a static dashboard (no server/CDN):
+
+```bash
+solver report --demo      # synthetic 235-problem run -> .cache/demo/out/index.html
+solver report             # a real run under runs/ -> publishable out/ site
+```
 
 ## Candidates
 
