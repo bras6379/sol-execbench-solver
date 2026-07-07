@@ -496,9 +496,9 @@ function render(){
   document.getElementById('c-oc').innerHTML=ocChart(sub);
   // problems table
   document.getElementById('t-prob').innerHTML=(()=>{
-    const rows=[...sub].sort((a,b)=>((b.bc??b.b??-1)-(a.bc??a.b??-1))).map(r=>{const i=idx[r.t];const bar=r.b==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.b,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b></td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}${bar}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
-    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est</th><th>our SOL</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+    const rows=[...sub].sort((a,b)=>((b.bc??-1)-(a.bc??-1))).map(r=>{const i=idx[r.t];const bar=r.bc==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.bc,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${bar}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est ▼</th><th>our SOL</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
 function bindSort(){

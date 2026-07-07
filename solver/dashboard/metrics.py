@@ -108,8 +108,9 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 candidates[e["cand"]]["status"] = "rejected"
         elif ev == "novelty" and e.get("verdict") != "materially-new":
             outcomes["duplicate"] += 1
-            if e.get("cand") in candidates:
-                candidates[e["cand"]]["status"] = "duplicate"
+            c = candidates.get(e.get("cand"))
+            if c and c["status"] == "planned":   # a re-generated exact dup must NOT
+                c["status"] = "duplicate"        # downgrade the accepted/scored winner
         elif ev == "exec_enqueued":
             jobs[e["job"]] = {"task": task_id, "enq": _t(ts)}
         elif ev == "exec_started":
