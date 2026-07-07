@@ -17,3 +17,6 @@ seq_len shapes (>=4096) where it's HBM-bound — the win there is achieved-BW%,
 and evicting streamed data frees L2 for the writes.
 D
 
+## 3. from `635aeb80` — Fused Triton RoPE-backward with per-seq_len autotuned tile sizes and an L2-bypass EVICT variant (evict_first on the five
+If this only matches the frontier (~0.70 raw) or is still bandwidth/launch-bound on small seq_len, switch to a persistent grid-stride kernel: a fixed ~SM-count grid atomically pulls BLOCK_S chunks, combines explicit float4/128-bit vectorized I/O with register-staged sincos, and adds num_stages pipelining to amortize launch overhead on the latency-bound shapes.
+

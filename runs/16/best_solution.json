@@ -1,25 +1,26 @@
 {
-  "name": "t16_acd65ef89a26",
+  "name": "t16_c2e2b87830d9",
   "definition": "016_rope_inverse_frequency_computation",
   "author": "sol-solver",
   "spec": {
     "languages": [
-      "pytorch"
+      "cuda_cpp"
     ],
     "target_hardware": [
       "B200",
       "LOCAL"
     ],
-    "entry_point": "kernel.py::run",
+    "entry_point": "kernel.cu::run",
     "dependencies": [
       "torch"
     ],
-    "destination_passing_style": false
+    "destination_passing_style": false,
+    "binding": "torch"
   },
   "sources": [
     {
-      "path": "kernel.py",
-      "content": "import torch\n\n# ---------------------------------------------------------------------------\n# Problem 016 \u2014 RoPE inverse-frequency initialization.\n#\n#   inv_freq[i] = 1.0 / rope_theta**(2*i / head_dim)\n#              = rope_theta**(-2*i / head_dim)        for i in [0, head_dim/2)\n#\n# This is a *latency / launch-overhead* bound op: the whole working set is\n# ~1 KB (output 256 B + a cached 256 B exponent vector) and lives entirely in\n# L2 \u2014 compute and memory time are sub-nanosecond, so the only meaningful lever\n# is the number of CUDA kernel launches.\n#\n# The eager reference issues FOUR launches (arange, div, pow, rcp).  We collapse\n# that to ONE honest launch:\n#\n#   * The exponent vector  e[i] = -(2*i)/head_dim  is independent of rope_theta,\n#     so it is built ONCE on first call and cached.  First call happens during\n#     the harness's untimed warmup, so the arange/div cost is not measured.\n#   * Each timed call is then a single fused elementwise kernel:\n#         torch.pow(scalar_base, exponent_tensor)  ->  rope_theta ** e\n#     which folds the reference's pow + reciprocal (negative exponent) into one\n#     launch that reads 256 B and writes a fresh 256 B fp32 output.\n#\n# Pure PyTorch (no Triton / no cpp_extension) \u2014 the prior Triton fusions all\n# died with RUNTIME_ERROR (tl.math.pow / libdevice landmine), and this path has\n# none of that risk while giving the same 1-launch result.  A fresh output is\n# allocated every call (no static-buffer aliasing / memory-reuse hazard).\n# ---------------------------------------------------------------------------\n\n_HEAD_DIM = 128\n_EXP_CACHE = {}\n\n\ndef _neg_exponents(device: torch.device) -> torch.Tensor:\n    \"\"\"Cached e[i] = -(2*i)/head_dim, shape (head_dim/2,) fp32 \u2014 built once.\"\"\"\n    key = str(device)\n    p = _EXP_CACHE.get(key)\n    if p is None:\n        # [0, 2, 4, ..., head_dim-2] -> divide by head_dim, negate.\n        idx = torch.arange(0, _HEAD_DIM, 2, dtype=torch.float32, device=device)\n        p = idx * (-1.0 / _HEAD_DIM)\n        _EXP_CACHE[key] = p\n    return p\n\n\n@torch.no_grad()\ndef run(rope_theta: float) -> torch.Tensor:\n    \"\"\"\n    inv_freq = rope_theta ** (-2*i / head_dim)  for i in [0, head_dim/2) = (64,).\n\n    Single fused `scalar ** tensor` elementwise CUDA kernel over a cached\n    exponent vector; fp32 output of shape (64,).\n    \"\"\"\n    exponents = _neg_exponents(torch.device(\"cuda\"))\n    return torch.pow(float(rope_theta), exponents)\n"
+      "path": "kernel.cu",
+      "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n\n// Problem 016 \u2014 RoPE inverse-frequency initialization.\n//\n//   inv_freq[i] = 1.0 / rope_theta^(2*i / head_dim)\n//               = 1.0 / rope_theta^(i / 64.0)      for i in [0, 64)\n//\n// This is pure launch-latency/latency bound.  One elementwise kernel handles\n// all work directly from threadIdx.x with no input tensor reads and no\n// intermediate allocations.  Compiled with -O3 --use_fast_math it maps to a\n// single CUDA kernel launch that writes only the 256 B output.\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void rope_inv_freq_kernel(float* __restrict__ out, float rope_theta)\n{\n    const int i = threadIdx.x;\n    if (i < N) {\n        const float exponent = static_cast<float>(i) / static_cast<float>(N);\n        out[i] = 1.0f / powf(rope_theta, exponent);\n    }\n}\n\n// Entry point called by the harness.  CUDA binding is performed by the\n// PYBIND11_MODULE stanza below.\ntorch::Tensor run(float rope_theta)\n{\n    auto out = torch::empty(\n        {N},\n        torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n\n    rope_inv_freq_kernel<<<1, N>>>(out.data_ptr<float>(), rope_theta);\n    return out;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32)\");\n}\n"
     }
   ]
 }

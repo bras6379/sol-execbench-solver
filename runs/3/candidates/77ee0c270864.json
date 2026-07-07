@@ -1,0 +1,245 @@
+{
+  "cand_id": "77ee0c270864",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.5854093857446512,
+  "sol_score_calibrated": 0.32514371595792496,
+  "correct": true,
+  "vector": [
+    0.5887190078176532,
+    0.2232308569441468,
+    0.5452846404137222,
+    0.35765729718915673,
+    0.7222172680090604,
+    0.8673306891128673,
+    0.16523371853748162,
+    0.9045558982426362,
+    0.6439760218533186,
+    0.7177749875624835,
+    0.5894269816636293,
+    0.5751385225442125,
+    0.2211090945755193,
+    0.6449473423324358,
+    0.7049392392641165,
+    0.8950086058519793
+  ],
+  "strategy": "Hybrid bf16 GEMM: custom N-tiled Triton streaming kernel for skinny M<=320 (split M=293 into BM256+BM64 chunks so MMA wa",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "4c05cd72aba0",
+  "trajectory": "runs/3/work/77ee0c270864/trajectory.jsonl",
+  "gpu_s": 11.476,
+  "job_id": "3-77ee0c270864",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 611.09,
+      "samples": 35,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.024973,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.5887190078176532,
+      "sol_score_cal": 0.28677872719314057,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.157951,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.2232308569441468,
+      "sol_score_cal": 0.1796340472425798,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.0791445,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.5452846404137222,
+      "sol_score_cal": 0.2742379289726356,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.109872,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.35765729718915673,
+      "sol_score_cal": 0.2836244274760718,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.4980625,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.7222172680090604,
+      "sol_score_cal": 0.33983759510393524,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.2442065,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.8673306891128673,
+      "sol_score_cal": 0.45223434597319945,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.265151,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.16523371853748162,
+      "sol_score_cal": 0.1361598599077468,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.242111,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.9045558982426362,
+      "sol_score_cal": 0.46335522836997894,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.889357,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.6439760218533186,
+      "sol_score_cal": 0.40034382383971717,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.498526,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.7177749875624835,
+      "sol_score_cal": 0.33825691515900747,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.0248285,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.5894269816636293,
+      "sol_score_cal": 0.2871180846727111,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.0198999999999998,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.5751385225442125,
+      "sol_score_cal": 0.30961292428353937,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.158463,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.2211090945755193,
+      "sol_score_cal": 0.17790415125045944,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7485565000000001,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.6449473423324358,
+      "sol_score_cal": 0.32361548630066594,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.18355149999999998,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.7049392392641165,
+      "sol_score_cal": 0.48802573640495794,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.2426545,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.8950086058519793,
+      "sol_score_cal": 0.4615601731764528,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\n003_lm_head_projection_with_logit_slicing  \u2014  NVIDIA B200\n\nlogits = hidden_states @ weight.t()      (bf16, fp32 accumulation)\n  hidden_states [B, S, H=2048] bf16\n  weight        [V=102400, H=2048] bf16\n  logits        [B, S, V] bf16\n\nThis is a single dense bf16 GEMM.  Effective rows M = B*S, K=2048, N=V=102400.\n\nRoofline (B200: 7.7 TB/s HBM, 2.25 PFLOP/s bf16 TC, ridge AI ~= 292):\n  * M <= ~293 : memory-bound / near-ridge.  cuBLAS under-uses HBM bandwidth on\n    these skinny-M shapes (MMA efficiency falls, so it acts compute-starved).\n    A custom N-tiled streaming GEMM \u2014 one pass over the full weight matrix per\n    M-block, tiny hidden tile L2-resident \u2014 can beat it.\n  * M >  ~293 : compute-bound.  cuBLAS/torch.matmul is saturated; custom\n    Triton generally loses to the vendor library on plain dense GEMM.\n\nImplementation:\n  - M <= 256        -> one Triton launch over N only (weight streamed once).\n  - 256 < M <= 320  -> split into a 256-row block + a masked remainder block\n                       (BM=64 for the tail), then concatenate.  This caps MMA\n                       waste at ~1.1x for M=293 vs ~1.75x from a single BM=512\n                       padded launch, at the cost of a second weight pass.\n  - M > 320         -> plain torch.matmul (cuBLAS).\n\nNumerics: fp32 accumulators, round-to-bf16 on store -- matches the bf16\nreference (torch.matmul fp32-accum -> bf16) to ~1 ulp, far inside tol.\n\"\"\"\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - no triton in some envs\n    _HAS_TRITON = False\n\n\ndef _skinny_config(chunk_m: int):\n    \"\"\"Tile config tuned for the memory-bound skinny-M regime.\"\"\"\n    if chunk_m <= 64:\n        # small tail rows (e.g. M=293 remainder): keep tile compact\n        return 64, 128, 64, 8, 4\n    if chunk_m <= 128:\n        return 128, 128, 64, 8, 4\n    if chunk_m <= 256:\n        return 256, 128, 64, 8, 3\n    # defensive fallback for any future just-over-256 shape\n    return 512, 128, 64, 8, 3\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _lm_head_streaming_kernel(\n        H_ptr, W_ptr, O_ptr,\n        M, N, K,\n        stride_hm, stride_hk,\n        stride_wn, stride_wk,\n        stride_om, stride_on,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # 1-D grid over N: each program owns BLOCK_N vocab rows for the FULL\n        # current M-chunk.  => every weight row is streamed from HBM exactly\n        # once *per M-chunk*; hidden is re-read per program but from L2.\n        pid_n = tl.program_id(0)\n\n        offs_m = tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        # coalesced tiles: hidden row-major [M,K]; weight row-major [N,K]\n        h_ptrs = H_ptr + (offs_m[:, None] * stride_hm + offs_k[None, :] * stride_hk)\n        w_ptrs = W_ptr + (offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk)\n\n        m_mask = offs_m < M\n        n_mask = offs_n < N\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        # K (=2048) is an exact multiple of BLOCK_K -> no k-mask needed.\n        for _ in range(0, K, BLOCK_K):\n            h = tl.load(h_ptrs, mask=m_mask[:, None], other=0.0)\n            w = tl.load(w_ptrs, mask=n_mask[:, None], other=0.0)\n            acc += tl.dot(h, tl.trans(w), out_dtype=tl.float32)\n            h_ptrs += BLOCK_K * stride_hk\n            w_ptrs += BLOCK_K * stride_wk\n\n        o_ptrs = O_ptr + (offs_m[:, None] * stride_om + offs_n[None, :] * stride_on)\n        o_mask = m_mask[:, None] & n_mask[None, :]\n        tl.store(o_ptrs, acc.to(tl.bfloat16), mask=o_mask)\n\n    def _run_streaming_chunk(h_chunk, weight, M, N, K):\n        \"\"\"Run one skinny-M chunk and return an [M, N] output tensor.\"\"\"\n        BLOCK_M, BLOCK_N, BLOCK_K, num_warps, num_stages = _skinny_config(M)\n        out = torch.empty((M, N), dtype=torch.bfloat16, device=h_chunk.device)\n        grid = (triton.cdiv(N, BLOCK_N),)\n        _lm_head_streaming_kernel[grid](\n            h_chunk, weight, out,\n            M, N, K,\n            h_chunk.stride(0), h_chunk.stride(1),\n            weight.stride(0), weight.stride(1),\n            out.stride(0), out.stride(1),\n            BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N, BLOCK_K=BLOCK_K,\n            num_warps=num_warps, num_stages=num_stages,\n        )\n        return out\n\n    def _triton_lm_head(h2d, weight, M, N, K):\n        # Single launch for M <= 256; split into power-of-2-ish chunks otherwise.\n        if M <= 256:\n            return _run_streaming_chunk(h2d, weight, M, N, K)\n\n        outs = []\n        start = 0\n        while start < M:\n            end = min(start + 256, M)\n            chunk = h2d[start:end]\n            chunk_m = end - start\n            outs.append(_run_streaming_chunk(chunk, weight, chunk_m, N, K))\n            start = end\n        return torch.cat(outs, dim=0)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    M = batch_size * seq_len\n\n    # Tall-skinny, memory-bound regime -> custom bandwidth-optimal streaming GEMM.\n    # Threshold at 320 covers M=293 (workload #6) and leaves a small margin.\n    if _HAS_TRITON and hidden_states.is_cuda and M <= 320:\n        try:\n            h2d = hidden_states.reshape(M, hidden_size).contiguous()\n            w = weight.contiguous()\n            out = _triton_lm_head(h2d, w, M, vocab_size, hidden_size)\n            return out.reshape(batch_size, seq_len, vocab_size)\n        except Exception:\n            # any compile/launch issue -> exact reference (no numeric masking)\n            pass\n\n    # Compute-bound / fallback: cuBLAS via plain torch.matmul (saturated).\n    return torch.matmul(hidden_states, weight.t())\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_77ee0c270864",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\n003_lm_head_projection_with_logit_slicing  \u2014  NVIDIA B200\n\nlogits = hidden_states @ weight.t()      (bf16, fp32 accumulation)\n  hidden_states [B, S, H=2048] bf16\n  weight        [V=102400, H=2048] bf16\n  logits        [B, S, V] bf16\n\nThis is a single dense bf16 GEMM.  Effective rows M = B*S, K=2048, N=V=102400.\n\nRoofline (B200: 7.7 TB/s HBM, 2.25 PFLOP/s bf16 TC, ridge AI ~= 292):\n  * M <= ~293 : memory-bound / near-ridge.  cuBLAS under-uses HBM bandwidth on\n    these skinny-M shapes (MMA efficiency falls, so it acts compute-starved).\n    A custom N-tiled streaming GEMM \u2014 one pass over the full weight matrix per\n    M-block, tiny hidden tile L2-resident \u2014 can beat it.\n  * M >  ~293 : compute-bound.  cuBLAS/torch.matmul is saturated; custom\n    Triton generally loses to the vendor library on plain dense GEMM.\n\nImplementation:\n  - M <= 256        -> one Triton launch over N only (weight streamed once).\n  - 256 < M <= 320  -> split into a 256-row block + a masked remainder block\n                       (BM=64 for the tail), then concatenate.  This caps MMA\n                       waste at ~1.1x for M=293 vs ~1.75x from a single BM=512\n                       padded launch, at the cost of a second weight pass.\n  - M > 320         -> plain torch.matmul (cuBLAS).\n\nNumerics: fp32 accumulators, round-to-bf16 on store -- matches the bf16\nreference (torch.matmul fp32-accum -> bf16) to ~1 ulp, far inside tol.\n\"\"\"\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - no triton in some envs\n    _HAS_TRITON = False\n\n\ndef _skinny_config(chunk_m: int):\n    \"\"\"Tile config tuned for the memory-bound skinny-M regime.\"\"\"\n    if chunk_m <= 64:\n        # small tail rows (e.g. M=293 remainder): keep tile compact\n        return 64, 128, 64, 8, 4\n    if chunk_m <= 128:\n        return 128, 128, 64, 8, 4\n    if chunk_m <= 256:\n        return 256, 128, 64, 8, 3\n    # defensive fallback for any future just-over-256 shape\n    return 512, 128, 64, 8, 3\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _lm_head_streaming_kernel(\n        H_ptr, W_ptr, O_ptr,\n        M, N, K,\n        stride_hm, stride_hk,\n        stride_wn, stride_wk,\n        stride_om, stride_on,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # 1-D grid over N: each program owns BLOCK_N vocab rows for the FULL\n        # current M-chunk.  => every weight row is streamed from HBM exactly\n        # once *per M-chunk*; hidden is re-read per program but from L2.\n        pid_n = tl.program_id(0)\n\n        offs_m = tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        # coalesced tiles: hidden row-major [M,K]; weight row-major [N,K]\n        h_ptrs = H_ptr + (offs_m[:, None] * stride_hm + offs_k[None, :] * stride_hk)\n        w_ptrs = W_ptr + (offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk)\n\n        m_mask = offs_m < M\n        n_mask = offs_n < N\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        # K (=2048) is an exact multiple of BLOCK_K -> no k-mask needed.\n        for _ in range(0, K, BLOCK_K):\n            h = tl.load(h_ptrs, mask=m_mask[:, None], other=0.0)\n            w = tl.load(w_ptrs, mask=n_mask[:, None], other=0.0)\n            acc += tl.dot(h, tl.trans(w), out_dtype=tl.float32)\n            h_ptrs += BLOCK_K * stride_hk\n            w_ptrs += BLOCK_K * stride_wk\n\n        o_ptrs = O_ptr + (offs_m[:, None] * stride_om + offs_n[None, :] * stride_on)\n        o_mask = m_mask[:, None] & n_mask[None, :]\n        tl.store(o_ptrs, acc.to(tl.bfloat16), mask=o_mask)\n\n    def _run_streaming_chunk(h_chunk, weight, M, N, K):\n        \"\"\"Run one skinny-M chunk and return an [M, N] output tensor.\"\"\"\n        BLOCK_M, BLOCK_N, BLOCK_K, num_warps, num_stages = _skinny_config(M)\n        out = torch.empty((M, N), dtype=torch.bfloat16, device=h_chunk.device)\n        grid = (triton.cdiv(N, BLOCK_N),)\n        _lm_head_streaming_kernel[grid](\n            h_chunk, weight, out,\n            M, N, K,\n            h_chunk.stride(0), h_chunk.stride(1),\n            weight.stride(0), weight.stride(1),\n            out.stride(0), out.stride(1),\n            BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N, BLOCK_K=BLOCK_K,\n            num_warps=num_warps, num_stages=num_stages,\n        )\n        return out\n\n    def _triton_lm_head(h2d, weight, M, N, K):\n        # Single launch for M <= 256; split into power-of-2-ish chunks otherwise.\n        if M <= 256:\n            return _run_streaming_chunk(h2d, weight, M, N, K)\n\n        outs = []\n        start = 0\n        while start < M:\n            end = min(start + 256, M)\n            chunk = h2d[start:end]\n            chunk_m = end - start\n            outs.append(_run_streaming_chunk(chunk, weight, chunk_m, N, K))\n            start = end\n        return torch.cat(outs, dim=0)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    M = batch_size * seq_len\n\n    # Tall-skinny, memory-bound regime -> custom bandwidth-optimal streaming GEMM.\n    # Threshold at 320 covers M=293 (workload #6) and leaves a small margin.\n    if _HAS_TRITON and hidden_states.is_cuda and M <= 320:\n        try:\n            h2d = hidden_states.reshape(M, hidden_size).contiguous()\n            w = weight.contiguous()\n            out = _triton_lm_head(h2d, w, M, vocab_size, hidden_size)\n            return out.reshape(batch_size, seq_len, vocab_size)\n        except Exception:\n            # any compile/launch issue -> exact reference (no numeric masking)\n            pass\n\n    # Compute-bound / fallback: cuBLAS via plain torch.matmul (saturated).\n    return torch.matmul(hidden_states, weight.t())\n"
+      }
+    ]
+  }
+}

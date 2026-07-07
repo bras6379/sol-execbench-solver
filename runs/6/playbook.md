@@ -14,3 +14,6 @@ pipelined structure but still lets warm-autotune choose among its configs.
 
 TRIGGER: if this persistent kernel only
 
+## 2. from `68e868dc` — Single persistent Triton kernel w/ CHANNEL_BLOCK∈{1,2,4} coarsening, load-compute-store reordered for num_stages SW pipe
+2D persistent grid: outer dim = `min(B * ceil(DM/CHANNEL_BLOCK), NUM_SM * PROG_MULT)` selects (batch, channel-group) pairs; inner loop = grid-stride only over time tiles. Each CTA stays on the same channel(s) for its lifetime, preloading weights+bias once outside the time loop and keeping the 3 input rows hot in L1 across all time tiles. The current flat 1D stride causes L1 thrashing when channels change every few iterations. Trigger: if overall score < 0.78 after this round, the L1-thrash from channel-hopping is the bottleneck — the 2D grid also enables warp-specialized producer-consumer doub
+

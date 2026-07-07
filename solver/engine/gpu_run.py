@@ -114,7 +114,8 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
                        provider: PodProvider, spec: PodSpec | None = None,
                        problems_dir: str | Path = "problems", config: dict | None = None,
                        key: str = "~/.ssh/id_ed25519", max_concurrency: int = 0,
-                       max_lifetime_min: float | None = None, log=print) -> None:
+                       max_lifetime_min: float | None = None, shuffle: bool = False,
+                       log=print) -> None:
     """Provision → bootstrap → run the fleet on the pod → guaranteed teardown.
 
     `max_lifetime_min` is a HARD wall-clock cap on total pod uptime (create →
@@ -135,7 +136,7 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
         log(f"[gpu] running fleet over {len(ids)} problem(s) on the B200 ...")
         fleet = run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
                           knowledge=knowledge, families=families, names=names,
-                          max_concurrency=max_concurrency)
+                          max_concurrency=max_concurrency, shuffle=shuffle)
         if max_lifetime_min:
             remaining = max(1.0, max_lifetime_min * 60 - (time.monotonic() - t_start))
             log(f"[gpu] hard {max_lifetime_min:.0f}-min pod cap — fleet has ~{remaining/60:.0f} min "

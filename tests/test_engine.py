@@ -401,6 +401,32 @@ def test_reopen_resumes_any_non_final_termination(tmp_path):
         assert ctx.reopen_if_capped() is should, reason
 
 
+def test_shuffle_randomizes_launch_order(tmp_path):
+    # --shuffle launches problems in a seeded-random order, so a concurrency window
+    # samples random ids (not always the lowest), and every problem still runs.
+    from solver.engine.agent import Candidate, solution_hash
+    seen = []
+
+    class RecAgent:
+        def __init__(self, persp):
+            self.perspective = persp
+        async def design(self, task_id):
+            seen.append(task_id)
+            return "d"
+        async def plan(self, parent, ctx):
+            sol = {"__eval__": {"scores": [0.6]}, "__uid__": f"{self.perspective}:{getattr(ctx, 'iters', 0)}"}
+            return Candidate(cand_id=solution_hash(sol)[:12], solution=sol, parent=None,
+                             agent=self.perspective.agent, model=self.perspective.model, strategy="s")
+
+    persp = Perspective("x", "1")
+    c = cfg([Tier("t", [persp])], max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1)
+    ids = list(range(1, 9))
+    run(run_fleet(ids, StubExecutor(), {persp: RecAgent(persp)}, c, runs_dir=tmp_path,
+                  max_concurrency=1, shuffle=True, seed=0))         # cap=1 ⇒ serial ⇒ launch order observable
+    assert sorted(seen) == ids                                     # every problem ran (coverage)
+    assert seen != ids                                             # order was shuffled, not 1..8
+
+
 def test_all_agents_dead_terminates_cleanly(tmp_path):
     from solver.engine.agent import StubAgent
     dead = Perspective("dead", "x")

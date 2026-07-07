@@ -213,7 +213,7 @@ def _cmd_solve(args) -> None:
         asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
                                  knowledge=knowledge, families=families, names=names,
                                  provider=RunPodProvider(api), spec=spec, config=hcfg,
-                                 max_concurrency=args.max_concurrency,
+                                 max_concurrency=args.max_concurrency, shuffle=args.shuffle,
                                  max_lifetime_min=(args.gpu_max_hours * 60 if args.gpu_max_hours else None)))
     else:
         if args.agent != "sim":
@@ -225,7 +225,7 @@ def _cmd_solve(args) -> None:
         asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
                               seeds_fn=seeds_fn, knowledge=knowledge,
                               families=families, names=names,
-                              max_concurrency=args.max_concurrency))
+                              max_concurrency=args.max_concurrency, shuffle=args.shuffle))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -513,6 +513,10 @@ def main(argv: list[str] | None = None) -> None:
                          help="consecutive plan failures before a perspective is circuit-broken and "
                               "skipped — a dead agent (e.g. Claude/GPT out of credits) stops being used "
                               "and the run downgrades to the healthy models in the pool")
+    p_solve.add_argument("--shuffle", action="store_true",
+                         help="randomize problem launch order (seeded) so a --max-concurrency window "
+                              "is a RANDOM sample of the id range, not always the lowest ids — fairer "
+                              "coverage; on a resume, stops strong low ids from starving underworked high ids")
     p_solve.add_argument("--max-concurrency", type=int, default=0,
                          help="cap how many problems run at once (each holds <=1 agent call in flight, "
                               "so this bounds concurrent CLIs + provider streams — the real limit is the "

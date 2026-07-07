@@ -1,0 +1,246 @@
+{
+  "cand_id": "c2e2b87830d9",
+  "task_id": 16,
+  "verdict": "entered",
+  "sol_score": 0.5487331268124045,
+  "sol_score_calibrated": 0.49458812970726757,
+  "correct": true,
+  "vector": [
+    0.5431472081218275,
+    0.5665376600178624,
+    0.5539215686274509,
+    0.5573694029850746,
+    0.5510041440867071,
+    0.5357142857142857,
+    0.5459183673469388,
+    0.5412371134020618,
+    0.5384615384615384,
+    0.5651320754716981,
+    0.5615763546798029,
+    0.5588235294117646,
+    0.5587559368775719,
+    0.5255102040816326,
+    0.546391752577305,
+    0.5302288871349496
+  ],
+  "strategy": "Single 1-block/64-thread CUDA kernel computing inv_freq[i] = 1.0 / rope_theta^(i / 64.0) directly from threadIdx.x, elim",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "a352515d9fa4",
+  "trajectory": "runs/16/work/c2e2b87830d9/trajectory.jsonl",
+  "gpu_s": 55.928,
+  "job_id": "16-c2e2b87830d9",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 36.0,
+      "power_w_max": 255.97,
+      "samples": 187,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.00184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": 0.5431472081218275,
+      "sol_score_cal": 0.4889193511537583,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.001856,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002303,
+      "sol_score": 0.5665376600178624,
+      "sol_score_cal": 0.5127113620933065,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.001856,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002208,
+      "sol_score": 0.5539215686274509,
+      "sol_score_cal": 0.4999115200849408,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0018235,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021925,
+      "sol_score": 0.5573694029850746,
+      "sol_score_cal": 0.5031628380910409,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0018085,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021285,
+      "sol_score": 0.5510041440867071,
+      "sol_score_cal": 0.4966076397418272,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.001856,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": 0.5357142857142857,
+      "sol_score_cal": 0.48156301596037426,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.001824,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": 0.5459183673469388,
+      "sol_score_cal": 0.49159239180373066,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.001824,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": 0.5412371134020618,
+      "sol_score_cal": 0.4868774923490679,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.00184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": 0.5384615384615384,
+      "sol_score_cal": 0.48420567212358767,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0018405000000000001,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002272,
+      "sol_score": 0.5651320754716981,
+      "sol_score_cal": 0.5111688481907708,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.001824,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": 0.5615763546798029,
+      "sol_score_cal": 0.5074334549986647,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.00184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": 0.5588235294117646,
+      "sol_score_cal": 0.5047597963249945,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.00184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0022234999999999,
+      "sol_score": 0.5587559368775719,
+      "sol_score_cal": 0.5046912623508761,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.001888,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002048,
+      "sol_score": 0.5255102040816326,
+      "sol_score_cal": 0.47156853767969975,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.001808,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020959999999999,
+      "sol_score": 0.546391752577305,
+      "sol_score_cal": 0.49194783496540967,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.001888,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020794999999999,
+      "sol_score": 0.5302288871349496,
+      "sol_score_cal": 0.47628905740423105,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n\n// Problem 016 \u2014 RoPE inverse-frequency initialization.\n//\n//   inv_freq[i] = 1.0 / rope_theta^(2*i / head_dim)\n//               = 1.0 / rope_theta^(i / 64.0)      for i in [0, 64)\n//\n// This is pure launch-latency/latency bound.  One elementwise kernel handles\n// all work directly from threadIdx.x with no input tensor reads and no\n// intermediate allocations.  Compiled with -O3 --use_fast_math it maps to a\n// single CUDA kernel launch that writes only the 256 B output.\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void rope_inv_freq_kernel(float* __restrict__ out, float rope_theta)\n{\n    const int i = threadIdx.x;\n    if (i < N) {\n        const float exponent = static_cast<float>(i) / static_cast<float>(N);\n        out[i] = 1.0f / powf(rope_theta, exponent);\n    }\n}\n\n// Entry point called by the harness.  CUDA binding is performed by the\n// PYBIND11_MODULE stanza below.\ntorch::Tensor run(float rope_theta)\n{\n    auto out = torch::empty(\n        {N},\n        torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n\n    rope_inv_freq_kernel<<<1, N>>>(out.data_ptr<float>(), rope_theta);\n    return out;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32)\");\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t16_c2e2b87830d9",
+    "definition": "016_rope_inverse_frequency_computation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n\n// Problem 016 \u2014 RoPE inverse-frequency initialization.\n//\n//   inv_freq[i] = 1.0 / rope_theta^(2*i / head_dim)\n//               = 1.0 / rope_theta^(i / 64.0)      for i in [0, 64)\n//\n// This is pure launch-latency/latency bound.  One elementwise kernel handles\n// all work directly from threadIdx.x with no input tensor reads and no\n// intermediate allocations.  Compiled with -O3 --use_fast_math it maps to a\n// single CUDA kernel launch that writes only the 256 B output.\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void rope_inv_freq_kernel(float* __restrict__ out, float rope_theta)\n{\n    const int i = threadIdx.x;\n    if (i < N) {\n        const float exponent = static_cast<float>(i) / static_cast<float>(N);\n        out[i] = 1.0f / powf(rope_theta, exponent);\n    }\n}\n\n// Entry point called by the harness.  CUDA binding is performed by the\n// PYBIND11_MODULE stanza below.\ntorch::Tensor run(float rope_theta)\n{\n    auto out = torch::empty(\n        {N},\n        torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n\n    rope_inv_freq_kernel<<<1, N>>>(out.data_ptr<float>(), rope_theta);\n    return out;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32)\");\n}\n"
+      }
+    ]
+  }
+}

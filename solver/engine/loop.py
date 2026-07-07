@@ -11,6 +11,7 @@ executor is the single serialized GPU.
 from __future__ import annotations
 
 import asyncio
+import random
 import time
 from pathlib import Path
 from typing import Awaitable, Callable
@@ -289,6 +290,7 @@ async def run_fleet(
     families: dict[int, str] | None = None,
     names: dict[int, str] | None = None,
     max_concurrency: int = 0,
+    shuffle: bool = False,
 ) -> None:
     families = families or {}
     names = names or {}
@@ -317,4 +319,12 @@ async def run_fleet(
             journal_mod.Journal(Path(runs_dir) / str(t) / "journal.jsonl", t).append(
                 "solver_error", error=repr(exc))
 
-    await asyncio.gather(*(guarded(t) for t in exemplar_first(ids, families)))
+    # Launch order determines which problems fill the concurrency window first (and,
+    # as slots free, which enter next). Default = exemplar-first. `shuffle` randomizes
+    # it (seeded → reproducible) so a --max-concurrency window is a RANDOM sample of a
+    # big id range rather than always the lowest ids — fairer coverage, and on a resume
+    # it stops the already-strong low ids from starving the underworked high ids.
+    order = exemplar_first(ids, families)
+    if shuffle:
+        random.Random(seed).shuffle(order)
+    await asyncio.gather(*(guarded(t) for t in order))

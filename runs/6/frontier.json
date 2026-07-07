@@ -3,7 +3,7 @@
   "family": "moe",
   "name": "moe_6",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 2,
   "best_cand": "a94c6b77216b",
   "best_score": 0.756620143067278,
   "best_score_cal": 0.7188513112089452,
@@ -13,7 +13,7 @@
       "sol_score": 0.756620143067278,
       "sol_score_cal": 0.7188513112089452,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 9,
       "vector": [
         0.9028701435071753,
         0.6540290748050447,
@@ -36,6 +36,35 @@
       "agent": "claude",
       "model": "opus",
       "candidate": "candidates/a94c6b77216b.json"
+    },
+    {
+      "cand_id": "68e868dc22ee",
+      "sol_score": 0.755209104803957,
+      "sol_score_cal": 0.7174361939434265,
+      "all_passed": true,
+      "shapes_won": 7,
+      "vector": [
+        0.9054054054054054,
+        0.6589008942600532,
+        0.6504137115839244,
+        0.9042574623107142,
+        0.6307848827126952,
+        0.6346026242000042,
+        0.6305616338439096,
+        0.9071568514463525,
+        0.6295379633377668,
+        0.8958077603245606,
+        0.627023050514956,
+        0.6423523472993438,
+        0.6482986287455561,
+        0.9017060876308647,
+        0.9116780254190459,
+        0.9048583478281589
+      ],
+      "strategy": "Single persistent Triton kernel w/ CHANNEL_BLOCK\u2208{1,2,4} coarsening, load-compute-store reordered for num_stages SW pipe",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/68e868dc22ee.json"
     }
   ]
 }

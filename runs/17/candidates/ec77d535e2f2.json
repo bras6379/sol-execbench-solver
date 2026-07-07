@@ -1,0 +1,245 @@
+{
+  "cand_id": "ec77d535e2f2",
+  "task_id": 17,
+  "verdict": "dominated",
+  "sol_score": 0.1253274248082848,
+  "sol_score_calibrated": 0.10694898261583846,
+  "correct": true,
+  "vector": [
+    0.08597888956666778,
+    0.14513053550743993,
+    0.133825231993712,
+    0.1313278103663474,
+    0.11656737049910124,
+    0.12216883498140116,
+    0.13819107030639302,
+    0.12088516433154377,
+    0.13732507161881385,
+    0.13615639537736227,
+    0.12462973953965614,
+    0.10511992007141366,
+    0.1577608800328332,
+    0.08417407998010897,
+    0.1307276536558742,
+    0.13527014910388804
+  ],
+  "strategy": "Use CUDA graph to collapse six bf16 GEMMs + fused Triton SiLU-backward into one launch, and batch the two Wgrads/dgrads ",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "ffda16b6e837",
+  "trajectory": "runs/17/work/ec77d535e2f2/trajectory.jsonl",
+  "gpu_s": 16.113,
+  "job_id": "17-ec77d535e2f2",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 39.0,
+      "power_w_max": 293.53,
+      "samples": 53,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.822253,
+      "sol_ms": 0.0326,
+      "baseline_latency_ms": 0.10688,
+      "sol_score": 0.08597888956666778,
+      "sol_score_cal": 0.07281203153537315,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.48291,
+      "sol_ms": 0.0032,
+      "baseline_latency_ms": 0.0846399999999999,
+      "sol_score": 0.14513053550743993,
+      "sol_score_cal": 0.1247352401099764,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.49219,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.078496,
+      "sol_score": 0.133825231993712,
+      "sol_score_cal": 0.11481737375989537,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.49425399999999997,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.077184,
+      "sol_score": 0.1313278103663474,
+      "sol_score_cal": 0.11262894584528461,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.8859319999999999,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.191376,
+      "sol_score": 0.11656737049910124,
+      "sol_score_cal": 0.09829846526055742,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.48665400000000003,
+      "sol_ms": 0.0142,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": 0.12216883498140116,
+      "sol_score_cal": 0.1042573340940478,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.4808295,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079536,
+      "sol_score": 0.13819107030639302,
+      "sol_score_cal": 0.11864570164276753,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.48676600000000003,
+      "sol_ms": 0.0168,
+      "baseline_latency_ms": 0.081424,
+      "sol_score": 0.12088516433154377,
+      "sol_score_cal": 0.10305616449335593,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.474175,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.0779199999999999,
+      "sol_score": 0.13732507161881385,
+      "sol_score_cal": 0.11788401184339893,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.4870865,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079216,
+      "sol_score": 0.13615639537736227,
+      "sol_score_cal": 0.11686107412456008,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.490303,
+      "sol_ms": 0.0117,
+      "baseline_latency_ms": 0.0798405,
+      "sol_score": 0.12462973953965614,
+      "sol_score_cal": 0.10648599165492878,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.601822,
+      "sol_ms": 0.0259,
+      "baseline_latency_ms": 0.0935525,
+      "sol_score": 0.10511992007141366,
+      "sol_score_cal": 0.08926065983580236,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.5963499999999999,
+      "sol_ms": 0.0751,
+      "baseline_latency_ms": 0.172736,
+      "sol_score": 0.1577608800328332,
+      "sol_score_cal": 0.1333474461975505,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7953415,
+      "sol_ms": 0.0292,
+      "baseline_latency_ms": 0.0996165,
+      "sol_score": 0.08417407998010897,
+      "sol_score_cal": 0.07129536617784135,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.49943800000000005,
+      "sol_ms": 0.0057,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": 0.1307276536558742,
+      "sol_score_cal": 0.11201369677150674,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.54267,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.121248,
+      "sol_score": 0.13527014910388804,
+      "sol_score_cal": 0.11478421850656843,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:  # pragma: no cover - fallback for non-Triton / non-GPU envs\n    triton = None\n    tl = None\n\n\n# -----------------------------------------------------------------------------\n# Problem 017 \u2014 MoE Expert SwiGLU Backward (B200)\n#\n# Reference does all compute in fp32 then casts outputs to bf16.  We keep the\n# same effective precision but eliminate intermediate HBM round-trips:\n#   * one fused Triton kernel for grad_gate/grad_up (SiLU backward chain)\n#   * batched BMMs for the two Wgrads and two dgrads so 4 GEMMs become 2\n#   * CUDA graph capture replayed inside run() to collapse launch overhead\n#     (the dominant cost for N <= 128)\n# For non-GPU tests or triton unavailability an eager PyTorch path is kept.\n# -----------------------------------------------------------------------------\n\n_STEM_BLOCK = 2048\n\ntry:\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True\nexcept AttributeError:\n    pass\n\n\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n\n@triton.jit\ndef _swiglu_bwd_kernel(\n    grad_intermediate_ptr,\n    up_ptr,\n    gate_silu_ptr,\n    gate_ptr,\n    gate_sigmoid_ptr,\n    stacked_gate_up_ptr,\n    n_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Compute grad_gate and grad_up, storing them as [2, N, 768] contiguously.\"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = offs < n_elements\n\n    gi = tl.load(grad_intermediate_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    up_v = tl.load(up_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    silu_v = tl.load(gate_silu_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    gate_v = tl.load(gate_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    sig_v = tl.load(gate_sigmoid_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n\n    d_up = gi * silu_v\n    d_gate = gi * up_v * sig_v * (1.0 + gate_v * (1.0 - sig_v))\n\n    tl.store(stacked_gate_up_ptr + offs, d_gate, mask=mask)\n    tl.store(stacked_gate_up_ptr + n_elements + offs, d_up, mask=mask)\n\n\ndef _run_eager(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Reference-like eager path used for CPU smoke tests and graph warm-up.\"\"\"\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n    grad_intermediate = torch.mm(grad_output, down_weight)\n\n    if triton is not None:\n        n = grad_output.size(0)\n        n_mid = n * 768\n        stacked_gate_up = torch.empty(\n            2, n, 768, dtype=torch.bfloat16, device=grad_output.device\n        )\n        grid = (triton.cdiv(n_mid, _STEM_BLOCK),)\n        _swiglu_bwd_kernel[grid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            stacked_gate_up,\n            n_mid,\n            BLOCK_SIZE=_STEM_BLOCK,\n            num_warps=8,\n        )\n        grad_gate = stacked_gate_up[0]\n        grad_up = stacked_gate_up[1]\n    else:\n        gi = grad_intermediate.to(torch.float32)\n        g_f = gate.to(torch.float32)\n        s_f = gate_sigmoid.to(torch.float32)\n        grad_up = (gi * gate_silu.to(torch.float32)).to(torch.bfloat16)\n        grad_gate = (\n            gi\n            * up.to(torch.float32)\n            * s_f\n            * (1.0 + g_f * (1.0 - s_f))\n        ).to(torch.bfloat16)\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n    grad_x = torch.mm(grad_gate, gate_weight) + torch.mm(grad_up, up_weight)\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n\n\n_GRAPH_CACHE = {}\n\n\ndef _build_graph(n: int, device: torch.device, inputs: tuple):\n    \"\"\"Capture one CUDA graph per (device, num_tokens) shape.\n\n    Independently of the inputs, the graph uses static graph-owned buffers for\n    everything.  The saved weights / replicated x are copied into the graph's\n    static buffers once at construction time so the replay does not need to copy\n    anything per iteration.\n    \"\"\"\n    (\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    ) = inputs\n\n    # One eager iteration allocates/caches cuBLAS workspace outside the graph.\n    _ = _run_eager(*inputs)\n\n    # Static graph-owned buffers.\n    grad_down_weight = torch.empty(2048, 768, dtype=torch.bfloat16, device=device)\n    grad_intermediate = torch.empty(n, 768, dtype=torch.bfloat16, device=device)\n    stacked_gate_up = torch.empty(2, n, 768, dtype=torch.bfloat16, device=device)\n\n    # Replicate x for both Wgrads and weights for both dgrads.\n    stacked_x = torch.empty(2, n, 2048, dtype=torch.bfloat16, device=device)\n    weights2 = torch.empty(2, 768, 2048, dtype=torch.bfloat16, device=device)\n    grad_w2 = torch.empty(2, 768, 2048, dtype=torch.bfloat16, device=device)\n    grad_x2 = torch.empty(2, n, 2048, dtype=torch.bfloat16, device=device)\n    grad_x = torch.empty(n, 2048, dtype=torch.bfloat16, device=device)\n\n    stacked_x[0].copy_(x)\n    stacked_x[1].copy_(x)\n    weights2[0].copy_(gate_weight)\n    weights2[1].copy_(up_weight)\n\n    graph = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(graph):\n        torch.mm(grad_output.t(), intermediate, out=grad_down_weight)\n        torch.mm(grad_output, down_weight, out=grad_intermediate)\n\n        n_mid = n * 768\n        grid = (triton.cdiv(n_mid, _STEM_BLOCK),)\n        _swiglu_bwd_kernel[grid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            stacked_gate_up,\n            n_mid,\n            BLOCK_SIZE=_STEM_BLOCK,\n            num_warps=8,\n        )\n\n        # Both weight gradients: [2, 768, N] @ [2, N, 2048] -> [2, 768, 2048]\n        torch.bmm(stacked_gate_up.transpose(1, 2), stacked_x, out=grad_w2)\n        # Both input gradients:  [2, N, 768] @ [2, 768, 2048] -> [2, N, 2048]\n        torch.bmm(stacked_gate_up, weights2, out=grad_x2)\n        # Accumulate\n        torch.add(grad_x2[0], grad_x2[1], out=grad_x)\n\n    outputs = (grad_x, grad_w2[0], grad_w2[1], grad_down_weight)\n    captured_ptrs = [t.data_ptr() for t in inputs]\n    return graph, outputs, captured_ptrs\n\n\ndef _run_graph(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Replay a cached CUDA graph, rebuilding it if input pointers change.\"\"\"\n    n = grad_output.size(0)\n    device = grad_output.device\n    inputs = (\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    )\n\n    key = (device, n)\n    cached = _GRAPH_CACHE.get(key)\n    if cached is not None:\n        graph, outputs, captured_ptrs = cached\n        if all(t.data_ptr() == p for t, p in zip(inputs, captured_ptrs)):\n            graph.replay()\n            return tuple(o.clone() for o in outputs)\n        del _GRAPH_CACHE[key]\n\n    graph, outputs, captured_ptrs = _build_graph(n, device, inputs)\n    _GRAPH_CACHE[key] = (graph, outputs, captured_ptrs)\n    graph.replay()\n    return tuple(o.clone() for o in outputs)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Backward pass for MoE expert SwiGLU + down projection.\n\n    Returns (bf16):\n      grad_x            [num_tokens, 2048]\n      grad_gate_weight  [768, 2048]\n      grad_up_weight    [768, 2048]\n      grad_down_weight  [2048, 768]\n    \"\"\"\n    # Non-GPU / no-Triton smoke-test and fallback path.\n    if grad_output.device.type != \"cuda\" or triton is None:\n        return _run_eager(\n            grad_output,\n            x,\n            gate_weight,\n            up_weight,\n            down_weight,\n            gate,\n            gate_sigmoid,\n            gate_silu,\n            up,\n            intermediate,\n        )\n\n    # CUDA graph collapses the six GEMMs + fused epilogue into one launch.\n    return _run_graph(\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t17_ec77d535e2f2",
+    "definition": "017_moe_expert_swiglu_with_down_projection_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:  # pragma: no cover - fallback for non-Triton / non-GPU envs\n    triton = None\n    tl = None\n\n\n# -----------------------------------------------------------------------------\n# Problem 017 \u2014 MoE Expert SwiGLU Backward (B200)\n#\n# Reference does all compute in fp32 then casts outputs to bf16.  We keep the\n# same effective precision but eliminate intermediate HBM round-trips:\n#   * one fused Triton kernel for grad_gate/grad_up (SiLU backward chain)\n#   * batched BMMs for the two Wgrads and two dgrads so 4 GEMMs become 2\n#   * CUDA graph capture replayed inside run() to collapse launch overhead\n#     (the dominant cost for N <= 128)\n# For non-GPU tests or triton unavailability an eager PyTorch path is kept.\n# -----------------------------------------------------------------------------\n\n_STEM_BLOCK = 2048\n\ntry:\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True\nexcept AttributeError:\n    pass\n\n\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n\n@triton.jit\ndef _swiglu_bwd_kernel(\n    grad_intermediate_ptr,\n    up_ptr,\n    gate_silu_ptr,\n    gate_ptr,\n    gate_sigmoid_ptr,\n    stacked_gate_up_ptr,\n    n_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Compute grad_gate and grad_up, storing them as [2, N, 768] contiguously.\"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = offs < n_elements\n\n    gi = tl.load(grad_intermediate_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    up_v = tl.load(up_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    silu_v = tl.load(gate_silu_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    gate_v = tl.load(gate_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    sig_v = tl.load(gate_sigmoid_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n\n    d_up = gi * silu_v\n    d_gate = gi * up_v * sig_v * (1.0 + gate_v * (1.0 - sig_v))\n\n    tl.store(stacked_gate_up_ptr + offs, d_gate, mask=mask)\n    tl.store(stacked_gate_up_ptr + n_elements + offs, d_up, mask=mask)\n\n\ndef _run_eager(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Reference-like eager path used for CPU smoke tests and graph warm-up.\"\"\"\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n    grad_intermediate = torch.mm(grad_output, down_weight)\n\n    if triton is not None:\n        n = grad_output.size(0)\n        n_mid = n * 768\n        stacked_gate_up = torch.empty(\n            2, n, 768, dtype=torch.bfloat16, device=grad_output.device\n        )\n        grid = (triton.cdiv(n_mid, _STEM_BLOCK),)\n        _swiglu_bwd_kernel[grid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            stacked_gate_up,\n            n_mid,\n            BLOCK_SIZE=_STEM_BLOCK,\n            num_warps=8,\n        )\n        grad_gate = stacked_gate_up[0]\n        grad_up = stacked_gate_up[1]\n    else:\n        gi = grad_intermediate.to(torch.float32)\n        g_f = gate.to(torch.float32)\n        s_f = gate_sigmoid.to(torch.float32)\n        grad_up = (gi * gate_silu.to(torch.float32)).to(torch.bfloat16)\n        grad_gate = (\n            gi\n            * up.to(torch.float32)\n            * s_f\n            * (1.0 + g_f * (1.0 - s_f))\n        ).to(torch.bfloat16)\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n    grad_x = torch.mm(grad_gate, gate_weight) + torch.mm(grad_up, up_weight)\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n\n\n_GRAPH_CACHE = {}\n\n\ndef _build_graph(n: int, device: torch.device, inputs: tuple):\n    \"\"\"Capture one CUDA graph per (device, num_tokens) shape.\n\n    Independently of the inputs, the graph uses static graph-owned buffers for\n    everything.  The saved weights / replicated x are copied into the graph's\n    static buffers once at construction time so the replay does not need to copy\n    anything per iteration.\n    \"\"\"\n    (\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    ) = inputs\n\n    # One eager iteration allocates/caches cuBLAS workspace outside the graph.\n    _ = _run_eager(*inputs)\n\n    # Static graph-owned buffers.\n    grad_down_weight = torch.empty(2048, 768, dtype=torch.bfloat16, device=device)\n    grad_intermediate = torch.empty(n, 768, dtype=torch.bfloat16, device=device)\n    stacked_gate_up = torch.empty(2, n, 768, dtype=torch.bfloat16, device=device)\n\n    # Replicate x for both Wgrads and weights for both dgrads.\n    stacked_x = torch.empty(2, n, 2048, dtype=torch.bfloat16, device=device)\n    weights2 = torch.empty(2, 768, 2048, dtype=torch.bfloat16, device=device)\n    grad_w2 = torch.empty(2, 768, 2048, dtype=torch.bfloat16, device=device)\n    grad_x2 = torch.empty(2, n, 2048, dtype=torch.bfloat16, device=device)\n    grad_x = torch.empty(n, 2048, dtype=torch.bfloat16, device=device)\n\n    stacked_x[0].copy_(x)\n    stacked_x[1].copy_(x)\n    weights2[0].copy_(gate_weight)\n    weights2[1].copy_(up_weight)\n\n    graph = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(graph):\n        torch.mm(grad_output.t(), intermediate, out=grad_down_weight)\n        torch.mm(grad_output, down_weight, out=grad_intermediate)\n\n        n_mid = n * 768\n        grid = (triton.cdiv(n_mid, _STEM_BLOCK),)\n        _swiglu_bwd_kernel[grid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            stacked_gate_up,\n            n_mid,\n            BLOCK_SIZE=_STEM_BLOCK,\n            num_warps=8,\n        )\n\n        # Both weight gradients: [2, 768, N] @ [2, N, 2048] -> [2, 768, 2048]\n        torch.bmm(stacked_gate_up.transpose(1, 2), stacked_x, out=grad_w2)\n        # Both input gradients:  [2, N, 768] @ [2, 768, 2048] -> [2, N, 2048]\n        torch.bmm(stacked_gate_up, weights2, out=grad_x2)\n        # Accumulate\n        torch.add(grad_x2[0], grad_x2[1], out=grad_x)\n\n    outputs = (grad_x, grad_w2[0], grad_w2[1], grad_down_weight)\n    captured_ptrs = [t.data_ptr() for t in inputs]\n    return graph, outputs, captured_ptrs\n\n\ndef _run_graph(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Replay a cached CUDA graph, rebuilding it if input pointers change.\"\"\"\n    n = grad_output.size(0)\n    device = grad_output.device\n    inputs = (\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    )\n\n    key = (device, n)\n    cached = _GRAPH_CACHE.get(key)\n    if cached is not None:\n        graph, outputs, captured_ptrs = cached\n        if all(t.data_ptr() == p for t, p in zip(inputs, captured_ptrs)):\n            graph.replay()\n            return tuple(o.clone() for o in outputs)\n        del _GRAPH_CACHE[key]\n\n    graph, outputs, captured_ptrs = _build_graph(n, device, inputs)\n    _GRAPH_CACHE[key] = (graph, outputs, captured_ptrs)\n    graph.replay()\n    return tuple(o.clone() for o in outputs)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    \"\"\"Backward pass for MoE expert SwiGLU + down projection.\n\n    Returns (bf16):\n      grad_x            [num_tokens, 2048]\n      grad_gate_weight  [768, 2048]\n      grad_up_weight    [768, 2048]\n      grad_down_weight  [2048, 768]\n    \"\"\"\n    # Non-GPU / no-Triton smoke-test and fallback path.\n    if grad_output.device.type != \"cuda\" or triton is None:\n        return _run_eager(\n            grad_output,\n            x,\n            gate_weight,\n            up_weight,\n            down_weight,\n            gate,\n            gate_sigmoid,\n            gate_silu,\n            up,\n            intermediate,\n        )\n\n    # CUDA graph collapses the six GEMMs + fused epilogue into one launch.\n    return _run_graph(\n        grad_output,\n        x,\n        gate_weight,\n        up_weight,\n        down_weight,\n        gate,\n        gate_sigmoid,\n        gate_silu,\n        up,\n        intermediate,\n    )\n"
+      }
+    ]
+  }
+}
