@@ -339,12 +339,37 @@ def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
             if tl:
                 card = card.rstrip() + "\n\n" + tl + "\n"
             (runs_dir / str(t) / "reflection.md").write_text(card)
+            attach_diagnosis(runs_dir, t)               # re-attach any stored fable prose (cheap)
             _append_snapshot(runs_dir / str(t), r, card, now_iso)
         if dump_prior:
             _dump_prior(runs_dir, t, dump_prior)
     log(f"[reflect] wrote {sum(1 for r in refls.values() if r.status not in ('thin',))} "
         f"coach card(s) across {len(refls)} problem(s)")
     return refls
+
+
+DIAGNOSIS_HEADER = "## Coach — expert diagnosis (fable-5)"
+
+
+def attach_diagnosis(runs_dir: str | Path, task_id: int) -> bool:
+    """Append the stored fable prose (diagnosis.json, written by the diagnose layer)
+    to `<task>/reflection.md`, idempotently. Called on every reflect pass so the
+    deterministic card always carries the latest diagnosis WITHOUT re-spending on
+    fable. No-op if there's no diagnosis yet."""
+    pdir = Path(runs_dir) / str(task_id)
+    dfile, card = pdir / "diagnosis.json", pdir / "reflection.md"
+    if not dfile.is_file() or not card.is_file():
+        return False
+    try:
+        prose = json.loads(dfile.read_text()).get("prose", "").strip()
+    except Exception:
+        return False
+    if not prose:
+        return False
+    text = card.read_text(errors="replace")
+    body = text.split("\n" + DIAGNOSIS_HEADER, 1)[0].rstrip()   # drop any stale diagnosis block
+    card.write_text(f"{body}\n\n{DIAGNOSIS_HEADER}\n\n{prose}\n")
+    return True
 
 
 def _append_snapshot(pdir: Path, r: ProblemReflection, card: str, ts: str) -> None:

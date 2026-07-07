@@ -293,6 +293,7 @@ async def run_fleet(
     shuffle: bool = False,
     reflect_first: bool = False,
     reflect_every_min: float = 0,
+    reflect_model: str = "",
 ) -> None:
     families = families or {}
     names = names or {}
@@ -300,15 +301,22 @@ async def run_fleet(
     # Cross-run reflection (the "Coach"): regenerate every problem's reflection.md
     # coach card from the accumulated journals BEFORE the fleet starts, so a restart
     # begins with each agent already knowing what's been tried / where it's stuck /
-    # where the loss is. Deterministic + best-effort: never let it abort the run.
-    def _reflect(tag: str) -> None:
+    # where the loss is. The deterministic detectors are free; when reflect_model is
+    # set (e.g. claude-fable-5), a strong model ALSO reads the tried kernels' source
+    # and adds a why-it's-stuck + one-lever diagnosis — but only for STUCK problems
+    # whose state moved (deduped), so fable spend stays bounded. Best-effort: a
+    # failure here (incl. fable out of credits) never aborts the run.
+    async def _reflect(tag: str) -> None:
         try:
             from . import reflection
-            reflection.reflect_all(runs_dir, ids, names=names, log=lambda *_: None)
+            refls = await asyncio.to_thread(reflection.reflect_all, runs_dir, ids, names=names)
+            if reflect_model:
+                from . import diagnose
+                await diagnose.diagnose_stuck(runs_dir, refls, model=reflect_model, log=print)
         except Exception as exc:
             print(f"[reflect:{tag}] skipped: {exc!r}")
     if reflect_first:
-        _reflect("startup")
+        await _reflect("startup")
     # Cap how many problems are ACTIVE at once. Each active problem holds ≤1 agent
     # call in flight (its loop is sequential), so this bounds concurrent agent CLIs
     # + provider streams — the real limit is the laptop and the provider's rate
@@ -348,7 +356,7 @@ async def run_fleet(
     async def _refresher() -> None:
         while True:
             await asyncio.sleep(max(30.0, reflect_every_min * 60))
-            await asyncio.to_thread(_reflect, "periodic")
+            await _reflect("periodic")
     refresher = asyncio.create_task(_refresher()) if reflect_every_min > 0 else None
     try:
         await asyncio.gather(*(guarded(t) for t in order))

@@ -215,6 +215,7 @@ def _cmd_solve(args) -> None:
                                  provider=RunPodProvider(api), spec=spec, config=hcfg,
                                  max_concurrency=args.max_concurrency, shuffle=args.shuffle,
                                  reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min,
+                                 reflect_model=args.reflect_model,
                                  max_lifetime_min=(args.gpu_max_hours * 60 if args.gpu_max_hours else None)))
     else:
         if args.agent != "sim":
@@ -227,7 +228,8 @@ def _cmd_solve(args) -> None:
                               seeds_fn=seeds_fn, knowledge=knowledge,
                               families=families, names=names,
                               max_concurrency=args.max_concurrency, shuffle=args.shuffle,
-                              reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min))
+                              reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min,
+                              reflect_model=args.reflect_model))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -595,6 +597,11 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--reflect-every-min", type=float, default=20.0,
                          help="also rebuild coach cards every N minutes during the run so long runs keep "
                               "reflecting on fresh results (0=only at startup)")
+    p_solve.add_argument("--reflect-model", default="claude-fable-5",
+                         help="strong model that reads the tried kernels' SOURCE and adds a why-it's-stuck "
+                              "+ one-untried-lever diagnosis to the coach card of STUCK problems (deduped on "
+                              "state so fable spend is bounded; runs at startup + every --reflect-every-min). "
+                              "Empty string = deterministic cards only, no LLM spend")
     p_solve.add_argument("--fake-scores", action="store_true",
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,

@@ -16,6 +16,7 @@ import datetime as dt
 import html
 import json
 import os
+import re
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -27,6 +28,66 @@ OUTCOME_KEYS = metrics_mod.OUTCOMES
 
 def _esc(s) -> str:
     return html.escape(str(s), quote=True)
+
+
+def _md_inline(s: str) -> str:
+    """Inline markdown → HTML (escape first, then `code`, **bold**, *italic*)."""
+    s = _esc(s)
+    s = re.sub(r"`([^`]+)`", r"<code>\1</code>", s)
+    s = re.sub(r"\*\*([^*]+)\*\*", r"<strong>\1</strong>", s)
+    s = re.sub(r"(?<![\*\w])\*([^*\n]+)\*(?!\w)", r"<em>\1</em>", s)
+    return s
+
+
+def _md_to_html(md: str) -> str:
+    """Minimal, self-contained markdown → HTML: fenced code, #/##/### headers,
+    - / * lists, **bold**, `code`, paragraphs. No external deps; used to render the
+    coach cards / diagnosis / agent context readably instead of raw source."""
+    out: list[str] = []
+    code: list[str] | None = None
+    in_list = False
+
+    def _close_list():
+        nonlocal in_list
+        if in_list:
+            out.append("</ul>")
+            in_list = False
+
+    for ln in md.splitlines():
+        s = ln.rstrip()
+        if s.lstrip().startswith("```"):
+            if code is not None:
+                out.append(f"<pre class='md-code'><code>{_esc(chr(10).join(code))}</code></pre>")
+                code = None
+            else:
+                _close_list()
+                code = []
+            continue
+        if code is not None:
+            code.append(ln)
+            continue
+        if not s.strip():
+            _close_list()
+            continue
+        h = re.match(r"\s*(#{1,6})\s+(.*)", s)
+        if h:
+            _close_list()
+            tag = {1: "h3", 2: "h4", 3: "h5"}.get(len(h.group(1)), "h6")
+            out.append(f"<{tag}>{_md_inline(h.group(2))}</{tag}>")
+            continue
+        li = re.match(r"\s*[-*]\s+(.*)", s)
+        if li:
+            if not in_list:
+                out.append("<ul>")
+                in_list = True
+            out.append(f"<li>{_md_inline(li.group(1))}</li>")
+            continue
+        _close_list()
+        out.append(f"<p>{_md_inline(s.strip())}</p>")
+    if code is not None:
+        out.append(f"<pre class='md-code'><code>{_esc(chr(10).join(code))}</code></pre>")
+    _close_list()
+    return "".join(out)
 
 
 def _localtime(ts: str | None) -> str:
@@ -314,9 +375,22 @@ td.proj{color:var(--ink2);font-style:italic}  /* projected board SOL + projected
 pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
 pre.traj{font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:70vh;overflow:auto}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
-pre.coach-card{white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.55;
-  background:var(--bg);border:1px solid var(--grid);border-left:3px solid var(--s1);
-  border-radius:8px;padding:12px 14px;max-height:44vh;overflow:auto;margin:0}
+.coach-card{background:var(--bg);border:1px solid var(--grid);border-left:3px solid var(--s1);
+  border-radius:8px;padding:4px 16px;max-height:52vh;overflow:auto}
+.md{font-size:13px;line-height:1.6;color:var(--ink);word-break:break-word}
+.md h3{font-size:15px;margin:14px 0 8px}
+.md h4{font-size:13px;margin:14px 0 6px;color:var(--ink2);text-transform:uppercase;letter-spacing:.03em}
+.md h5,.md h6{font-size:12px;margin:12px 0 6px;color:var(--ink2)}
+.md p{margin:8px 0}
+.md ul{margin:8px 0;padding-left:20px}
+.md li{margin:3px 0}
+.md strong{color:var(--ink);font-weight:700}
+.md code{font:12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--grid);
+  padding:1px 5px;border-radius:4px}
+.md pre.md-code{background:var(--bg);border:1px solid var(--grid);border-radius:6px;
+  padding:10px 12px;overflow:auto;margin:8px 0;max-height:60vh}
+.md pre.md-code code{background:none;padding:0;font-size:12px;line-height:1.5;white-space:pre}
+#modal-body .md{max-height:none}
 h3.coach-h{font-size:13px;color:var(--ink2);margin:16px 0 8px}
 td.views{white-space:nowrap}
 button.link{background:none;border:none;color:var(--s1);cursor:pointer;font:inherit;padding:0}
@@ -756,7 +830,7 @@ def _traj_blocks(p: dict, runs_dir: Path) -> tuple[str, set]:
         out.append(
             f'<template data-code="traj:{_esc(c["cand"])}" '
             f'data-title="{_esc(c["cand"])} — trajectory · {_esc(c.get("model") or "")}">'
-            f'<pre class="traj"><code>{_esc(txt)}</code></pre></template>')
+            f'<div class="md">{_md_to_html(txt)}</div></template>')
     return "".join(out), have
 
 
@@ -786,10 +860,13 @@ def _artifact_blocks(p: dict, runs_dir: Path) -> tuple[str, dict]:
             if len(txt) > 80000:
                 txt = "…(truncated to last 80k chars)…\n" + txt[-80000:]
             avail.setdefault(c["cand"], set()).add(key)
+            # CONTEXT.md / DESIGN.md / handoff.md are markdown → render; strategy is plain
+            inner = (f'<div class="md">{_md_to_html(txt)}</div>' if key in ("ctx", "design", "handoff")
+                     else f'<pre class="traj"><code>{_esc(txt)}</code></pre>')
             out.append(
                 f'<template data-code="{key}:{_esc(c["cand"])}" '
                 f'data-title="{_esc(c["cand"])} — {label} · {_esc(c.get("model") or "")}">'
-                f'<pre class="traj"><code>{_esc(txt)}</code></pre></template>')
+                f'{inner}</template>')
     return "".join(out), avail
 
 
@@ -820,13 +897,13 @@ def _coach_panel(p: dict, runs_dir: Path) -> tuple[str, str]:
                 f'<td><button class="link" data-code="reflect:{i}">view card</button></td></tr>')
             tmpls += (f'<template data-code="reflect:{i}" '
                       f'data-title="coach card @ {_localtime(s.get("ts",""))}">'
-                      f'<pre class="traj"><code>{_esc(s.get("card",""))}</code></pre></template>')
+                      f'<div class="md">{_md_to_html(s.get("card",""))}</div></template>')
         hist = ('<h3 class="coach-h">how the diagnosis evolved</h3>'
                 '<table class="sortable"><thead><tr><th>time</th><th>status</th>'
                 '<th>headline</th><th>card</th></tr></thead><tbody>'
                 + "".join(rows) + "</tbody></table>")
     panel = (f'<div class="panel"><h2>Coach — cross-run reflection (fed to every agent as context)</h2>'
-             f'<pre class="coach-card"><code>{_esc(card)}</code></pre>{hist}</div>')
+             f'<div class="coach-card md">{_md_to_html(card)}</div>{hist}</div>')
     return panel, tmpls
 
 
