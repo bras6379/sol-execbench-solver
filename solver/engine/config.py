@@ -48,6 +48,13 @@ class Config:
     agent_fail_limit: int = 3                     # consecutive plan failures before a perspective is
                                                   # circuit-broken (dead agent, e.g. out of credits) and skipped
     score_target: float | None = None            # optional early stop (off by default)
+    review_enabled: bool = True                   # pre-GPU code review gate (a DIFFERENT model than the
+                                                  # writer reads the kernel + reference + workloads and
+                                                  # judges ship/revise BEFORE it spends a GPU eval)
+    review_max_rounds: int = 6                    # repair-loop safety valve: "revise" sends the SAME
+                                                  # writer back with the critique for another attempt, up
+                                                  # to this many rounds, then ships as-is (never blocks
+                                                  # forever on one stubborn candidate)
 
     def __post_init__(self) -> None:
         if not self.tiers:

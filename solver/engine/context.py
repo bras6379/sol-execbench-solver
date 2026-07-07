@@ -50,6 +50,8 @@ class RunContext:
         self.terminated_reason: str | None = None
         self.deadline: float | None = None          # monotonic wall-clock stop (live-only, per run)
         self.recent_failures: list[dict] = []       # last few INCORRECT attempts (fed back to agents)
+        self.review_critique: str | None = None     # live-only: this round's pre-GPU review issues,
+                                                     # fed to the SAME writer for a repair turn
         self.sibling_hint: dict | None = None       # best same-op sibling's kernel to adapt (transfer)
         self.playbook: list[dict] = []              # accepted candidates' handoffs = reserve plays
         self._playbook_seen: set[str] = set()       # dedup playbook entries by handoff text

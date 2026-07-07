@@ -7,7 +7,7 @@ headroom-gated escalation, the novelty gates, and the fleet. Everything runs
 against StubExecutor + StubAgent (no GPU, no API); see the §12 stub contract.
 """
 
-from .agent import Agent, Candidate, StubAgent, solution_hash, stub_agents
+from .agent import Agent, Candidate, ReviewVerdict, StubAgent, solution_hash, stub_agents
 from .cli_agent import SPECS, CliAgent, CliSpec, make_agents
 from .config import Config, Perspective, Tier, default_config
 from .context import RunContext
@@ -29,13 +29,13 @@ from .harness import (
     traces_from_jsonl,
 )
 from .knowledge import KnowledgeStore
-from .loop import exemplar_first, reference_seed, run_fleet, solve_problem
+from .loop import exemplar_first, pick_reviewer, reference_seed, run_fleet, solve_problem
 from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
 from .ssh_exec import PodConn, SshExecutor
 from . import store
 
 __all__ = [
-    "Agent", "Candidate", "StubAgent", "solution_hash", "stub_agents",
+    "Agent", "Candidate", "ReviewVerdict", "StubAgent", "solution_hash", "stub_agents",
     "CliAgent", "CliSpec", "SPECS", "make_agents",
     "Config", "Perspective", "Tier", "default_config",
     "RunContext",
@@ -46,7 +46,7 @@ __all__ = [
     "bootstrap", "harness_ref", "solve_on_gpu",
     "map_traces_to_result", "pod_harness", "solution_to_harness_json", "traces_from_jsonl",
     "KnowledgeStore",
-    "exemplar_first", "reference_seed", "run_fleet", "solve_problem",
+    "exemplar_first", "pick_reviewer", "reference_seed", "run_fleet", "solve_problem",
     "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
     "PodConn", "SshExecutor",
     "store",

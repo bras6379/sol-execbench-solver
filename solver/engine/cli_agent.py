@@ -24,7 +24,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from .agent import Candidate, solution_hash
+from .agent import Candidate, ReviewVerdict, solution_hash
 from .config import Config, Perspective
 
 _HELPERS = Path(__file__).resolve().parent.parent / "agent_helpers"
@@ -36,6 +36,7 @@ KERNELS = "kernel.*"
 F_STRATEGY = "strategy.txt"
 F_DESIGN = "design.md"
 F_HANDOFF = "handoff.md"
+F_REVIEW = "review.md"
 
 
 @dataclass
@@ -107,6 +108,17 @@ _PLAN = (
     "(kernel.py::run); a mismatch scores zero. Any imports (triton, torch) go in that\n"
     "file. Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate only\n"
     "when needed.\n"
+    "CORRECTNESS — over a third of candidates fail here, so check these BEFORE you\n"
+    "consider the kernel done: (1) never mix a .py and a .cu/.cpp source file in one\n"
+    "solution — pick ONE language; (2) grid/block launch dims and bounds checks must\n"
+    "cover every element for EVERY graded shape in workloads.md, not just the common\n"
+    "case — an out-of-bounds index is the #1 failure mode; (3) match the reference's\n"
+    "reduction order, masking, and accumulation dtype exactly (fp32 accumulate unless\n"
+    "the reference doesn't) — silent numerical drift fails the tolerance gate; (4) the\n"
+    "output shape/dtype/device must exactly match what reference.py returns; (5) never\n"
+    "use threading, monkey-patch torch.cuda.Event.elapsed_time, or wrap the entry\n"
+    "function body in try/except — these are rejected as reward-hacking, not scored.\n"
+    "Re-read your kernel against this list before finishing.\n"
     "Also write handoff.md: 1-2 sentences naming the HIGHER-CEILING idea you did NOT\n"
     "ship this round and the trigger to try it (e.g. 'if this only ties the baseline,\n"
     "switch to a radix-sort + atomic-free segmented reduction that writes output once').\n"
@@ -130,6 +142,33 @@ _DESIGN = (
     "(kb/README.md index; optimization-recipe.md, profiling-guide.md, b200-hardware.md)\n"
     "for the hardware limits and the optimization ladder. Write a short markdown design\n"
     "(op graph, per-shape roofline, 3 ranked approaches) to a file named design.md."
+)
+_REVIEW = (
+    "You are a SECOND, INDEPENDENT reviewer for a GPU kernel about to be sent to a real\n"
+    "B200 for grading — a rented, single-flight GPU, so a bad kernel wastes real GPU\n"
+    "time for the whole fleet (a hang can burn 10 minutes). You did NOT write this\n"
+    "kernel; read it with fresh, skeptical eyes.\n"
+    "reference.py is the ground truth it must match; workloads.md lists the EXACT\n"
+    "graded shapes/tolerances; definition.json is the spec. CONTEXT.md has this\n"
+    "problem's history (what's already been tried and failed) if useful. The kb/\n"
+    "directory is the same B200 knowledge base the writer had (kb/README.md index) —\n"
+    "check it for KNOWN correctness pitfalls specific to this op's technique (e.g. a\n"
+    "documented Triton masking gotcha, a CUDA-graph static-buffer trap) before you\n"
+    "flag something as a guess.\n"
+    "Read the kernel file(s) line by line against reference.py and workloads.md. Look\n"
+    "specifically for: (1) mixed C++/Python source files (instant reject); (2) the\n"
+    "entry function's name/params not matching reference.py's `run` exactly; (3)\n"
+    "grid/block launch config or bounds checks that don't cover every graded shape in\n"
+    "workloads.md (the #1 real failure mode — trace through the actual numbers); (4)\n"
+    "reduction order / masking / accumulation dtype that would silently drift from the\n"
+    "reference's numerics; (5) output shape/dtype mismatches; (6) threading, timer\n"
+    "monkey-patching, or try/except around the entry body (reward-hack rejects).\n"
+    "You have NO GPU either — this is a careful READ, not an execution test.\n"
+    "Write your verdict to review.md in EXACTLY this format: the first line is either\n"
+    "'VERDICT: SHIP' or 'VERDICT: REVISE', and if REVISE, followed by a markdown bullet\n"
+    "list of the SPECIFIC issues found (name the exact line/shape/variable — 'looks\n"
+    "risky' is not actionable). Ship if you find no CONCRETE bug — do not revise purely\n"
+    "on style or a hunch. Write nothing else; only the review.md file."
 )
 
 
@@ -221,6 +260,21 @@ class CliAgent:
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
                          trajectory=str(wd / "trajectory.jsonl"))
+
+    async def review(self, cand: Candidate, ctx) -> ReviewVerdict:
+        """Pre-GPU code review: an INDEPENDENT (agent,model) — never the one that
+        wrote `cand` — reads the kernel against reference.py + workloads.md and
+        judges ship/revise before a single GPU eval is spent."""
+        wd = self._workdir(getattr(ctx, "task_id", ""), f"review-{cand.cand_id}-{self._seq}")
+        self._seq += 1
+        (wd / "CONTEXT.md").write_text(_context_md(cand, ctx))
+        self._write_problem(wd, getattr(ctx, "task_id", ""))
+        self._write_kb(wd)                     # same knowledge base the writer consulted
+        for s in (cand.solution or {}).get("sources", []):
+            (wd / s["path"]).write_text(s.get("content", ""))
+        await self._run(wd, _REVIEW)
+        f = wd / F_REVIEW
+        return _parse_review(f.read_text() if f.exists() else "", reviewer=f"{self.spec.name}:{self.model}")
 
     # ---- helpers ----
     def _workdir(self, key, sub: str) -> Path:
@@ -371,6 +425,12 @@ def _context_md(parent, ctx) -> str:
              "is in parentheses.", ""]
     if parent is not None and getattr(parent, "solution", None):
         lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
+    critique = getattr(ctx, "review_critique", None)
+    if critique:
+        lines += ["", "## Pre-submission code review — FIX these before this ships to the GPU",
+                  "An independent reviewer found concrete issues in the kernel you're improving on.",
+                  "Fix EVERY issue below; do not ignore one because you're focused on speed:",
+                  critique.strip()]
     # Coach card first — the cross-run reflection is the highest-signal directive
     # (you are stuck / here's what's been tried / where the loss actually is).
     card = getattr(ctx, "reflection", None)
@@ -422,6 +482,18 @@ def _context_md(parent, ctx) -> str:
             if detail:
                 lines.append(f"    → {detail}")
     return "\n".join(lines) + "\n"
+
+
+def _parse_review(text: str, *, reviewer: str) -> ReviewVerdict:
+    """Parse review.md's fixed format. Fails OPEN (verdict=ship) on anything
+    malformed/missing — a reviewer that doesn't follow the format must never
+    permanently block a candidate from ever reaching the GPU."""
+    lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
+    if not lines or not lines[0].upper().startswith("VERDICT:"):
+        return ReviewVerdict(verdict="ship", reviewer=reviewer)
+    verdict = "revise" if "REVISE" in lines[0].upper() else "ship"
+    issues = [ln.lstrip("-* ").strip() for ln in lines[1:] if ln.lstrip("-* ").strip()]
+    return ReviewVerdict(verdict=verdict, issues=issues, reviewer=reviewer)
 
 
 def make_agents(cfg: Config, specs: dict[str, CliSpec] = SPECS, **kwargs) -> dict:

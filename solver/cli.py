@@ -190,6 +190,7 @@ def _cmd_solve(args) -> None:
             epsilon=0.02, max_iterations=(big if tl else args.max_iters),
             max_gpu_evals=(big if tl else args.max_evals), time_limit_s=tl,
             verify_runs=args.verify_runs, agent_fail_limit=args.agent_fail_limit,
+            review_enabled=args.review, review_max_rounds=args.review_max_rounds,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
@@ -576,6 +577,19 @@ def main(argv: list[str] | None = None) -> None:
                          help="consecutive plan failures before a perspective is circuit-broken and "
                               "skipped — a dead agent (e.g. Claude/GPT out of credits) stops being used "
                               "and the run downgrades to the healthy models in the pool")
+    p_solve.add_argument("--review", dest="review", action="store_true", default=True,
+                         help="(default on) pre-GPU code review: an INDEPENDENT model (never the writer) "
+                              "reads the kernel against reference.py + workloads.md and judges ship/revise "
+                              "before a single GPU eval is spent; on revise, the same writer gets the "
+                              "critique back for a repair turn and the cycle repeats (bounded by "
+                              "--review-max-rounds) — catches the ~37%% of candidates that fail correctness "
+                              "for free instead of burning a GPU eval (up to the full timeout on a hang)")
+    p_solve.add_argument("--no-review", dest="review", action="store_false",
+                         help="skip the pre-GPU review gate — every candidate goes straight to the GPU")
+    p_solve.add_argument("--review-max-rounds", type=int, default=6,
+                         help="safety valve on the review/repair cycle: after this many 'revise' rounds on "
+                              "one candidate, ship it as-is rather than looping forever (never worse than "
+                              "--no-review)")
     p_solve.add_argument("--shuffle", action="store_true",
                          help="randomize problem launch order (seeded) so a --max-concurrency window "
                               "is a RANDOM sample of the id range, not always the lowest ids — fairer "

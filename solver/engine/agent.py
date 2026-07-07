@@ -31,6 +31,22 @@ class Candidate:
     trajectory: str | None = None       # path to the persisted agent trajectory (jsonl)
 
 
+@dataclass
+class ReviewVerdict:
+    """A pre-GPU code review's verdict on a candidate — read the kernel against
+    the reference + graded shapes and judge whether it's worth a GPU eval."""
+    verdict: str                        # "ship" | "revise"
+    issues: list[str] = field(default_factory=list)
+    reviewer: str = ""                  # the Perspective that produced this verdict
+
+    @property
+    def ship(self) -> bool:
+        return self.verdict == "ship"
+
+    def issues_text(self) -> str:
+        return "\n".join(f"- {i}" for i in self.issues)
+
+
 def solution_hash(solution: dict) -> str:
     """Stable content hash — the novelty gate's identity (stands in for the
     harness's `Solution.hash()` until the real Solution model is wired)."""
@@ -43,6 +59,7 @@ class Agent(Protocol):
 
     async def design(self, task_id: int) -> str: ...
     async def plan(self, parent: Any, ctx: Any) -> Candidate: ...
+    async def review(self, cand: Candidate, ctx: Any) -> ReviewVerdict: ...
 
 
 # A planner turns (perspective, parent, ctx) into a *spec* dict the StubAgent
@@ -54,6 +71,10 @@ class Agent(Protocol):
 #   handoff: str               higher-ceiling idea not shipped (→ playbook)
 Spec = dict
 Planner = Callable[[Perspective, Any, Any], Spec]
+# A reviewer turns (perspective, candidate, ctx) into a ReviewVerdict. None (the
+# default) means "always ship" — existing tests that don't exercise review are
+# unaffected.
+ReviewFn = Callable[[Perspective, Candidate, Any], "ReviewVerdict"]
 
 
 class StubAgent:
@@ -71,15 +92,24 @@ class StubAgent:
         *,
         design_text: str = "stub design",
         raise_on: Callable[["StubAgent", Any, Any], bool] | None = None,
+        reviewer: ReviewFn | None = None,
     ) -> None:
         self.perspective = perspective
         self._planner = planner
         self._design_text = design_text
         self._raise_on = raise_on
+        self._reviewer = reviewer
         self.calls = 0
+        self.review_calls = 0
 
     async def design(self, task_id: int) -> str:
         return self._design_text
+
+    async def review(self, cand: Candidate, ctx: Any) -> ReviewVerdict:
+        self.review_calls += 1
+        if self._reviewer is None:
+            return ReviewVerdict(verdict="ship", reviewer=str(self.perspective))
+        return self._reviewer(self.perspective, cand, ctx)
 
     async def plan(self, parent: Any, ctx: Any) -> Candidate:
         self.calls += 1

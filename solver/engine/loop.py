@@ -66,13 +66,39 @@ def _persist_reference(runs_dir: str | Path, task_id: int, problems_dir: str | P
 
 def _default_check(solution: dict, task_id: int) -> tuple[bool, list[str]]:
     """Stub gate: honour the agent's `__invalid__` marker and reject an empty
-    Solution (a CLI agent that wrote no kernel). The real gate wraps
-    `solver.check.check_solution` against the problem definition."""
+    Solution (a CLI agent that wrote no kernel)."""
     if solution.get("__invalid__"):
         return False, ["stub: marked invalid"]
     if "sources" in solution and not solution.get("sources"):
         return False, ["no source files produced"]
     return True, []
+
+
+def default_check_fn(problems_dir: str | Path) -> CheckFn:
+    """The real pre-GPU gate: `_default_check`'s cheap markers, THEN the static
+    schema/DPS-signature/reward-hack checker (`solver.bench.check`) against the
+    exact JSON the harness would receive. Pure Python, no GPU — catches malformed
+    solutions (wrong entry signature, mixed C++/Python sources, reward-hack
+    patterns) before a single GPU eval is spent. Fails OPEN (never blocks a run)
+    if the check itself can't run, e.g. a test solution with no real `sources`."""
+    from ..bench.check import check_solution
+    from .harness import solution_to_harness_json
+    problems_dir = Path(problems_dir)
+
+    def check(solution: dict, task_id: int) -> tuple[bool, list[str]]:
+        ok, errs = _default_check(solution, task_id)
+        if not ok:
+            return ok, errs
+        try:
+            harness_sol = solution_to_harness_json(solution, task_id, problems_dir)
+            defn_path = problems_dir / str(task_id) / "definition.json"
+            definition = json.loads(defn_path.read_text()) if defn_path.is_file() else None
+        except Exception:
+            return True, []                            # can't build a real check → don't block
+        report = check_solution(harness_sol, definition)
+        return report.ok, report.errors
+
+    return check
 
 
 def _statuses(result: EvalResult) -> list[str]:
@@ -123,6 +149,16 @@ def _failure_detail(result: EvalResult) -> str:
              for err, idxs in sorted(by_err.items(), key=lambda kv: -len(kv[1]))]
     tail = f". PASSED: #{_fmt_idxs(passed)}" if passed else " (ALL workloads failed)"
     return f"{len(failed)}/{len(pw)} workloads FAILED — " + "; ".join(parts) + tail
+
+
+def pick_reviewer(perspectives: list[Perspective], writer: Perspective, key: str) -> Perspective:
+    """Pick a reviewer DIFFERENT from the writer — cross-model review catches blind
+    spots a model has about its own code. Deterministic on `key` (e.g. a per-round
+    seed) so a resumed run reproduces the same reviewer for the same round; falls
+    back to the writer itself only when it's the sole perspective in the pool."""
+    others = [p for p in perspectives if p != writer]
+    pool = others or [writer]
+    return random.Random(key).choice(pool)
 
 
 async def _reverify(ctx: RunContext, executor: Executor, task_id: int, cid: str,
@@ -181,7 +217,7 @@ async def solve_problem(
     if cfg.time_limit_s:               # wall-clock budget for THIS run (resume gets a fresh one)
         ctx.deadline = time.monotonic() + cfg.time_limit_s
     seeds_fn = seeds_fn or _default_seeds
-    check_fn = check_fn or _default_check
+    check_fn = check_fn or default_check_fn(problems_dir)
 
     # ---- bootstrap (consumes GPU evals; committed by the `bootstrapped` marker) ----
     if ctx.fresh():
@@ -257,6 +293,51 @@ async def solve_problem(
         # strategy strings wrongly threw away real variants (FP16-vs-TF32, tile/warp
         # autotuning) after we'd already paid to generate them. We measure; the
         # frontier decides.
+
+        # ---- pre-GPU code review: an INDEPENDENT model (never the writer) reads the
+        # kernel against reference.py + workloads.md and judges ship/revise BEFORE a
+        # GPU eval is spent — the single-flight GPU makes a bad candidate expensive
+        # (a hang burns the full timeout for the whole fleet). On "revise", the SAME
+        # writer gets the critique back for a repair turn and the cycle repeats —
+        # effectively unlimited, bounded only by review_max_rounds as a safety valve
+        # so one stubborn candidate can't stall the problem forever (it ships as-is
+        # if the cap is hit — never worse than review being off).
+        if cfg.review_enabled:
+            round_n = 0
+            while True:
+                review_persp = pick_reviewer(cfg.perspectives, persp,
+                                             f"{seed}:{task_id}:{cand.cand_id}:{round_n}")
+                try:
+                    verdict = await agents[review_persp].review(cand, ctx)
+                except Exception as exc:
+                    ctx.record("review_error", cand=cand.cand_id, reviewer=str(review_persp),
+                              error=repr(exc)[:200])
+                    break                          # review itself failed → fail open, ship as-is
+                ctx.record("review", cand=cand.cand_id, reviewer=str(review_persp),
+                          verdict=verdict.verdict, issues=verdict.issues, round=round_n)
+                if verdict.ship or round_n >= cfg.review_max_rounds:
+                    break
+                round_n += 1
+                ctx.review_critique = verdict.issues_text()
+                try:
+                    repaired = await agents[persp].plan(cand, ctx)
+                except Exception as exc:
+                    ctx.record("plan_error", agent=persp.agent, model=persp.model,
+                              error=repr(exc)[:200])
+                    break                          # repair failed → ship the last GOOD candidate
+                finally:
+                    ctx.review_critique = None
+                rtok = repaired.tokens or {}
+                ctx.record("plan_done", cand=repaired.cand_id, parent=repaired.parent,
+                          agent=persp.agent, model=persp.model, strategy=repaired.strategy,
+                          solution=repaired.solution, dur_s=0.0, tok_in=(rtok.get("in") or 0),
+                          tok_out=(rtok.get("out") or 0), trajectory=repaired.trajectory,
+                          handoff=repaired.handoff)
+                rok, _rerrs = check_fn(repaired.solution, task_id)
+                ctx.record("check", cand=repaired.cand_id, ok=rok)
+                if not rok:
+                    break                          # repair broke the schema → ship the pre-repair cand
+                cand = repaired
 
         ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
         result = await executor.evaluate(cand.solution, task_id)
