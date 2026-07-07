@@ -111,7 +111,11 @@ async def solve_problem(
     if ctx.fresh():
         ctx.record("run_started", agent=str(cfg.design_model), name=name, family=family)
         _persist_reference(runs_dir, task_id, problems_dir)   # ground truth beside the frontier
-        design = await agents[cfg.design_model].design(task_id)
+        try:
+            design = await agents[cfg.design_model].design(task_id)
+        except Exception as exc:                              # a slow/failed design must not abort
+            design = ""
+            ctx.record("design_error", error=repr(exc)[:200])
         ctx.record("design_done", text=design, dur_s=0.0)
         # sibling seeding (best same-family Solution so far) then the scaffold seed
         seeds = (knowledge.sibling_seed(task_id, family) if knowledge else []) + seeds_fn(task_id)
@@ -137,7 +141,14 @@ async def solve_problem(
         persp = ctx.current_perspective()
         agent = agents[persp]
         parent = ctx.frontier.select(ctx.rng)
-        cand = await agent.plan(parent, ctx)
+        try:
+            cand = await agent.plan(parent, ctx)
+        except Exception as exc:
+            # agent timed out / wrote no kernel: skip THIS iteration, keep the
+            # problem's frontier, advance to the next perspective. Never abort.
+            ctx.record("plan_error", agent=persp.agent, model=persp.model, error=repr(exc)[:200])
+            ctx.record("iter", n=ctx.iters, outcome="agent_error")
+            continue
 
         is_dup_hash = cand.cand_id in ctx.seen
         tok = cand.tokens or {}
@@ -155,7 +166,10 @@ async def solve_problem(
             ctx.record("novelty", cand=cand.cand_id, verdict="duplicate")
             ctx.record("iter", n=ctx.iters, outcome="duplicate")
             continue
-        verdict_nov = await agent.judge(cand, parent, ctx.frontier)
+        try:
+            verdict_nov = await agent.judge(cand, parent, ctx.frontier)
+        except Exception:
+            verdict_nov = "materially-new"      # a judge failure must not drop a real candidate
         ctx.record("novelty", cand=cand.cand_id, verdict=verdict_nov)
         if verdict_nov != "materially-new":
             ctx.record("iter", n=ctx.iters, outcome="duplicate")
@@ -173,7 +187,10 @@ async def solve_problem(
                  problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
                  agent=persp.agent, model=persp.model, parent=cand.parent,
                  verdict=verdict, trajectory=cand.trajectory)
-        await agent.reflect(cand, result, verdict)
+        try:
+            await agent.reflect(cand, result, verdict)
+        except Exception:
+            pass                                # reflection is best-effort; never abort on it
         ctx.record("reflect_done", cand=cand.cand_id, dur_s=0.0)
         ctx.record("iter", n=ctx.iters, outcome=verdict)
 

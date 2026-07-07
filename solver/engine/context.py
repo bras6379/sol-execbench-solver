@@ -116,6 +116,13 @@ class RunContext:
             self.design = e.get("text")
         elif ev == "bootstrapped":
             self.bootstrapped = True
+        elif ev == "plan_error":
+            # an agent call failed (e.g. timed out) — advance exactly like a plan
+            # so the loop moves on (next perspective, counts toward the cap) and the
+            # problem keeps its frontier instead of aborting.
+            self.iters += 1
+            self.planned_since_gain += 1
+            self.cursor += 1
         elif ev == "plan_done":
             self.iters += 1
             self.planned_since_gain += 1

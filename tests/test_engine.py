@@ -240,15 +240,19 @@ def test_round_robin_covers_pool_before_escalation(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
-# test 6 — crash isolation
+# test 6 — agent errors are non-fatal (a timeout skips the iteration, keeps the
+# problem), and the fleet stays isolated
 # --------------------------------------------------------------------------- #
-def test_crash_isolation(tmp_path):
+def test_agent_error_is_nonfatal(tmp_path):
     c = one_tier(max_iterations=3, plateau_cycles=999, escalate_ceiling=1.1)
     agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}),
                          raise_on=lambda self, parent, ctx: ctx.task_id == 2)
     run(run_fleet([1, 2, 3], StubExecutor(), agents, c, runs_dir=tmp_path))
-    assert "solver_error" in events(tmp_path / "2" / "journal.jsonl")
-    for good in (1, 3):
+    ev2 = events(tmp_path / "2" / "journal.jsonl")
+    assert "plan_error" in ev2 and "solver_error" not in ev2   # skipped, NOT aborted
+    assert "terminated" in ev2                                 # still finished cleanly
+    assert "accept" in ev2                                     # its seed frontier survived
+    for good in (1, 3):                                        # other problems unaffected
         evs = events(tmp_path / str(good) / "journal.jsonl")
         assert "terminated" in evs and "solver_error" not in evs
 

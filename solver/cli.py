@@ -435,7 +435,9 @@ def main(argv: list[str] | None = None) -> None:
                          help="M: full pool-cycles with no ε-gain before escalating a tier")
     p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
     p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
-    p_solve.add_argument("--timeout", type=float, default=600.0, help="per agent-call timeout (s)")
+    p_solve.add_argument("--timeout", type=float, default=1800.0,
+                         help="per agent-call timeout (s); a timeout now skips the iteration, "
+                              "not the whole problem")
     p_solve.add_argument("--fake-scores", action="store_true",
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,

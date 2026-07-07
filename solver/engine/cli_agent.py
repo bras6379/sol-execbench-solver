@@ -71,7 +71,10 @@ _PLAN = (
     "You are optimizing a GPU kernel for NVIDIA B200 (SOL-ExecBench).\n"
     "reference.py is the PyTorch reference you must stay numerically equivalent to;\n"
     "definition.json is the spec; DESIGN.md and CONTEXT.md hold the plan and prior\n"
-    "attempts. Write your optimized implementation to a file named kernel.py or\n"
+    "attempts. The kb/ directory is a B200 optimization knowledge base (start at\n"
+    "kb/README.md; e.g. optimization-recipe.md, profiling-guide.md, b200-hardware.md,\n"
+    "fusion-patterns.md) — consult the files relevant to this op before you write.\n"
+    "Write your optimized implementation to a file named kernel.py or\n"
     "kernel.cu (one language), and a one-line summary of the approach to strategy.txt.\n"
     "CONTRACT: the kernel file MUST define a top-level function named `run` with the\n"
     "SAME parameter names and order as reference.py's `run`, and it MUST RETURN the\n"
@@ -81,9 +84,11 @@ _PLAN = (
     "when needed. Do not print the code — only write the files."
 )
 _DESIGN = (
-    "Analyze reference.py and definition.json for NVIDIA B200. Write a short markdown\n"
-    "design (op graph, per-shape roofline memory- vs compute-bound, 3 ranked\n"
-    "approaches) to a file named design.md."
+    "Analyze reference.py and definition.json for NVIDIA B200. Consult the kb/\n"
+    "knowledge base (kb/README.md index; optimization-recipe.md, profiling-guide.md,\n"
+    "b200-hardware.md) for the hardware limits and the optimization ladder. Write a\n"
+    "short markdown design (op graph, per-shape roofline memory- vs compute-bound, 3\n"
+    "ranked approaches) to a file named design.md."
 )
 
 
@@ -140,13 +145,14 @@ class CliAgent:
     """An Agent that drives codex or claude via subprocess."""
 
     def __init__(self, spec: CliSpec, model: str, *, runs_dir: str | Path = "runs",
-                 problems_dir: str | Path = "problems", timeout: float = 600.0,
-                 env: dict | None = None) -> None:
+                 problems_dir: str | Path = "problems", timeout: float = 1800.0,
+                 kb_dir: str | Path = "kb", env: dict | None = None) -> None:
         self.spec = spec
         self.model = model
         self.perspective = Perspective(spec.name, model)
         self.runs_dir = Path(runs_dir)
         self.problems_dir = Path(problems_dir)
+        self.kb_dir = Path(kb_dir)
         self.timeout = timeout
         self.env = {**os.environ, **(env or {})}
         self._seq = 0
@@ -154,6 +160,7 @@ class CliAgent:
     async def design(self, task_id: int) -> str:
         wd = self._workdir(task_id, "design")
         self._write_problem(wd, task_id)
+        self._write_kb(wd)
         await self._run(wd, _DESIGN)
         f = wd / F_DESIGN
         return f.read_text().strip() if f.exists() else "(no design produced)"
@@ -212,6 +219,7 @@ class CliAgent:
         (wd / "DESIGN.md").write_text(getattr(ctx, "design", "") or "")
         (wd / "CONTEXT.md").write_text(_context_md(parent, ctx))
         self._write_problem(wd, getattr(ctx, "task_id", ""))
+        self._write_kb(wd)
         psol = getattr(parent, "solution", None)
         for s in (psol or {}).get("sources", []):     # starting point = the parent's kernel
             (wd / s["path"]).write_text(s.get("content", ""))
@@ -222,6 +230,13 @@ class CliAgent:
             src = pdir / fname
             if src.exists():
                 (wd / fname).write_text(src.read_text())
+
+    def _write_kb(self, wd: Path) -> None:
+        """Drop the B200 optimization knowledge base into the workdir so the
+        agentic CLI can read the recipes/profiling/hardware notes it needs."""
+        if self.kb_dir.is_dir() and not (wd / "kb").exists():
+            shutil.copytree(self.kb_dir, wd / "kb",
+                            ignore=shutil.ignore_patterns("__pycache__", ".*"))
 
     def _collect(self, wd: Path) -> dict:
         files = [f for f in sorted(wd.glob(self.spec.kernels)) if f.is_file()]
