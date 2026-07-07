@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html
+import json
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -296,6 +297,7 @@ padding:5px 9px;border-radius:6px;font-size:12px;opacity:0;transition:opacity .0
 .chip{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;font-weight:600;color:#fff}
 td.strat{white-space:normal;max-width:380px;color:var(--ink2)}
 pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
+pre.traj{font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:70vh;overflow:auto}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
 button.link{background:none;border:none;color:var(--s1);cursor:pointer;font:inherit;padding:0}
 button.link:hover{text-decoration:underline}
@@ -664,33 +666,94 @@ def _code_blocks(p: dict) -> str:
     return "".join(out)
 
 
-def _progression_table(p: dict) -> str:
-    """Solution progression over time: strategy TL;DR + status + score + code link."""
+def _progression_table(p: dict, has_traj: set | None = None) -> str:
+    """Every candidate in order: strategy · agent · LB-est & raw score · kernel &
+    trajectory links. This is the per-problem 'what each agent did + how it scored'."""
     if not p["candidates"]:
         return '<p class="muted">no candidates yet</p>'
+    has_traj = has_traj or set()
     rows = []
     for c in p["candidates"]:
         t = (c["ts"] or "")[11:19]
         chip = (f'<span class="chip" style="background:var(--{_STATUS_CHIP.get(c["status"], "o-dominated")})">'
                 f'{_esc(c["status"])}</span>')
-        score = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
+        raw = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
+        cal = "–" if c.get("sol_score_cal") is None else f"{c['sol_score_cal']:.3f}"
         best = "" if c.get("best_after") is None else f"{c['best_after']:.3f}"
-        code = (f'<button class="link" data-code="{_esc(c["cand"])}">view code</button>'
-                if c.get("solution") else '<span class="muted">–</span>')
+        links = []
+        if c.get("solution"):
+            links.append(f'<button class="link" data-code="{_esc(c["cand"])}">code</button>')
+        if c["cand"] in has_traj:
+            links.append(f'<button class="link" data-code="traj:{_esc(c["cand"])}">trajectory</button>')
+        links_html = " · ".join(links) or '<span class="muted">–</span>'
         rows.append(
             "<tr>"
             f'<td>{t}</td><td>{_esc(c["cand"])}</td><td>{_esc(c.get("model") or "")}</td>'
             f'<td class="strat">{_esc(c.get("strategy") or "")}</td>'
-            f'<td>{chip}</td><td data-v="{c.get("sol_score") or -1}">{score}</td>'
-            f'<td data-v="{c.get("best_after") or -1}">{best}</td><td>{code}</td>'
+            f'<td>{chip}</td>'
+            f'<td data-v="{c.get("sol_score_cal") or -1}"><b>{cal}</b></td>'
+            f'<td data-v="{c.get("sol_score") or -1}">{raw}</td>'
+            f'<td data-v="{c.get("best_after") or -1}">{best}</td><td>{links_html}</td>'
             "</tr>")
     return ('<table class="sortable"><thead><tr><th>time</th><th>cand</th>'
-            "<th>agent</th><th>strategy</th><th>status</th><th>score</th>"
-            "<th>best after</th><th>code</th></tr></thead><tbody>"
+            "<th>agent</th><th>strategy</th><th>status</th><th>LB est</th><th>our SOL</th>"
+            "<th>best after</th><th>view</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
 
 
-def build_detail(p: dict, slot_i: int) -> str:
+def _traj_blocks(p: dict, runs_dir: Path) -> tuple[str, set]:
+    """Agent-trajectory templates (reasoning + tool calls) per candidate, read from
+    runs/<task>/work/<cand>/trajectory.txt. Returns (html, {cands with a trajectory})."""
+    out, have = [], set()
+    wroot = Path(runs_dir) / str(p["task"]) / "work"
+    for c in p["candidates"]:
+        tf = wroot / str(c["cand"]) / "trajectory.txt"
+        if not tf.exists():
+            continue
+        txt = tf.read_text(errors="replace")
+        if len(txt) > 80000:                              # bound the page
+            txt = "…(truncated to last 80k chars)…\n" + txt[-80000:]
+        have.add(c["cand"])
+        out.append(
+            f'<template data-code="traj:{_esc(c["cand"])}" '
+            f'data-title="{_esc(c["cand"])} — trajectory · {_esc(c.get("model") or "")}">'
+            f'<pre class="traj"><code>{_esc(txt)}</code></pre></template>')
+    return "".join(out), have
+
+
+def _submissions_panel(p: dict, runs_dir: Path) -> str:
+    """Real leaderboard submissions for this problem (runs/<task>/submissions.jsonl)."""
+    sf = Path(runs_dir) / str(p["task"]) / "submissions.jsonl"
+    if not sf.exists():
+        return ""
+    subs: dict = {}
+    for line in sf.read_text().splitlines():
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        sid = e.get("submission_id") or e.get("id")
+        if sid is not None:
+            subs.setdefault(sid, {}).update(e)
+    if not subs:
+        return ""
+    rows = []
+    for sid, e in sorted(subs.items()):
+        sc = e.get("sol_score")
+        lat = e.get("latency_ms")
+        fast = f"{e['fast_1_count']}/{e['fast_1_total']}" if e.get("fast_1_total") else "–"
+        rows.append(
+            f"<tr><td>#{sid}</td><td>{_esc(e.get('status', '–'))}</td>"
+            f"<td>{_esc(str(e.get('is_correct', '–')))}</td>"
+            f"<td data-v='{sc or -1}'><b>{'–' if sc is None else f'{sc:.4f}'}</b></td>"
+            f"<td>{'–' if lat is None else f'{lat:.6f}'}</td><td>{fast}</td></tr>")
+    return ('<div class="panel"><h2>Leaderboard submissions (real, not estimate)</h2>'
+            '<table class="sortable"><thead><tr><th>submission</th><th>status</th>'
+            '<th>correct</th><th>SOL score</th><th>latency ms</th><th>fast</th></tr></thead><tbody>'
+            + "".join(rows) + "</tbody></table></div>")
+
+
+def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
     conv = _line_chart(
         [{"label": f"#{p['task']}", "color": _slot(slot_i), "points": p["convergence"]}],
         x_label="GPU evals", right=120) if p["convergence"] else '<p class="muted">no evals yet</p>'
@@ -705,6 +768,8 @@ def build_detail(p: dict, slot_i: int) -> str:
         _tile("wait p50 / p95", f"{_fmt_s(p['wait_p50'])} / {_fmt_s(p['wait_p95'])}"),
         _tile("agent", p["model"] or "–"),
     ])
+    traj_html, has_traj = _traj_blocks(p, runs_dir) if runs_dir else ("", set())
+    subs = _submissions_panel(p, runs_dir) if runs_dir else ""
     modal = ('<div id="modal" class="modal" hidden><div class="modal-card">'
              '<div class="modal-bar"><b id="modal-title"></b>'
              '<button id="modal-x" class="link" aria-label="close">✕ close</button></div>'
@@ -712,10 +777,11 @@ def build_detail(p: dict, slot_i: int) -> str:
     body = f"""
 <div class="tiles">{stats}</div>
 <div class="panel"><h2>Convergence</h2>{conv}</div>
-<div class="panel"><h2>Solution progression — every candidate, in order</h2>
-{_progression_table(p)}</div>
+<div class="panel"><h2>Solution progression — every candidate: agent · score · kernel · trajectory</h2>
+{_progression_table(p, has_traj)}</div>
+{subs}
 <div class="panel"><h2>Iteration outcomes</h2>{_outcomes_svg([p], order)}</div>
-{_code_blocks(p)}{modal}
+{_code_blocks(p)}{traj_html}{modal}
 """
     sub = f'{_esc(p["family"])} · <a href="../index.html">← back to fleet dashboard</a>'
     return _shell(f"#{p['task']} {p['name']}", sub, body, None)
@@ -733,7 +799,7 @@ def render(runs_dir: Path, out_dir: Path, *, refresh: int | None = None) -> Path
 
     order = {p["task"]: i for i, p in enumerate(data["problems"])}
     for p in data["problems"]:
-        (p_dir / f"{p['task']}.html").write_text(build_detail(p, order[p["task"]]))
+        (p_dir / f"{p['task']}.html").write_text(build_detail(p, order[p["task"]], runs_dir))
 
     index = out_dir / "index.html"
     tmp = index.with_suffix(".tmp")
