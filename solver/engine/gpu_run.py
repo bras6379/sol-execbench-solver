@@ -14,6 +14,7 @@ install `run_eval.sh` + config, and rsync only the problems this run needs.
 
 from __future__ import annotations
 
+import asyncio
 import json
 import re
 import time
@@ -112,9 +113,17 @@ async def bootstrap(conn: PodConn, *, problems_dir: str | Path, ids: list[int],
 async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, families, names,
                        provider: PodProvider, spec: PodSpec | None = None,
                        problems_dir: str | Path = "problems", config: dict | None = None,
-                       key: str = "~/.ssh/id_ed25519", max_concurrency: int = 0, log=print) -> None:
-    """Provision → bootstrap → run the fleet on the pod → guaranteed teardown."""
+                       key: str = "~/.ssh/id_ed25519", max_concurrency: int = 0,
+                       max_lifetime_min: float | None = None, log=print) -> None:
+    """Provision → bootstrap → run the fleet on the pod → guaranteed teardown.
+
+    `max_lifetime_min` is a HARD wall-clock cap on total pod uptime (create →
+    terminate, bootstrap included): when hit, the fleet is cancelled and the pod is
+    terminated via the API (the only reliable way to stop RunPod billing). The run
+    is resumable, so a cut-off is safe. Primary cap; a cron backstop reaps the pod
+    even if this process is hard-killed."""
     spec = spec or PodSpec()
+    t_start = time.monotonic()
     async with PodSession(provider, spec) as pod:            # reap → create → (finally) terminate
         log(f"[gpu] pod {pod.id} created; waiting for SSH ...")
         h = await wait_ssh_ready(provider, pod.id)
@@ -124,10 +133,21 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
         await bootstrap(conn, problems_dir=problems_dir, ids=ids, config=config, log=log)
         executor = SshExecutor(conn, problems_dir=problems_dir)
         log(f"[gpu] running fleet over {len(ids)} problem(s) on the B200 ...")
-        await run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
-                        knowledge=knowledge, families=families, names=names,
-                        max_concurrency=max_concurrency)
-        log("[gpu] fleet done — terminating pod")
+        fleet = run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
+                          knowledge=knowledge, families=families, names=names,
+                          max_concurrency=max_concurrency)
+        if max_lifetime_min:
+            remaining = max(1.0, max_lifetime_min * 60 - (time.monotonic() - t_start))
+            log(f"[gpu] hard {max_lifetime_min:.0f}-min pod cap — fleet has ~{remaining/60:.0f} min "
+                f"before forced teardown")
+            try:
+                await asyncio.wait_for(fleet, timeout=remaining)
+                log("[gpu] fleet done — terminating pod")
+            except asyncio.TimeoutError:
+                log(f"[gpu] {max_lifetime_min:.0f}-min cap reached — cancelling fleet + terminating pod")
+        else:
+            await fleet
+            log("[gpu] fleet done — terminating pod")
 
 
 async def _sleep(s: float) -> None:

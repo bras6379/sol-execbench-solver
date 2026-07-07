@@ -210,7 +210,8 @@ def _cmd_solve(args) -> None:
         asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
                                  knowledge=knowledge, families=families, names=names,
                                  provider=RunPodProvider(api), spec=spec, config=hcfg,
-                                 max_concurrency=args.max_concurrency))
+                                 max_concurrency=args.max_concurrency,
+                                 max_lifetime_min=(args.gpu_max_hours * 60 if args.gpu_max_hours else None)))
     else:
         if args.agent != "sim":
             print(f"  (StubExecutor — no GPU scoring; add --gpu for real B200 evaluation)")
@@ -394,6 +395,29 @@ def _cmd_export(args) -> None:
     print(f"\n{len(manifest)} solution(s) -> {out}/  ·  mean best {mean:.3f}  ·  manifest.json written")
 
 
+def _cmd_reap(args) -> None:
+    """Kill switch / cron backstop: terminate EVERY B200 pod this tool created
+    (the `sol-solver` tag) via the RunPod API, so billing stops even if a solve
+    process died uncleanly. Safe to run anytime — no-op if nothing is running."""
+    import asyncio
+    from .engine.pod import PodSpec, RunPodProvider
+    api = os.environ.get("RUNPOD_API_KEY")
+    if not api:
+        raise SystemExit("RUNPOD_API_KEY not set (add it to .env)")
+    tag = args.tag or PodSpec().tag
+    provider = RunPodProvider(api)
+
+    async def go() -> int:
+        pods = await provider.list_tagged(tag)
+        for p in pods:
+            print(f"terminating pod {p.id} (tag {tag}) ...")
+            await provider.terminate(p.id)
+        return len(pods)
+
+    n = asyncio.run(go())
+    print(f"reaped {n} pod(s) with tag {tag!r}")
+
+
 def _cmd_candidates(args) -> None:
     m = _run_metrics(Path(args.runs_dir), args.task)
     for c in m["candidates"]:
@@ -503,6 +527,10 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--gpu-type", default="NVIDIA B200", help="RunPod GPU type id")
     p_solve.add_argument("--gpu-cloud", default="SECURE", choices=["SECURE", "COMMUNITY", "ALL"],
                          help="RunPod cloud type (SECURE supports the public IP we SSH over)")
+    p_solve.add_argument("--gpu-max-hours", type=float, default=None,
+                         help="HARD cap on total B200 pod uptime (hours). When hit, the fleet is "
+                              "cancelled and the pod terminated via the API (stops billing). The run "
+                              "is resumable, so a cut-off is safe. Strongly recommended for real runs")
     p_solve.add_argument("--gpu-iterations", type=int, default=50,
                          help="harness timed iterations per workload (leaderboard uses 50; lower = noisier)")
     p_solve.set_defaults(func=_cmd_solve)
@@ -545,6 +573,10 @@ def main(argv: list[str] | None = None) -> None:
     p_poll.add_argument("--task", type=int, default=None, help="poll the latest submission for this task")
     p_poll.add_argument("--runs-dir", default="runs")
     p_poll.set_defaults(func=_cmd_poll)
+
+    p_reap = sub.add_parser("reap", help="terminate all B200 pods this tool created (kill switch / cron backstop)")
+    p_reap.add_argument("--tag", default=None, help="pod tag to reap (default: sol-solver)")
+    p_reap.set_defaults(func=_cmd_reap)
 
     p_export = sub.add_parser("export", help="collect each problem's best_solution.json into a submission dir")
     p_export.add_argument("--runs-dir", default="runs")
