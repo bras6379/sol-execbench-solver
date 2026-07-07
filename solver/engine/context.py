@@ -33,6 +33,7 @@ class RunContext:
                  *, seed: int = 0) -> None:
         self.task_id = task_id
         self.cfg = cfg
+        self.seed = seed
         self.runs_dir = Path(runs_dir)
         self.path = self.runs_dir / str(task_id) / "journal.jsonl"
         self.journal = journal_mod.Journal(self.path, task_id)
@@ -52,6 +53,8 @@ class RunContext:
         self.sibling_hint: dict | None = None       # best same-op sibling's kernel to adapt (transfer)
         self.playbook: list[dict] = []              # accepted candidates' handoffs = reserve plays
         self._playbook_seen: set[str] = set()       # dedup playbook entries by handoff text
+        self.disabled: set[str] = set()             # perspectives circuit-broken (repeated agent failures)
+        self._fail_streak: dict[str, int] = {}      # consecutive plan failures per perspective
         self._pending: dict[str, dict] = {}
         self._replaying = False
 
@@ -64,8 +67,41 @@ class RunContext:
     def pool_size(self) -> int:
         return len(self.tier.pool)
 
+    def _pool_order(self) -> list:
+        """A per-problem *shuffled* permutation of the current tier's pool —
+        deterministic (seeded by seed+task_id+tier), so replay is identical, but
+        DIFFERENT across problems, so the fleet doesn't march in lockstep and hammer
+        one provider (e.g. Claude/GPT) simultaneously. Round-robin over this
+        permutation still covers every model once per cycle (plateau logic intact)."""
+        pool = list(self.tier.pool)
+        random.Random(f"{self.seed}:{self.task_id}:{self.tier_idx}").shuffle(pool)
+        return pool
+
     def current_perspective(self):
-        return self.tier.pool[self.cursor % self.pool_size]
+        """Next perspective in the shuffled rotation, skipping any that have been
+        circuit-broken (disabled). None ⇒ every model in this tier is dead."""
+        order = self._pool_order()
+        n = len(order)
+        for i in range(n):
+            p = order[(self.cursor + i) % n]
+            if str(p) not in self.disabled:
+                return p
+        return None
+
+    def route_around_dead_tier(self) -> bool:
+        """The current tier has no live agent (all circuit-broken). Switch to any
+        OTHER tier that still has one — this is how a run gracefully **downgrades**
+        when premium agents (Claude/GPT) run out of credits and only the cheap
+        providers remain. Returns False if no tier anywhere has a live agent."""
+        for idx, tier in enumerate(self.cfg.tiers):
+            if idx == self.tier_idx:
+                continue
+            live = next((p for p in tier.pool if str(p) not in self.disabled), None)
+            if live is not None:
+                self.record("agent_changed", tier=idx, agent=live.agent, model=live.model,
+                            trigger="route")
+                return True
+        return False
 
     # ---- lifecycle predicates ----
     def fresh(self) -> bool:
@@ -127,16 +163,23 @@ class RunContext:
         elif ev == "bootstrapped":
             self.bootstrapped = True
         elif ev == "plan_error":
-            # an agent call failed (e.g. timed out) — advance exactly like a plan
-            # so the loop moves on (next perspective, counts toward the cap) and the
-            # problem keeps its frontier instead of aborting.
+            # an agent call failed (e.g. timed out, or no credits) — advance exactly
+            # like a plan so the loop moves on (next perspective, counts toward the
+            # cap) and the problem keeps its frontier instead of aborting. Track the
+            # failure streak: repeated failures circuit-break the perspective so a
+            # dead agent (e.g. Claude/GPT out of credits) stops being scheduled.
             self.iters += 1
             self.planned_since_gain += 1
             self.cursor += 1
+            persp = f"{e.get('agent', '')}:{e.get('model', '')}"
+            self._fail_streak[persp] = self._fail_streak.get(persp, 0) + 1
+            if self._fail_streak[persp] >= self.cfg.agent_fail_limit:
+                self.disabled.add(persp)
         elif ev == "plan_done":
             self.iters += 1
             self.planned_since_gain += 1
             self.cursor += 1
+            self._fail_streak[f"{e.get('agent', '')}:{e.get('model', '')}"] = 0   # a success clears the streak
             cid = e.get("cand")
             if cid:
                 self.seen.add(cid)
@@ -179,7 +222,9 @@ class RunContext:
                 self.planned_since_gain = 0
                 self._playbook_add(cid)          # bank the handoff (live and replay alike)
         elif ev == "agent_changed":
-            if e.get("trigger") == "escalation":
+            # escalation (plateau → stronger tier) OR route (current tier's agents all
+            # circuit-broken → switch to a tier that still has a live one).
+            if e.get("trigger") in ("escalation", "route"):
                 self.tier_idx = int(e.get("tier", self.tier_idx + 1))
                 self.cursor = 0
                 self.planned_since_gain = 0

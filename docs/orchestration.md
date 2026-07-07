@@ -271,12 +271,23 @@ the stubborn tail climbs.
   interface, and a pool mixes model **families** on purpose (Anthropic,
   OpenAI, DeepSeek, Zhipu-GLM, Moonshot-Kimi, Qwen) — different training
   corpora surface different kernel tricks.
-- **Within a tier: round-robin the pool** (deterministic, by iteration index →
-  replay-safe). Consecutive candidates for the same problem come from
-  different models/agents, all feeding the *same* per-shape frontier — so
-  **diversity is continuous**, not just something that happens at escalation.
-  `plan_done{agent, model}` tags each candidate, so the dashboard shows exactly
-  which model produced which win, per family.
+- **Within a tier: rotate the pool in a per-problem *shuffle*** (deterministic —
+  seeded by seed+task_id — so replay is identical, but a *different* permutation
+  per problem, so the fleet doesn't march in lockstep and hammer one provider
+  (Claude/GPT) at the same moment; it still covers every model once per cycle).
+  Consecutive candidates for the same problem come from different models/agents,
+  all feeding the *same* per-shape frontier — so **diversity is continuous**, not
+  just something that happens at escalation. `plan_done{agent, model}` tags each
+  candidate, so the dashboard shows exactly which model produced which win.
+- **Graceful downgrade (dead agents).** A perspective whose `plan` fails
+  `agent_fail_limit` times in a row (default 3 — e.g. Claude/GPT out of credits)
+  is **circuit-broken** and skipped for the rest of the run (state reconstructed
+  from journaled `plan_error`s → replay-safe). The shuffle then rotates only the
+  live models. If a whole tier goes dark, `route_around_dead_tier` switches to any
+  tier that still has a live agent (`agent_changed{trigger:"route"}`); if none
+  anywhere, the problem ends `terminated{reason:"agents-unavailable"}`. So a pool
+  that mixes premium + cheap models automatically **downgrades to the cheap
+  providers** when the premium ones run dry, instead of stalling.
 - **Escalate on a *tier* plateau — but only while headroom remains.** The
   plateau window is **M full round-robin cycles** (one candidate per pool
   member) with no ε-gain, so it scales with pool size and every model gets a
@@ -566,10 +577,11 @@ flaky{cand, attempt} · accept{cand, verdict, best, best_cal, frontier} ·
 agent_changed{tier, agent, model, trigger} · terminated{reason}`
 
 `plan_done{agent, model}` tags every candidate with the perspective that made
-it (it rotates within a tier's pool). `agent_changed` fires only at a **tier
-boundary** — a within-run tier escalation (`trigger:"escalation"`) or a
-cross-session swap (`trigger:"resume"`) — and *that* is what resets the plateau
-counter, so the dashboard can show which tier produced which candidate and
+it (it rotates within a tier's pool, per-problem shuffled). `agent_changed` fires
+at a **tier boundary** — a within-run escalation (`trigger:"escalation"`), a route
+around a dead tier (`trigger:"route"`, §6b), or a cross-session swap
+(`trigger:"resume"`) — and *that* is what resets the plateau counter, so the
+dashboard can show which tier produced which candidate and
 which one broke a plateau (§6b).
 
 `plan_done.strategy` is a one-line TL;DR of the approach and

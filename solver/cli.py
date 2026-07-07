@@ -186,7 +186,7 @@ def _cmd_solve(args) -> None:
             plateau_cycles=(big if tl else args.plateau_cycles), escalate_ceiling=0.9,
             epsilon=0.02, max_iterations=(big if tl else args.max_iters),
             max_gpu_evals=(big if tl else args.max_evals), time_limit_s=tl,
-            verify_runs=args.verify_runs,
+            verify_runs=args.verify_runs, agent_fail_limit=args.agent_fail_limit,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
@@ -480,6 +480,10 @@ def main(argv: list[str] | None = None) -> None:
                          help="re-run a would-be frontier entry this many times (fresh evals, same "
                               "grader config) and reject if any run disagrees on correctness; catches "
                               "flaky/racy kernels that pass locally but fail the leaderboard. 1=off, 2-3=harden")
+    p_solve.add_argument("--agent-fail-limit", type=int, default=3,
+                         help="consecutive plan failures before a perspective is circuit-broken and "
+                              "skipped — a dead agent (e.g. Claude/GPT out of credits) stops being used "
+                              "and the run downgrades to the healthy models in the pool")
     p_solve.add_argument("--timeout", type=float, default=1800.0,
                          help="per agent-call timeout (s); a timeout now skips the iteration, "
                               "not the whole problem")

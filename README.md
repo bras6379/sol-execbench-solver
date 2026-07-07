@@ -81,8 +81,23 @@ solver solve --gpu 1-10 \
 
 - **Resumes from journals** — re-running the same ids continues where it left off,
   keeping every frontier (kill the process to pause).
-- **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier round-robins its
-  models; multiple tiers escalate cheap→strong on plateau.
+- **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier shuffles its
+  models per problem; multiple tiers escalate cheap→strong on plateau.
+- **Cheap models (cost).** Claude/GPT are pricey, so any provider with an
+  Anthropic-compatible endpoint runs through the same `claude` CLI via env — no code
+  change. `openrouter/<model>` (one key, every model) or direct `glm`/`deepseek`/`kimi`.
+  A GLM-5.2 plan is ~1/6th the cost of GPT-5.5; DeepSeek less. Mix them in one pool:
+  ```bash
+  solver solve --gpu 1-10 --tier all=claude/opus,codex/gpt-5.5,\
+    openrouter/z-ai/glm-5.2,openrouter/deepseek/deepseek-v4-pro,openrouter/moonshotai/kimi-k2.7-code
+  ```
+  Keys go in `.env` (`OPENROUTER_API_KEY`, or `ZAI_API_KEY`/`DEEPSEEK_API_KEY`/`MOONSHOT_API_KEY`).
+- **Load-spreading + graceful downgrade.** A pool is rotated in a **per-problem shuffle**
+  (deterministic → replay-safe, but different across problems) so the fleet doesn't hit
+  one provider in lockstep. An agent that keeps failing (e.g. out of credits) is
+  **circuit-broken** after `--agent-fail-limit` (default 3) consecutive failures and
+  skipped — the run downgrades to the healthy models automatically; if a whole tier dies
+  it routes to a live one, or ends cleanly (`agents-unavailable`).
 - **`--verify-runs N`** (default 1 = off) — the harness checks correctness for 10 rounds,
   but a rare non-deterministic (racy) kernel can pass locally yet fail the leaderboard's
   single run. With `N>1`, a candidate that would *enter the frontier* is re-run `N−1` more

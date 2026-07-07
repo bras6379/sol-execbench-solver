@@ -310,6 +310,50 @@ def test_round_robin_covers_pool_before_escalation(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
+# fleet load-spreading + graceful downgrade (mixing cheap + premium models)
+# --------------------------------------------------------------------------- #
+def test_pool_order_is_per_problem_shuffle(tmp_path):
+    # one pool, all models: the rotation is a per-problem SHUFFLE — deterministic
+    # (replay-safe) but different across problems, so the fleet doesn't hit one
+    # provider (Claude/GPT) in lockstep. Each order is still a full permutation.
+    from solver.engine.context import RunContext
+    pool = [Perspective(a, "m") for a in ("claude", "gpt", "glm", "deepseek", "kimi")]
+    c = cfg([Tier("all", pool)])
+    twice = [tuple(str(p) for p in RunContext(1, c, tmp_path, seed=0)._pool_order()) for _ in range(2)]
+    assert twice[0] == twice[1]                               # deterministic per problem (replay-safe)
+    orders = {tuple(str(p) for p in RunContext(t, c, tmp_path, seed=0)._pool_order()) for t in range(6)}
+    assert len(orders) > 1                                    # desynchronized across the fleet
+    assert all(sorted(o) == sorted(str(p) for p in pool) for o in orders)   # every model once (coverage)
+
+
+def test_circuit_breaker_disables_dead_agent_and_downgrades(tmp_path):
+    # a dead agent (out of credits → always errors) is circuit-broken after
+    # agent_fail_limit consecutive failures; the healthy model carries the run.
+    from solver.engine.agent import StubAgent
+    dead, good = Perspective("dead", "x"), Perspective("good", "y")
+    c = cfg([Tier("all", [dead, good])], max_iterations=16, plateau_cycles=999,
+            escalate_ceiling=1.1, agent_fail_limit=3)
+    plan = lambda persp, parent, ctx: {"scores": [0.6]}
+    agents = {dead: StubAgent(dead, plan, raise_on=lambda *a: True),
+              good: StubAgent(good, plan)}
+    ctx = run(solve_problem(1, StubExecutor(), agents, c, runs_dir=tmp_path))
+    assert "dead:x" in ctx.disabled and "good:y" not in ctx.disabled
+    assert ctx.frontier.best_score() >= 0.6                   # progressed via the healthy agent
+    assert ctx.terminated_reason != "agents-unavailable"
+
+
+def test_all_agents_dead_terminates_cleanly(tmp_path):
+    from solver.engine.agent import StubAgent
+    dead = Perspective("dead", "x")
+    c = cfg([Tier("all", [dead])], max_iterations=16, plateau_cycles=999,
+            escalate_ceiling=1.1, agent_fail_limit=3)
+    agents = {dead: StubAgent(dead, lambda *a: {"scores": [0.6]}, raise_on=lambda *a: True)}
+    ctx = run(solve_problem(1, StubExecutor(), agents, c, runs_dir=tmp_path))
+    assert "dead:x" in ctx.disabled
+    assert ctx.terminated_reason == "agents-unavailable"
+
+
+# --------------------------------------------------------------------------- #
 # test 6 — agent errors are non-fatal (a timeout skips the iteration, keeps the
 # problem), and the fleet stays isolated
 # --------------------------------------------------------------------------- #

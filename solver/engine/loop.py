@@ -179,6 +179,11 @@ async def solve_problem(
             if not ctx.escalate():
                 break
         persp = ctx.current_perspective()
+        if persp is None:                          # every agent in this tier is dead (circuit-broken)
+            if not ctx.route_around_dead_tier():   # → downgrade to a tier that still has a live agent
+                ctx.record("terminated", reason="agents-unavailable")
+                break
+            persp = ctx.current_perspective()
         agent = agents[persp]
         parent = ctx.frontier.select(ctx.rng)
         try:

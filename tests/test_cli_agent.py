@@ -12,6 +12,8 @@ import asyncio
 import sys
 from types import SimpleNamespace
 
+import pytest
+
 from solver import journal as journal_mod
 from solver.engine import (
     CliAgent,
@@ -80,6 +82,27 @@ def test_plan_writes_files_and_persists_trajectory(tmp_path):
 def test_design_reads_file(tmp_path):
     agent = _agent(_fake_spec(tmp_path), tmp_path)
     assert "roofline" in run(agent.design(7))                 # from design.md
+
+
+def test_provider_routing_injects_anthropic_endpoint(monkeypatch, tmp_path):
+    # A cheap provider (OpenRouter/GLM/DeepSeek/Kimi) runs the SAME claude CLI but
+    # routed at its Anthropic-compatible endpoint via env; the real claude spec is
+    # NOT routed (keeps subscription auth) — so a mixed tier ladder stays isolated.
+    from solver.engine.cli_agent import OPENROUTER, CLAUDE
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or-test")
+    a = CliAgent(OPENROUTER, "z-ai/glm-5.2", runs_dir=tmp_path / "r", problems_dir=tmp_path / "p")
+    assert a._provider_env() == {"ANTHROPIC_BASE_URL": "https://openrouter.ai/api",
+                                 "ANTHROPIC_AUTH_TOKEN": "sk-or-test"}
+    assert a.perspective.agent == "openrouter" and a.model == "z-ai/glm-5.2"
+    b = CliAgent(CLAUDE, "opus", runs_dir=tmp_path / "r", problems_dir=tmp_path / "p")
+    assert b._provider_env() == {}                        # real Claude subscription, not routed
+
+
+def test_provider_missing_key_fails_fast(monkeypatch, tmp_path):
+    from solver.engine.cli_agent import DEEPSEEK
+    monkeypatch.delenv("DEEPSEEK_API_KEY", raising=False)
+    with pytest.raises(SystemExit):
+        CliAgent(DEEPSEEK, "deepseek-chat", runs_dir=tmp_path / "r", problems_dir=tmp_path / "p")
 
 
 def test_context_md_renders_reserve_plays():

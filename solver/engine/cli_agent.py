@@ -40,14 +40,23 @@ F_HANDOFF = "handoff.md"
 
 @dataclass
 class CliSpec:
-    """A supported agent CLI (codex or claude). One streaming, write-capable
-    command template; its JSON event schema (`stream`) is parsed for tokens."""
+    """A supported agent CLI. One streaming, write-capable command template; its
+    JSON event schema (`stream`) is parsed for tokens.
+
+    `base_url` + `api_key_env` route the *same* CLI at a different provider: the
+    `claude` CLI speaks the Anthropic Messages protocol, and GLM / DeepSeek / Kimi
+    / OpenRouter all expose an Anthropic-compatible endpoint, so a cheap model is
+    just `ANTHROPIC_BASE_URL` + `ANTHROPIC_AUTH_TOKEN` (per-spec, so a mixed tier
+    ladder — cheap on OpenRouter, strong on the real Claude subscription — keeps
+    each perspective's auth isolated)."""
 
     name: str
     cmd: list[str]                  # {model}/{prompt} substituted; runs with write access + JSON stream
     stream: str                     # event-stream schema: "codex" | "claude"
     kernels: str = KERNELS
     lang: str | None = None
+    base_url: str | None = None     # Anthropic-compatible endpoint (routes the claude CLI elsewhere)
+    api_key_env: str | None = None  # env var holding the provider key → ANTHROPIC_AUTH_TOKEN
 
 
 CODEX = CliSpec(
@@ -56,13 +65,24 @@ CODEX = CliSpec(
          "--skip-git-repo-check", "{prompt}"],
     stream="codex",
 )
-CLAUDE = CliSpec(
-    "claude",  # Claude Code print mode, stream-json events (needs --verbose)
-    cmd=["claude", "-p", "{prompt}", "--model", "{model}",
-         "--output-format", "stream-json", "--verbose", "--dangerously-skip-permissions"],
-    stream="claude",
-)
-SPECS: dict[str, CliSpec] = {"codex": CODEX, "claude": CLAUDE}
+# The Claude Code CLI in print mode + stream-json events. The same command, pointed
+# at an Anthropic-compatible endpoint via base_url, drives cheap third-party models.
+_CLAUDE_CMD = ["claude", "-p", "{prompt}", "--model", "{model}",
+               "--output-format", "stream-json", "--verbose", "--dangerously-skip-permissions"]
+CLAUDE = CliSpec("claude", cmd=_CLAUDE_CMD, stream="claude")   # your real Claude subscription auth
+
+# Cheap providers over the SAME claude CLI (Anthropic-compatible endpoints). The
+# model string comes from `--tier` (e.g. openrouter/z-ai/glm-5.2, deepseek/deepseek-chat).
+OPENROUTER = CliSpec("openrouter", cmd=_CLAUDE_CMD, stream="claude",
+                     base_url="https://openrouter.ai/api", api_key_env="OPENROUTER_API_KEY")
+GLM = CliSpec("glm", cmd=_CLAUDE_CMD, stream="claude",
+              base_url="https://api.z.ai/api/anthropic", api_key_env="ZAI_API_KEY")
+DEEPSEEK = CliSpec("deepseek", cmd=_CLAUDE_CMD, stream="claude",
+                   base_url="https://api.deepseek.com/anthropic", api_key_env="DEEPSEEK_API_KEY")
+KIMI = CliSpec("kimi", cmd=_CLAUDE_CMD, stream="claude",
+               base_url="https://api.moonshot.ai/anthropic", api_key_env="MOONSHOT_API_KEY")
+SPECS: dict[str, CliSpec] = {"codex": CODEX, "claude": CLAUDE, "openrouter": OPENROUTER,
+                             "glm": GLM, "deepseek": DEEPSEEK, "kimi": KIMI}
 
 
 _PLAN = (
@@ -136,7 +156,8 @@ def _parse_tokens(schema: str, raw: str) -> dict:
 
 
 class CliAgent:
-    """An Agent that drives codex or claude via subprocess."""
+    """An Agent that drives a coding CLI (codex, or claude — optionally pointed at a
+    cheap provider's Anthropic-compatible endpoint) via subprocess."""
 
     def __init__(self, spec: CliSpec, model: str, *, runs_dir: str | Path = "runs",
                  problems_dir: str | Path = "problems", timeout: float = 1800.0,
@@ -148,8 +169,20 @@ class CliAgent:
         self.problems_dir = Path(problems_dir)
         self.kb_dir = Path(kb_dir)
         self.timeout = timeout
-        self.env = {**os.environ, **(env or {})}
+        self.env = {**os.environ, **(env or {}), **self._provider_env()}
         self._seq = 0
+
+    def _provider_env(self) -> dict:
+        """Route the claude CLI at a third-party Anthropic-compatible endpoint when
+        the spec names one (GLM / DeepSeek / Kimi / OpenRouter). Fail fast with a
+        clear message if the provider key isn't in the environment (.env)."""
+        if not self.spec.base_url:
+            return {}
+        key = os.environ.get(self.spec.api_key_env or "")
+        if not key:
+            raise SystemExit(f"{self.spec.name} needs {self.spec.api_key_env} set "
+                             f"(add it to .env) to reach {self.spec.base_url}")
+        return {"ANTHROPIC_BASE_URL": self.spec.base_url, "ANTHROPIC_AUTH_TOKEN": key}
 
     async def design(self, task_id: int) -> str:
         wd = self._workdir(task_id, "design")

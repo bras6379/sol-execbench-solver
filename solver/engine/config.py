@@ -45,6 +45,8 @@ class Config:
     time_limit_s: float | None = None             # wall-clock budget per problem (per run); None = off
     verify_runs: int = 1                          # re-run a would-be frontier entry this many times;
                                                   # reject if any run disagrees (catches flaky/racy kernels)
+    agent_fail_limit: int = 3                     # consecutive plan failures before a perspective is
+                                                  # circuit-broken (dead agent, e.g. out of credits) and skipped
     score_target: float | None = None            # optional early stop (off by default)
 
     def __post_init__(self) -> None:
