@@ -48,6 +48,7 @@ class RunContext:
         self.bootstrapped = False
         self.terminated_reason: str | None = None
         self.deadline: float | None = None          # monotonic wall-clock stop (live-only, per run)
+        self.recent_failures: list[dict] = []       # last few INCORRECT attempts (fed back to agents)
         self._pending: dict[str, dict] = {}
         self._replaying = False
 
@@ -197,6 +198,12 @@ class RunContext:
             self.record("reopened", from_reason=self.terminated_reason)
             return True
         return False
+
+    def note_failure(self, strategy: str, reason: str, cand_id: str) -> None:
+        """Remember an INCORRECT attempt so the next agent context can warn against
+        repeating it (live-only; keeps the last few)."""
+        self.recent_failures.append({"strategy": strategy or "", "reason": reason, "cand": cand_id})
+        self.recent_failures = self.recent_failures[-4:]
 
     def accept_candidate(self, cand_id: str) -> str:
         """Live-accept a candidate whose scores are already recorded (exec_done)."""

@@ -74,6 +74,15 @@ def _statuses(result: EvalResult) -> list[str]:
     return [("PASSED" if w.correct else (w.error or "FAILED")) for w in result.per_workload]
 
 
+def _dominant_failure(result: EvalResult) -> str:
+    """The most common failure kind across a candidate's workloads (for feedback)."""
+    from collections import Counter
+    if (result.asi or {}).get("solution_status"):
+        return result.asi["solution_status"]                  # COMPILE_ERROR / REWARD_HACK
+    errs = [w.error for w in result.per_workload if not w.correct and w.error]
+    return Counter(errs).most_common(1)[0][0] if errs else "INCORRECT"
+
+
 def _persist(ctx: RunContext, task_id: int, cid: str, solution: dict | None,
              result: EvalResult, *, runs_dir, problems_dir, family: str, name: str,
              **meta) -> None:
@@ -183,6 +192,8 @@ async def solve_problem(
                    gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
                    sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
                    scores=result.vector(), statuses=_statuses(result))
+        if not result.correct:                              # feed the mistake back to future agents
+            ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id)
         verdict = ctx.accept_candidate(cand.cand_id)
         _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
                  problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,

@@ -286,26 +286,37 @@ class CliAgent:
             pass
 
 
+def _member_cal(m):
+    return getattr(m, "sol_score_cal", None)
+
+
 def _score_note(m) -> str:
-    """`leaderboard-est · raw` for a frontier member (est is the number that ranks
-    you on the board; 0.5 = the optimized-PyTorch baseline, 1.0 = speed-of-light)."""
-    cal = getattr(m, "sol_score_cal", None)
-    return f"{cal:.3f}" if cal is not None else f"{m.mean:.3f}(raw)"
+    """`leaderboard-est (raw N)` — est is the number that ranks you on the board
+    (0.5 = optimized-PyTorch baseline, 1.0 = speed-of-light); raw is our local measure."""
+    cal = _member_cal(m)
+    return f"{cal:.3f} (raw {m.mean:.3f})" if cal is not None else f"{m.mean:.3f} (raw)"
 
 
 def _context_md(parent, ctx) -> str:
     lines = ["# Context", "",
-             "Scores below are the **leaderboard estimate** (0.5 = optimized-PyTorch",
-             "baseline, 1.0 = speed-of-light). Beat 0.5 to score on the board.", ""]
+             "Scores are the **leaderboard estimate** (0.5 = optimized-PyTorch baseline,",
+             "1.0 = speed-of-light). Beat 0.5 to score on the board; the raw local measure",
+             "is in parentheses.", ""]
     if parent is not None and getattr(parent, "solution", None):
-        lines.append("The current best kernel is in this directory's kernel file(s).")
+        lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
         if getattr(parent, "reflection", None):
             lines += ["", "## Reflection on it", parent.reflection]
     fr = getattr(ctx, "frontier", None)
-    members = getattr(fr, "members", None) if fr else None
+    members = list(getattr(fr, "members", None) or []) if fr else []
     if members:
-        lines += ["", "## Frontier (leaderboard-est score · strategy)"]
+        members.sort(key=lambda m: (_member_cal(m) if _member_cal(m) is not None else m.mean),
+                     reverse=True)                                     # best first
+        lines += ["", "## Frontier — best first (leaderboard-est (raw) · strategy)"]
         lines += [f"- {m.cand_id[:8]}  {_score_note(m)}  {m.strategy}" for m in members[:8]]
+    fails = getattr(ctx, "recent_failures", None)
+    if fails:
+        lines += ["", "## Recent FAILED attempts — do NOT repeat these (they were INCORRECT)"]
+        lines += [f"- [{f['reason']}] {f['strategy']}" for f in fails[-4:]]
     return "\n".join(lines) + "\n"
 
 
