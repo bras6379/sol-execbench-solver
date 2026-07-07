@@ -291,9 +291,24 @@ async def run_fleet(
     names: dict[int, str] | None = None,
     max_concurrency: int = 0,
     shuffle: bool = False,
+    reflect_first: bool = False,
+    reflect_every_min: float = 0,
 ) -> None:
     families = families or {}
     names = names or {}
+
+    # Cross-run reflection (the "Coach"): regenerate every problem's reflection.md
+    # coach card from the accumulated journals BEFORE the fleet starts, so a restart
+    # begins with each agent already knowing what's been tried / where it's stuck /
+    # where the loss is. Deterministic + best-effort: never let it abort the run.
+    def _reflect(tag: str) -> None:
+        try:
+            from . import reflection
+            reflection.reflect_all(runs_dir, ids, names=names, log=lambda *_: None)
+        except Exception as exc:
+            print(f"[reflect:{tag}] skipped: {exc!r}")
+    if reflect_first:
+        _reflect("startup")
     # Cap how many problems are ACTIVE at once. Each active problem holds ≤1 agent
     # call in flight (its loop is sequential), so this bounds concurrent agent CLIs
     # + provider streams — the real limit is the laptop and the provider's rate
@@ -327,4 +342,16 @@ async def run_fleet(
     order = exemplar_first(ids, families)
     if shuffle:
         random.Random(seed).shuffle(order)
-    await asyncio.gather(*(guarded(t) for t in order))
+
+    # Optional periodic refresh: rebuild coach cards every N minutes so long runs
+    # keep reflecting on fresh results, not just the startup snapshot.
+    async def _refresher() -> None:
+        while True:
+            await asyncio.sleep(max(30.0, reflect_every_min * 60))
+            await asyncio.to_thread(_reflect, "periodic")
+    refresher = asyncio.create_task(_refresher()) if reflect_every_min > 0 else None
+    try:
+        await asyncio.gather(*(guarded(t) for t in order))
+    finally:
+        if refresher is not None:
+            refresher.cancel()

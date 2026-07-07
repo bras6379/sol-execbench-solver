@@ -371,6 +371,21 @@ def _context_md(parent, ctx) -> str:
              "is in parentheses.", ""]
     if parent is not None and getattr(parent, "solution", None):
         lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
+    # Coach card first — the cross-run reflection is the highest-signal directive
+    # (you are stuck / here's what's been tried / where the loss actually is).
+    card = getattr(ctx, "reflection", None)
+    if card is None:
+        rd, tid = getattr(ctx, "runs_dir", None), getattr(ctx, "task_id", None)
+        if rd is not None and tid is not None:
+            cf = Path(rd) / str(tid) / "reflection.md"
+            card = cf.read_text() if cf.is_file() else ""
+    if card:
+        lines += ["", card.strip()]
+    prior = getattr(ctx, "runs_dir", None)
+    if prior is not None and getattr(ctx, "task_id", None) is not None and \
+            (Path(prior) / str(ctx.task_id) / "prior").is_dir():
+        lines += ["", "The `prior/` directory holds the top earlier kernels (named by score) "
+                  "if you want to inspect exactly what a past approach did — read them on demand."]
     hint = getattr(ctx, "sibling_hint", None)
     if hint and hint.get("sources"):
         est = hint.get("score")

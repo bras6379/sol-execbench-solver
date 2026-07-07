@@ -214,6 +214,7 @@ def _cmd_solve(args) -> None:
                                  knowledge=knowledge, families=families, names=names,
                                  provider=RunPodProvider(api), spec=spec, config=hcfg,
                                  max_concurrency=args.max_concurrency, shuffle=args.shuffle,
+                                 reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min,
                                  max_lifetime_min=(args.gpu_max_hours * 60 if args.gpu_max_hours else None)))
     else:
         if args.agent != "sim":
@@ -225,7 +226,8 @@ def _cmd_solve(args) -> None:
         asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
                               seeds_fn=seeds_fn, knowledge=knowledge,
                               families=families, names=names,
-                              max_concurrency=args.max_concurrency, shuffle=args.shuffle))
+                              max_concurrency=args.max_concurrency, shuffle=args.shuffle,
+                              reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -584,6 +586,15 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--timeout", type=float, default=1800.0,
                          help="per agent-call timeout (s); a timeout now skips the iteration, "
                               "not the whole problem")
+    p_solve.add_argument("--reflect-first", dest="reflect_first", action="store_true", default=True,
+                         help="(default on) regenerate every problem's reflection.md coach card from the "
+                              "accumulated journals BEFORE the fleet starts — a restart begins with each "
+                              "agent already knowing what's been tried / where it's stuck / where the loss is")
+    p_solve.add_argument("--no-reflect-first", dest="reflect_first", action="store_false",
+                         help="skip the startup reflection pass")
+    p_solve.add_argument("--reflect-every-min", type=float, default=20.0,
+                         help="also rebuild coach cards every N minutes during the run so long runs keep "
+                              "reflecting on fresh results (0=only at startup)")
     p_solve.add_argument("--fake-scores", action="store_true",
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,
