@@ -289,20 +289,27 @@ What we do instead, to stay honest and calibratable:
   on the (consistent) local number; the **leaderboard is the authoritative gate**.
 - **Reference-as-seed** is the always-present local probe (measure it every run).
 
-**Measured calibration (two real submissions, `solver submit`):**
+**Measured calibration — 6 real submissions across 3 op types (`solver submit`):**
 
-| task | our latency | leaderboard | ratio | our SOL | LB SOL |
-|---|---|---|---|---|---|
-| 230 rmsnorm_h128 | 0.006950 ms | 0.008469 ms | **1.219×** | 0.530 | 0.481 |
-| 210 fused_add_rmsnorm_h2048 | 0.016719 ms | 0.020238 ms | **1.210×** | 0.224 | 0.188 |
+| task | op | our latency | leaderboard | ratio | our SOL | LB SOL |
+|---|---|---|---|---|---|---|
+| 230 | rmsnorm_h128 | 0.006950 | 0.008469 | 1.219× | 0.530 | 0.481 |
+| 210 | fused_add_rmsnorm_h2048 | 0.016719 | 0.020238 | 1.210× | 0.224 | 0.188 |
+| 231 | rmsnorm_h512 | 0.005135 | 0.006079 | 1.184× | 0.547 | 0.498 |
+| 234 | rmsnorm_h4096 | 0.030949 | 0.036730 | 1.187× | 0.288 | 0.250 |
+| 211 | fused_add_rmsnorm_h4096 | 0.013925 | 0.016204 | 1.164× | 0.678 | 0.626 |
+| 213 | **gemm_n128_k2048** | 0.008639 | 0.010384 | 1.202× | 0.553 | 0.502 |
 
-The leaderboard latency is a **stable ~1.21× our unlocked measurement** across two
-different ops/shapes/score-levels (interestingly *below* the raw SM-clock ratio
-1965/1500 = 1.31, because DRAM already runs at the locked 3996 MHz preset). Being
-constant, it **preserves ranking** — the frontier keeps the right kernels — and
-makes leaderboard SOL predictable (scale local latency ×1.21, re-score). The loop
-is closed in-tool: `solver solve --gpu` → `solver submit <task>` (kernel_id =
-task_id) → `solver poll`.
+The leaderboard latency is our unlocked latency × **1.16–1.22 (mean ≈ 1.19)** —
+tight across ops (norm / fused-add / GEMM), shapes (h128→h4096) and scores
+(0.25→0.68). The GEMM (compute-bound) lands at 1.20, *not* nearer the raw SM-clock
+ratio (1965/1500 = 1.31) — because DRAM already runs at the locked 3996 preset, so
+even compute-ish kernels don't feel the full SM delta. Being ~constant it
+**preserves ranking** (the frontier keeps the right kernels) and makes leaderboard
+SOL predictable: `scoring.LEADERBOARD_LATENCY_FACTOR` (default 1.19,
+env-overridable) re-scores local latency → the `sol_score_cal` shown to the agent
+and dashboard. Loop closed in-tool: `solver solve --gpu` → `solver submit <task>`
+(kernel_id = task_id) → `solver poll`.
 
 ## 8b. GPU observability & profiling — what we capture, and when
 
