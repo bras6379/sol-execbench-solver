@@ -3,7 +3,7 @@
   "family": "elementwise",
   "name": "elementwise_7",
   "epsilon": 0.02,
-  "size": 2,
+  "size": 3,
   "best_cand": "298bd0219287",
   "best_score": 0.5982327807528593,
   "best_score_cal": 0.5542493985702884,
@@ -13,7 +13,7 @@
       "sol_score": 0.5982327807528593,
       "sol_score_cal": 0.5542493985702884,
       "all_passed": true,
-      "shapes_won": 11,
+      "shapes_won": 9,
       "vector": [
         0.6401440144014401,
         0.5643110277256619,
@@ -42,7 +42,7 @@
       "sol_score": 0.5979236552843665,
       "sol_score_cal": 0.5539317021043366,
       "all_passed": true,
-      "shapes_won": 5,
+      "shapes_won": 4,
       "vector": [
         0.6406052963430013,
         0.5640657019546587,
@@ -65,6 +65,35 @@
       "agent": "codex",
       "model": "gpt-5.5",
       "candidate": "candidates/f34cd44ef0ed.json"
+    },
+    {
+      "cand_id": "ccbdf21e0f26",
+      "sol_score": 0.4437913482298173,
+      "sol_score_cal": null,
+      "all_passed": false,
+      "shapes_won": 3,
+      "vector": [
+        0.6466667045525581,
+        0.560382868895551,
+        0.0,
+        0.5506467272539843,
+        0.0,
+        0.6308455220589112,
+        0.5348013104036041,
+        0.7538713367621208,
+        0.538862158848559,
+        0.6009919130654536,
+        0.5540369691048166,
+        0.5515337953119055,
+        0.0,
+        0.6323291221250406,
+        0.5456931432945722,
+        0.0
+      ],
+      "strategy": "DFT-as-GEMM for small prime-L (Bluestein) shapes + cuFFT R2C with fused Triton epilogue (div+split) for rest; no CUDA gr",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/ccbdf21e0f26.json"
     }
   ]
 }

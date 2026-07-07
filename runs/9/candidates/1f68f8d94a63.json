@@ -1,0 +1,245 @@
+{
+  "cand_id": "1f68f8d94a63",
+  "task_id": 9,
+  "verdict": "entered",
+  "sol_score": 0.7349827843874541,
+  "sol_score_calibrated": 0.6958613720767046,
+  "correct": true,
+  "vector": [
+    0.5949413882155464,
+    0.692843056203439,
+    0.7608783451223698,
+    0.7370510208816623,
+    0.692268674710756,
+    0.7785439800034007,
+    0.758880977747818,
+    0.879945321516641,
+    0.5941537068438142,
+    0.7590541049780372,
+    0.8226235592068689,
+    0.7476621659405422,
+    0.7591831875953371,
+    0.8176931732537722,
+    0.5939335331934075,
+    0.7700683547858542
+  ],
+  "strategy": "Eager torch, targeted TF32: run grad_gated (G2) + the 3 K=N wgrad GEMMs (G1/G3/G5) in TF32 (fp32 operands, 10-bit mantis",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "0e64357e3901",
+  "trajectory": "runs/9/work/1f68f8d94a63/trajectory.jsonl",
+  "gpu_s": 21.079,
+  "job_id": "9-1f68f8d94a63",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 478.75,
+      "samples": 71,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.7213115,
+      "sol_ms": 0.0951,
+      "baseline_latency_ms": 1.014866,
+      "sol_score": 0.5949413882155464,
+      "sol_score_cal": 0.5464951971334905,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.762847,
+      "sol_ms": 0.0978,
+      "baseline_latency_ms": 1.5979230000000002,
+      "sol_score": 0.692843056203439,
+      "sol_score_cal": 0.6493727121580262,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.8581425,
+      "sol_ms": 0.1,
+      "baseline_latency_ms": 2.512388,
+      "sol_score": 0.7608783451223698,
+      "sol_score_cal": 0.7236633753753278,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.8432310000000001,
+      "sol_ms": 0.1009,
+      "baseline_latency_ms": 2.181668,
+      "sol_score": 0.7370510208816623,
+      "sol_score_cal": 0.6974689134936831,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.7643504999999999,
+      "sol_ms": 0.0979,
+      "baseline_latency_ms": 1.597139,
+      "sol_score": 0.692268674710756,
+      "sol_score_cal": 0.6487639266712537,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.979598,
+      "sol_ms": 0.1311,
+      "baseline_latency_ms": 3.1140535,
+      "sol_score": 0.7785439800034007,
+      "sol_score_cal": 0.7424760983685104,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.8787825,
+      "sol_ms": 0.1101,
+      "baseline_latency_ms": 2.529397,
+      "sol_score": 0.758880977747818,
+      "sol_score_cal": 0.7211130765082534,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 2.782668,
+      "sol_ms": 0.7971,
+      "baseline_latency_ms": 15.350396,
+      "sol_score": 0.879945321516641,
+      "sol_score_cal": 0.8526870090779152,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.7231194999999999,
+      "sol_ms": 0.0952,
+      "baseline_latency_ms": 1.014466,
+      "sol_score": 0.5941537068438142,
+      "sol_score_cal": 0.5456950572383786,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.871087,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5216365,
+      "sol_score": 0.7590541049780372,
+      "sol_score_cal": 0.7215668510824368,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.0969585,
+      "sol_ms": 0.1996,
+      "baseline_latency_ms": 4.3613040000000005,
+      "sol_score": 0.8226235592068689,
+      "sol_score_cal": 0.790074258242518,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.841295,
+      "sol_ms": 0.1017,
+      "baseline_latency_ms": 2.2930765,
+      "sol_score": 0.7476621659405422,
+      "sol_score_cal": 0.7089957477431821,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.8712305,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5237965,
+      "sol_score": 0.7591831875953371,
+      "sol_score_cal": 0.7217094449602784,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.1011025,
+      "sol_ms": 0.1934,
+      "baseline_latency_ms": 4.26468,
+      "sol_score": 0.8176931732537722,
+      "sol_score_cal": 0.7847203842143872,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.7212315,
+      "sol_ms": 0.0943,
+      "baseline_latency_ms": 1.011282,
+      "sol_score": 0.5939335331934075,
+      "sol_score_cal": 0.5455149599750881,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.9278225,
+      "sol_ms": 0.1156,
+      "baseline_latency_ms": 2.8358295,
+      "sol_score": 0.7700683547858542,
+      "sol_score_cal": 0.7334649409845454,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Enable TF32 tensor cores for the fp32 matmuls on the correctness-critical path.\n# TF32 keeps a 10-bit mantissa (vs bf16's 7) -> ~8x less rounding error than bf16,\n# while still running on tensor cores (1.1 PF on B200, 15x faster than fp32 CUDA\n# cores). This is the lever that clears the atol gate for N >= 215.\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.allow_tf32 = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward (SwiGLU MLP).\n\n    Precision strategy (correctness is the whole game -- one failing workload\n    unlocks no sol_score):\n      * Everything downstream of `grad_gated` carries error that accumulates over\n        the K=N wgrad contraction and crosses the (N-growing) atol for N >= 215 if\n        computed in bf16. So the CRITICAL path runs in TF32:\n          - G2 (grad_gated = grad_expert_output @ w2)   -> TF32 (fp32 operands)\n          - G1 (grad_w2_weight)  wgrad, K=N             -> TF32\n          - G3 (grad_w3_weight)  wgrad, K=N             -> TF32\n          - G5 (grad_w1_weight)  wgrad, K=N             -> TF32\n        The gating / SiLU' elementwise chain stays fp32.\n      * The dgrad GEMMs that feed ONLY grad_hidden_states are N-independent in\n        their per-element error (K=F=14336 fixed) and are proven safe at bf16:\n          - G4 (grad_up  @ w3_weight -> gst_w3)         -> bf16 (cheap weight read)\n          - G6 (grad_w1o @ w1_weight -> gst_w1)         -> bf16\n        Only w2_weight is upcast to fp32 (needed by TF32 G2); w1/w3 read once bf16.\n    \"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    dev = grad_output.device\n\n    # --- Step 1: gather gradient rows for this expert (bf16 gather, then fp32) ---\n    gwo = grad_output.index_select(0, token_indices).to(torch.float32)  # (N, H) fp32\n\n    # --- Step 2: grad w.r.t. routing weights (row dot, fp32) -> scatter ----------\n    grad_sel_w = (gwo * expert_output.to(torch.float32)).sum(dim=-1)     # (N,)\n    grad_routing_weights = torch.zeros(B, dtype=torch.float32, device=dev)\n    grad_routing_weights[token_indices] = grad_sel_w\n\n    # grad w.r.t. expert_output (row-scale by routing weight), keep fp32\n    geo = gwo * selected_weights.to(torch.float32).unsqueeze(-1)         # (N, H) fp32\n\n    # fp32 operands for the TF32 GEMMs\n    w2_f = w2_weight.to(torch.float32)                                  # (H, F)\n    gated_f = gated_output.to(torch.float32)                            # (N, F)\n    sel_tok_f = selected_tokens.to(torch.float32)                      # (N, H)\n\n    # --- Step 3: w2 wgrad (G1, K=N, TF32) and grad_gated dgrad (G2, K=H, TF32) ---\n    grad_w2_weight = geo.t() @ gated_f                                  # (H, F) fp32\n    grad_gated = geo @ w2_f                                             # (N, F) fp32\n\n    # --- Step 4: element-wise gating backward (fp32) ----------------------------\n    # bf16 operands auto-promote to fp32 in the multiply (matches reference fp32).\n    grad_gate_output = grad_gated * up_output                          # (N, F) fp32\n    grad_up_output = grad_gated * gate_output                          # (N, F) fp32\n\n    # --- Step 5: w3 wgrad (G3, K=N, TF32) and up dgrad (G4, K=F, bf16) ----------\n    grad_w3_weight = grad_up_output.t() @ sel_tok_f                     # (F, H) fp32\n    gst_w3 = grad_up_output.to(torch.bfloat16) @ w3_weight              # (N, H) bf16\n\n    # --- Step 6: SiLU' then w1 wgrad (G5, K=N, TF32) and w1 dgrad (G6, K=F, bf16)-\n    w1o_f = w1_output.to(torch.float32)\n    sig = torch.sigmoid(w1o_f)\n    grad_w1_output = grad_gate_output * (sig * (1.0 + w1o_f * (1.0 - sig)))  # (N,F) fp32\n    grad_w1_weight = grad_w1_output.t() @ sel_tok_f                     # (F, H) fp32\n    gst_w1 = grad_w1_output.to(torch.bfloat16) @ w1_weight              # (N, H) bf16\n\n    # --- Step 7/8: accumulate selected-token grads (fp32) and scatter back ------\n    grad_selected_tokens = gst_w1.to(torch.float32) + gst_w3.to(torch.float32)  # (N,H)\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.float32, device=dev)\n    grad_hidden_states[token_indices] = grad_selected_tokens\n\n    return (\n        grad_hidden_states.to(torch.bfloat16),\n        grad_routing_weights.to(torch.bfloat16),\n        grad_w1_weight.to(torch.bfloat16),\n        grad_w2_weight.to(torch.bfloat16),\n        grad_w3_weight.to(torch.bfloat16),\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t9_1f68f8d94a63",
+    "definition": "009_expert_token_scatter_with_weighted_forward_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Enable TF32 tensor cores for the fp32 matmuls on the correctness-critical path.\n# TF32 keeps a 10-bit mantissa (vs bf16's 7) -> ~8x less rounding error than bf16,\n# while still running on tensor cores (1.1 PF on B200, 15x faster than fp32 CUDA\n# cores). This is the lever that clears the atol gate for N >= 215.\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.allow_tf32 = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward (SwiGLU MLP).\n\n    Precision strategy (correctness is the whole game -- one failing workload\n    unlocks no sol_score):\n      * Everything downstream of `grad_gated` carries error that accumulates over\n        the K=N wgrad contraction and crosses the (N-growing) atol for N >= 215 if\n        computed in bf16. So the CRITICAL path runs in TF32:\n          - G2 (grad_gated = grad_expert_output @ w2)   -> TF32 (fp32 operands)\n          - G1 (grad_w2_weight)  wgrad, K=N             -> TF32\n          - G3 (grad_w3_weight)  wgrad, K=N             -> TF32\n          - G5 (grad_w1_weight)  wgrad, K=N             -> TF32\n        The gating / SiLU' elementwise chain stays fp32.\n      * The dgrad GEMMs that feed ONLY grad_hidden_states are N-independent in\n        their per-element error (K=F=14336 fixed) and are proven safe at bf16:\n          - G4 (grad_up  @ w3_weight -> gst_w3)         -> bf16 (cheap weight read)\n          - G6 (grad_w1o @ w1_weight -> gst_w1)         -> bf16\n        Only w2_weight is upcast to fp32 (needed by TF32 G2); w1/w3 read once bf16.\n    \"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    dev = grad_output.device\n\n    # --- Step 1: gather gradient rows for this expert (bf16 gather, then fp32) ---\n    gwo = grad_output.index_select(0, token_indices).to(torch.float32)  # (N, H) fp32\n\n    # --- Step 2: grad w.r.t. routing weights (row dot, fp32) -> scatter ----------\n    grad_sel_w = (gwo * expert_output.to(torch.float32)).sum(dim=-1)     # (N,)\n    grad_routing_weights = torch.zeros(B, dtype=torch.float32, device=dev)\n    grad_routing_weights[token_indices] = grad_sel_w\n\n    # grad w.r.t. expert_output (row-scale by routing weight), keep fp32\n    geo = gwo * selected_weights.to(torch.float32).unsqueeze(-1)         # (N, H) fp32\n\n    # fp32 operands for the TF32 GEMMs\n    w2_f = w2_weight.to(torch.float32)                                  # (H, F)\n    gated_f = gated_output.to(torch.float32)                            # (N, F)\n    sel_tok_f = selected_tokens.to(torch.float32)                      # (N, H)\n\n    # --- Step 3: w2 wgrad (G1, K=N, TF32) and grad_gated dgrad (G2, K=H, TF32) ---\n    grad_w2_weight = geo.t() @ gated_f                                  # (H, F) fp32\n    grad_gated = geo @ w2_f                                             # (N, F) fp32\n\n    # --- Step 4: element-wise gating backward (fp32) ----------------------------\n    # bf16 operands auto-promote to fp32 in the multiply (matches reference fp32).\n    grad_gate_output = grad_gated * up_output                          # (N, F) fp32\n    grad_up_output = grad_gated * gate_output                          # (N, F) fp32\n\n    # --- Step 5: w3 wgrad (G3, K=N, TF32) and up dgrad (G4, K=F, bf16) ----------\n    grad_w3_weight = grad_up_output.t() @ sel_tok_f                     # (F, H) fp32\n    gst_w3 = grad_up_output.to(torch.bfloat16) @ w3_weight              # (N, H) bf16\n\n    # --- Step 6: SiLU' then w1 wgrad (G5, K=N, TF32) and w1 dgrad (G6, K=F, bf16)-\n    w1o_f = w1_output.to(torch.float32)\n    sig = torch.sigmoid(w1o_f)\n    grad_w1_output = grad_gate_output * (sig * (1.0 + w1o_f * (1.0 - sig)))  # (N,F) fp32\n    grad_w1_weight = grad_w1_output.t() @ sel_tok_f                     # (F, H) fp32\n    gst_w1 = grad_w1_output.to(torch.bfloat16) @ w1_weight              # (N, H) bf16\n\n    # --- Step 7/8: accumulate selected-token grads (fp32) and scatter back ------\n    grad_selected_tokens = gst_w1.to(torch.float32) + gst_w3.to(torch.float32)  # (N,H)\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.float32, device=dev)\n    grad_hidden_states[token_indices] = grad_selected_tokens\n\n    return (\n        grad_hidden_states.to(torch.bfloat16),\n        grad_routing_weights.to(torch.bfloat16),\n        grad_w1_weight.to(torch.bfloat16),\n        grad_w2_weight.to(torch.bfloat16),\n        grad_w3_weight.to(torch.bfloat16),\n    )\n"
+      }
+    ]
+  }
+}

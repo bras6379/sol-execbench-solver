@@ -1,0 +1,289 @@
+{
+  "cand_id": "5f5e10a48e07",
+  "task_id": 2,
+  "verdict": "entered",
+  "sol_score": 0.582017563777576,
+  "sol_score_calibrated": 0.5275376660799416,
+  "correct": true,
+  "vector": [
+    0.6684613224555892,
+    0.6064635141086943,
+    0.5909368955312712,
+    0.5622487561872572,
+    0.6417744388399622,
+    0.6100716117840674,
+    0.5202121976241241,
+    0.5975780391111705,
+    0.583971908422592,
+    0.6206375599568753,
+    0.49242250966443674,
+    0.49757111337029064,
+    0.5872745177374044,
+    0.5775644924513341,
+    0.6176293953812231,
+    0.4816347751202682,
+    0.6288681691619084,
+    0.6190218662301215,
+    0.6020062367498829,
+    0.5340019556630475
+  ],
+  "strategy": "NCHW-layout body for B==1 (cuDNN emits NCHW for tall-skinny B==1 implicit GEMMs, so matching NCHW weights avoids the int",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "c3dd0c43392a",
+  "trajectory": "runs/2/work/5f5e10a48e07/trajectory.jsonl",
+  "gpu_s": 33.542,
+  "job_id": "2-5f5e10a48e07",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 757.38,
+      "samples": 113,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.2528635,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.42264,
+      "sol_score": 0.6684613224555892,
+      "sol_score_cal": 0.6102753619358752,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.1213275,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.175232,
+      "sol_score": 0.6064635141086943,
+      "sol_score_cal": 0.5558489597065439,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.13414350000000003,
+      "sol_ms": 0.0228,
+      "baseline_latency_ms": 0.183648,
+      "sol_score": 0.5909368955312712,
+      "sol_score_cal": 0.5403408603902263,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 2.197227,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 2.6277915,
+      "sol_score": 0.5622487561872572,
+      "sol_score_cal": 0.5016888204379439,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.18219200000000002,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2922884999999999,
+      "sol_score": 0.6417744388399622,
+      "sol_score_cal": 0.5892416162442209,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.32249550000000005,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4561275,
+      "sol_score": 0.6100716117840674,
+      "sol_score_cal": 0.5541359899120921,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.8190695,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.873664,
+      "sol_score": 0.5202121976241241,
+      "sol_score_cal": 0.46646142308279936,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.118336,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.1652,
+      "sol_score": 0.5975780391111705,
+      "sol_score_cal": 0.5464172089968526,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.1047185000000002,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.412656,
+      "sol_score": 0.583971908422592,
+      "sol_score_cal": 0.5239888367097782,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0922075,
+      "sol_ms": 0.0111,
+      "baseline_latency_ms": 0.1437919999999999,
+      "sol_score": 0.6206375599568753,
+      "sol_score_cal": 0.5736322698196871,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 5.847908500000001,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 5.714099,
+      "sol_score": 0.49242250966443674,
+      "sol_score_cal": 0.4373818797728772,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.6316145,
+      "sol_ms": 0.1122,
+      "baseline_latency_ms": 0.6265925,
+      "sol_score": 0.49757111337029064,
+      "sol_score_cal": 0.445819351494904,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 1.224765,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.5981445,
+      "sol_score": 0.5872745177374044,
+      "sol_score_cal": 0.529655381827127,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.569071,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.715216,
+      "sol_score": 0.5775644924513341,
+      "sol_score_cal": 0.5181018521344231,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.1748955,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2559845,
+      "sol_score": 0.6176293953812231,
+      "sol_score_cal": 0.5633204157565022,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 3.9083769999999998,
+      "sol_ms": 0.7687,
+      "baseline_latency_ms": 3.685905,
+      "sol_score": 0.4816347751202682,
+      "sol_score_cal": 0.4290339456761743,
+      "error": null
+    },
+    {
+      "index": 16,
+      "correct": true,
+      "latency_ms": 0.25747149999999996,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.391552,
+      "sol_score": 0.6288681691619084,
+      "sol_score_cal": 0.5748150309161711,
+      "error": null
+    },
+    {
+      "index": 17,
+      "correct": true,
+      "latency_ms": 0.25988750000000005,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3820325,
+      "sol_score": 0.6190218662301215,
+      "sol_score_cal": 0.564681380332263,
+      "error": null
+    },
+    {
+      "index": 18,
+      "correct": true,
+      "latency_ms": 0.31980699999999995,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4397594999999999,
+      "sol_score": 0.6020062367498829,
+      "sol_score_cal": 0.5456192757468853,
+      "error": null
+    },
+    {
+      "index": 19,
+      "correct": true,
+      "latency_ms": 0.6166385000000001,
+      "sol_ms": 0.1284,
+      "baseline_latency_ms": 0.687888,
+      "sol_score": 0.5340019556630475,
+      "sol_score_cal": 0.4802934607054844,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# -----------------------------------------------------------------------------\n# 002_vae_conv3x3_groupnorm_silu_residual_fused  (Sana / DC-AE VAE residual block)\n#\n#   x -> Conv3x3 -> GroupNorm(32) -> SiLU -> Conv3x3 -> GroupNorm(32) -> SiLU -> +x\n#\n# C=256, G=32, k=3, stride=1, pad=1, fp32 in/out.\n#\n# Precision: FP16 cuDNN tensor-core convs (~2x TF32 throughput), fp32 tails.\n# FP16 has 10-bit mantissa \u2248 5e-4 rel-error, sitting comfortably inside the\n# atol~3e-3 / rtol=1e-5 tolerance band.  GN re-centers after each conv so any\n# fp16 rounding before GN gets washed out for the next stage.\n#\n# ---------------------------------------------------------------------------\n# What this revision fixes vs the parent (frontier c3dd0c43, cal 0.531):\n#\n#   The parent's B==1 path (_core_natural) used NHWC weights for BOTH convs,\n#   but for B==1 cuDNN emits an NCHW output from conv1 (tall-skinny implicit\n#   GEMM).  After GN+SiLU the intermediate was NCHW-fp32 --> .to(fp16)\n#   preserved NCHW --> conv2 received NCHW-fp16 input with NHWC-fp16 weights\n#   --> a LAYOUT MISMATCH that killed conv2 throughput.  On wl10 (1x1024x1024)\n#   this gave 5.74 ms = WORSE than the eager-fp32 baseline (5.71 ms).\n#\n#   FIX: a separate NCHW body for B==1.  Both convs get NCHW-NCHW fp16, zero\n#   layout conversions anywhere in the path (x input never transposed to NHWC,\n#   intermediate never force-transposed).  The NCHW body is torch.compile'd\n#   (default mode) so Inductor fuses the GN+SiLU+add tail, and falls back to\n#   pure eager if compile isn't available.  The B>=2 CL path is unchanged\n#   (NHWC throughout, free NHWC handoff between convs, proven).\n#\n#   Also: for B==1 the NCHW body saves the input-level fp32-NCHW --> fp16-NHWC\n#   transpose that _core_natural was paying even before conv1.  For\n#   1x1024x1024x256 that's a 256-MB noncontiguous transpose (~0.5-1 ms) that\n#   had zero benefit since conv1 output would still be NCHW.\n# -----------------------------------------------------------------------------\n\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\ntry:\n    import torch._dynamo as _dynamo\n\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 256)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 1024\n        )\nexcept Exception:\n    pass\n\n_NUM_GROUPS = 32\n_CL = torch.channels_last\n_HALF = torch.float16\n\n# P = B*H*W threshold below which launch overhead dominates and CUDA-graph\n# replay (reduce-overhead) beats plain compilation.  Empirically tuned from\n# the frontier's per-workload crossover.\n_P_CUDAGRAPH_MAX = 1 << 15  # 32768\n\n\n# ---- body definitions (pure eager, no compile) ----\n\n\ndef _body_cl(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NHWC throughout.  For B>=2 cuDNN emits NHWC so the intermediate\n    .to(fp16, channels_last) is a FREE no-op cast: conv2 gets NHWC-NHWC.\"\"\"\n    x_h = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv1_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _body_nchw(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NCHW throughout for B==1.  cuDNN outputs NCHW for tall-skinny (B==1)\n    implicit GEMM regardless of input layout, so matching NCHW weights\n    avoids any intermediate layout mismatch.  No layout conversions anywhere:\n    x stays NCHW, weights stay NCHW, intermediate stays NCHW, conv2 gets\n    NCHW-NCHW.  Every .to(fp16) is a pure dtype cast (contiguous in memory).\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    w2 = conv2_weight.to(dtype=_HALF)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\n# ---- lazily-built compiled entry points with graceful degradation ----\n\n\n_compiled_graph = None\n_compiled_default_cl = None\n_compiled_default_nchw = None\n_graph_disabled = False\n_default_cl_disabled = False\n_default_nchw_disabled = False\n\n\ndef _get_graph():\n    global _compiled_graph, _graph_disabled\n    if _compiled_graph is not None or _graph_disabled:\n        return _compiled_graph\n    if not hasattr(torch, \"compile\"):\n        _graph_disabled = True\n        return None\n    try:\n        _compiled_graph = torch.compile(_body_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_disabled = True\n        _compiled_graph = None\n    return _compiled_graph\n\n\ndef _get_default_cl():\n    global _compiled_default_cl, _default_cl_disabled\n    if _compiled_default_cl is not None or _default_cl_disabled:\n        return _compiled_default_cl\n    if not hasattr(torch, \"compile\"):\n        _default_cl_disabled = True\n        return None\n    try:\n        _compiled_default_cl = torch.compile(_body_cl)\n    except Exception:\n        _default_cl_disabled = True\n        _compiled_default_cl = None\n    return _compiled_default_cl\n\n\ndef _get_default_nchw():\n    global _compiled_default_nchw, _default_nchw_disabled\n    if _compiled_default_nchw is not None or _default_nchw_disabled:\n        return _compiled_default_nchw\n    if not hasattr(torch, \"compile\"):\n        _default_nchw_disabled = True\n        return None\n    try:\n        _compiled_default_nchw = torch.compile(_body_nchw)\n    except Exception:\n        _default_nchw_disabled = True\n        _compiled_default_nchw = None\n    return _compiled_default_nchw\n\n\n# ---- dispatch (try/except isolated from run()) ----\n\n\ndef _dispatch(args):\n    global _graph_disabled, _default_cl_disabled, _default_nchw_disabled\n    x = args[0]\n    b = x.shape[0]\n    p = b * x.shape[2] * x.shape[3]\n\n    # ---- small shapes: CUDA-graph replay of the NHWC body ----\n    if p <= _P_CUDAGRAPH_MAX:\n        fn = _get_graph()\n        if fn is not None:\n            try:\n                return fn(*args).clone()\n            except Exception:\n                _graph_disabled = True\n        fn = _get_default_cl()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_cl_disabled = True\n        return _body_nchw(*args)\n\n    # ---- B==1 large: NCHW body, compiled with eager fallback ----\n    if b == 1:\n        fn = _get_default_nchw()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_nchw_disabled = True\n        return _body_nchw(*args)\n\n    # ---- B>=2 large: NHWC body, compiled with eager fallback ----\n    fn = _get_default_cl()\n    if fn is not None:\n        try:\n            return fn(*args)\n        except Exception:\n            _default_cl_disabled = True\n    return _body_nchw(*args)\n\n\n# ---- entry point ----\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    return _dispatch(\n        (\n            x,\n            conv1_weight,\n            norm1_weight,\n            norm1_bias,\n            conv2_weight,\n            norm2_weight,\n            norm2_bias,\n            eps,\n        )\n    )"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t2_5f5e10a48e07",
+    "definition": "002_vae_conv3x3_groupnorm_silu_residual_fused",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# -----------------------------------------------------------------------------\n# 002_vae_conv3x3_groupnorm_silu_residual_fused  (Sana / DC-AE VAE residual block)\n#\n#   x -> Conv3x3 -> GroupNorm(32) -> SiLU -> Conv3x3 -> GroupNorm(32) -> SiLU -> +x\n#\n# C=256, G=32, k=3, stride=1, pad=1, fp32 in/out.\n#\n# Precision: FP16 cuDNN tensor-core convs (~2x TF32 throughput), fp32 tails.\n# FP16 has 10-bit mantissa \u2248 5e-4 rel-error, sitting comfortably inside the\n# atol~3e-3 / rtol=1e-5 tolerance band.  GN re-centers after each conv so any\n# fp16 rounding before GN gets washed out for the next stage.\n#\n# ---------------------------------------------------------------------------\n# What this revision fixes vs the parent (frontier c3dd0c43, cal 0.531):\n#\n#   The parent's B==1 path (_core_natural) used NHWC weights for BOTH convs,\n#   but for B==1 cuDNN emits an NCHW output from conv1 (tall-skinny implicit\n#   GEMM).  After GN+SiLU the intermediate was NCHW-fp32 --> .to(fp16)\n#   preserved NCHW --> conv2 received NCHW-fp16 input with NHWC-fp16 weights\n#   --> a LAYOUT MISMATCH that killed conv2 throughput.  On wl10 (1x1024x1024)\n#   this gave 5.74 ms = WORSE than the eager-fp32 baseline (5.71 ms).\n#\n#   FIX: a separate NCHW body for B==1.  Both convs get NCHW-NCHW fp16, zero\n#   layout conversions anywhere in the path (x input never transposed to NHWC,\n#   intermediate never force-transposed).  The NCHW body is torch.compile'd\n#   (default mode) so Inductor fuses the GN+SiLU+add tail, and falls back to\n#   pure eager if compile isn't available.  The B>=2 CL path is unchanged\n#   (NHWC throughout, free NHWC handoff between convs, proven).\n#\n#   Also: for B==1 the NCHW body saves the input-level fp32-NCHW --> fp16-NHWC\n#   transpose that _core_natural was paying even before conv1.  For\n#   1x1024x1024x256 that's a 256-MB noncontiguous transpose (~0.5-1 ms) that\n#   had zero benefit since conv1 output would still be NCHW.\n# -----------------------------------------------------------------------------\n\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\ntry:\n    import torch._dynamo as _dynamo\n\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 256)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 1024\n        )\nexcept Exception:\n    pass\n\n_NUM_GROUPS = 32\n_CL = torch.channels_last\n_HALF = torch.float16\n\n# P = B*H*W threshold below which launch overhead dominates and CUDA-graph\n# replay (reduce-overhead) beats plain compilation.  Empirically tuned from\n# the frontier's per-workload crossover.\n_P_CUDAGRAPH_MAX = 1 << 15  # 32768\n\n\n# ---- body definitions (pure eager, no compile) ----\n\n\ndef _body_cl(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NHWC throughout.  For B>=2 cuDNN emits NHWC so the intermediate\n    .to(fp16, channels_last) is a FREE no-op cast: conv2 gets NHWC-NHWC.\"\"\"\n    x_h = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv1_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _body_nchw(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NCHW throughout for B==1.  cuDNN outputs NCHW for tall-skinny (B==1)\n    implicit GEMM regardless of input layout, so matching NCHW weights\n    avoids any intermediate layout mismatch.  No layout conversions anywhere:\n    x stays NCHW, weights stay NCHW, intermediate stays NCHW, conv2 gets\n    NCHW-NCHW.  Every .to(fp16) is a pure dtype cast (contiguous in memory).\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    w2 = conv2_weight.to(dtype=_HALF)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\n# ---- lazily-built compiled entry points with graceful degradation ----\n\n\n_compiled_graph = None\n_compiled_default_cl = None\n_compiled_default_nchw = None\n_graph_disabled = False\n_default_cl_disabled = False\n_default_nchw_disabled = False\n\n\ndef _get_graph():\n    global _compiled_graph, _graph_disabled\n    if _compiled_graph is not None or _graph_disabled:\n        return _compiled_graph\n    if not hasattr(torch, \"compile\"):\n        _graph_disabled = True\n        return None\n    try:\n        _compiled_graph = torch.compile(_body_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_disabled = True\n        _compiled_graph = None\n    return _compiled_graph\n\n\ndef _get_default_cl():\n    global _compiled_default_cl, _default_cl_disabled\n    if _compiled_default_cl is not None or _default_cl_disabled:\n        return _compiled_default_cl\n    if not hasattr(torch, \"compile\"):\n        _default_cl_disabled = True\n        return None\n    try:\n        _compiled_default_cl = torch.compile(_body_cl)\n    except Exception:\n        _default_cl_disabled = True\n        _compiled_default_cl = None\n    return _compiled_default_cl\n\n\ndef _get_default_nchw():\n    global _compiled_default_nchw, _default_nchw_disabled\n    if _compiled_default_nchw is not None or _default_nchw_disabled:\n        return _compiled_default_nchw\n    if not hasattr(torch, \"compile\"):\n        _default_nchw_disabled = True\n        return None\n    try:\n        _compiled_default_nchw = torch.compile(_body_nchw)\n    except Exception:\n        _default_nchw_disabled = True\n        _compiled_default_nchw = None\n    return _compiled_default_nchw\n\n\n# ---- dispatch (try/except isolated from run()) ----\n\n\ndef _dispatch(args):\n    global _graph_disabled, _default_cl_disabled, _default_nchw_disabled\n    x = args[0]\n    b = x.shape[0]\n    p = b * x.shape[2] * x.shape[3]\n\n    # ---- small shapes: CUDA-graph replay of the NHWC body ----\n    if p <= _P_CUDAGRAPH_MAX:\n        fn = _get_graph()\n        if fn is not None:\n            try:\n                return fn(*args).clone()\n            except Exception:\n                _graph_disabled = True\n        fn = _get_default_cl()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_cl_disabled = True\n        return _body_nchw(*args)\n\n    # ---- B==1 large: NCHW body, compiled with eager fallback ----\n    if b == 1:\n        fn = _get_default_nchw()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_nchw_disabled = True\n        return _body_nchw(*args)\n\n    # ---- B>=2 large: NHWC body, compiled with eager fallback ----\n    fn = _get_default_cl()\n    if fn is not None:\n        try:\n            return fn(*args)\n        except Exception:\n            _default_cl_disabled = True\n    return _body_nchw(*args)\n\n\n# ---- entry point ----\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    return _dispatch(\n        (\n            x,\n            conv1_weight,\n            norm1_weight,\n            norm1_bias,\n            conv2_weight,\n            norm2_weight,\n            norm2_bias,\n            eps,\n        )\n    )"
+      }
+    ]
+  }
+}

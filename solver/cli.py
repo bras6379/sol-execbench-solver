@@ -121,7 +121,10 @@ def _cmd_report(args) -> None:
     if args.watch:
         print(f"watching: regenerating {out_dir}/ every {args.watch}s (Ctrl-C to stop)")
         while True:
-            report_mod.render(runs_dir, out_dir, refresh=args.refresh or args.watch)
+            try:
+                report_mod.render(runs_dir, out_dir, refresh=args.refresh or args.watch)
+            except Exception as exc:                    # a transient render error must not kill the watcher
+                print(f"[watch] render failed ({exc!r}); retrying next cycle")
             time.sleep(args.watch)
     path = report_mod.render(runs_dir, out_dir, refresh=args.refresh)
     print(f"dashboard site -> {path}")

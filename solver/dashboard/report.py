@@ -15,6 +15,7 @@ from __future__ import annotations
 import datetime as dt
 import html
 import json
+import os
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -826,7 +827,7 @@ def render(runs_dir: Path, out_dir: Path, *, refresh: int | None = None) -> Path
         (p_dir / f"{p['task']}.html").write_text(build_detail(p, order[p["task"]], runs_dir))
 
     index = out_dir / "index.html"
-    tmp = index.with_suffix(".tmp")
+    tmp = index.with_suffix(f".{os.getpid()}.tmp")   # unique per process → no cross-render collision
     tmp.write_text(build_hub(data, refresh=refresh, detail_dir="p"))
     tmp.replace(index)
     return index

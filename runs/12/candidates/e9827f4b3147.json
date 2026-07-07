@@ -1,0 +1,245 @@
+{
+  "cand_id": "e9827f4b3147",
+  "task_id": 12,
+  "verdict": "entered",
+  "sol_score": 0.9142156452485883,
+  "sol_score_calibrated": 0.893692486053788,
+  "correct": true,
+  "vector": [
+    0.9140221402214023,
+    0.9020656584286242,
+    0.9140317577889913,
+    0.9144391007717257,
+    0.9232524183245118,
+    0.9132821075740943,
+    0.9136397331356562,
+    0.9131627056672761,
+    0.9163477817203554,
+    0.9149175412293854,
+    0.9127218934911243,
+    0.9204009433962264,
+    0.9126750184229919,
+    0.9175304376439615,
+    0.9137461328900586,
+    0.911214953271028
+  ],
+  "strategy": "Triton fused single-kernel: loads each fp32 frequency once, computes cos+sin+scale+bf16-cast in registers, writes each v",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "382967eb8bbe",
+  "trajectory": "runs/12/work/e9827f4b3147/trajectory.jsonl",
+  "gpu_s": 16.365,
+  "job_id": "12-e9827f4b3147",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 532.82,
+      "samples": 53,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.002464,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9140221402214023,
+      "sol_score_cal": 0.8947018623668963,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.002624,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020064,
+      "sol_score": 0.9020656584286242,
+      "sol_score_cal": 0.8817951047841576,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.002657,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9140317577889913,
+      "sol_score_cal": 0.8931580492566892,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0029125,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.02144,
+      "sol_score": 0.9144391007717257,
+      "sol_score_cal": 0.8923474872712787,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.007264,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.044368,
+      "sol_score": 0.9232524183245118,
+      "sol_score_cal": 0.8950689372062737,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0026565,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020352,
+      "sol_score": 0.9132821075740943,
+      "sol_score_cal": 0.8922461699516296,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.002464,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.02032,
+      "sol_score": 0.9136397331356562,
+      "sol_score_cal": 0.8942434663996633,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0024,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02048,
+      "sol_score": 0.9131627056672761,
+      "sol_score_cal": 0.8945200573065902,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.0023035,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020256,
+      "sol_score": 0.9163477817203554,
+      "sol_score_cal": 0.8981157344594178,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0024159999999999997,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020128,
+      "sol_score": 0.9149175412293854,
+      "sol_score_cal": 0.8956549178463187,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.002688,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9127218934911243,
+      "sol_score_cal": 0.8916700387305625,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.00336,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.026176,
+      "sol_score": 0.9204009433962264,
+      "sol_score_cal": 0.8992453482343453,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.002496,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9126750184229919,
+      "sol_score_cal": 0.8931662147348988,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.003105,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0234069999999999,
+      "sol_score": 0.9175304376439615,
+      "sol_score_cal": 0.8957933013278073,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.002368,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020289,
+      "sol_score": 0.9137461328900586,
+      "sol_score_cal": 0.8951495730748562,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0024,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02,
+      "sol_score": 0.911214953271028,
+      "sol_score_cal": 0.8922035139092239,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_SIZE': 128}, num_warps=2),\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),\n    ],\n    key=['total_elems'],\n)\n@triton.jit\ndef _fused_rope_kernel(\n    freqs_ptr,\n    cos_out_ptr,\n    sin_out_ptr,\n    total_elems,\n    half_dim: tl.constexpr,\n    full_dim: tl.constexpr,\n    ATTENTION_SCALING: tl.constexpr,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    block_start = pid * BLOCK_SIZE\n    offsets = block_start + tl.arange(0, BLOCK_SIZE)\n    mask = offsets < total_elems\n\n    # Load frequencies as fp32 from the flat [B,S,64] tensor \u2014 single coalesced read\n    vals = tl.load(freqs_ptr + offsets, mask=mask, other=0.0)\n\n    # Compute cos and sin in fp32, then scale by attention_scaling\n    cos_vals = tl.math.cos(vals) * ATTENTION_SCALING\n    sin_vals = tl.math.sin(vals) * ATTENTION_SCALING\n\n    # Map flat index to (row, col): row = offset // half_dim, col = offset % half_dim\n    row = offsets // half_dim\n    col = offsets % half_dim\n\n    # Output offsets for both halves \u2014 replicates the cat(freqs,freqs) behaviour\n    # without materialising the intermediate\n    off_lo = row * full_dim + col\n    off_hi = row * full_dim + col + half_dim\n\n    # Store to both positions; fp32 \u2192 bf16 truncation matches reference .to(bf16)\n    tl.store(cos_out_ptr + off_lo, cos_vals, mask=mask)\n    tl.store(cos_out_ptr + off_hi, cos_vals, mask=mask)\n    tl.store(sin_out_ptr + off_lo, sin_vals, mask=mask)\n    tl.store(sin_out_ptr + off_hi, sin_vals, mask=mask)\n\n\n@torch.no_grad()\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    \"\"\"\n    Fused cos/sin embedding generation from frequencies for RoPE.\n\n    Single Triton kernel that loads each frequency once, computes cos+sin+scale,\n    casts to bf16, and writes each value to both duplicated output positions \u2014\n    eliminating the fp32 cat intermediate and all separate cos/sin/scale/cast\n    kernel launches.\n\n    Args:\n        freqs: [B, S, head_dim//2] fp32, result of (inv_freq @ position_ids)\n        attention_scaling: scalar scaling factor\n\n    Returns:\n        Tuple of (cos, sin), each [B, S, head_dim] in bfloat16\n    \"\"\"\n    B, S, half_dim = freqs.shape\n    full_dim = half_dim * 2\n    n_rows = B * S\n    total_elems = n_rows * half_dim\n\n    # Ensure row-major contiguity for flat pointer addressing\n    freqs = freqs.contiguous()\n\n    # attention_scaling may arrive as a 0-d tensor\n    if isinstance(attention_scaling, torch.Tensor):\n        attention_scaling = attention_scaling.item()\n\n    cos = torch.empty(B, S, full_dim, dtype=torch.bfloat16, device=freqs.device)\n    sin = torch.empty(B, S, full_dim, dtype=torch.bfloat16, device=freqs.device)\n\n    grid = lambda meta: (triton.cdiv(total_elems, meta['BLOCK_SIZE']),)\n\n    _fused_rope_kernel[grid](\n        freqs, cos, sin,\n        total_elems,\n        half_dim=half_dim,\n        full_dim=full_dim,\n        ATTENTION_SCALING=attention_scaling,\n    )\n\n    return cos, sin"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t12_e9827f4b3147",
+    "definition": "012_fused_cos_sin_embedding_generation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_SIZE': 128}, num_warps=2),\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),\n    ],\n    key=['total_elems'],\n)\n@triton.jit\ndef _fused_rope_kernel(\n    freqs_ptr,\n    cos_out_ptr,\n    sin_out_ptr,\n    total_elems,\n    half_dim: tl.constexpr,\n    full_dim: tl.constexpr,\n    ATTENTION_SCALING: tl.constexpr,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    block_start = pid * BLOCK_SIZE\n    offsets = block_start + tl.arange(0, BLOCK_SIZE)\n    mask = offsets < total_elems\n\n    # Load frequencies as fp32 from the flat [B,S,64] tensor \u2014 single coalesced read\n    vals = tl.load(freqs_ptr + offsets, mask=mask, other=0.0)\n\n    # Compute cos and sin in fp32, then scale by attention_scaling\n    cos_vals = tl.math.cos(vals) * ATTENTION_SCALING\n    sin_vals = tl.math.sin(vals) * ATTENTION_SCALING\n\n    # Map flat index to (row, col): row = offset // half_dim, col = offset % half_dim\n    row = offsets // half_dim\n    col = offsets % half_dim\n\n    # Output offsets for both halves \u2014 replicates the cat(freqs,freqs) behaviour\n    # without materialising the intermediate\n    off_lo = row * full_dim + col\n    off_hi = row * full_dim + col + half_dim\n\n    # Store to both positions; fp32 \u2192 bf16 truncation matches reference .to(bf16)\n    tl.store(cos_out_ptr + off_lo, cos_vals, mask=mask)\n    tl.store(cos_out_ptr + off_hi, cos_vals, mask=mask)\n    tl.store(sin_out_ptr + off_lo, sin_vals, mask=mask)\n    tl.store(sin_out_ptr + off_hi, sin_vals, mask=mask)\n\n\n@torch.no_grad()\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    \"\"\"\n    Fused cos/sin embedding generation from frequencies for RoPE.\n\n    Single Triton kernel that loads each frequency once, computes cos+sin+scale,\n    casts to bf16, and writes each value to both duplicated output positions \u2014\n    eliminating the fp32 cat intermediate and all separate cos/sin/scale/cast\n    kernel launches.\n\n    Args:\n        freqs: [B, S, head_dim//2] fp32, result of (inv_freq @ position_ids)\n        attention_scaling: scalar scaling factor\n\n    Returns:\n        Tuple of (cos, sin), each [B, S, head_dim] in bfloat16\n    \"\"\"\n    B, S, half_dim = freqs.shape\n    full_dim = half_dim * 2\n    n_rows = B * S\n    total_elems = n_rows * half_dim\n\n    # Ensure row-major contiguity for flat pointer addressing\n    freqs = freqs.contiguous()\n\n    # attention_scaling may arrive as a 0-d tensor\n    if isinstance(attention_scaling, torch.Tensor):\n        attention_scaling = attention_scaling.item()\n\n    cos = torch.empty(B, S, full_dim, dtype=torch.bfloat16, device=freqs.device)\n    sin = torch.empty(B, S, full_dim, dtype=torch.bfloat16, device=freqs.device)\n\n    grid = lambda meta: (triton.cdiv(total_elems, meta['BLOCK_SIZE']),)\n\n    _fused_rope_kernel[grid](\n        freqs, cos, sin,\n        total_elems,\n        half_dim=half_dim,\n        full_dim=full_dim,\n        ATTENTION_SCALING=attention_scaling,\n    )\n\n    return cos, sin"
+      }
+    ]
+  }
+}

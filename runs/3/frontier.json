@@ -3,7 +3,7 @@
   "family": "layernorm",
   "name": "layernorm_3",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 2,
   "best_cand": "7d12b2e7b23e",
   "best_score": 0.7027709532253971,
   "best_score_cal": 0.39610241836691934,
@@ -13,7 +13,7 @@
       "sol_score": 0.7027709532253971,
       "sol_score_cal": 0.39610241836691934,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 11,
       "vector": [
         0.6403455383158837,
         0.5530488965468878,
@@ -36,6 +36,35 @@
       "agent": "",
       "model": "",
       "candidate": "candidates/7d12b2e7b23e.json"
+    },
+    {
+      "cand_id": "4c05cd72aba0",
+      "sol_score": 0.6471538170683623,
+      "sol_score_cal": 0.35712311927436924,
+      "all_passed": true,
+      "shapes_won": 5,
+      "vector": [
+        0.6166675161255617,
+        0.22276786254705977,
+        0.6441082202529509,
+        0.3572998900769462,
+        0.7524155187791104,
+        0.9543025672837289,
+        0.625067141265222,
+        0.9518312405388623,
+        0.6782861196249202,
+        0.757985327137291,
+        0.6363869890505084,
+        0.5962405773562917,
+        0.2120490129339687,
+        0.6816404232398211,
+        0.7215612606971402,
+        0.945851406184413
+      ],
+      "strategy": "Hybrid LM-head GEMM: Triton N-tiled streaming kernel (each weight row read once, hidden L2-resident, fp32 accum, BLOCK_N",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/4c05cd72aba0.json"
     }
   ]
 }

@@ -1,0 +1,25 @@
+{
+  "name": "t11_60d8b251bc98",
+  "definition": "011_rotary_position_embedding",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\nimport math\n\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"Generate inputs including precomputed llama3-scaled inverse frequencies.\"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    head_dim = axes_and_scalars[\"head_dim\"]\n    \n    # Llama3 RoPE constants\n    rope_theta = 500000.0\n    factor = 8.0\n    low_freq_factor = 1.0\n    high_freq_factor = 4.0\n    original_max_position_embeddings = 8192\n    \n    # Compute inverse frequencies with llama3 scaling\n    dim_indices = torch.arange(0, head_dim, 2, dtype=torch.float32, device=device)\n    inv_freq = 1.0 / (rope_theta ** (dim_indices / head_dim))\n    \n    # Compute wavelengths and scaling factors\n    low_freq_wavelen = original_max_position_embeddings / low_freq_factor\n    high_freq_wavelen = original_max_position_embeddings / high_freq_factor\n    \n    # Wavelength for each frequency component\n    wavelens = 2 * math.pi / inv_freq\n    \n    # Smooth interpolation factor\n    smooth_factor = (original_max_position_embeddings / wavelens - low_freq_factor) / (\n        high_freq_factor - low_freq_factor\n    )\n    smooth_factor = torch.clamp(smooth_factor, 0.0, 1.0)\n    \n    # Apply scaled frequencies\n    scaled_inv_freq = inv_freq / factor\n    inv_freq = (1 - smooth_factor) * inv_freq + smooth_factor * scaled_inv_freq\n    \n    # Generate position_ids (sequential positions for each batch)\n    position_ids = torch.arange(seq_len, dtype=torch.int64, device=device).unsqueeze(0).expand(batch_size, -1).contiguous()\n    \n    return {\n        \"position_ids\": position_ids,\n        \"inv_freq\": inv_freq,\n        \"attention_scaling\": 1.0\n    }\n\n\n@torch.no_grad()\ndef run(\n    position_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    attention_scaling: float\n) -> torch.Tensor:\n    \"\"\"\n    Compute rotary position embeddings.\n    \n    Args:\n        position_ids: Position indices (batch_size, seq_len)\n        inv_freq: Precomputed inverse frequencies with llama3 scaling (head_dim/2,)\n        attention_scaling: Attention scaling factor\n    \n    Returns:\n        cos_sin: Concatenated cos and sin embeddings (batch_size, seq_len, head_dim, 2)\n    \"\"\"\n    batch_size = position_ids.shape[0]\n    \n    # Expand inv_freq for batch dimension: (batch_size, head_dim/2, 1)\n    inv_freq_expanded = inv_freq[None, :, None].float().expand(\n        batch_size, -1, 1\n    )\n    \n    # Expand position_ids: (batch_size, 1, seq_len)\n    position_ids_expanded = position_ids[:, None, :].float()\n    \n    # Compute frequencies: (batch_size, head_dim/2, seq_len) -> (batch_size, seq_len, head_dim/2)\n    freqs = (inv_freq_expanded @ position_ids_expanded).transpose(1, 2)\n    \n    # Duplicate frequencies for complex number representation\n    # (batch_size, seq_len, head_dim)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    \n    # Compute cos and sin with attention scaling\n    cos = emb.cos() * attention_scaling\n    sin = emb.sin() * attention_scaling\n    \n    # Stack cos and sin along last dimension: (batch_size, seq_len, head_dim, 2)\n    cos_sin = torch.stack([cos, sin], dim=-1)\n    \n    # Convert to bfloat16\n    return cos_sin.to(dtype=torch.bfloat16)\n"
+    }
+  ]
+}

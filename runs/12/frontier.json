@@ -1,0 +1,41 @@
+{
+  "task_id": 12,
+  "family": "softmax",
+  "name": "softmax_12",
+  "epsilon": 0.02,
+  "size": 1,
+  "best_cand": "e9827f4b3147",
+  "best_score": 0.9142156452485883,
+  "best_score_cal": 0.893692486053788,
+  "members": [
+    {
+      "cand_id": "e9827f4b3147",
+      "sol_score": 0.9142156452485883,
+      "sol_score_cal": 0.893692486053788,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.9140221402214023,
+        0.9020656584286242,
+        0.9140317577889913,
+        0.9144391007717257,
+        0.9232524183245118,
+        0.9132821075740943,
+        0.9136397331356562,
+        0.9131627056672761,
+        0.9163477817203554,
+        0.9149175412293854,
+        0.9127218934911243,
+        0.9204009433962264,
+        0.9126750184229919,
+        0.9175304376439615,
+        0.9137461328900586,
+        0.911214953271028
+      ],
+      "strategy": "Triton fused single-kernel: loads each fp32 frequency once, computes cos+sin+scale+bf16-cast in registers, writes each v",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/e9827f4b3147.json"
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "cand_id": "b2fe61b3479c",
+  "task_id": 4,
+  "verdict": "entered",
+  "sol_score": 0.7965911879078921,
+  "sol_score_calibrated": 0.7097731740272807,
+  "correct": true,
+  "vector": [
+    0.9048360050352796,
+    0.7832658148956062,
+    0.9049658767288118,
+    0.7831382828410786,
+    0.8401221785760968,
+    0.8404383140289325,
+    0.9049834569203272,
+    0.7220138999157211,
+    0.6512933138116154,
+    0.711113324039036,
+    0.719972746739342,
+    0.9041274270433671,
+    0.7833846693699315,
+    0.667614650987447,
+    0.7841162983560174,
+    0.8400727472376638
+  ],
+  "strategy": "Sequential bf16 tensor-core GEMMs (fp32 accumulation) with a zero-copy transposed (B,H,S,D) view for grad_attn_output, a",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "d2275cdaace9",
+  "trajectory": "runs/4/work/b2fe61b3479c/trajectory.jsonl",
+  "gpu_s": 7.356,
+  "job_id": "4-b2fe61b3479c",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 32.0,
+      "power_w_max": 312.69,
+      "samples": 21,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0865435,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.9048360050352796,
+      "sol_score_cal": 0.7849294385933567,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.030528,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7832658148956062,
+      "sol_score_cal": 0.7037619836932175,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.086528,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.9049658767288118,
+      "sol_score_cal": 0.7850452690778901,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0305275,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7831382828410786,
+      "sol_score_cal": 0.7036033318902555,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.04992,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8401221785760968,
+      "sol_score_cal": 0.7431421780240564,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.04992,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8404383140289325,
+      "sol_score_cal": 0.7435915504080342,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0864805,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.9049834569203272,
+      "sol_score_cal": 0.784652042902091,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0212795,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.7220138999157211,
+      "sol_score_cal": 0.6571124204496782,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.014432,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.6512933138116154,
+      "sol_score_cal": 0.6010232482728181,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.021504,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.711113324039036,
+      "sol_score_cal": 0.6454592784884268,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.021408,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.719972746739342,
+      "sol_score_cal": 0.6551305124135587,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0866075,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.9041274270433671,
+      "sol_score_cal": 0.7841141166152454,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.030511499999999997,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.7833846693699315,
+      "sol_score_cal": 0.7038405722154055,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.017664,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.667614650987447,
+      "sol_score_cal": 0.613172040006162,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.0304635,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7841162983560174,
+      "sol_score_cal": 0.7045428584778638,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0499515,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8400727472376638,
+      "sol_score_cal": 0.7432499429084319,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward pass for attention output projection with reshape.\n\n    Both GEMMs run as bf16 tensor-core matmuls with fp32 accumulation, which is\n    numerically equivalent to the fp32 reference because all operands are\n    already bf16.  The input gradient is returned as a zero-copy transposed\n    (B, H, S, D) view so the reshape/transpose is never materialized.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    # wgrad: (H*D, B*S) @ (B*S, H*D) -> (H*D, H*D)\n    grad_weight = go2d.t().mm(rs2d)\n\n    # dgrad: (B*S, H*D) @ (H*D, H*D) -> (B*S, H*D)\n    grad_reshaped_2d = go2d.mm(weight)\n\n    # Reverse the forward transpose+reshape as a zero-copy view.\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_b2fe61b3479c",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward pass for attention output projection with reshape.\n\n    Both GEMMs run as bf16 tensor-core matmuls with fp32 accumulation, which is\n    numerically equivalent to the fp32 reference because all operands are\n    already bf16.  The input gradient is returned as a zero-copy transposed\n    (B, H, S, D) view so the reshape/transpose is never materialized.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    # wgrad: (H*D, B*S) @ (B*S, H*D) -> (H*D, H*D)\n    grad_weight = go2d.t().mm(rs2d)\n\n    # dgrad: (B*S, H*D) @ (H*D, H*D) -> (B*S, H*D)\n    grad_reshaped_2d = go2d.mm(weight)\n\n    # Reverse the forward transpose+reshape as a zero-copy view.\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}
