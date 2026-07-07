@@ -670,43 +670,6 @@ def _live_banner(live: dict | None) -> str:
     return '<div class="livebar live">' + ' &nbsp;·&nbsp; '.join(parts) + '</div>'
 
 
-def _board_submissions_panel(subs: list[dict], exp_by_cand: dict, best_by_task: dict) -> str:
-    """Every leaderboard submission across the board, most-recent first — with WHEN
-    it ran, what we expected at submit, its real score, and how it compares to our
-    CURRENT best (↑ = we've built something better since → worth re-submitting)."""
-    if not subs:
-        return ('<div class="panel"><h2>Submissions — across the board</h2>'
-                '<p class="muted">no submissions yet — nothing has been sent to the leaderboard</p></div>')
-    rows = []
-    for s in subs:
-        sol, rank, n = s.get("sol_score"), s.get("board_rank"), s.get("board_n")
-        status = s.get("status") or "—"
-        scls = "real" if status == "COMPLETED" else ("run" if status in ("QUEUED", "RUNNING", "PENDING") else "")
-        when = _localtime(s.get("finished_at") or s.get("submitted_at") or "")
-        exp = exp_by_cand.get(s.get("cand_id"))            # our expected SOL at submit
-        best = best_by_task.get(s["task"])                 # our current best (expected)
-        # have we surpassed this submission since? (better kernel now → re-submit)
-        better = (best is not None and sol is not None and best > sol + 0.01)
-        mark = (' <span class="up" title="our current best expected ('
-                f'{best:.3f}) beats this submission ({sol:.3f}) — re-submit">↑</span>') if better else ""
-        rows.append(
-            f'<tr><td data-v="{s.get("finished_at") or s.get("submitted_at") or ""}">{when}</td>'
-            f'<td><a href="p/{s["task"]}.html">#{s["task"]}</a></td>'
-            f'<td>#{s["sid"]}</td>'
-            f'<td class="strat">{_esc((s.get("cand_strategy") or "")[:64])}</td>'
-            f'<td class="{scls}">{_esc(status)}</td>'
-            f'<td data-v="{exp or -1}">{"—" if exp is None else f"~{exp:.3f}"}</td>'
-            f'<td data-v="{sol or -1}"><b class="real">{"—" if sol is None else f"{sol:.4f}"}</b></td>'
-            f'<td data-v="{best or -1}">{"—" if best is None else f"{best:.3f}"}{mark}</td>'
-            f'<td data-v="{rank or 9999}">{f"#{rank} of {n}" if rank else "—"}</td></tr>')
-    return ('<div class="panel"><h2>Submissions — across the board '
-            '<span class="fcount">(most recent first)</span></h2>'
-            '<table class="sortable"><thead><tr><th>when</th><th>problem</th><th>submission</th>'
-            '<th>kernel</th><th>status</th><th>expected@submit</th><th>real SOL</th>'
-            '<th>our best now</th><th>rank</th></tr></thead><tbody>'
-            + "".join(rows) + '</tbody></table></div>')
-
-
 def _recent_attempts_panel(problems: list[dict], limit: int = 25) -> str:
     """A fleet-wide activity feed: the most recent candidate attempts across ALL
     problems, with WHEN, the agent, its expected SOL, and its verdict (accepted /
@@ -815,7 +778,6 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 <div id="tiles" class="tiles"></div>
 <div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
 {_recent_attempts_panel(problems)}
-{_board_submissions_panel(data.get("submissions") or [], {c["cand"]: c.get("sol_score_cal") for p in problems for c in (p.get("candidates") or [])}, {p["task"]: p.get("best_cal") for p in problems})}
 <div class="panel"><h2 id="h-fleet">Fleet expected SOL over time (mean of per-problem best, ↑)</h2>
 <div id="c-fleet"></div></div>
 <div class="panel"><h2 id="h-conv">Convergence — top movers (expected SOL vs GPU evals)</h2>

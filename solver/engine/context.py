@@ -263,10 +263,12 @@ class RunContext:
             return True
         return False
 
-    def note_failure(self, strategy: str, reason: str, cand_id: str) -> None:
+    def note_failure(self, strategy: str, reason: str, cand_id: str, detail: str = "") -> None:
         """Remember an INCORRECT attempt so the next agent context can warn against
-        repeating it (live-only; keeps the last few)."""
-        self.recent_failures.append({"strategy": strategy or "", "reason": reason, "cand": cand_id})
+        repeating it AND tell it exactly which workloads failed and how (live-only;
+        keeps the last few)."""
+        self.recent_failures.append({"strategy": strategy or "", "reason": reason,
+                                     "cand": cand_id, "detail": detail})
         self.recent_failures = self.recent_failures[-4:]
 
     def _playbook_add(self, cand_id: str) -> None:

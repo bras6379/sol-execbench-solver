@@ -414,8 +414,13 @@ def _context_md(parent, ctx) -> str:
             lines.append(f"- {e['handoff']}{tag}")
     fails = getattr(ctx, "recent_failures", None)
     if fails:
-        lines += ["", "## Recent FAILED attempts — do NOT repeat these (they were INCORRECT)"]
-        lines += [f"- [{f['reason']}] {f['strategy']}" for f in fails[-4:]]
+        lines += ["", "## Recent FAILED attempts — INCORRECT. Fix the exact workloads that failed",
+                  "(each line: the failure + WHICH workloads broke; their shapes are in `workloads.md`):"]
+        for f in fails[-4:]:
+            detail = (f.get("detail") or "").strip()
+            lines.append(f"- [{f['reason']}] {f['strategy']}")
+            if detail:
+                lines.append(f"    → {detail}")
     return "\n".join(lines) + "\n"
 
 

@@ -113,6 +113,34 @@ def test_live_state_from_active_set():
     assert _live_state({"task": 30, "terminated": None, "evals": 0}, active, True) == "pending"
 
 
+def test_failure_detail_is_actionable():
+    from solver.engine.executor import EvalResult, WorkloadResult
+    from solver.engine.loop import _failure_detail, _fmt_idxs
+
+    assert _fmt_idxs([0, 1, 2, 3, 7]) == "0-3,7"
+    assert _fmt_idxs([]) == "-"
+
+    result = EvalResult(task_id=1, correct=False, sol_score=None, per_workload=[
+        WorkloadResult(index=0, correct=False, error="RUNTIME_ERROR"),
+        WorkloadResult(index=1, correct=False, error="RUNTIME_ERROR"),
+        WorkloadResult(index=2, correct=False, error="TOLERANCE"),
+        WorkloadResult(index=3, correct=True),
+    ])
+    detail = _failure_detail(result)
+    assert "3/4 workloads FAILED" in detail
+    assert "RUNTIME_ERROR on #0-1" in detail
+    assert "TOLERANCE on #2" in detail
+    assert "PASSED: #3" in detail
+
+    all_fail = EvalResult(task_id=1, correct=False, sol_score=None, per_workload=[
+        WorkloadResult(index=0, correct=False, error="COMPILE_ERROR")])
+    assert "ALL workloads failed" in _failure_detail(all_fail)
+
+    ok = EvalResult(task_id=1, correct=True, sol_score=0.5,
+                    per_workload=[WorkloadResult(index=0, correct=True)])
+    assert _failure_detail(ok) == ""
+
+
 def test_live_state_recency_fallback():
     import datetime as dt
     from solver.dashboard.metrics import _live_state

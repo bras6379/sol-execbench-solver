@@ -121,16 +121,33 @@ class ProblemReflection:
     headline: str = ""             # one-line directive for the agent
 
 
-def _failed_ledger(bad: list) -> list[dict]:
-    """Distinct approaches that FAILED correctness (score 0), grouped by family, so
-    the card can say 'these don't even pass — don't retry'."""
+def _cand_error(candidates: dict, cand_id: str) -> str:
+    """The dominant per-workload error of a failed candidate (RUNTIME_ERROR /
+    TOLERANCE / COMPILE_ERROR / …), so the card names the FAILURE MODE, not just
+    'it failed'."""
+    from collections import Counter
+    c = candidates.get(cand_id) or {}
+    pw = c.get("per_workload") or []
+    errs = [w.get("error") for w in pw if isinstance(w, dict) and w.get("correct") is False and w.get("error")]
+    if errs:
+        err, k = Counter(errs).most_common(1)[0]
+        return f"{err} (×{k})"
+    return ""
+
+
+def _failed_ledger(bad: list, candidates: dict | None = None) -> list[dict]:
+    """Distinct approaches that FAILED correctness (score 0), grouped by family, with
+    the dominant failure mode — so the card can say 'these don't even pass, and HOW
+    they broke — don't retry'."""
+    candidates = candidates or {}
     fam: dict[frozenset[str], dict] = {}
     for a in bad:
         sig = _sig(a.strategy)
         rec = fam.setdefault(sig, {"n": 0, "strategy": a.strategy, "cand": a.cand_id})
         rec["n"] += 1
     out = [{"family": " + ".join(sorted(sig)) or "misc", "n": rec["n"],
-            "cand": rec["cand"][:8], "strategy": _clip(rec["strategy"], 150)}
+            "cand": rec["cand"][:8], "strategy": _clip(rec["strategy"], 150),
+            "error": _cand_error(candidates, rec["cand"])}
            for sig, rec in fam.items()]
     out.sort(key=lambda d: -d["n"])
     return out
@@ -189,14 +206,14 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
         r.status = "broken" if any(e.get("ev") == "plan_done" for e in events) else "thin"
         r.headline = ("No correct kernel yet — the whole score is gated on producing "
                       "ONE that passes all workloads. Prioritize correctness over speed.")
-        r.failed = _failed_ledger(bad)
+        r.failed = _failed_ledger(bad, candidates)
         return r
 
     best_a = max(ok, key=lambda a: a.score)
     r.best, r.best_order = round(best_a.score, 4), best_a.order
     r.best_strategy, r.best_cand = best_a.strategy, best_a.cand_id
     r.stale_evals = r.n_evals - best_a.order
-    r.failed = _failed_ledger(bad)
+    r.failed = _failed_ledger(bad, candidates)
 
     # --- attempt ledger: distinct families, their ceiling, how many times tried ---
     # (correct attempts only — failures are in r.failed, not the "best score each" list)
@@ -317,7 +334,8 @@ def render_card(r: ProblemReflection) -> str:
         L += [f"**Tried and FAILED correctness — do NOT retry ({total} attempt(s) that don't even",
               "pass the tolerance/compile gate; the kernel in `prior/0.000_<cand>.py` shows the bug):**"]
         for d in r.failed[:6]:
-            L.append(f"- ×{d['n']}  [{d['family']}]  {d['strategy']}  → `prior/0.000_{d['cand']}.py`")
+            err = f"  ({d['error']})" if d.get("error") else ""
+            L.append(f"- ×{d['n']}  [{d['family']}]{err}  {d['strategy']}  → `prior/0.000_{d['cand']}.py`")
         L.append("")
 
     if r.techniques_untried:

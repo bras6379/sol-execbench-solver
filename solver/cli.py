@@ -597,7 +597,7 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--reflect-every-min", type=float, default=20.0,
                          help="also rebuild coach cards every N minutes during the run so long runs keep "
                               "reflecting on fresh results (0=only at startup)")
-    p_solve.add_argument("--reflect-model", default="claude-opus-4-8",
+    p_solve.add_argument("--reflect-model", default="claude-sonnet-5",
                          help="strong model that reads the tried kernels' SOURCE and adds a why-it's-stuck "
                               "+ one-untried-lever diagnosis to the coach card of STUCK problems (deduped on "
                               "state so spend is bounded; runs in the BACKGROUND, never blocks the GPU; at "

@@ -88,6 +88,43 @@ def _dominant_failure(result: EvalResult) -> str:
     return Counter(errs).most_common(1)[0][0] if errs else "INCORRECT"
 
 
+def _fmt_idxs(idxs: list[int]) -> str:
+    """Compress a workload-index list to ranges: [0,1,2,3,7] -> '0-3,7'."""
+    if not idxs:
+        return "-"
+    idxs = sorted(set(idxs))
+    out, start, prev = [], idxs[0], idxs[0]
+    for i in idxs[1:] + [None]:
+        if i == prev + 1:
+            prev = i
+        else:
+            out.append(f"{start}-{prev}" if prev > start else f"{start}")
+            start = prev = i
+    return ",".join(out)
+
+
+def _failure_detail(result: EvalResult) -> str:
+    """An ACTIONABLE per-workload failure breakdown fed back to the agent so it can
+    fix an incorrect kernel: which workloads failed, with what error, and which
+    passed. E.g. '12/15 workloads FAILED — RUNTIME_ERROR on #0-11; TOLERANCE on
+    #12,13. PASSED: #14'. Empty string if there's no per-workload detail."""
+    from collections import defaultdict
+    pw = result.per_workload or []
+    if not pw:
+        return ""
+    failed = [w for w in pw if not w.correct]
+    if not failed:
+        return ""
+    passed = [w.index for w in pw if w.correct]
+    by_err: dict[str, list[int]] = defaultdict(list)
+    for w in failed:
+        by_err[w.error or "INCORRECT_OUTPUT"].append(w.index)
+    parts = [f"{err} on #{_fmt_idxs(idxs)}"
+             for err, idxs in sorted(by_err.items(), key=lambda kv: -len(kv[1]))]
+    tail = f". PASSED: #{_fmt_idxs(passed)}" if passed else " (ALL workloads failed)"
+    return f"{len(failed)}/{len(pw)} workloads FAILED — " + "; ".join(parts) + tail
+
+
 async def _reverify(ctx: RunContext, executor: Executor, task_id: int, cid: str,
                     solution: dict, runs: int) -> int | None:
     """Re-run a would-be frontier entry `runs`-1 more times as FRESH evals (same
@@ -229,7 +266,8 @@ async def solve_problem(
                    sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
                    scores=result.vector(), statuses=_statuses(result))
         if not result.correct:                              # feed the mistake back to future agents
-            ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id)
+            ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id,
+                             detail=_failure_detail(result))
             verdict = ctx.accept_candidate(cand.cand_id)
         else:
             # A candidate that PASSED and would improve the frontier gets re-verified

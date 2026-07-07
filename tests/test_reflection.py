@@ -102,6 +102,24 @@ def test_reflect_all_writes_cards_and_prior(tmp_path):
     assert priors and any("0.700" in f.name for f in priors)
 
 
+def test_failed_ledger_includes_error_mode():
+    ev, cands = _events([0.6], ["triton fused"])
+    cands["cand000"]["correct"] = False
+    cands["cand000"].pop("sol_score_calibrated", None)
+    cands["cand000"]["per_workload"] = [
+        {"index": 0, "correct": False, "error": "RUNTIME_ERROR"},
+        {"index": 1, "correct": False, "error": "RUNTIME_ERROR"},
+        {"index": 2, "correct": True},
+    ]
+    ev2, cands2 = _events([0.5], ["seed"])
+    ev = ev2 + ev
+    cands2.update(cands)
+    r = R.analyze(ev, cands2, task_id=1)
+    assert r.failed and r.failed[0]["error"] == "RUNTIME_ERROR (×2)"
+    card = R.render_card(r)
+    assert "RUNTIME_ERROR (×2)" in card
+
+
 def test_failed_correctness_attempts_surface(tmp_path):
     # correct=False candidates carry NO score (sol_score=None) — they must still be
     # mined as tried-and-failed dead-ends, not silently skipped.
