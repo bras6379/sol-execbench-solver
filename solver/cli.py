@@ -177,9 +177,15 @@ def _cmd_solve(args) -> None:
             tiers = _parse_tiers(args.tier)
         else:
             tiers = [Tier(args.agent, [Perspective(args.agent, args.model)])]
+        tl = args.time_limit_min * 60 if args.time_limit_min else None
+        big = 10 ** 9
         cfg = Config(
-            tiers=tiers, plateau_cycles=args.plateau_cycles, escalate_ceiling=0.9,
-            epsilon=0.02, max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
+            tiers=tiers,
+            # with a wall-clock budget, keep iterating until time runs out: don't let
+            # the iter/eval caps or a plateau stop the problem early.
+            plateau_cycles=(big if tl else args.plateau_cycles), escalate_ceiling=0.9,
+            epsilon=0.02, max_iterations=(big if tl else args.max_iters),
+            max_gpu_evals=(big if tl else args.max_evals), time_limit_s=tl,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
@@ -435,6 +441,9 @@ def main(argv: list[str] | None = None) -> None:
                          help="M: full pool-cycles with no ε-gain before escalating a tier")
     p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
     p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
+    p_solve.add_argument("--time-limit-min", type=float, default=None,
+                         help="wall-clock budget per problem (minutes); when set it's the ONLY stop "
+                              "condition — iter/eval caps and plateau are lifted so it keeps trying")
     p_solve.add_argument("--timeout", type=float, default=1800.0,
                          help="per agent-call timeout (s); a timeout now skips the iteration, "
                               "not the whole problem")

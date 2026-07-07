@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import time
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -46,6 +47,7 @@ class RunContext:
         self.design: str | None = None
         self.bootstrapped = False
         self.terminated_reason: str | None = None
+        self.deadline: float | None = None          # monotonic wall-clock stop (live-only, per run)
         self._pending: dict[str, dict] = {}
         self._replaying = False
 
@@ -68,6 +70,8 @@ class RunContext:
     def done(self) -> bool:
         if self.terminated_reason is not None:
             return True
+        if self.deadline is not None and time.monotonic() >= self.deadline:
+            return True
         if self.iters >= self.cfg.max_iterations:
             return True
         if self.evals >= self.cfg.max_gpu_evals:
@@ -81,6 +85,8 @@ class RunContext:
             return self.terminated_reason
         if self.cfg.score_target is not None and self.frontier.best_score() >= self.cfg.score_target:
             return "target"
+        if self.deadline is not None and time.monotonic() >= self.deadline:
+            return "budget:time"
         if self.evals >= self.cfg.max_gpu_evals:
             return "budget:evals"
         if self.iters >= self.cfg.max_iterations:

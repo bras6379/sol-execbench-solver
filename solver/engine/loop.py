@@ -10,6 +10,7 @@ its own problem. Everything is async; the executor is the single serialized GPU.
 from __future__ import annotations
 
 import asyncio
+import time
 from pathlib import Path
 from typing import Awaitable, Callable
 
@@ -104,6 +105,8 @@ async def solve_problem(
 ) -> RunContext:
     ctx = RunContext.load(task_id, cfg, runs_dir, seed=seed)
     ctx.reopen_if_capped()             # a cap-terminated run continues if the caps now allow it
+    if cfg.time_limit_s:               # wall-clock budget for THIS run (resume gets a fresh one)
+        ctx.deadline = time.monotonic() + cfg.time_limit_s
     seeds_fn = seeds_fn or _default_seeds
     check_fn = check_fn or _default_check
 
