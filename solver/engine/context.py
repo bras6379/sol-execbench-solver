@@ -61,7 +61,9 @@ class RunContext:
     # ---- tier / perspective ----
     @property
     def tier(self):
-        return self.cfg.tiers[self.tier_idx]
+        # Clamp: retuning to FEWER tiers between sessions must never crash a resume.
+        # The journal keeps going regardless of how the config is tuned.
+        return self.cfg.tiers[min(self.tier_idx, len(self.cfg.tiers) - 1)]
 
     @property
     def pool_size(self) -> int:
@@ -231,7 +233,11 @@ class RunContext:
         elif ev == "terminated":
             self.terminated_reason = e.get("reason")
         elif ev == "reopened":
-            self.terminated_reason = None                 # a cap-terminated run resumes
+            self.terminated_reason = None                 # a non-final run resumes
+            self.disabled.clear()                         # fresh circuit-breaker each session:
+            self._fail_streak.clear()                     # retuning gives every agent a new chance
+            if self.tier_idx >= len(self.cfg.tiers):      # config shrank → don't point past the end
+                self.tier_idx = 0
         # iter / check / novelty / flaky / verify_started / exec_enqueued /
         # exec_started / run_started / solver_error carry no core-state delta.
 
@@ -243,13 +249,17 @@ class RunContext:
                       sol_score_cal=p.get("sol_score_cal"))
 
     def reopen_if_capped(self) -> bool:
-        """A `budget:*`-terminated run continues when the caps now allow more
-        work (e.g. resumed with a higher `--max-evals`); `converged:*`/`target`
-        runs stay done. Journals `reopened` so replay reconstructs it."""
-        if (self.terminated_reason and self.terminated_reason.startswith("budget:")
+        """Resume a run that isn't truly finished. Only `converged:*`/`target` are
+        final (a different prior won't help / the goal is met). Everything else —
+        a killed run (`stopped`), a cap (`budget:*`), a dead-agent stop
+        (`agents-unavailable`) — continues when the caps allow, so you can retune
+        the system (models/tiers/budgets) and the journal keeps going. Journals
+        `reopened` so replay reconstructs it."""
+        r = self.terminated_reason
+        if (r and not r.startswith("converged") and r != "target"
                 and self.iters < self.cfg.max_iterations
                 and self.evals < self.cfg.max_gpu_evals):
-            self.record("reopened", from_reason=self.terminated_reason)
+            self.record("reopened", from_reason=r)
             return True
         return False
 

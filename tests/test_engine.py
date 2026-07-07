@@ -374,6 +374,33 @@ def test_max_concurrency_caps_active_problems(tmp_path):
     assert unbounded["peak"] >= 2              # unbounded ⇒ problems overlap
 
 
+def test_retune_to_fewer_tiers_does_not_crash(tmp_path):
+    # tuning the system between sessions (fewer tiers / different models) must never
+    # crash a resume — tier access clamps to the new config.
+    from solver.engine.context import RunContext
+    two = cfg([Tier("cheap", [Perspective("a", "1")]), Tier("strong", [Perspective("b", "2")])])
+    ctx = RunContext(1, two, tmp_path)
+    ctx.tier_idx = 1
+    assert ctx.tier.name == "strong"
+    ctx.cfg = cfg([Tier("new", [Perspective("c", "9")])])     # resume under a 1-tier config
+    assert ctx.tier.name == "new"                             # clamped, no IndexError
+    assert ctx.pool_size == 1 and ctx.current_perspective() is not None
+
+
+def test_reopen_resumes_any_non_final_termination(tmp_path):
+    # only converged/target are final; a killed ('stopped') or capped run resumes,
+    # so the journal keeps going across retunes.
+    from solver.engine.context import RunContext
+    c = one_tier(max_iterations=100, plateau_cycles=999)
+    cases = {"budget:iterations": True, "budget:time": True, "stopped": True,
+             "agents-unavailable": True, "converged:ceiling": False,
+             "converged:last-tier": False, "target": False}
+    for reason, should in cases.items():
+        ctx = RunContext(1, c, tmp_path / reason.replace(":", "_"))
+        ctx.terminated_reason = reason
+        assert ctx.reopen_if_capped() is should, reason
+
+
 def test_all_agents_dead_terminates_cleanly(tmp_path):
     from solver.engine.agent import StubAgent
     dead = Perspective("dead", "x")
