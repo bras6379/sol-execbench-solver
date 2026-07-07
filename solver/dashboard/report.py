@@ -424,7 +424,7 @@ function lineChart(series,{xTime=false,xLabel='',right=150,height=300}={}){
 }
 function histChart(sub){
   const bins=20,c=Array(bins).fill(0);
-  sub.forEach(r=>{if(r.b!=null)c[Math.min(bins-1,Math.floor(Math.max(0,Math.min(r.b,.9999))*bins))]++;});
+  sub.forEach(r=>{if(r.bc!=null)c[Math.min(bins-1,Math.floor(Math.max(0,Math.min(r.bc,.9999))*bins))]++;});
   if(!c.some(x=>x))return '<p class="muted">no scored problems</p>';
   const W=960,H=190,L=46,R=20,T=12,B=34,pw=W-L-R,ph=H-T-B,mx=Math.max(...c),bw=pw/bins;
   let bars=''; c.forEach((v,i)=>{if(!v)return;const h=ph*v/mx,x=L+i*bw;bars+=`<rect x="${(x+1).toFixed(1)}" y="${(T+ph-h).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="var(--seq)" class="seg" data-tip="score ${(i/bins).toFixed(2)}–${((i+1)/bins).toFixed(2)}: ${v}"/><text x="${(x+bw/2).toFixed(1)}" y="${(T+ph-h-5).toFixed(1)}" class="dl2" text-anchor="middle">${v}</text>`;});
@@ -456,7 +456,7 @@ function fleetSeries(sub){
 }
 function famRollup(sub){
   const m={}; sub.forEach(r=>{(m[r.f]=m[r.f]||[]).push(r);});
-  return Object.entries(m).map(([f,rs])=>{const bs=rs.filter(r=>r.b!=null).map(r=>r.b);
+  return Object.entries(m).map(([f,rs])=>{const bs=rs.filter(r=>r.bc!=null).map(r=>r.bc);
     return {f,n:rs.length,done:rs.filter(r=>r.s!=='running').length,
       mb:bs.length?bs.reduce((a,b)=>a+b)/bs.length:null,ev:rs.reduce((a,r)=>a+r.e,0)};})
     .sort((a,b)=>(b.mb||0)-(a.mb||0));
@@ -466,15 +466,12 @@ function tile(l,v,s){return `<div class="tile"><div class="tile-v">${v}</div><di
 function render(){
   const sub=RECS.filter(matches);
   document.getElementById('fcount').textContent=`${sub.length} / ${RECS.length} problems`;
-  const bs=sub.filter(r=>r.b!=null).map(r=>r.b);
-  const mb=bs.length?(bs.reduce((a,b)=>a+b)/bs.length):null;
   const bcs=sub.filter(r=>r.bc!=null).map(r=>r.bc);
   const mbc=bcs.length?(bcs.reduce((a,b)=>a+b)/bcs.length):null;
   const w5=pct(sub.filter(r=>r.w5!=null).map(r=>r.w5),.5), w9=pct(sub.filter(r=>r.w9!=null).map(r=>r.w9),.95);
   const scoped = sub.length!==RECS.length;
   document.getElementById('tiles').innerHTML=[
-    tile('Leaderboard est (mean of best)', mbc==null?'–':mbc.toFixed(3),'clock-calibrated → board'),
-    tile('SOL score, our measure', mb==null?'–':mb.toFixed(3),'unlocked · 0.5 baseline · 1.0 SOL'),
+    tile('expected SOL (mean of best)', mbc==null?'–':mbc.toFixed(3),'leaderboard estimate · 0.5 baseline · 1.0 SOL'),
     tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
     tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
@@ -501,8 +498,8 @@ function render(){
   document.getElementById('t-prob').innerHTML=(()=>{
     const rows=[...sub].sort((a,b)=>((b.bc??-1)-(a.bc??-1))).map(r=>{const i=idx[r.t];const bar=r.bc==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.bc,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
       const lb=r.lb||{};const rsol=lb.sol==null?'':lb.sol.toFixed(4);const rank=lb.rank?`#${lb.rank} of ${lb.n??'?'}`:'';
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${bar}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}</td><td data-v="${lb.sol??-1}" class="real"><b>${rsol}</b></td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
-    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est ▼</th><th>our SOL</th><th>real SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${bar}</td><td data-v="${lb.sol??-1}" class="real"><b>${rsol}</b></td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>expected SOL ▼</th><th>real SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
 function bindSort(){
@@ -539,36 +536,6 @@ def _shell(title: str, sub: str, body: str, refresh: int | None,
 <script>{_JS}</script>{f'<script>{extra_js}</script>' if extra_js else ''}</body></html>"""
 
 
-def _problem_table(problems: list[dict], order: dict[int, int], detail_dir: str) -> str:
-    rows = []
-    for p in problems:
-        i = order.get(p["task"], 0)
-        best = p["best"]
-        bar = ""
-        if best is not None:
-            pct = max(0.0, min(best, 1.0)) * 100
-            bar = (f'<div class="bar"><i style="width:{pct:.1f}%;'
-                   f'background:{_slot(i)}"></i><b></b></div>')
-        status = p["terminated"] or "running"
-        rows.append(
-            "<tr>"
-            f'<td data-v="{p["task"]}"><span class="dot" style="background:{_slot(i)}"></span>#{p["task"]}</td>'
-            f'<td><a href="{detail_dir}/{p["task"]}.html">{_esc(p["name"])}</a></td>'
-            f"<td>{_esc(p['family'])}</td><td>{_esc(p['model'])}</td>"
-            f'<td class="{ "done" if p["terminated"] else "run"}">{_esc(status)}</td>'
-            f"<td>{p['iters']}</td><td>{p['evals']}</td><td>{p['frontier']}</td>"
-            f'<td data-v="{best if best is not None else -1}">'
-            f"{'' if best is None else f'{best:.3f}'}{bar}</td>"
-            f'<td data-v="{p["wait_p50"] or -1}">{_fmt_s(p["wait_p50"])}</td>'
-            "</tr>")
-    return ('<input id="flt" class="flt" placeholder="filter problems…">'
-            '<table class="sortable"><thead><tr><th>task</th><th>name</th>'
-            "<th>family</th><th>agent</th><th>status</th><th>iters</th>"
-            "<th>evals</th><th>frontier</th><th>best SOL score</th>"
-            "<th>wait p50</th></tr></thead><tbody>"
-            + "".join(rows) + "</tbody></table>")
-
-
 def _family_table(families: list[dict]) -> str:
     rows = []
     for f in families:
@@ -591,7 +558,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     # compact per-problem records for the client-side filter/renderer
     recs = [{
         "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
-        "b": p["best"], "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
+        "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
         "it": p["iters"], "fr": p["frontier"], "lb": p.get("lb"),
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
@@ -623,10 +590,10 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     body = f"""
 {filterbar}
 <div id="tiles" class="tiles"></div>
-<div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by leaderboard estimate ▼)</span></h2><div id="t-prob"></div></div>
-<div class="panel"><h2 id="h-fleet">Fleet SOL score over time (mean of per-problem best, ↑)</h2>
+<div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
+<div class="panel"><h2 id="h-fleet">Fleet expected SOL over time (mean of per-problem best, ↑)</h2>
 <div id="c-fleet"></div></div>
-<div class="panel"><h2 id="h-conv">Convergence — top movers (best SOL score vs GPU evals)</h2>
+<div class="panel"><h2 id="h-conv">Convergence — top movers (expected SOL vs GPU evals)</h2>
 <div id="note-conv" class="sub"></div><div id="lg-conv" class="legend"></div><div id="c-conv"></div></div>
 <div class="panel"><h2>GPU occupancy — rented windows, one job at a time <span class="fcount">(fleet-wide)</span></h2>
 {_timeline_svg(fleet, order)}</div>
@@ -692,7 +659,6 @@ def _progression_table(p: dict, has_traj: set | None = None) -> str:
         t = _localtime(c["ts"])
         chip = (f'<span class="chip" style="background:var(--{_STATUS_CHIP.get(c["status"], "o-dominated")})">'
                 f'{_esc(c["status"])}</span>')
-        raw = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
         cal = "–" if c.get("sol_score_cal") is None else f"{c['sol_score_cal']:.3f}"
         best = "" if c.get("best_after") is None else f"{c['best_after']:.3f}"
         links = []
@@ -707,11 +673,10 @@ def _progression_table(p: dict, has_traj: set | None = None) -> str:
             f'<td class="strat">{_esc(c.get("strategy") or "")}</td>'
             f'<td>{chip}</td>'
             f'<td data-v="{c.get("sol_score_cal") or -1}"><b>{cal}</b></td>'
-            f'<td data-v="{c.get("sol_score") or -1}">{raw}</td>'
             f'<td data-v="{c.get("best_after") or -1}">{best}</td><td>{links_html}</td>'
             "</tr>")
     return ('<table class="sortable"><thead><tr><th>time</th><th>cand</th>'
-            "<th>agent</th><th>strategy</th><th>status</th><th>LB est</th><th>our SOL</th>"
+            "<th>agent</th><th>strategy</th><th>status</th><th>expected SOL</th>"
             "<th>best after</th><th>view</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
 
@@ -767,14 +732,15 @@ def _submissions_panel(p: dict, runs_dir: Path) -> str:
         rank_s = f"#{rank} of {e.get('board_n','?')}" if rank else "–"
         top = e.get("board_top_sol")
         top_s = (f"{top:.4f} ({_esc(str(e.get('board_top_user') or ''))[:14]})" if top is not None else "–")
+        cid_s = _esc(cid[:12]) if cid else "–"          # matches the CAND column in the solutions table
         rows.append(
-            f"<tr><td>#{sid}</td><td class='strat'>{kern}</td><td>{_esc(e.get('status', '–'))}</td>"
+            f"<tr><td>#{sid}</td><td>{cid_s}</td><td class='strat'>{kern}</td><td>{_esc(e.get('status', '–'))}</td>"
             f"<td data-v='{sc or -1}'><b>{'–' if sc is None else f'{sc:.4f}'}</b></td>"
             f"<td data-v='{rank or 999}'>{rank_s}</td><td data-v='{top or -1}'>{top_s}</td>"
             f"<td>{fast}</td></tr>")
     return ('<div class="panel"><h2>Leaderboard submissions (real, not estimate)</h2>'
-            '<table class="sortable"><thead><tr><th>submission</th><th>kernel</th><th>status</th>'
-            '<th>our SOL</th><th>rank</th><th>leaderboard #1</th><th>fast</th></tr></thead><tbody>'
+            '<table class="sortable"><thead><tr><th>submission</th><th>cand</th><th>kernel</th><th>status</th>'
+            '<th>real SOL</th><th>rank</th><th>leaderboard #1</th><th>fast</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div>")
 
 
@@ -784,9 +750,8 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
         x_label="GPU evals", right=120) if p["convergence"] else '<p class="muted">no evals yet</p>'
     order = {p["task"]: slot_i}
     stats = "".join([
-        _tile("leaderboard est (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
-              "clock-calibrated"),
-        _tile("SOL score, our measure", "–" if p["best"] is None else f"{p['best']:.3f}", "unlocked"),
+        _tile("expected SOL (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
+              "leaderboard estimate"),
         _tile("status", p["terminated"] or "running"),
         _tile("iterations / evals", f"{p['iters']} / {p['evals']}"),
         _tile("frontier size", str(p["frontier"])),

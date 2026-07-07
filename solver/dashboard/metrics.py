@@ -187,9 +187,12 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 best = e["best"]
                 if e.get("best_cal") is not None:
                     best_cal = e["best_cal"]
-                convergence.append((evals, best))
+                # the fleet-over-time + convergence charts plot EXPECTED SOL (the
+                # leaderboard estimate), falling back to raw when uncalibrated.
+                show = best_cal if best_cal is not None else best
+                convergence.append((evals, show))
                 if ts:
-                    accept_times.append((_t(ts), best))
+                    accept_times.append((_t(ts), show))
             if c:
                 c["best_after"] = best
             frontier = e.get("frontier", frontier)

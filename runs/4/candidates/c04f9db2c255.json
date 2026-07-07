@@ -1,0 +1,245 @@
+{
+  "cand_id": "c04f9db2c255",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": 0.5850127910019284,
+  "sol_score_calibrated": 0.5161236193957052,
+  "correct": true,
+  "vector": [
+    0.9048360050352796,
+    0.7832658148956062,
+    0.9055043440668276,
+    0.7833749220212103,
+    0.8393830461409454,
+    0.8408077755263247,
+    0.9053932919997012,
+    0.020889108770937876,
+    0.011574587297551783,
+    0.017337363584495672,
+    0.017276221606020638,
+    0.9041274270433671,
+    0.784608325523274,
+    0.014755647863016978,
+    0.7845985629490784,
+    0.8424722117072163
+  ],
+  "strategy": "bf16 cuBLAS tensor-core GEMMs (fp32-accum) for wgrad and dgrad, with each GEMM captured in its own CUDA graph for M<=102",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "e0b86351e99b",
+  "trajectory": "runs/4/work/c04f9db2c255/trajectory.jsonl",
+  "gpu_s": 10.107,
+  "job_id": "4-c04f9db2c255",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 32.0,
+      "power_w_max": 315.42,
+      "samples": 31,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0865435,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.9048360050352796,
+      "sol_score_cal": 0.7849294385933567,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.030528,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7832658148956062,
+      "sol_score_cal": 0.7037619836932175,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.086464,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.9055043440668276,
+      "sol_score_cal": 0.7855274829165827,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.030511999999999997,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7833749220212103,
+      "sol_score_cal": 0.7038306434662713,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.049984,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8393830461409454,
+      "sol_score_cal": 0.7424539885357094,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.049888,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8408077755263247,
+      "sol_score_cal": 0.7439357286788746,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.086432,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.9053932919997012,
+      "sol_score_cal": 0.7850186790468247,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 1.395244,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.020889108770937876,
+      "sol_score_cal": 0.017592895260796874,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.826379,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.011574587297551783,
+      "sol_score_cal": 0.009742018066251298,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 1.628876,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.017337363584495672,
+      "sol_score_cal": 0.01459561271946842,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.692955,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.017276221606020638,
+      "sol_score_cal": 0.014544528966645086,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0866075,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.9041274270433671,
+      "sol_score_cal": 0.7841141166152454,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.0304315,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.784608325523274,
+      "sol_score_cal": 0.7050161510095488,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.690091,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.014755647863016978,
+      "sol_score_cal": 0.01242305715272352,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.030432,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7845985629490784,
+      "sol_score_cal": 0.7050062037177393,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.049744,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8424722117072163,
+      "sol_score_cal": 0.7454853818920263,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Backward of an attention output projection: two independent bf16 GEMMs that\n# share grad_output_2d:\n#   wgrad: grad_weight      = grad_output_2d^T @ reshaped_2d  (2048, 2048)\n#   dgrad: grad_reshaped_2d = grad_output_2d   @ weight       (M, 2048)\n#\n# For small token counts (M <= 1024) the two cuBLAS launches and their stream\n# synchronisation dominate the ~10-20us of actual GEMM work.  At those sizes we\n# capture each GEMM into its own CUDA graph and replay them on the same two\n# streams the eager frontier used: wgrad on a side stream, dgrad on the current\n# stream.  Graph replay removes the cuBLAS Python-side dispatch overhead while\n# keeping the SM overlap.  For larger M the kernels are compute-bound and stay on\n# the eager concurrent-streams path.\n#\n# Failures are caught only in helpers; `run` never contains try/except.  Static\n# graph outputs are cloned inside each capture so the returned tensors are never\n# aliases of the raw mm output buffers.\n\n_SMALL_M = 1024\n\n_STREAM = {}\n_GRAPH_CACHE = {}\n_GRAPH_DISABLED = set()\n\n\ndef _side_stream(device):\n    s = _STREAM.get(device.index)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM[device.index] = s\n    return s\n\n\ndef _graph_key(go2d, rs2d, weight):\n    return (\n        go2d.device.index,\n        go2d.data_ptr(),\n        rs2d.data_ptr(),\n        weight.data_ptr(),\n        tuple(go2d.shape),\n        tuple(rs2d.shape),\n        tuple(weight.shape),\n        go2d.dtype,\n    )\n\n\ndef _capture_pair(device, go2d, rs2d, weight):\n    \"\"\"Capture wgrad and dgrad into two separate graphs, one per stream.\"\"\"\n    cur = torch.cuda.current_stream()\n    s = _side_stream(device)\n\n    def _wgrad(_go2d, _rs2d):\n        # Clone so the returned tensor is not an alias of the raw mm output.\n        return _go2d.t().mm(_rs2d).clone()\n\n    def _dgrad(_go2d, _weight):\n        return _go2d.mm(_weight).clone()\n\n    # Warm cuBLAS workspace and the caching allocator using the same two-stream\n    # schedule we will replay.\n    s.wait_stream(cur)\n    with torch.cuda.stream(s):\n        _wgrad(go2d, rs2d)\n    with torch.cuda.stream(cur):\n        _dgrad(go2d, weight)\n    cur.wait_stream(s)\n    torch.cuda.synchronize()\n\n    # Capture wgrad on the side stream.\n    graph_w = torch.cuda.CUDAGraph()\n    with torch.cuda.stream(s):\n        with torch.cuda.graph(graph_w):\n            gw_static = _wgrad(go2d, rs2d)\n\n    # Capture dgrad on the current stream.\n    graph_d = torch.cuda.CUDAGraph()\n    with torch.cuda.stream(cur):\n        with torch.cuda.graph(graph_d):\n            gr_static = _dgrad(go2d, weight)\n\n    # Prime the graphs and static buffers.\n    with torch.cuda.stream(s):\n        graph_w.replay()\n    with torch.cuda.stream(cur):\n        graph_d.replay()\n    cur.wait_stream(s)\n\n    return graph_w, graph_d, gw_static, gr_static\n\n\ndef _run_graph(device, go2d, rs2d, weight, batch_size, seq_len):\n    key = _graph_key(go2d, rs2d, weight)\n    cached = _GRAPH_CACHE.get(key)\n\n    if cached is None:\n        try:\n            cached = _capture_pair(device, go2d, rs2d, weight)\n        except Exception:\n            _GRAPH_DISABLED.add(device.index)\n            return None\n        _GRAPH_CACHE[key] = cached\n\n    graph_w, graph_d, gw_static, gr_static = cached\n    cur = torch.cuda.current_stream()\n    s = _side_stream(device)\n\n    try:\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            graph_w.replay()\n        with torch.cuda.stream(cur):\n            graph_d.replay()\n        cur.wait_stream(s)\n    except Exception:\n        _GRAPH_CACHE.pop(key, None)\n        _GRAPH_DISABLED.add(device.index)\n        return None\n\n    grad_attn_output = gr_static.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n    return grad_attn_output, gw_static\n\n\ndef _run_eager(device, go2d, rs2d, weight, M, batch_size, seq_len):\n    if go2d.is_cuda and M <= _SMALL_M:\n        cur = torch.cuda.current_stream()\n        s = _side_stream(device)\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n        cur.wait_stream(s)\n        grad_weight.record_stream(cur)\n    else:\n        grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n    return grad_attn_output, grad_weight\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n    device = grad_output.device\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M and device.index not in _GRAPH_DISABLED:\n        out = _run_graph(device, go2d, rs2d, weight, batch_size, seq_len)\n        if out is not None:\n            return out\n\n    return _run_eager(device, go2d, rs2d, weight, M, batch_size, seq_len)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_c04f9db2c255",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Backward of an attention output projection: two independent bf16 GEMMs that\n# share grad_output_2d:\n#   wgrad: grad_weight      = grad_output_2d^T @ reshaped_2d  (2048, 2048)\n#   dgrad: grad_reshaped_2d = grad_output_2d   @ weight       (M, 2048)\n#\n# For small token counts (M <= 1024) the two cuBLAS launches and their stream\n# synchronisation dominate the ~10-20us of actual GEMM work.  At those sizes we\n# capture each GEMM into its own CUDA graph and replay them on the same two\n# streams the eager frontier used: wgrad on a side stream, dgrad on the current\n# stream.  Graph replay removes the cuBLAS Python-side dispatch overhead while\n# keeping the SM overlap.  For larger M the kernels are compute-bound and stay on\n# the eager concurrent-streams path.\n#\n# Failures are caught only in helpers; `run` never contains try/except.  Static\n# graph outputs are cloned inside each capture so the returned tensors are never\n# aliases of the raw mm output buffers.\n\n_SMALL_M = 1024\n\n_STREAM = {}\n_GRAPH_CACHE = {}\n_GRAPH_DISABLED = set()\n\n\ndef _side_stream(device):\n    s = _STREAM.get(device.index)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM[device.index] = s\n    return s\n\n\ndef _graph_key(go2d, rs2d, weight):\n    return (\n        go2d.device.index,\n        go2d.data_ptr(),\n        rs2d.data_ptr(),\n        weight.data_ptr(),\n        tuple(go2d.shape),\n        tuple(rs2d.shape),\n        tuple(weight.shape),\n        go2d.dtype,\n    )\n\n\ndef _capture_pair(device, go2d, rs2d, weight):\n    \"\"\"Capture wgrad and dgrad into two separate graphs, one per stream.\"\"\"\n    cur = torch.cuda.current_stream()\n    s = _side_stream(device)\n\n    def _wgrad(_go2d, _rs2d):\n        # Clone so the returned tensor is not an alias of the raw mm output.\n        return _go2d.t().mm(_rs2d).clone()\n\n    def _dgrad(_go2d, _weight):\n        return _go2d.mm(_weight).clone()\n\n    # Warm cuBLAS workspace and the caching allocator using the same two-stream\n    # schedule we will replay.\n    s.wait_stream(cur)\n    with torch.cuda.stream(s):\n        _wgrad(go2d, rs2d)\n    with torch.cuda.stream(cur):\n        _dgrad(go2d, weight)\n    cur.wait_stream(s)\n    torch.cuda.synchronize()\n\n    # Capture wgrad on the side stream.\n    graph_w = torch.cuda.CUDAGraph()\n    with torch.cuda.stream(s):\n        with torch.cuda.graph(graph_w):\n            gw_static = _wgrad(go2d, rs2d)\n\n    # Capture dgrad on the current stream.\n    graph_d = torch.cuda.CUDAGraph()\n    with torch.cuda.stream(cur):\n        with torch.cuda.graph(graph_d):\n            gr_static = _dgrad(go2d, weight)\n\n    # Prime the graphs and static buffers.\n    with torch.cuda.stream(s):\n        graph_w.replay()\n    with torch.cuda.stream(cur):\n        graph_d.replay()\n    cur.wait_stream(s)\n\n    return graph_w, graph_d, gw_static, gr_static\n\n\ndef _run_graph(device, go2d, rs2d, weight, batch_size, seq_len):\n    key = _graph_key(go2d, rs2d, weight)\n    cached = _GRAPH_CACHE.get(key)\n\n    if cached is None:\n        try:\n            cached = _capture_pair(device, go2d, rs2d, weight)\n        except Exception:\n            _GRAPH_DISABLED.add(device.index)\n            return None\n        _GRAPH_CACHE[key] = cached\n\n    graph_w, graph_d, gw_static, gr_static = cached\n    cur = torch.cuda.current_stream()\n    s = _side_stream(device)\n\n    try:\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            graph_w.replay()\n        with torch.cuda.stream(cur):\n            graph_d.replay()\n        cur.wait_stream(s)\n    except Exception:\n        _GRAPH_CACHE.pop(key, None)\n        _GRAPH_DISABLED.add(device.index)\n        return None\n\n    grad_attn_output = gr_static.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n    return grad_attn_output, gw_static\n\n\ndef _run_eager(device, go2d, rs2d, weight, M, batch_size, seq_len):\n    if go2d.is_cuda and M <= _SMALL_M:\n        cur = torch.cuda.current_stream()\n        s = _side_stream(device)\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n        cur.wait_stream(s)\n        grad_weight.record_stream(cur)\n    else:\n        grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n    return grad_attn_output, grad_weight\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n    device = grad_output.device\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M and device.index not in _GRAPH_DISABLED:\n        out = _run_graph(device, go2d, rs2d, weight, batch_size, seq_len)\n        if out is not None:\n            return out\n\n    return _run_eager(device, go2d, rs2d, weight, M, batch_size, seq_len)\n"
+      }
+    ]
+  }
+}
