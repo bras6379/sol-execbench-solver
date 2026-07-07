@@ -300,25 +300,12 @@ async def run_fleet(
     families = families or {}
     names = names or {}
 
-    # Cross-run reflection (the "Coach"): regenerate every problem's reflection.md
-    # coach card from the accumulated journals BEFORE the fleet starts, so a restart
-    # begins with each agent already knowing what's been tried / where it's stuck /
-    # where the loss is. The deterministic detectors are free; when reflect_model is
-    # set (e.g. claude-fable-5), a strong model ALSO reads the tried kernels' source
-    # and adds a why-it's-stuck + one-lever diagnosis — but only for STUCK problems
-    # whose state moved (deduped), so fable spend stays bounded. Best-effort: a
-    # failure here (incl. fable out of credits) never aborts the run.
-    async def _reflect(tag: str) -> None:
-        try:
-            from . import reflection
-            refls = await asyncio.to_thread(reflection.reflect_all, runs_dir, ids, names=names)
-            if reflect_model:
-                from . import diagnose
-                await diagnose.diagnose_stuck(runs_dir, refls, model=reflect_model, log=print)
-        except Exception as exc:
-            print(f"[reflect:{tag}] skipped: {exc!r}")
-    if reflect_first:
-        await _reflect("startup")
+    # Cross-run reflection (the "Coach") is wired below, AFTER the working-set
+    # publisher. Critically it must NEVER block the GPU: the cheap deterministic cards
+    # are written fast up front, but the expensive fable diagnosis runs in the
+    # BACKGROUND so problems start being worked immediately (not after ~15 min of
+    # fable). Live status (agents running / reflecting) is published to _active.json.
+
     # Cap how many problems are ACTIVE at once. Each active problem holds ≤1 agent
     # call in flight (its loop is sequential), so this bounds concurrent agent CLIs
     # + provider streams — the real limit is the laptop and the provider's rate
@@ -334,14 +321,42 @@ async def run_fleet(
     # can sit idle for a while, so recency alone can't tell active from queued.
     active: set[int] = set()
     active_path = Path(runs_dir) / "_active.json"
+    status = {"phase": "starting", "reflect": None}   # live fleet status for the dashboard
 
     def _write_active() -> None:
         try:
             active_path.write_text(json.dumps({
                 "ts": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                "active": sorted(active), "cap": max_concurrency}))
+                "active": sorted(active), "cap": max_concurrency,
+                "phase": status["phase"], "reflect": status["reflect"]}))
         except OSError:
             pass
+
+    async def _diagnose_bg(tag: str) -> None:
+        """The Coach: deterministic cards (fast) + fable diagnosis on STUCK problems.
+        Runs in its own task so it NEVER blocks the fleet; publishes reflect progress
+        to _active.json so the dashboard shows 'reflecting X/Y'."""
+        try:
+            from . import reflection
+            refls = await asyncio.to_thread(reflection.reflect_all, runs_dir, ids, names=names)
+            if not reflect_model:
+                return
+            from . import diagnose as diag
+            stuck = [r for r in refls.values() if r.status in diag.STUCK]
+            status["reflect"] = {"done": 0, "total": len(stuck), "model": reflect_model} if stuck else None
+            _write_active()
+
+            def _prog(done: int) -> None:
+                status["reflect"] = ({"done": done, "total": len(stuck), "model": reflect_model}
+                                     if done < len(stuck) else None)
+                _write_active()
+            await diag.diagnose_stuck(runs_dir, refls, model=reflect_model,
+                                      progress=_prog, log=print)
+        except Exception as exc:
+            print(f"[reflect:{tag}] skipped: {exc!r}")
+        finally:
+            status["reflect"] = None
+            _write_active()
 
     async def guarded(t: int) -> None:
         async def _do() -> None:
@@ -374,26 +389,42 @@ async def run_fleet(
     if shuffle:
         random.Random(seed).shuffle(order)
 
-    # Optional periodic refresh: rebuild coach cards every N minutes so long runs
-    # keep reflecting on fresh results, not just the startup snapshot.
+    # Write the cheap deterministic cards up front (fast) so the first agent plans
+    # already have them — but do NOT wait on fable here.
+    if reflect_first:
+        try:
+            from . import reflection
+            await asyncio.to_thread(reflection.reflect_all, runs_dir, ids, names=names)
+        except Exception as exc:
+            print(f"[reflect:startup] cards skipped: {exc!r}")
+
+    # Optional periodic refresh: rebuild coach cards + re-diagnose every N minutes so
+    # long runs keep reflecting on fresh results (in its own task — never blocks).
     async def _refresher() -> None:
         while True:
             await asyncio.sleep(max(30.0, reflect_every_min * 60))
-            await _reflect("periodic")
+            await _diagnose_bg("periodic")
     # Heartbeat: keep _active.json's ts fresh (the set changes only when a problem
     # starts/finishes, but the dashboard needs a recent ts to trust it as live).
     async def _heartbeat() -> None:
         while True:
             _write_active()
             await asyncio.sleep(25)
-    refresher = asyncio.create_task(_refresher()) if reflect_every_min > 0 else None
-    heartbeat = asyncio.create_task(_heartbeat())
+
+    status["phase"] = "running"
     _write_active()
+    heartbeat = asyncio.create_task(_heartbeat())
+    refresher = asyncio.create_task(_refresher()) if reflect_every_min > 0 else None
+    # startup fable diagnosis runs in the BACKGROUND, concurrently with the fleet
+    startup_diag = asyncio.create_task(_diagnose_bg("startup")) if reflect_first else None
     try:
         await asyncio.gather(*(guarded(t) for t in order))
     finally:
         if refresher is not None:
             refresher.cancel()
+        if startup_diag is not None:
+            startup_diag.cancel()
         heartbeat.cancel()
+        status["phase"] = "done"
         active.clear()
         _write_active()                # publish an empty, fresh set → all idle on exit

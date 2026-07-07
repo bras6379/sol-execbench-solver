@@ -597,11 +597,12 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--reflect-every-min", type=float, default=20.0,
                          help="also rebuild coach cards every N minutes during the run so long runs keep "
                               "reflecting on fresh results (0=only at startup)")
-    p_solve.add_argument("--reflect-model", default="claude-fable-5",
+    p_solve.add_argument("--reflect-model", default="claude-opus-4-8",
                          help="strong model that reads the tried kernels' SOURCE and adds a why-it's-stuck "
                               "+ one-untried-lever diagnosis to the coach card of STUCK problems (deduped on "
-                              "state so fable spend is bounded; runs at startup + every --reflect-every-min). "
-                              "Empty string = deterministic cards only, no LLM spend")
+                              "state so spend is bounded; runs in the BACKGROUND, never blocks the GPU; at "
+                              "startup + every --reflect-every-min). Uses the same native-auth claude CLI as "
+                              "the opus agents. Empty string = deterministic cards only, no LLM spend")
     p_solve.add_argument("--fake-scores", action="store_true",
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,

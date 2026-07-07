@@ -228,24 +228,34 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
 async def diagnose_stuck(runs_dir: str | Path, refls: dict[int, R.ProblemReflection], *,
                          model: str = "claude-fable-5", timeout: float = 360,
                          kb_dir: str | Path = "kb", max_concurrency: int = 4,
-                         log=lambda *_: None) -> int:
+                         progress=None, log=lambda *_: None) -> int:
     """Run fable on every STUCK problem whose state moved since its last diagnosis.
     Returns how many fresh diagnoses were written. After writing, re-attach the
-    stored prose to each card so agents pick it up on the next plan."""
+    stored prose to each card so agents pick it up on the next plan. `progress(done)`
+    is called after each problem completes (for a live 'reflecting X/Y' indicator)."""
     runs_dir = Path(runs_dir)
     stuck = [r for r in refls.values() if r.status in STUCK]
     if not stuck:
         return 0
     sem = asyncio.Semaphore(max(1, max_concurrency))
+    done = 0
 
     async def _guard(r):
+        nonlocal done
         async with sem:
             try:
-                return await diagnose_one(runs_dir, r, model=model, timeout=timeout,
-                                          kb_dir=kb_dir, log=log)
+                res = await diagnose_one(runs_dir, r, model=model, timeout=timeout,
+                                         kb_dir=kb_dir, log=log)
             except Exception as exc:                    # one bad diagnosis never aborts the sweep
                 log(f"[diagnose] task {r.task_id}: {exc!r}")
-                return False
+                res = False
+        done += 1
+        if progress:
+            try:
+                progress(done)
+            except Exception:
+                pass
+        return res
 
     results = await asyncio.gather(*(_guard(r) for r in stuck))
     for r in refls.values():

@@ -362,6 +362,11 @@ td .bar b{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:v
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .done{color:var(--ink3)} .run{color:var(--o-accepted);font-weight:600}
 .wait{color:var(--s3,#c98a3a);font-weight:600} .pend{color:var(--ink3);font-style:italic}
+.livebar{border-radius:10px;padding:11px 16px;margin-bottom:14px;font-size:13px;border:1px solid var(--grid)}
+.livebar.live{background:color-mix(in srgb,var(--o-accepted) 12%,var(--panel));border-color:color-mix(in srgb,var(--o-accepted) 40%,var(--grid))}
+.livebar.stale{background:color-mix(in srgb,#c98a3a 14%,var(--panel));border-color:#c98a3a}
+.livebar.idle{color:var(--ink3)}
+.livebar .reflecting{color:var(--seq);font-weight:600}
 .muted{color:var(--ink3)}
 a{color:inherit}
 input.flt{background:var(--surface);border:1px solid var(--grid);border-radius:7px;
@@ -642,6 +647,56 @@ def _family_table(families: list[dict]) -> str:
             f"<tbody>{''.join(rows)}</tbody></table>")
 
 
+def _live_banner(live: dict | None) -> str:
+    """A live activity strip: what the fleet is doing right now — how many agents
+    hold a slot, and whether the Coach is reflecting."""
+    if not live:
+        return ('<div class="livebar idle">◦ no live fleet status '
+                '(no run writing runs/_active.json)</div>')
+    if not live.get("fresh"):
+        return ('<div class="livebar stale">⚠ fleet status stale — the run may have '
+                'stopped (no heartbeat in &gt;3 min)</div>')
+    cap = live.get("cap") or 0
+    n = live.get("n_active", 0)
+    phase = live.get("phase") or "?"
+    parts = [f'<b>▶ {_esc(phase)}</b>',
+             (f'{n}/{cap} agents working' if cap else f'{n} agents working')]
+    refl = live.get("reflect")
+    if refl and refl.get("total"):
+        parts.append(f'<span class="reflecting">🧠 reflecting {refl.get("done",0)}/'
+                     f'{refl.get("total",0)} <span class="muted">({_esc(refl.get("model",""))})</span></span>')
+    else:
+        parts.append('<span class="muted">coach idle</span>')
+    return '<div class="livebar live">' + ' &nbsp;·&nbsp; '.join(parts) + '</div>'
+
+
+def _board_submissions_panel(subs: list[dict]) -> str:
+    """Every leaderboard submission across the board, most-recent first — so you can
+    see at a glance whether solutions are getting sent and how they scored."""
+    if not subs:
+        return ('<div class="panel"><h2>Submissions — across the board</h2>'
+                '<p class="muted">no submissions yet — nothing has been sent to the leaderboard</p></div>')
+    rows = []
+    for s in subs:
+        sol, rank, n = s.get("sol_score"), s.get("board_rank"), s.get("board_n")
+        top = s.get("board_top_sol")
+        status = s.get("status") or "—"
+        scls = "real" if status == "COMPLETED" else ("run" if status in ("QUEUED", "RUNNING", "PENDING") else "")
+        rows.append(
+            f'<tr><td><a href="p/{s["task"]}.html">#{s["task"]}</a></td>'
+            f'<td>#{s["sid"]}</td><td>{_esc((s.get("cand_id") or "")[:10])}</td>'
+            f'<td class="strat">{_esc((s.get("cand_strategy") or "")[:80])}</td>'
+            f'<td class="{scls}">{_esc(status)}</td>'
+            f'<td data-v="{sol or -1}"><b class="real">{"—" if sol is None else f"{sol:.4f}"}</b></td>'
+            f'<td data-v="{rank or 9999}">{f"#{rank} of {n}" if rank else "—"}</td>'
+            f'<td data-v="{top or -1}">{"—" if top is None else f"{top:.4f}"}</td></tr>')
+    return ('<div class="panel"><h2>Submissions — across the board '
+            '<span class="fcount">(most recent first)</span></h2>'
+            '<table class="sortable"><thead><tr><th>problem</th><th>submission</th><th>cand</th>'
+            '<th>kernel</th><th>status</th><th>real SOL</th><th>rank</th><th>board #1</th>'
+            '</tr></thead><tbody>' + "".join(rows) + '</tbody></table></div>')
+
+
 def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     problems, fleet = data["problems"], data["fleet"]
     order = {p["task"]: i for i, p in enumerate(problems)}
@@ -710,9 +765,11 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         '<span id="fcount" class="fcount"></span></div>')
 
     body = f"""
+{_live_banner(data.get("live"))}
 {filterbar}
 <div id="tiles" class="tiles"></div>
 <div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
+{_board_submissions_panel(data.get("submissions") or [])}
 <div class="panel"><h2 id="h-fleet">Fleet expected SOL over time (mean of per-problem best, ↑)</h2>
 <div id="c-fleet"></div></div>
 <div class="panel"><h2 id="h-conv">Convergence — top movers (expected SOL vs GPU evals)</h2>

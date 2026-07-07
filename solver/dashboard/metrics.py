@@ -329,6 +329,32 @@ def top_movers(per_problem: list[dict], k: int = 8) -> list[dict]:
     return [p for p in ranked if p["convergence"]][:k]
 
 
+def board_submissions(runs_dir: Path, limit: int = 12) -> list[dict]:
+    """Every leaderboard submission across ALL problems, most-recent first (by the
+    monotonic submission id), merged across its submit + poll lines. Lets the hub
+    show 'are solutions getting sent, and how did they score'."""
+    runs_dir = Path(runs_dir)
+    out: list[dict] = []
+    for sf in runs_dir.glob("*/submissions.jsonl"):
+        task = sf.parent.name
+        if not task.isdigit():
+            continue
+        merged: dict = {}
+        for line in sf.read_text().splitlines():
+            try:
+                e = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            sid = e.get("submission_id") or e.get("id")
+            if sid is None:
+                continue
+            rec = merged.setdefault(sid, {"task": int(task), "sid": sid})
+            rec.update({k: v for k, v in e.items() if v is not None})   # keep best info per line
+        out.extend(merged.values())
+    out.sort(key=lambda s: s["sid"], reverse=True)
+    return out[:limit]
+
+
 def _age_s(ts) -> float | None:
     """Seconds since an ISO timestamp, or None if unparseable."""
     if not ts:
@@ -347,11 +373,13 @@ def _live_state(p: dict, active_set: set, active_fresh: bool) -> str:
     queued for a slot) · pending (not started yet) · else the terminal reason.
     Prefers the engine's exact working-set (runs/_active.json); falls back to the
     recency of the last journal event when that file is absent or stale."""
+    # Holding a slot RIGHT NOW is ground truth — it overrides a stale terminal reason
+    # left in the journal by a prior run that is now being resumed/reopened.
+    if active_fresh and p["task"] in active_set:
+        return "running"
     if p["terminated"]:
         return p["terminated"]
     if active_fresh:
-        if p["task"] in active_set:
-            return "running"
         return "pending" if p["evals"] == 0 else "waiting"
     age = _age_s(p.get("last_ts"))                 # fallback: no engine active-file
     if age is not None and age < 720:              # a slot-holder logs within ~12 min
@@ -374,7 +402,7 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
             p["board"] = board.get(str(p["task"]))   # {top_sol, top_user, n, sol_bound, scores} = the #1 to beat + full distribution for rank projection
     # live working-set: which problems currently hold a concurrency slot (from the
     # engine's runs/_active.json) so status shows running vs waiting vs pending.
-    active_set, active_fresh = set(), False
+    active_set, active_fresh, live = set(), False, None
     if runs_dir:
         af = Path(runs_dir) / "_active.json"
         if af.exists():
@@ -383,6 +411,9 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
                 active_set = set(a.get("active", []))
                 age = _age_s(a.get("ts"))
                 active_fresh = age is not None and age < 180
+                live = {"phase": a.get("phase"), "reflect": a.get("reflect"),
+                        "cap": a.get("cap"), "n_active": len(active_set),
+                        "fresh": active_fresh, "age_s": None if age is None else round(age)}
             except (json.JSONDecodeError, OSError):
                 pass
     for p in per_problem:
@@ -390,6 +421,8 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,
+        "live": live,
+        "submissions": board_submissions(runs_dir) if runs_dir else [],
         "fleet": fleet_metrics(per_problem, rentals),
         "fleet_series": fleet_score_series(per_problem),
         "histogram": score_histogram(per_problem),
