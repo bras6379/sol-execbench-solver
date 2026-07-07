@@ -22,7 +22,6 @@ class Member:
     strategy: str = ""
     agent: str = ""
     model: str = ""
-    reflection: str | None = None
     sol_score_cal: float | None = None   # leaderboard-estimate mean (latency × factor)
 
     @property
@@ -49,6 +48,14 @@ class Frontier:
     def best_score(self) -> float:
         b = self.best()
         return b.mean if b else 0.0
+
+    def would_enter(self, vector: tuple[float, ...]) -> bool:
+        """True if `vector` is non-dominated by the current set (i.e. accept() would
+        keep it). Used to gate the expensive re-verification onto only the candidates
+        that would actually improve the frontier."""
+        if self.members and len(vector) != len(self.members[0].vector):
+            return True
+        return not any(_dominates(o.vector, vector, self.epsilon) for o in self.members)
 
     def accept(self, m: Member) -> str:
         """Insert `m`, pruning what it dominates. Returns the verdict.

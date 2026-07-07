@@ -112,6 +112,27 @@ def record_frontier(runs_dir, task_id: int, frontier: Frontier, *,
             _write(base / "best_solution.json", submit)
 
 
+def record_playbook(runs_dir, task_id: int, playbook: list[dict], *, name: str = "") -> None:
+    """Write the per-problem `playbook.md`: higher-ceiling ideas that accepted
+    kernels flagged but did NOT ship (each banked when its author entered the
+    frontier). Human-browsable, and the same list is fed to the next agent's
+    context so reserve plays accumulate instead of dying in the trajectory."""
+    if not playbook:
+        return
+    base = Path(runs_dir) / str(task_id)
+    base.mkdir(parents=True, exist_ok=True)
+    lines = [f"# Playbook — task {task_id}" + (f" · {name}" if name else ""), "",
+             "Higher-ceiling ideas that accepted kernels flagged but did NOT ship.",
+             "Banked when each author entered the frontier; the next agent reads these.", ""]
+    for i, e in enumerate(playbook, 1):
+        strat = (e.get("strategy") or "").strip()
+        lines.append(f"## {i}. from `{e['cand'][:8]}`" + (f" — {strat}" if strat else ""))
+        lines += [e["handoff"].strip(), ""]
+    tmp = base / "playbook.md.tmp"
+    tmp.write_text("\n".join(lines) + "\n")
+    tmp.replace(base / "playbook.md")
+
+
 def _shapes_won(m, members) -> int:
     """How many per-shape columns this member is (co-)best on — why it's on the set."""
     if not m.vector:

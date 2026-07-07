@@ -62,7 +62,7 @@ class EvalResult:
     correct: bool                       # correct on every workload
     sol_score: float | None             # mean over workloads (None if incorrect / no data)
     per_workload: list[WorkloadResult] = field(default_factory=list)
-    asi: dict = field(default_factory=dict)   # actionable side info for reflection
+    asi: dict = field(default_factory=dict)   # actionable side info fed back to agents
     raw: dict = field(default_factory=dict)
 
     @property
@@ -85,7 +85,10 @@ class EvalResult:
 
 
 class Executor(Protocol):
-    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False) -> EvalResult: ...
+    # `attempt` > 0 is a FRESH re-run of the same candidate (busts the idempotency
+    # cache) — used to re-verify a would-be frontier entry and catch flaky kernels.
+    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False,
+                       attempt: int = 0) -> EvalResult: ...
 
 
 Outcome = Callable[[dict, int], EvalResult]
@@ -150,7 +153,8 @@ class StubExecutor:
         self.calls = 0                   # GPU-equivalent evaluations
         self.max_concurrent = 0          # observed peak; must stay ≤ 1
 
-    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False) -> EvalResult:
+    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False,
+                       attempt: int = 0) -> EvalResult:
         # NB: the timed window opens *after* the lock is acquired, so `gpu_s` /
         # started..ended measure actual GPU work — never lock-wait. The loop
         # journals these as exec_started/exec_done ts, keeping queue-wait and
@@ -165,7 +169,10 @@ class StubExecutor:
                 if self._delay:
                     await asyncio.sleep(self._delay)   # force interleavings in concurrency tests
                 self.calls += 1
-                result = self._outcome(solution, task_id)
+                if attempt in (solution.get("__flaky_on__") or []):
+                    result = _flaky_fail(self._outcome(solution, task_id))  # simulate a racy re-run
+                else:
+                    result = self._outcome(solution, task_id)
                 result.raw = {**(result.raw or {}),
                               "started": _iso(started),
                               "ended": _iso(dt.datetime.now(dt.timezone.utc)),
@@ -173,6 +180,18 @@ class StubExecutor:
                 return result
             finally:
                 self._in_flight = False
+
+
+def _flaky_fail(r: EvalResult) -> EvalResult:
+    """Turn a passing result into a failed one (stub: simulate a non-deterministic
+    re-run failing correctness). Every workload flips to INCORRECT."""
+    for w in r.per_workload:
+        w.correct = False
+        w.score = None
+        w.error = "INCORRECT_NUMERICAL"
+    r.correct = False
+    r.sol_score = None
+    return r
 
 
 def _iso(t: dt.datetime) -> str:

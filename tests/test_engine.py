@@ -171,16 +171,83 @@ def test_gates_skip_the_gpu(tmp_path):
 
 
 def test_no_novelty_prefilter_measures_candidates(tmp_path):
-    # The LLM novelty judge is removed: a "cosmetic" verdict no longer bounces a
-    # candidate. Every non-exact-duplicate is MEASURED and the ε-Pareto frontier
-    # decides on real performance (exact-hash duplicates are still skipped).
+    # There is no LLM novelty pre-filter: every non-exact-duplicate is MEASURED and
+    # the ε-Pareto frontier decides on real performance (exact-hash dups still skip).
     c = one_tier(max_iterations=3, plateau_cycles=999, escalate_ceiling=1.1)
-    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}),
-                         judge_fn=lambda cand, parent, fr: "cosmetic")   # ignored now
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
     ex = StubExecutor()
     ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
     assert ex.calls > 1                          # candidates are measured, not bounced
     assert ctx.frontier.best_score() >= 0.6      # a 0.6 kernel entered over the 0.5 seed
+
+
+# --------------------------------------------------------------------------- #
+# re-verification — a flaky (racy) kernel that passes once but fails a fresh
+# re-run must NOT enter the frontier when --verify-runs > 1.
+# --------------------------------------------------------------------------- #
+def test_verify_runs_rejects_flaky_candidate(tmp_path):
+    script = {"claude:haiku": [
+        {"scores": [0.8], "flaky_on": [1]},   # passes attempt 0, fails fresh re-run 1 → flaky
+        {"scores": [0.7]},                     # clean → passes every re-run → accepted
+    ]}
+    c = one_tier(max_iterations=2, plateau_cycles=999, escalate_ceiling=1.1, verify_runs=3)
+    ex = StubExecutor()
+    agents = stub_agents(c.perspectives, scripted(script))
+    ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
+    # the flaky 0.8 is rejected; only the clean 0.7 enters → best is 0.7, never 0.8
+    assert round(ctx.frontier.best_score(), 4) == 0.7
+    assert all(round(m.mean, 4) != 0.8 for m in ctx.frontier.members)
+    evs = journal_mod.read(ctx.path)
+    assert any(e["ev"] == "flaky" for e in evs)
+    assert "flaky" in [e["outcome"] for e in evs if e["ev"] == "iter"]
+    # cost: seed(1) + flaky[primary+1 verify=2, stops on first disagree] + clean[primary+2 verify=3]
+    assert ex.calls == 6 and ctx.evals == 6
+
+
+def test_verify_runs_off_by_default_accepts_flaky(tmp_path):
+    # verify_runs=1 (default): no re-verification, so a flaky kernel slips in — this
+    # is the exact gap --verify-runs closes; it stays opt-in to keep GPU cost down.
+    script = {"claude:haiku": [{"scores": [0.8], "flaky_on": [1]}]}
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1)
+    ex = StubExecutor()
+    agents = stub_agents(c.perspectives, scripted(script))
+    ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
+    assert round(ctx.frontier.best_score(), 4) == 0.8
+    assert not any(e["ev"] == "flaky" for e in journal_mod.read(ctx.path))
+
+
+def test_handoff_accumulates_into_playbook(tmp_path):
+    # Each ACCEPTED candidate's handoff (a reserve play it flagged but didn't ship)
+    # is banked into ctx.playbook — deduped by text, skipping dominated candidates
+    # and empty handoffs — so the next agent inherits reserve plays, not silence.
+    script = {"claude:haiku": [
+        {"scores": [0.60], "handoff": "A radix-sort segmented reduction"},  # enters → bank A
+        {"scores": [0.55], "handoff": "B dominated idea"},                  # dominated → NOT banked
+        {"scores": [0.65], "handoff": "C warp-specialized epilogue"},       # enters → bank C
+        {"scores": [0.70], "handoff": "A radix-sort segmented reduction"},  # enters but DUP → not re-banked
+        {"scores": [0.72]},                                                 # enters, no handoff → nothing
+    ]}
+    c = one_tier(max_iterations=5, plateau_cycles=999, escalate_ceiling=1.1)
+    ctx = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                            c, runs_dir=tmp_path))
+    assert [p["handoff"] for p in ctx.playbook] == [
+        "A radix-sort segmented reduction", "C warp-specialized epilogue"]
+    # survives resume: the playbook is journal-derived, so a replay rebuilds it
+    ctx2 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                             c, runs_dir=tmp_path))
+    assert [p["handoff"] for p in ctx2.playbook] == [p["handoff"] for p in ctx.playbook]
+
+
+def test_verify_runs_resume_is_identical(tmp_path):
+    # a run with re-verification replays bit-identically (verify_started/_done/flaky
+    # are journaled with no hidden state), so resume reconstructs the same frontier.
+    script = {"claude:haiku": [{"scores": [0.8], "flaky_on": [1]}, {"scores": [0.7]}]}
+    c = one_tier(max_iterations=2, plateau_cycles=999, escalate_ceiling=1.1, verify_runs=3)
+    x1 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                           c, runs_dir=tmp_path))
+    x2 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                           c, runs_dir=tmp_path))            # resume: fully replayed, no new work
+    assert state(x1) == state(x2)
 
 
 # --------------------------------------------------------------------------- #

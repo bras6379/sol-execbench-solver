@@ -21,10 +21,15 @@ parsed for the answer.
 
 | Method | Agent writes | We read |
 |---|---|---|
-| `plan` | `kernel.<ext>` (+ `strategy.txt`) | glob `kernel.*` → Solution; `strategy.txt` |
+| `plan` | `kernel.<ext>` (+ `strategy.txt` + `handoff.md`) | glob `kernel.*` → Solution; `strategy.txt`; `handoff.md` |
 | `design` | `design.md` | `design.md` |
-| `reflect` | `reflection.txt` | `reflection.txt` |
-| `judge` | `verdict.txt` (`materially-new`/`cosmetic`) | `verdict.txt` |
+
+`handoff.md` is the plan agent's own reserve play — the higher-ceiling idea it did
+NOT ship. On accept it's banked into the per-problem **playbook** (`runs/<task>/
+playbook.md`) and fed to the next agent's `CONTEXT.md`, so forward-looking reasoning
+accumulates instead of dying in the trajectory. (There is no separate `reflect`/
+`judge` call — their output was discarded; the ε-Pareto frontier is the novelty gate
+and the playbook is the "text gradient".)
 
 A `plan` that writes no kernel raises (exit code + stderr) → the fleet journals a
 `solver_error` for that problem; the default `check` gate also rejects an empty

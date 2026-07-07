@@ -6,8 +6,8 @@ codex and claude only; other agent types would be integrated separately.
 Two disciplines make this robust:
 - **Results come from known files, never parsed stdout.** The agent is told to
   write its output to fixed filenames in the workdir — `kernel.<ext>` +
-  `strategy.txt` (plan), `design.md`, `reflection.txt`, `verdict.txt` — and we
-  read those files. The model's prose is never parsed for the answer.
+  `strategy.txt` + `handoff.md` (plan), `design.md` — and we read those files.
+  The model's prose is never parsed for the answer.
 - **The event stream is the trajectory.** We run the CLI in streaming JSON mode,
   persist the raw stream as `trajectory.jsonl` (+ a readable `trajectory.txt`),
   and parse it only for token usage. Each plan's workdir is keyed by its
@@ -21,7 +21,6 @@ import json
 import os
 import shutil
 import subprocess
-import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -36,8 +35,7 @@ _EXT_LANG = {"py": "pytorch", "cu": "cuda_cpp", "cuh": "cuda_cpp",
 KERNELS = "kernel.*"
 F_STRATEGY = "strategy.txt"
 F_DESIGN = "design.md"
-F_REFLECT = "reflection.txt"
-F_VERDICT = "verdict.txt"
+F_HANDOFF = "handoff.md"
 
 
 @dataclass
@@ -82,14 +80,20 @@ _PLAN = (
     "(kernel.py::run); a mismatch scores zero. Any imports (triton, torch) go in that\n"
     "file. Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate only\n"
     "when needed.\n"
-    "HOW THIS WORKS — your ONLY job is to write the kernel file (and strategy.txt).\n"
-    "Do NOT try to run, benchmark, or numerically test it yourself: there is NO GPU,\n"
-    "torch, or triton in your environment, so any local execution will fail — that is\n"
-    "EXPECTED and not your concern. After you finish, the SYSTEM ships your kernel to\n"
-    "a real B200, runs it in the official harness (correctness + latency), scores it,\n"
-    "and hands you the measured score + a reflection on the NEXT round. So spend all\n"
-    "your effort making the kernel correct and fast — not on verifying it locally.\n"
-    "Do not print the code — only write the files."
+    "Also write handoff.md: 1-2 sentences naming the HIGHER-CEILING idea you did NOT\n"
+    "ship this round and the trigger to try it (e.g. 'if this only ties the baseline,\n"
+    "switch to a radix-sort + atomic-free segmented reduction that writes output once').\n"
+    "This is fed verbatim to the next agent as a reserve play — make it a concrete,\n"
+    "actionable next kernel, not a platitude. Leave it empty only if you truly shipped\n"
+    "the ceiling.\n"
+    "HOW THIS WORKS — your ONLY job is to write the kernel file, strategy.txt, and\n"
+    "handoff.md. Do NOT try to run, benchmark, or numerically test the kernel yourself:\n"
+    "there is NO GPU, torch, or triton in your environment, so any local execution will\n"
+    "fail — that is EXPECTED and not your concern. After you finish, the SYSTEM ships\n"
+    "your kernel to a real B200, runs it in the official harness (correctness + latency),\n"
+    "and scores it; the next round's agent sees that score, the frontier, and your\n"
+    "handoff. So spend all your effort making the kernel correct and fast — not on\n"
+    "verifying it locally. Do not print the code — only write the files."
 )
 _DESIGN = (
     "Analyze reference.py and definition.json for NVIDIA B200. Consult the kb/\n"
@@ -98,24 +102,6 @@ _DESIGN = (
     "short markdown design (op graph, per-shape roofline memory- vs compute-bound, 3\n"
     "ranked approaches) to a file named design.md."
 )
-
-
-def _reflect_prompt(cand: Candidate, result, verdict: str) -> str:
-    cal = result.calibrated_sol_score() if hasattr(result, "calibrated_sol_score") else None
-    score = cal if cal is not None else getattr(result, "sol_score", None)
-    score_s = f"{score:.3f}" if isinstance(score, (int, float)) else str(score)
-    return (f"A GPU kernel (strategy: '{cand.strategy}') scored ~{score_s} on the leaderboard "
-            f"scale (0.5 = optimized-PyTorch baseline, 1.0 = speed-of-light; frontier verdict: "
-            f"{verdict}). Write a 2-3 sentence diagnosis of the single most promising next "
-            f"optimization to a file named reflection.txt.")
-
-
-def _judge_prompt(cand: Candidate, parent) -> str:
-    return (f"Candidate B strategy: '{cand.strategy}'. Parent A strategy: "
-            f"'{getattr(parent, 'strategy', '')}'. Is B a materially different kernel "
-            f"implementation (algorithm/layout/fusion/precision/launch) from A, or a "
-            f"cosmetic variant? Write exactly one word — materially-new or cosmetic — to a "
-            f"file named verdict.txt.")
 
 
 @dataclass
@@ -184,26 +170,15 @@ class CliAgent:
                                f"(exit {res.rc}): {res.stderr[:400]}")
         strat = wd / F_STRATEGY
         strategy = (strat.read_text().strip()[:120] if strat.exists() else "") or "cli agent"
+        hf = wd / F_HANDOFF
+        handoff = (hf.read_text().strip()[:600] if hf.exists() else "") or None
         cand_id = solution_hash(solution)[:12]
         wd = self._rekey_workdir(wd, ctx.task_id, cand_id)   # kernel + trajectory + inputs, keyed by cand
         return Candidate(cand_id=cand_id, solution=solution,
                          parent=getattr(parent, "cand_id", None),
                          agent=self.spec.name, model=self.model, strategy=strategy,
-                         tokens=res.tokens or None,
+                         handoff=handoff, tokens=res.tokens or None,
                          trajectory=str(wd / "trajectory.jsonl"))
-
-    async def reflect(self, cand: Candidate, result, verdict: str) -> str:
-        with tempfile.TemporaryDirectory(prefix="agent-reflect-") as d:   # text output, ephemeral
-            await self._run(Path(d), _reflect_prompt(cand, result, verdict))
-            f = Path(d) / F_REFLECT
-            return f.read_text().strip() if f.exists() else ""
-
-    async def judge(self, cand: Candidate, parent, frontier) -> str:
-        with tempfile.TemporaryDirectory(prefix="agent-judge-") as d:
-            await self._run(Path(d), _judge_prompt(cand, parent))
-            f = Path(d) / F_VERDICT
-            txt = f.read_text().lower() if f.exists() else ""
-            return "cosmetic" if "cosmetic" in txt else "materially-new"
 
     # ---- helpers ----
     def _workdir(self, key, sub: str) -> Path:
@@ -306,8 +281,6 @@ def _context_md(parent, ctx) -> str:
              "is in parentheses.", ""]
     if parent is not None and getattr(parent, "solution", None):
         lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
-        if getattr(parent, "reflection", None):
-            lines += ["", "## Reflection on it", parent.reflection]
     hint = getattr(ctx, "sibling_hint", None)
     if hint and hint.get("sources"):
         est = hint.get("score")
@@ -325,6 +298,15 @@ def _context_md(parent, ctx) -> str:
                      reverse=True)                                     # best first
         lines += ["", "## Frontier — best first (leaderboard-est (raw) · strategy)"]
         lines += [f"- {m.cand_id[:8]}  {_score_note(m)}  {m.strategy}" for m in members[:8]]
+    plays = getattr(ctx, "playbook", None) or []
+    if plays:
+        lines += ["", "## Reserve plays — higher-ceiling ideas flagged but NOT yet shipped",
+                  "Banked by prior accepted kernels. Cross-check the frontier above: if one is",
+                  "still unexplored, executing it is likely the biggest win — otherwise beat it."]
+        for e in plays[-6:][::-1]:                                   # most recent first
+            strat = (e.get("strategy") or "").strip()
+            tag = f"  (flagged after: {strat[:60]})" if strat else ""
+            lines.append(f"- {e['handoff']}{tag}")
     fails = getattr(ctx, "recent_failures", None)
     if fails:
         lines += ["", "## Recent FAILED attempts — do NOT repeat these (they were INCORRECT)"]

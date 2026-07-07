@@ -20,7 +20,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "error")
+OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "flaky", "error")
 
 
 def _t(ts: str) -> float:
@@ -55,13 +55,42 @@ def load_rentals(runs_dir: Path) -> list[dict]:
     return sorted(out, key=lambda r: r["start"])
 
 
+def submission_summary(runs_dir: Path, task_id: int) -> dict | None:
+    """The best REAL leaderboard submission for a problem (runs/<task>/submissions.jsonl):
+    highest actual SOL + its board rank/size. None if never submitted. This is the
+    ground truth (not the calibrated estimate) — surfaced on the problems table."""
+    sf = Path(runs_dir) / str(task_id) / "submissions.jsonl"
+    if not sf.exists():
+        return None
+    subs: dict = {}
+    for line in sf.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        sid = e.get("submission_id") or e.get("id")
+        if sid is not None:
+            subs.setdefault(sid, {}).update(e)
+    if not subs:
+        return None
+    scored = [e for e in subs.values() if e.get("sol_score") is not None]
+    best = max(scored, key=lambda e: e["sol_score"]) if scored else list(subs.values())[-1]
+    return {
+        "sol": best.get("sol_score"), "rank": best.get("board_rank"),
+        "n": best.get("board_n"), "top_sol": best.get("board_top_sol"),
+        "status": best.get("status"), "sid": best.get("submission_id") or best.get("id"),
+    }
+
+
 def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     jobs: dict[str, dict] = {}
     convergence: list[tuple[int, float]] = []   # (gpu_eval_index, best_so_far)
     accept_times: list[tuple[float, float]] = []  # (ts, best) for fleet-over-time
     outcomes = {k: 0 for k in OUTCOMES}
     agent = {"plan": {"n": 0, "dur": 0.0, "tok": 0},
-             "reflect": {"n": 0, "dur": 0.0, "tok": 0},
              "design": {"n": 0, "dur": 0.0, "tok": 0}}
     iters = evals = 0
     best = None
@@ -164,9 +193,19 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             if c:
                 c["best_after"] = best
             frontier = e.get("frontier", frontier)
-        elif ev == "reflect_done":
-            agent["reflect"]["n"] += 1
-            agent["reflect"]["dur"] += e.get("dur_s", 0.0)
+        elif ev == "verify_started":
+            jobs.setdefault(e["job"], {"task": task_id})["start"] = _t(ts)
+        elif ev == "verify_done":                     # re-verification of a would-be frontier entry
+            j = jobs.setdefault(e["job"], {"task": task_id})
+            j["done"] = _t(ts)
+            j["gpu_s"] = e.get("gpu_s")
+            j["verify"] = True
+            evals += 1
+        elif ev == "flaky":                           # passed once, failed a fresh re-run → rejected
+            outcomes["flaky"] += 1
+            c = candidates.get(e.get("cand"))
+            if c:
+                c["status"] = "flaky"
         elif ev == "terminated":
             terminated = e.get("reason")
         elif ev == "reopened":
@@ -277,6 +316,9 @@ def top_movers(per_problem: list[dict], k: int = 8) -> list[dict]:
 
 def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> dict[str, Any]:
     per_problem = [problem_metrics(t, evs) for t, evs in sorted(journals.items())]
+    if runs_dir:                                   # attach the real leaderboard result per problem
+        for p in per_problem:
+            p["lb"] = submission_summary(runs_dir, p["task"])
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,

@@ -119,8 +119,13 @@ class SshExecutor:
     _in_flight: bool = field(default=False, repr=False)
     max_concurrent: int = 0
 
-    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False) -> EvalResult:
+    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False,
+                       attempt: int = 0) -> EvalResult:
+        # attempt>0 is a re-verification: distinct job dir → a genuine fresh eval
+        # (10 more correctness rounds), never the cached trace of attempt 0.
         job_id = f"{task_id}-{solution_hash(solution)[:12]}"
+        if attempt:
+            job_id += f"-v{attempt}"
         jobdir = f"{self.remote_root}/{job_id}"
         trace_path = f"{jobdir}/trace.jsonl"
         async with self._lock:                         # single-flight — the GPU

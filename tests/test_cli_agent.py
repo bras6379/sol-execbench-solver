@@ -1,9 +1,9 @@
 """CliAgent adapter tests — driven by a fake CLI (docs/agent.md).
 
 A fake "coding agent" writes results to the known files (kernel.py + strategy.txt
-/ design.md / reflection.txt / verdict.txt) and emits a codex-style JSON event
-stream, so the whole contract — workdir setup → run → collect files → Solution,
-trajectory persistence, token parsing — is exercised with no real CLI/auth/GPU.
++ handoff.md / design.md) and emits a codex-style JSON event stream, so the whole
+contract — workdir setup → run → collect files → Solution, trajectory persistence,
+token parsing — is exercised with no real CLI/auth/GPU.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ run = asyncio.run
 
 # A fake CLI: reads the prompt, writes the requested known file(s), streams codex JSONL.
 _FAKE = '''\
-import sys, os, pathlib, hashlib, json
+import sys, pathlib, hashlib, json
 model, prompt = sys.argv[1], sys.argv[2]
 def ev(o): print(json.dumps(o))
 ev({"type": "thread.started", "thread_id": "t1"})
@@ -36,12 +36,9 @@ if "kernel.py" in prompt:                       # plan
     tag = hashlib.sha1(prompt.encode()).hexdigest()[:8]
     pathlib.Path("kernel.py").write_text(f"# {model} {tag}\\ndef run(*t): return t[-1]\\n")
     pathlib.Path("strategy.txt").write_text("fused elementwise path")
+    pathlib.Path("handoff.md").write_text("reserve play: radix-sort segmented reduction")
 elif "design.md" in prompt:
     pathlib.Path("design.md").write_text("# design\\nroofline")
-elif "reflection.txt" in prompt:
-    pathlib.Path("reflection.txt").write_text("Try vectorized 128-bit loads.")
-elif "verdict.txt" in prompt:
-    pathlib.Path("verdict.txt").write_text(os.environ.get("FAKE_VERDICT", "materially-new"))
 ev({"type": "turn.completed", "usage": {"input_tokens": 100, "output_tokens": 50,
      "reasoning_output_tokens": 20, "cached_input_tokens": 0}})
 '''
@@ -71,6 +68,7 @@ def test_plan_writes_files_and_persists_trajectory(tmp_path):
     assert "gpt-5.5" in cand.solution["sources"][0]["content"]
     assert cand.solution["spec"]["languages"] == ["pytorch"]
     assert cand.strategy == "fused elementwise path"          # read from strategy.txt, not stdout
+    assert cand.handoff == "reserve play: radix-sort segmented reduction"   # from handoff.md
     assert cand.tokens["in"] == 100 and cand.tokens["out"] == 50   # parsed from the stream
     # kernel + trajectory + inputs persist together under work/<cand_id>/
     wd = tmp_path / "runs" / "7" / "work" / cand.cand_id
@@ -79,18 +77,22 @@ def test_plan_writes_files_and_persists_trajectory(tmp_path):
     assert cand.trajectory == str(wd / "trajectory.jsonl")
 
 
-def test_design_reflect_judge_read_files(tmp_path):
-    spec = _fake_spec(tmp_path)
-    agent = _agent(spec, tmp_path)
+def test_design_reads_file(tmp_path):
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
     assert "roofline" in run(agent.design(7))                 # from design.md
-    refl = run(agent.reflect(SimpleNamespace(cand_id="c1", strategy="s"),
-                             SimpleNamespace(sol_score=0.7), "dominated"))
-    assert "128-bit" in refl                                  # from reflection.txt
-    assert run(agent.judge(SimpleNamespace(cand_id="c1", strategy="s"),
-                           SimpleNamespace(strategy="p"), None)) == "materially-new"
-    cosmetic = _agent(spec, tmp_path, env={"FAKE_VERDICT": "cosmetic"})
-    assert run(cosmetic.judge(SimpleNamespace(cand_id="c2", strategy="s"),
-                              SimpleNamespace(strategy="p"), None)) == "cosmetic"   # from verdict.txt
+
+
+def test_context_md_renders_reserve_plays():
+    # the per-problem playbook (reserve plays) is fed to the next agent via CONTEXT.md
+    from solver.engine.cli_agent import _context_md
+    ctx = SimpleNamespace(design="", sibling_hint=None, recent_failures=[],
+                          frontier=SimpleNamespace(members=[]),
+                          playbook=[{"cand": "abc12345", "strategy": "atomic scatter",
+                                     "handoff": "radix-sort + atomic-free segmented reduction"}])
+    md = _context_md(parent=None, ctx=ctx)
+    assert "Reserve plays" in md
+    assert "radix-sort + atomic-free segmented reduction" in md
+    assert "atomic scatter" in md                             # the strategy that flagged it
 
 
 def test_timeout_raises(tmp_path):

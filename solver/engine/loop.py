@@ -2,9 +2,10 @@
 
 `solve_problem` is one problem's GEPA loop: bootstrap (design + seed the
 frontier) → repeat (round-robin the current tier's pool → plan → gates → GPU
-eval → ε-Pareto accept → reflect) until a budget, target, or a terminating
-plateau. `run_fleet` runs many concurrently, guarded so one failure stops only
-its own problem. Everything is async; the executor is the single serialized GPU.
+eval → ε-Pareto accept → bank the plan's handoff into the playbook) until a
+budget, target, or a terminating plateau. `run_fleet` runs many concurrently,
+guarded so one failure stops only its own problem. Everything is async; the
+executor is the single serialized GPU.
 """
 
 from __future__ import annotations
@@ -84,6 +85,27 @@ def _dominant_failure(result: EvalResult) -> str:
     return Counter(errs).most_common(1)[0][0] if errs else "INCORRECT"
 
 
+async def _reverify(ctx: RunContext, executor: Executor, task_id: int, cid: str,
+                    solution: dict, runs: int) -> int | None:
+    """Re-run a would-be frontier entry `runs`-1 more times as FRESH evals (same
+    seed/config as the grader — just more correctness rounds). Returns the attempt
+    that DISAGREED on correctness (→ flaky/racy kernel), or None if all re-runs
+    passed. Each re-run costs a GPU eval and is journaled (verify_started/_done)
+    so resume replays it. Gated by the caller onto would-be frontier entries only,
+    so most candidates never pay for it."""
+    for attempt in range(1, runs):
+        job = f"{cid}-v{attempt}"
+        r = await executor.evaluate(solution, task_id, attempt=attempt)
+        ctx.record("verify_started", cand=cid, attempt=attempt, job=job,
+                   ts=r.raw.get("started"))
+        ctx.record("verify_done", cand=cid, attempt=attempt, job=job,
+                   ts=r.raw.get("ended"), gpu_s=r.raw.get("gpu_s", 0.0),
+                   all_passed=r.correct, scores=r.vector(), statuses=_statuses(r))
+        if not r.correct:
+            return attempt
+    return None
+
+
 def _persist(ctx: RunContext, task_id: int, cid: str, solution: dict | None,
              result: EvalResult, *, runs_dir, problems_dir, family: str, name: str,
              **meta) -> None:
@@ -94,6 +116,7 @@ def _persist(ctx: RunContext, task_id: int, cid: str, solution: dict | None,
                                problems_dir=problems_dir, **meta)
         store.record_frontier(runs_dir, task_id, ctx.frontier,
                               problems_dir=problems_dir, family=family, name=name)
+        store.record_playbook(runs_dir, task_id, ctx.playbook, name=name)
     except Exception as exc:                       # pragma: no cover - defensive
         ctx.record("store_error", cand=cid, error=repr(exc)[:200])
 
@@ -172,7 +195,7 @@ async def solve_problem(
         ctx.record("plan_done", cand=cand.cand_id, parent=cand.parent, agent=persp.agent,
                    model=persp.model, strategy=cand.strategy, solution=cand.solution,
                    dur_s=0.0, tok_in=(tok.get("in") or 0), tok_out=(tok.get("out") or 0),
-                   trajectory=cand.trajectory)
+                   trajectory=cand.trajectory, handoff=cand.handoff)
 
         ok, _errs = check_fn(cand.solution, task_id)
         ctx.record("check", cand=cand.cand_id, ok=ok)
@@ -199,16 +222,26 @@ async def solve_problem(
                    scores=result.vector(), statuses=_statuses(result))
         if not result.correct:                              # feed the mistake back to future agents
             ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id)
-        verdict = ctx.accept_candidate(cand.cand_id)
+            verdict = ctx.accept_candidate(cand.cand_id)
+        else:
+            # A candidate that PASSED and would improve the frontier gets re-verified
+            # (10 more correctness rounds per re-run) to catch flaky/racy kernels that
+            # pass once but fail the leaderboard's single run. Cheap: only frontier-
+            # entering candidates pay, and we can't lean on the leaderboard (throttled).
+            flaky_at = None
+            if cfg.verify_runs > 1 and ctx.frontier.would_enter(tuple(result.vector())):
+                flaky_at = await _reverify(ctx, executor, task_id, cand.cand_id,
+                                           cand.solution, cfg.verify_runs)
+            if flaky_at is not None:
+                ctx.record("flaky", cand=cand.cand_id, attempt=flaky_at)
+                ctx.note_failure(cand.strategy, "FLAKY_NONDETERMINISTIC", cand.cand_id)
+                verdict = "flaky"                           # rejected: never enters the frontier
+            else:
+                verdict = ctx.accept_candidate(cand.cand_id)
         _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
                  problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
                  agent=persp.agent, model=persp.model, parent=cand.parent,
                  verdict=verdict, trajectory=cand.trajectory)
-        try:
-            await agent.reflect(cand, result, verdict)
-        except Exception:
-            pass                                # reflection is best-effort; never abort on it
-        ctx.record("reflect_done", cand=cand.cand_id, dur_s=0.0)
         ctx.record("iter", n=ctx.iters, outcome=verdict)
 
     if ctx.terminated_reason is None:

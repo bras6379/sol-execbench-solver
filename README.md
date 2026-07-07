@@ -56,7 +56,7 @@ cp .env.example .env                # then fill in the keys below
   solve --gpu  ── auto-provision ────────────▶  create pod, bootstrap the pinned
                                                  harness (uv sync torch/cu13 + …)
   agents write kernel.py (Claude/GPT) ──────▶   run in the SOL-ExecBench harness
-  ε-Pareto frontier · score · reflect  ◀────    (correctness + cold-L2 CUPTI timing)
+  ε-Pareto frontier · score · playbook ◀────    (correctness + cold-L2 CUPTI timing)
   … iterate until the time budget …
   terminate the pod (guaranteed teardown)  ──▶  pod destroyed, nothing left billing
   submit best → leaderboard
@@ -75,13 +75,20 @@ runs the fleet, and terminates the pod:
 solver solve --gpu 1-10 \
   --tier main=claude/opus,codex/gpt-5.5 \   # models round-robin within a tier (or cheap→strong ladders)
   --time-limit-min 120 \                    # wall-clock budget PER problem (lifts iter/eval caps)
-  --gpu-iterations 50                        # harness timed iters/workload
+  --gpu-iterations 50 \                      # harness timed iters/workload
+  --verify-runs 3                            # re-run a would-be frontier entry 3× → reject flaky kernels
 ```
 
 - **Resumes from journals** — re-running the same ids continues where it left off,
   keeping every frontier (kill the process to pause).
 - **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier round-robins its
   models; multiple tiers escalate cheap→strong on plateau.
+- **`--verify-runs N`** (default 1 = off) — the harness checks correctness for 10 rounds,
+  but a rare non-deterministic (racy) kernel can pass locally yet fail the leaderboard's
+  single run. With `N>1`, a candidate that would *enter the frontier* is re-run `N−1` more
+  times (fresh evals, same grader config = `10N` correctness rounds); if any run disagrees
+  it's marked **flaky** and rejected. Targeted (only frontier-entering candidates pay) and
+  fully local — the leaderboard is throttled, so we don't lean on it for correctness.
 - **Calibration.** RunPod containers can't lock GPU clocks, so we measure *unlocked*
   (boost) — a constant **~1.19×** faster than the leaderboard's locked 1500 MHz
   (measured across 6 submissions; `docs/gpu-execution.md` §8). Every score therefore
@@ -91,13 +98,16 @@ solver solve --gpu 1-10 \
 
 ## Engine
 
-`docs/orchestration.md` is the full design: a GEPA-style reflective loop per problem
-(reflect on the trace → mutate the kernel → evaluate → ε-Pareto accept), a fleet over
-one single-flight GPU, fully resumable via journal replay. What the agents get each
-iteration: the problem reference + `kb/`, the current **frontier** (best-first, with
-the leaderboard estimate), a reflection on the parent, **recent FAILED attempts**
-(so they don't repeat mistakes), and — for same-op siblings — a **warm-start kernel**
-to adapt (cross-problem transfer, `knowledge.py`).
+`docs/orchestration.md` is the full design: a GEPA-style loop per problem
+(mutate the kernel → evaluate → ε-Pareto accept), a fleet over one single-flight GPU,
+fully resumable via journal replay. What the agents get each iteration: the problem
+reference + `kb/`, the current **frontier** (best-first, with the leaderboard estimate),
+the **playbook** of reserve plays (higher-ceiling ideas prior accepted kernels flagged
+but didn't ship — `runs/<task>/playbook.md`), **recent FAILED attempts** (so they don't
+repeat mistakes), and — for same-op siblings — a **warm-start kernel** to adapt
+(cross-problem transfer, `knowledge.py`). Each plan writes a `handoff.md` naming its own
+reserve play, which is banked into that playbook on accept — so forward-looking reasoning
+accumulates across rounds instead of dying in the trajectory.
 
 Agents are existing coding-agent CLIs, shelled out to — no per-agent code (`CliAgent`,
 `docs/agent.md`): `claude` and `codex` today. A timed-out or failed agent call *skips
@@ -108,7 +118,7 @@ the iteration*, it never aborts the problem.
 is deterministically asserted:
 
 ```bash
-python -m pytest -q          # 50 tests, no GPU / no API
+python -m pytest -q          # 55 tests, no GPU / no API
 ```
 
 ## Leaderboard
@@ -125,15 +135,18 @@ solver export                # bundle every best_solution.json → submissions/ 
 
 `solve` writes to `runs/<task>/`: `journal.jsonl`, `candidates/<cid>.json` (every
 candidate + a ready-to-submit `submit` form), `frontier.json`, `best_solution.json`,
-`submissions.jsonl`. The dashboard renders it live (no server/CDN — self-contained):
+`playbook.md` (accumulated reserve plays), `submissions.jsonl`. The dashboard renders
+it live (no server/CDN — self-contained):
 
 ```bash
 solver report --runs-dir runs --out-dir out --watch 15   # regenerates out/ every 15s
 python -m http.server 8765 --directory out               # view at localhost:8765
 ```
 
-Problems are sorted by leaderboard estimate; each problem's detail page shows every
-candidate's **agent · score · kernel · trajectory** and the real leaderboard submissions.
+Problems are sorted by leaderboard estimate; the table also carries each problem's
+**real SOL** and **leaderboard rank** (`#4 of 16`) from any actual submission. Each
+problem's detail page shows every candidate's **agent · score · kernel · trajectory**
+and the real leaderboard submissions.
 
 ## Candidates, scoring, fetching
 
@@ -163,4 +176,4 @@ HuggingFace dataset.
 bootstrap → real harness scoring → guaranteed teardown → leaderboard submission.
 Deferred: network-volume harness caching (fresh `uv sync` each run, ~5 min), ncu
 deep-profiling, and same-op transfer only helps runs with sibling shapes (the 2xx
-FlashInfer groups / full 235). 50 tests pass on the laptop.
+FlashInfer groups / full 235). 55 tests pass on the laptop.

@@ -245,9 +245,6 @@ def build_demo(runs_dir: Path, seed: int = 7, limit: int | None = None,
                     verdict = "dominated"
             j.append("accept", ts=_iso(d + 0.4), cand=cand, verdict=verdict,
                      best=round(s["best"], 4), frontier=s["frontier"])
-            j.append("reflect_done", ts=_iso(d + rng.uniform(8, 28)), cand=cand,
-                     tier="full" if verdict == "entered" else "brief",
-                     dur_s=round(rng.uniform(12, 40), 1))
             s["eval_i"] += 1
             s["evals_left"] -= 1
             clocks[task] = d + rng.uniform(4, 18)

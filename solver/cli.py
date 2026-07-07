@@ -186,6 +186,7 @@ def _cmd_solve(args) -> None:
             plateau_cycles=(big if tl else args.plateau_cycles), escalate_ceiling=0.9,
             epsilon=0.02, max_iterations=(big if tl else args.max_iters),
             max_gpu_evals=(big if tl else args.max_evals), time_limit_s=tl,
+            verify_runs=args.verify_runs,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
@@ -475,6 +476,10 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--time-limit-min", type=float, default=None,
                          help="wall-clock budget per problem (minutes); when set it's the ONLY stop "
                               "condition — iter/eval caps and plateau are lifted so it keeps trying")
+    p_solve.add_argument("--verify-runs", type=int, default=1,
+                         help="re-run a would-be frontier entry this many times (fresh evals, same "
+                              "grader config) and reject if any run disagrees on correctness; catches "
+                              "flaky/racy kernels that pass locally but fail the leaderboard. 1=off, 2-3=harden")
     p_solve.add_argument("--timeout", type=float, default=1800.0,
                          help="per agent-call timeout (s); a timeout now skips the iteration, "
                               "not the whole problem")

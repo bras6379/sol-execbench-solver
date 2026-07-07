@@ -144,8 +144,11 @@ class GpuQueueExecutor:
         self._in_flight = False
         self.max_concurrent = 0
 
-    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False) -> EvalResult:
+    async def evaluate(self, solution: dict, task_id: int, *, profile: bool = False,
+                       attempt: int = 0) -> EvalResult:
         job_id = f"{task_id}-{solution_hash(solution)[:12]}"
+        if attempt:
+            job_id += f"-v{attempt}"
         async with self._lock:
             assert not self._in_flight, "GPU re-entered: single-flight violated"
             self._in_flight = True

@@ -251,17 +251,17 @@ _CSS = """
 :root{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;
 --grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;--o-error:#d03b3b;}
+--o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;}
 @media (prefers-color-scheme: dark){:root{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;
 --grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;}}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;--o-flaky:#c07de0;}}
 :root[data-theme=light]{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;--grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;}
+--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;--o-flaky:#a855c7;}
 :root[data-theme=dark]{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;--grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;--o-flaky:#c07de0;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--surface);color:var(--ink);
 font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
@@ -307,6 +307,7 @@ color:var(--ink);padding:6px 10px;font-size:13px;margin-bottom:10px;width:260px}
 padding:5px 9px;border-radius:6px;font-size:12px;opacity:0;transition:opacity .08s;z-index:9;max-width:420px;white-space:normal}
 .chip{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;font-weight:600;color:#fff}
 td.strat{white-space:normal;max-width:380px;color:var(--ink2)}
+td.real b{color:var(--o-accepted)}  /* the real, submitted leaderboard SOL (ground truth) */
 pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
 pre.traj{font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:70vh;overflow:auto}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
@@ -381,7 +382,7 @@ _HUB_JS = r"""
 const D = JSON.parse(document.getElementById('data').textContent);
 const RECS = D.recs, OC = D.outcomes, DETAIL = D.detail;
 const OCC = {accepted:'--o-accepted',dominated:'--o-dominated',incorrect:'--o-incorrect',
-             rejected:'--o-rejected',duplicate:'--o-duplicate',error:'--o-error'};
+             rejected:'--o-rejected',duplicate:'--o-duplicate',flaky:'--o-flaky',error:'--o-error'};
 const sel = new Set();          // selected families
 let query = '';
 const SL = i => 'var(--s'+(i%8+1)+')';
@@ -498,8 +499,9 @@ function render(){
   // problems table
   document.getElementById('t-prob').innerHTML=(()=>{
     const rows=[...sub].sort((a,b)=>((b.bc??-1)-(a.bc??-1))).map(r=>{const i=idx[r.t];const bar=r.bc==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.bc,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${bar}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
-    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est ▼</th><th>our SOL</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+      const lb=r.lb||{};const rsol=lb.sol==null?'':lb.sol.toFixed(4);const rank=lb.rank?`#${lb.rank} of ${lb.n??'?'}`:'';
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${bar}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}</td><td data-v="${lb.sol??-1}" class="real"><b>${rsol}</b></td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est ▼</th><th>our SOL</th><th>real SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
 function bindSort(){
@@ -589,7 +591,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     recs = [{
         "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
         "b": p["best"], "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
-        "it": p["iters"], "fr": p["frontier"],
+        "it": p["iters"], "fr": p["frontier"], "lb": p.get("lb"),
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
         "ac": [[round(ts, 1), round(y, 4)] for ts, y in p["accept_times"]],
@@ -646,8 +648,8 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 
 _STATUS_CHIP = {
     "accepted": "o-accepted", "dominated": "o-dominated", "rejected": "o-rejected",
-    "duplicate": "o-duplicate", "incorrect": "o-incorrect", "error": "o-error",
-    "planned": "o-dominated",
+    "duplicate": "o-duplicate", "incorrect": "o-incorrect", "flaky": "o-flaky",
+    "error": "o-error", "planned": "o-dominated",
 }
 
 

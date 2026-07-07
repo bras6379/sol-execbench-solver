@@ -1,14 +1,15 @@
 # Orchestration: the Solver Engine
 
-Single design doc for the multi-agent optimization engine. **Status: Phases
-A–E built (engine, knowledge, fleet, `solver solve`/views, sibling seeding —
-all laptop/stub, dashboard-verified on real runs); Phase F (GPU) designed.**
-Goal: **select problems → optimize each to
-the best kernel we can find → accumulate and transfer knowledge across
-problems.** The GPU is abstracted behind an interface (stub today, real
-harness transport later). The engine *finds* best solutions; it does **not**
-submit to the website (a submit step can be added at the end of the loop
-later — it's one function call).
+Single design doc for the multi-agent optimization engine. **Status: fully
+built and validated live on a rented B200** — engine, knowledge/transfer,
+fleet, `solver solve`/views, sibling seeding, the real `SshExecutor` + pod
+lifecycle (Phase F), and closed-loop leaderboard submit/poll. Goal: **select
+problems → optimize each to the best kernel we can find → accumulate and
+transfer knowledge across problems.** The GPU is abstracted behind one
+`Executor` interface (a deterministic stub for the tests; the real SSH-to-B200
+executor for live runs). The engine *finds* best solutions on the laptop
+(authoritative scoring) and can **submit the best straight to the leaderboard**
+(`solver submit`, §10).
 
 Design stance: **solid but not over-engineered.** The v1 core below is the
 minimum that is correct, resumable, and observable; everything else lives in
@@ -20,7 +21,7 @@ minimum that is correct, resumable, and observable; everything else lives in
 
 GEPA (Genetic-Pareto reflective text evolution; arXiv 2507.19457, ICLR 2026
 oral) evolves a *text artifact* — for us, a kernel **Solution** — through:
-reflect on execution traces (the "text gradient") → mutate → evaluate →
+learn from execution traces (the "text gradient") → mutate → evaluate →
 keep a **Pareto frontier per instance** (per workload shape, *not* top-k by
 aggregate) → merge specialists. It reaches strong results in 100–500
 evaluations instead of RL's tens of thousands — the reason it fits a world
@@ -29,11 +30,17 @@ collapse each rich trace — per-shape statuses, matched-ratio, logs — into a
 scalar and need thousands of runs to learn from it; GEPA turns each trace
 into one targeted fix. We evolve the kernel, not a model.)
 
+Our "text gradient" is not a separate reflection call — it's the frontier the
+next agent sees plus a **per-problem playbook of reserve plays** (§6d): each
+plan writes a `handoff` (the higher-ceiling idea it didn't ship) that is banked
+when it enters the frontier and fed forward, so forward-looking reasoning
+accumulates instead of dying in the trajectory.
+
 | GEPA concept | Here |
 |---|---|
 | Candidate | a Solution (`solver/bench/solution.py`) + lineage (parent id) |
 | evaluate() | run in the SOL-ExecBench harness on the GPU → per-workload Traces |
-| Reflection / ASI | diagnosis from statuses, matched_ratio, latency-vs-SOL, logs |
+| Text gradient | frontier capsules + recent failures + the **playbook** (reserve plays banked from each accepted kernel's `handoff`, §6d) |
 | Pareto frontier | per-workload-shape non-domination (specialists survive) |
 | Merge | per-shape dispatch kernel from specialists (deferred until data shows specialist-rich frontiers) |
 
@@ -58,13 +65,15 @@ async def solve_problem(task_id, executor, agents, knowledge):
         if ctx.tier_plateaued():                      # M full pool-cycles, no ε-gain (§6b)
             if not ctx.escalate():  break             # escalate iff headroom (best<ceiling) & a tier remains; else STOP
         agent  = agents[ctx.tier.next()]              # round-robin THIS tier's pool → per-iter diversity (§6b)
-        parent = ctx.frontier.select()                # Pareto-weighted parent (full) + frontier capsules
-        cand   = await agent.plan(parent, ctx)        # concurrent across problems
+        parent = ctx.frontier.select()                # Pareto-weighted parent (full) + frontier capsules + playbook
+        cand   = await agent.plan(parent, ctx)        # writes kernel + strategy + handoff; concurrent across problems
         if not check(cand):        ctx.journal("reject", cand); continue
-        if not await novel(cand):  ctx.journal("dup", cand);    continue
+        if cand.hash in ctx.seen:  ctx.journal("dup", cand);    continue   # exact-hash dedup (no LLM judge)
         result  = await executor.evaluate(cand, task_id)  # ← THE GPU LOCK
-        verdict = ctx.accept(cand, result)            # ε-Pareto, journaled delta
-        cand.reflection = await agent.reflect(cand, result, verdict)  # reflection BY the planning agent (§6b); no tiering
+        if result.correct and cfg.verify_runs > 1 and ctx.frontier.would_enter(result):
+            if not ctx.reverify(cand, cfg.verify_runs):    # fresh re-runs; racy kernel disagrees → flaky
+                ctx.journal("flaky", cand); continue       # rejected: never enters the frontier (§6d)
+        verdict = ctx.accept(cand, result)            # ε-Pareto, journaled delta; on 'entered' → bank cand.handoff
         ctx.journal("iter", cand, result)
     finalize(ctx)                                     # best all-correct → best_solution.json
     await knowledge.curate(ctx)                       # serialized curator
@@ -102,7 +111,7 @@ journaled once), and `solver solve` resumes it later — never twenty
 `solver_error`s from one shared cause.
 
 **Agent swapping across sessions.** The agent is a per-session construct;
-run state is model-agnostic (Solutions, reflections, scores). So a run can
+run state is model-agnostic (Solutions, handoffs/playbook, scores). So a run can
 be stopped and **resumed with a different agent/model (or a whole different
 ladder/pool config)** — e.g. grind with a cheap model, resume the hard tail
 with an expensive one, or stop an expensive run and continue cheaper. Mechanics: every generative journal
@@ -122,30 +131,27 @@ Rules that make this work:
   goes to `asyncio.to_thread`; no sync lock ever sits on the event-loop path.
   (Phase A's `threading.Lock` stub gets converted.)
 - **Two swappable interfaces** — the only abstraction that earns its keep:
-  - `Executor.evaluate(solution, task_id) -> EvalResult` — StubExecutor (now)
-    / GpuQueueExecutor (later). All solvers share ONE instance; strictly one
-    job on the GPU at a time, dispatched **fair round-robin across
-    problems**: per-problem FIFO queues, one job per problem per turn. This
-    prevents a fast-thinking problem (or a multi-seed bootstrap) from
-    monopolizing the GPU while other problems' evals wait — each solver has
-    ≤1 eval in flight, so RR over problems is exact fairness. (Phase F's
-    priority refinements — screens first, circuit breaker — extend this same
-    dispatcher.)
-  - `Agent.design/plan/reflect/judge(...)` — the interface is **framework- and
-    provider-agnostic**: an `Agent` is any coding agent bound to a model.
-    Impls: StubAgent (deterministic tests; scripting API in §12), Claude Agent
-    SDK on the subscription OAuth token (`claude setup-token` → `CLAUDE_CODE_OAUTH_TOKEN`;
-    no API key), and **one generic OpenAI-compatible backend** (any
-    `base_url`/`model` — GPT / DeepSeek / GLM / Qwen / Kimi, native or via an
-    aggregator). A `(agent, model)` pair is a **perspective**; a pool of them
-    is a **tier**; the tier ladder is §6b. The **novelty judge** uses a cheap
-    fixed model; **reflection is done by the planning agent** (so it matches
-    the current tier — strong reflection once you've escalated).
+  - `Executor.evaluate(solution, task_id, *, attempt=0) -> EvalResult` —
+    StubExecutor (tests) / `SshExecutor` (live B200). All solvers share ONE
+    instance; strictly one job on the GPU at a time (single-flight lock). Per
+    candidate it builds the harness `solution.json`, ships it to the pod, runs
+    the pinned `sol-execbench` CLI, pulls the trace back, and **scores it on the
+    laptop**. Idempotent per-candidate job dirs keyed by `Solution.hash` mean a
+    crash mid-eval recovers for free; `attempt>0` is a fresh re-run (§6d
+    re-verification), never the cached trace.
+  - `Agent.design/plan(...)` — the interface is **framework- and
+    provider-agnostic**: an `Agent` is any coding agent bound to a model. Impls:
+    StubAgent (deterministic tests; scripting API in §12) and `CliAgent`, which
+    shells out to the `claude` and `codex` CLIs (results read from known files,
+    never parsed stdout — `docs/agent.md`). A `(agent, model)` pair is a
+    **perspective**; a pool of them is a **tier**; the tier ladder is §6b. There
+    is **no separate reflect/judge call** — a `plan` also writes its own
+    `handoff` (§6d), and the ε-Pareto frontier is the novelty gate.
 - **Crash isolation:** one solver failing is journaled and stops only that
   problem.
-- "Nodes" (select/plan/check/novelty/execute/accept/reflect) remain the
-  *vocabulary* — steps of the loop with typed inputs/outputs — but there is
-  **no driver/router/graph framework**; the loop is a function we edit.
+- "Nodes" (select/plan/check/execute/verify/accept) remain the *vocabulary* —
+  steps of the loop with typed inputs/outputs — but there is **no
+  driver/router/graph framework**; the loop is a function we edit.
 
 ## 3. Candidates
 
@@ -155,8 +161,8 @@ Rules that make this work:
   own `compile_options`/`dependencies`, DPS optional. See
   [kb/solution-format.md](../kb/solution-format.md).
 - **Clean-artifact invariant:** `solution.json` contains only the kernel.
-  Engine bookkeeping (status, parent, technique, scores, reflection) lives
-  beside it (`meta.json`/`result.json`/journal), never inside.
+  Engine bookkeeping (status, parent, technique, scores, handoff) lives
+  beside it (the candidate record / journal), never inside.
 - **Seed, not mold:** the seed is the correct PyTorch DPS **reference** (its
   measured score may be < 0.5; `T_b` is an *optimized* baseline), so the
   reference impl is candidate #0 on the frontier. It is also copied to
@@ -166,26 +172,24 @@ Rules that make this work:
 - **Mutation policy lives in the Plan prompt**, not engine machinery: follow
   the KB abstraction ladder (torch → Triton → CuTe-DSL/CUTLASS → C++/PTX),
   escalating language only on plateau/evidence. The exact context a `plan()`
-  call receives is the **§8 context-assembly** block (parent source + its
-  reflection + frontier capsules + top-K insights + design-doc section —
-  never full lineage history).
+  call receives is the **§8 context-assembly** block (parent source + frontier
+  capsules + the playbook of reserve plays + recent failures + sibling warm-start
+  + design-doc section — never full lineage history).
 
 ## 4. The gates before the GPU
 
 1. **Check** (static, free): schema + per-language entry validation (DPS
    names for `.py`; `void run(torch::Tensor…)` shape for C++). Built.
-2. **Novelty** (semantic dedup — the GPU's last gate), two tiers with
-   distinct scopes:
-   - exact `Solution.hash()` (the harness's own SHA1) checked against **the
-     full journal history** — free set-lookup; a candidate identical to
-     *anything ever evaluated* (including long-dominated ones) never re-pays
-     a GPU run;
-   - **LLM judge** (cheap model) against **parent + current frontier**:
-     materially different implementation (algorithm/layout/fusion/precision/
-     launch config) vs cosmetic variant? A judge call costs orders of
-     magnitude less than the GPU run it protects. `cosmetic` bounces to Plan
-     *with the verdict as feedback*.
-3. Every pass through Plan — including rejects and bounces — **counts as an
+2. **Exact-hash dedup** (free set-lookup — the GPU's last gate): the candidate's
+   content hash checked against **every candidate already seen this run**
+   (including long-dominated ones) → identical kernels never re-pay a GPU run.
+   There is **no LLM novelty judge.** An earlier design pre-judged candidates
+   from one-line strategy strings and wrongly discarded real variants
+   (FP16-vs-TF32, tile/warp autotuning) *after* we'd paid to generate them. We
+   measure instead: the ε-Pareto frontier IS the novelty gate — it keeps a
+   candidate only if its **measured** perf is non-dominated and discards a
+   near-duplicate that doesn't actually improve.
+3. Every pass through Plan — including rejects and dups — **counts as an
    iteration**, so termination caps always fire (no spin).
 
 ## 5. Evaluation results
@@ -210,14 +214,14 @@ class EvalResult:
     all_passed: bool
     sol_score: float | None           # mean over shapes; None unless all_passed
     env: dict                         # fingerprint: GPU/driver/clock/harness (recorded now)
-    asi: dict                         # logs + notes for reflection
+    asi: dict                         # logs + notes fed back to agents
 ```
 
 - **Status is per-workload** (one harness Trace per shape — a kernel can PASS
   14 and TIMEOUT 2; that partial-specialist signal is what the frontier
   needs). Only `COMPILE_ERROR` / `REWARD_HACK` are solution-level.
 - **REWARD_HACK → quarantine:** never selected or merged; its trace is *not*
-  fed to reflection (evasion must never be learned); Plan gets a neutral
+  fed back to agents (evasion must never be learned); Plan gets a neutral
   "disallowed pattern, regenerate" note; journaled loudly.
 - **StubExecutor** synthesizes latencies deterministically keyed on
   `Solution.hash()` (it sees only the clean Solution) + optional noise term +
@@ -229,15 +233,14 @@ class EvalResult:
 - **ε-Pareto frontier over the ~16 shapes.** Vector = per-shape `sol_score`
   (non-PASSED shape = 0). A ε-dominates B iff A ≥ B−ε everywhere and
   A > B+ε somewhere. v1: **one configurable relative ε (default ~2%)**;
-  Select samples the frontier weighted by shapes won, and always returns the
-  parent **with its own reflection** (reflections attach to lineage, never
-  float).
+  Select samples the frontier weighted by shapes won and returns the chosen
+  parent (its full source is seeded into the plan workdir to improve on).
 - **Budgets: two enforced caps + one observed metric.**
   - `max_iterations` per problem (counts everything; guarantees termination);
   - `max_gpu_evals` per problem (full harness runs — the scarce resource;
     per-eval cost is already bounded by the harness timeout). Counted when a
-    candidate **reaches the run stage**: check-fails, novelty bounces, and
-    (Phase F) `COMPILE_ERROR`s never touched the GPU and don't consume it;
+    candidate **reaches the run stage** (re-verification re-runs count too, §6e):
+    check-fails and exact-hash dups never touched the GPU and don't consume it;
   - agent tokens/credit: **logged per call**, not enforced — the
     subscription's non-interactive pool is a hard stop on Anthropic's side;
     we watch the logs and add enforcement only if needed.
@@ -377,6 +380,47 @@ Built now: reopen-on-raised-cap. Designed, not built: the fleet-budget scheduler
 breaker is already the plateau/converged detection; the priority queue is the
 headroom ordering).
 
+## 6d. Handoff → playbook (the text gradient — no separate reflect call)
+
+The forward-looking reasoning an agent does at plan time — *"I shipped the atomic
+scatter; the reserve play if it only ties is a radix-sort + atomic-free segmented
+reduction that writes output once at true SOL bandwidth"* — is the highest-value
+signal in the loop, and it used to die in the trajectory (no future agent reads
+trajectory files). An earlier design also ran a separate post-eval `reflect()`
+call that re-derived a thinner version — and **discarded its output** (`parent.
+reflection` was never wired). Both are gone, replaced by one free, durable channel:
+
+- **`plan` writes `handoff.md`** next to the kernel — the higher-ceiling idea it
+  did NOT ship + the trigger to try it. No extra agent call; it's reasoning the
+  agent already does.
+- **On accept (`entered`) the handoff is banked** into `ctx.playbook`, deduped by
+  text, skipping dominated candidates and empty handoffs.
+- **The next agent's context** (§8) gets a `## Reserve plays` section from the
+  playbook — accumulated across rounds, robust to which parent ε-Pareto samples.
+- **Durable + browsable:** `runs/<task>/playbook.md`. Journal-derived (rebuilt on
+  replay from `plan_done.handoff` + `accept`), so resume reconstructs it exactly.
+
+This is GEPA's "reflection", relocated: the frontier + recent failures carry the
+*measured* outcome; the playbook carries the *unexplored high-ceiling directions*.
+
+## 6e. Re-verification — reject flaky (non-deterministic) kernels
+
+The harness checks correctness for **10 rounds per workload**, but a rare racy
+kernel (unsynchronized atomics / order-dependent reductions) can pass all 10
+locally yet fail the leaderboard's single run. We can't lean on the leaderboard to
+catch it (submissions are throttled), so the check is **local and targeted**:
+
+- **`--verify-runs N`** (default 1 = off). When a correct candidate **would enter
+  the frontier** (`frontier.would_enter`), it's re-run `N−1` more times as FRESH
+  evals — same seed/config as the grader, just more rounds (`attempt>0` busts the
+  per-candidate idempotency cache). If any re-run disagrees on correctness →
+  journal `flaky`, feed `FLAKY_NONDETERMINISTIC` into recent-failures, and
+  **reject** it (it never enters the frontier).
+- **Cheap by construction:** only would-be frontier entries pay, so it's ~1.2–1.4×
+  GPU, not N×. The expensive part (the agent call) is already spent.
+- **Probabilistic but honest:** 10N rounds collapses the flaky-passer rate; every
+  re-run is journaled (`verify_started`/`verify_done`) so its GPU time is counted.
+
 ## 7. Persistence & resume (journal + results store)
 
 **The journal is the source of truth for *what happened*; an append-only
@@ -387,7 +431,7 @@ GPU work is protected separately (below).
 Storage rule — three classes, no ambiguity:
 
 1. **Inline in the journal**: small artifacts — Solutions (few KB of text),
-   check/novelty verdicts, reflections, frontier deltas, budget deltas.
+   check verdicts, handoffs, frontier deltas, budget deltas.
 2. **`runs/<id>/results/` — append-only, AUTHORITATIVE** (referenced from the
    journal by hash): raw harness Traces/logs. These are measurements — the
    one thing that **cannot be rebuilt without re-paying a GPU run** — so
@@ -409,6 +453,10 @@ Storage rule — three classes, no ambiguity:
      `vector`, `shapes_won` (why it survives), `(agent, model)`, strategy, and a
      pointer to its candidate file; plus `best_cand`/`best_score`.
    - `best_solution.json` — the submittable harness solution of the best member.
+   - `playbook.md` — accumulated **reserve plays** (§6d): each accepted kernel's
+     `handoff`, banked and deduped, browsable and fed to the next agent.
+   - `submissions.jsonl` — real leaderboard submissions for the problem (id,
+     status, real SOL, board rank/#1), written by `solver submit`/`poll` (§10).
    - `solver export` gathers every problem's `best_solution.json` into a
      `submissions/` bundle + `manifest.json` (a whole-benchmark submission).
 
@@ -421,11 +469,12 @@ Storage rule — three classes, no ambiguity:
   entered/left the frontier, with scores) so replay is deterministic across
   engine versions. A crash truncates at most the trailing line (dropped on
   replay).
-- **GPU work is never lost or re-paid:** the (Phase F) executor journals
-  `execute_submitted{job_id, solution_hash}` before waiting; the GPU-side
-  worker persists results durably by job-id (pending→processing→completed).
-  Restart reconciles: completed → recover; processing → wait; lost →
-  resubmit.
+- **GPU work is never lost or re-paid:** the `SshExecutor` uses **idempotent
+  per-candidate job dirs** on the pod, keyed by `task-<Solution.hash>`. It writes
+  the trace to `trace.jsonl` and keys off that file, not the exit code, so a
+  re-eval of the same candidate reuses the existing trace instead of re-running —
+  a laptop crash mid-eval recovers for free. (`attempt>0` re-verification uses a
+  distinct `-v<n>` job dir so it's a genuine fresh run, §6e.)
 - **Git policy:** run outputs (journal, candidates, frontier, best_solution)
   are git-visible — check in to snapshot progress. Only regenerable churn is
   ignored (`.cache/`).
@@ -468,24 +517,26 @@ sees raw journals or full lineage — just a **bounded, curated context**:
 
 ```
                  ┌──────────── PLAN() context (bounded & curated) ────────────┐
- STATIC  kb/ ───►│ • relevant KB slice — B200 tricks for THIS op class        │
+ STATIC  kb/ ───►│ • the full KB — B200 tricks, recipes, grader (agents read   │
+                 │   what's relevant to THIS op class)                         │
  DESIGN  design ►│ • design-doc section — op graph, per-shape roofline, ideas  │
  THIS RUN ──────►│ • parent Solution (full source, the code to improve)        │──► agent
- (warm)          │ • parent's reflection ("text gradient": what to fix next)   │    writes a
-                 │ • frontier capsules — every survivor: shapes-won, score,    │    candidate
-                 │   one-line descriptor (only the selected parent is in full) │
+ (warm)          │ • frontier capsules — every survivor: shapes-won, score,    │    writes
+                 │   one-line strategy (best-first, leaderboard-est score)     │    kernel +
+                 │ • playbook — reserve plays banked from accepted kernels     │    strategy +
+                 │ • recent FAILED attempts (don't repeat) · sibling warm-start│    handoff
  PAST RUNS ─────►│ • top-K distilled insights — knowledge/families/<fam>.md    │
  (cold/curated)  │   + global.md  (curator-COMPRESSED, never raw journals)     │
                  └──────────────────────────────────────────────────────────────┘
    NEVER injected: full lineage history · raw journals · other problems' traces
 ```
 
-Both "pasts" are compressed: **this problem's own** past → parent + its
-reflection + frontier capsules (bounded, not full lineage); **other problems'**
-past → the curator's family/global markdown, top-K relevant slice only. The
-whole frontier is *summarized* (capsules) so coverage gaps are visible without
-every survivor's full source bloating the prompt. There is **no human/`hints`
-layer — the system runs autonomously** (§9).
+Both "pasts" are compressed: **this problem's own** past → parent source +
+frontier capsules + the playbook of reserve plays + recent failures (bounded, not
+full lineage); **other problems'** past → the curator's family/global markdown,
+top-K relevant slice only. The whole frontier is *summarized* (capsules) so
+coverage gaps are visible without every survivor's full source bloating the
+prompt. There is **no human/`hints` layer — the system runs autonomously** (§9).
 
 ## 9. Observability
 
@@ -493,9 +544,10 @@ layer — the system runs autonomously** (§9).
   `runs/<id>/candidates/`.
 - **CLI views** (read-only over journals): `solver status [ids]`
   (iterations, caps spent, best vs baseline & SOL, frontier size);
-  `solver journal <id>` (timeline incl. bounces + reflections);
+  `solver journal <id>` (event timeline);
   `solver frontier <id>` (survivors + which shapes each wins);
-  `solver candidates <id> [--status …]`.
+  `solver candidates <id> [--status …]`; `solver poll <id>` (real leaderboard
+  SOL + our rank + the current #1).
 - **Autonomous — no in-loop human steering.** These views are read-only; the
   system runs unattended (no `hints.md`). Behavior is changed by **config
   between runs** (tiers/pools, budgets, ε), never by editing a live run.
@@ -506,10 +558,11 @@ Every journal event carries `{v, ts, task, ev, …}` (ISO-8601 UTC, fsync'd).
 The v1 event vocabulary — pinned here so Phase B implements against it:
 
 `run_started{agent} · design_done{dur_s} · plan_done{cand, parent, agent,
-model, dur_s, tok_in, tok_out, strategy, solution} · check{cand, ok} ·
-novelty{cand, verdict} · exec_enqueued{job, cand} · exec_started{job} ·
-exec_done{job, cand, gpu_s, all_passed, sol_score, statuses} ·
-accept{cand, verdict, best, frontier} · reflect_done{cand, dur_s} ·
+model, dur_s, tok_in, tok_out, strategy, solution, handoff, trajectory} ·
+check{cand, ok} · exec_enqueued{job, cand} · exec_started{job} ·
+exec_done{job, cand, gpu_s, all_passed, sol_score, sol_score_cal, statuses} ·
+verify_started{cand, attempt, job} · verify_done{cand, attempt, all_passed} ·
+flaky{cand, attempt} · accept{cand, verdict, best, best_cal, frontier} ·
 agent_changed{tier, agent, model, trigger} · terminated{reason}`
 
 `plan_done{agent, model}` tags every candidate with the perspective that made
@@ -560,26 +613,44 @@ for reporting and the finalize argmax. At finalize both aggregates
 about the website's exact per-problem formula (kb/benchmark-grader.md
 §Aggregation) can relabel the winner but can never alter the search.
 
-## 10. Measurement honesty (v1 posture)
+## 10. Measurement honesty + the leaderboard loop
 
-- Frontier admission requires a **full eval** (all shapes) — v1 has no
-  partial evals at all, so this is trivially true (screen mode is deferred).
-- `env` fingerprint (GPU/driver/clock/harness) is **recorded on every
-  result** from day one (stub-empty until Phase F's real pod) — comparisons
-  across different pods are flagged; automated re-baselining is deferred.
-- Website calibration: on first contact with a real pod, measure the seed,
-  journal local-vs-`T_b` discrepancy, report raw + calibrated scores
-  (search decisions use local relative numbers).
+- Frontier admission requires a **full eval** (all shapes) — there are no
+  partial evals, so this is trivially true (screen mode is deferred).
+- `env` fingerprint (GPU/driver/clock/harness) is **recorded on every result**;
+  the `SshExecutor` samples the pod's clocks/temp/power *while the eval runs* →
+  `env.json`, so every measurement records the conditions it was taken under.
+- **Leaderboard calibration (built).** RunPod containers can't lock GPU clocks
+  (the harness rejects a fake lock), so we measure *unlocked* (boost ~1965 MHz) —
+  a constant **~1.19×** faster than the leaderboard's locked 1500 MHz (measured
+  across 6 submissions; `docs/gpu-execution.md` §8). Every score therefore carries
+  a **leaderboard estimate** — the SOL re-scored with latency × the factor
+  (`scoring.LEADERBOARD_LATENCY_FACTOR`, env `SOLBENCH_CALIBRATION_FACTOR`) — shown
+  to agents (`sol_score_cal`) and the dashboard. A constant factor preserves
+  ranking; the search uses local relative numbers, the leaderboard is the gate.
+- **Closed loop (built).** `solver submit <task> [--poll]` uploads
+  `best_solution.json` and records the real result to `submissions.jsonl`
+  (status, real SOL, board rank/#1); `solver poll` / the dashboard surface it
+  next to the estimate. Submissions are **throttled**, so they are the final gate,
+  never the correctness check (that's §6e's local re-verification).
+
+**Aggregation.** The per-problem score reported/estimated is the mean over
+per-workload S; the harness's own per-problem latency is a geomean over the ~16
+per-workload medians (`kb/benchmark-grader.md`). Accept/Select consume the
+per-shape *vector*, so the exact aggregation can relabel the winner but never
+alter the search.
 
 ## 11. Security posture
 
-- Candidates are LLM-generated code. On our GPU box (Phase F) the eval
-  worker runs them **sandboxed**: no network, workdir-only FS, resource
-  limits. Designed now, built with the worker.
-- The Research/web option is **off by default**; when on: allowlisted
-  domains, and web text enters prompts as quoted untrusted data, never
-  instructions (injection chain: web → code-writing agent → our GPU).
-- Agents never modify the harness, the engine, or validation code.
+- Candidates are LLM-generated code, run inside the official harness on an
+  **ephemeral, per-run B200 pod** that is torn down on every exit path (the pod
+  is the isolation boundary; nothing runs on the laptop). In-pod sandboxing of
+  the eval worker (no network, workdir-only FS, resource limits) is a further
+  hardening step, deferred.
+- The agents run against LLM providers only; no web/research tool is enabled, so
+  there is no web → code-writing-agent → GPU injection chain today.
+- Agents never modify the harness, the engine, or validation code; the laptop
+  holds authoritative scoring and the pod only holds the pinned harness.
 
 ## 12. Acceptance tests (v1, stub-powered)
 
@@ -613,9 +684,9 @@ as strong as the stubs' scriptability:
    in-flight agent call re-runs), so the guarantee is **no-loss /
    no-double-pay**: every journaled GPU result and result-store trace is
    retained, budgets are exact, no completed GPU eval is re-run.
-2. **Budget exactness** — rejects, bounces, evals, timeouts all count correctly
-   against both caps; check-fails and novelty-bounces never charge
-   `max_gpu_evals`.
+2. **Budget exactness** — rejects, dups, evals, timeouts all count correctly
+   against both caps; check-fails and exact-hash dups never charge
+   `max_gpu_evals` (re-verification re-runs do — they're real GPU work).
 3. **Frontier correctness** — property test: the ε-Pareto set matches brute
    force over random score vectors + ε, including injected-noise scenarios (the
    frontier stays stable under the stub's noise term).
@@ -628,9 +699,9 @@ as strong as the stubs' scriptability:
    climbs). No spin (bounces count as iterations). A single-tier, single-model
    ladder degenerates to plain plateau termination.
 5. **Gates** — a hash-identical candidate never re-pays a GPU run; a
-   stub-judged "cosmetic" candidate bounces to Plan carrying the verdict; a
-   check-invalid candidate is rejected — each without touching the executor.
-   `REWARD_HACK` is quarantined (never selected, never fed to reflection).
+   check-invalid candidate is rejected; every non-exact-duplicate is MEASURED
+   (no LLM pre-filter) and the ε-Pareto frontier decides on real perf.
+   `REWARD_HACK` is quarantined (never selected, never fed back to agents).
 6. **Crash isolation** — a StubAgent that raises on one problem stops *only*
    that problem (`solver_error` journaled once) while the rest of the fleet
    finishes; fleet-wide credit-exhaustion suspends cleanly (one `suspended`
@@ -640,26 +711,34 @@ as strong as the stubs' scriptability:
    eval on the GPU at a time), fair round-robin holds (each problem ≤1 eval in
    flight; RR order across problems), and the curator queue never interleaves
    writes. This is the async layer the other tests don't exercise.
+8. **Handoff → playbook** — an accepted candidate's `handoff` is banked into the
+   playbook (deduped by text, skipping dominated candidates and empty handoffs),
+   rendered into the next agent's `CONTEXT.md` as reserve plays, and rebuilt
+   identically on resume (journal-derived state).
+9. **Re-verification** — with `--verify-runs > 1`, a candidate that passes once
+   but fails a fresh re-run (stub `flaky_on` marker) is journaled `flaky` and
+   **rejected** (never enters the frontier); off by default a flaky kernel slips
+   in (the exact gap the flag closes); replay is identical either way.
 
 **Out of scope for stubs** (other layers, by design): whether the real agent
 writes good/valid kernels; whether the stub's scoring matches real GPU noise
 (injected scenarios *approximate* it, they don't validate it); real
-GPU-transport failure modes (a fake queue *simulates* pod-crash-mid-eval, but
-the real transport is validated only at Phase F).
+GPU-transport failure modes — validated live against the B200 (Phase F).
 
 ## 13. Build order
 
-Status legend: ✅ built · ⬜ v1, planned · ⛔ GPU-blocked. **Only Phase A
-exists today; B–E are v1 scope, not yet written.**
+Status legend: ✅ built. **The whole pipeline is built and validated live on a
+rented B200** (55 stub tests pass with no GPU/API; the GPU path is exercised
+end-to-end on the pod).
 
 | Phase | Status | Piece |
 |---|---|---|
 | A | ✅ built | Executor interface + **async** StubExecutor (scenario API + re-entrancy assertion, §12) |
-| B | ✅ built | `solve_problem` loop + RunContext + journal/replay + ε-frontier + novelty (hash + judge) + caps/plateau + **tier ladder / headroom-gated escalate (§6b)** + StubAgent + **§12 tests (12 passing)** |
-| C | ✅ built | KnowledgeStore + serialized per-finished-problem curator (stub distiller) + design-at-bootstrap |
-| D | ✅ built | Fleet (`run_fleet`, crash isolation) + CLI `solve` + `status`/`journal`/`frontier`/`candidates` views; a deterministic `sim` agent drives real runs (launch order = passthrough until families mature) |
-| E | ✅ built | Bootstrap sibling seeding (best same-family Solution; §8) |
-| F | ⛔ GPU | GpuQueueExecutor: job-id queue, compile-∥-run split, sandbox, calibration; then the deferred items below as data demands |
+| B | ✅ built | `solve_problem` loop + RunContext + journal/replay + ε-frontier + hash dedup + caps/plateau + **tier ladder / headroom-gated escalate (§6b)** + handoff/playbook (§6d) + re-verification (§6e) + StubAgent + **§12 tests** |
+| C | ✅ built | KnowledgeStore + serialized per-finished-problem curator + design-at-bootstrap + cross-problem sibling transfer |
+| D | ✅ built | Fleet (`run_fleet`, crash isolation) + CLI `solve` + `status`/`journal`/`frontier`/`candidates` views + the `solver report` static dashboard |
+| E | ✅ built | Bootstrap sibling seeding (best same-op Solution; §8) |
+| F | ✅ built | `SshExecutor` + ephemeral-pod lifecycle (auto-provision → bootstrap pinned harness → run → guaranteed teardown), unlocked-clock **calibration** (§10), and closed-loop **leaderboard** submit/poll |
 
 ## Deferred (designed, not built)
 
@@ -690,9 +769,10 @@ Each with its trigger:
 - **Multi-seed sibling import** (§8) — seed a new problem from several
   structurally-distinct sibling frontier members, not just the single best —
   if bootstrap diversity proves worth the extra evals.
-- **Reflection tiering** (deeper/multi-level reflection on interesting
-  results; v1 does one reflection, by the planning agent) **+ normalized-hash
-  novelty tier** — if judge/reflect costs show up in logs.
+- **Normalized-hash / near-dup detection** — beyond exact-hash dedup, catch
+  cosmetically-different-but-equivalent kernels before the GPU — only if logs
+  show near-dups wasting real eval budget (measuring is currently cheap enough
+  that the frontier absorbs them).
 - **Dynamic family scheduling + live sibling reads** (§2) — work-conserving
   rebalancing and mid-run reads of a running sibling's frontier, beyond the
   static exemplar-first launch order + bootstrap templating — when the fleet
@@ -702,10 +782,10 @@ Each with its trigger:
   immediately on repeated `COMPILE_ERROR`/`INCORRECT` a tier can't fix,
   without waiting out the full plateau window — when logs show tiers stuck on
   fixable errors.
-- **Submit node** — if/when we decide to submit; one function call at the
-  end of `finalize`.
-- **Nsight → ASI profiling in the eval path** — Phase F+; profile on
-  plateau, not every run.
+- **Varied-seed re-verification** (§6e) — re-verify with *different* seeds
+  (not just more same-seed rounds) to catch input-dependent bugs too; today
+  we match the grader's fixed seed to avoid over-rejecting.
+- **Nsight → ASI profiling in the eval path** — profile on plateau, not every run.
 - **Parallel perspective panel** (§6b) — on plateau, run several perspectives
   *concurrently on the same parent* and keep the best, beyond within-tier
   round-robin + sequential tier escalation. More diverse, but multiplies
@@ -719,21 +799,22 @@ Each with its trigger:
 
 ## Decision log
 
-1. **Agents:** two backends behind the `Agent` interface — Claude Agent SDK on
-   the subscription OAuth token (default) and one generic OpenAI-compatible
-   backend for GPT / DeepSeek / GLM / Qwen / Kimi. The novelty judge uses a
-   cheap fixed model; reflection is done by the planning agent. Perspectives
-   pool into **tiers** (§6b); **v1 ships Claude-only**. Claude credit pool
-   (Pro $20 / Max-5x $100 / Max-20x $200 monthly, non-interactive) is logged
-   not enforced; metered providers bump enforcement.
-2. **Search:** custom lightweight loop implementing GEPA's concepts
-   (reflection, ε-Pareto, merge); no gepa-library dependency; **no graph
-   framework** — concurrency comes from asyncio, extensibility from editing
-   a 25-line loop.
-3. **Termination:** maximize sol_score; caps + plateau; optional target off
-   by default; no submission.
-4. **Dedup:** crash-replay = journal replay (exact, mechanical); candidate
-   novelty = semantic (hash → LLM judge).
+1. **Agents:** the `Agent` interface is `design`/`plan` only — `CliAgent` shells
+   out to the `claude` and `codex` CLIs today (a generic OpenAI-compatible
+   backend is a config entry away). There is **no separate reflect/judge call**:
+   each `plan` emits its own `handoff` (§6d). Perspectives pool into **tiers**
+   (§6b). Claude credit pool (non-interactive) is logged not enforced; metered
+   providers bump enforcement.
+2. **Search:** custom lightweight loop implementing GEPA's concepts (the "text
+   gradient" as frontier + handoff/playbook, ε-Pareto, merge); no gepa-library
+   dependency; **no graph framework** — concurrency comes from asyncio,
+   extensibility from editing one loop function.
+3. **Termination:** maximize sol_score; caps + plateau; optional target off by
+   default. Leaderboard submission is a separate closed-loop step (§10).
+4. **Dedup / novelty:** crash-replay = journal replay (exact, mechanical);
+   candidate dedup = exact content hash only. No LLM novelty judge — the
+   ε-Pareto frontier decides on *measured* perf (a pre-filter from strategy
+   strings discarded real variants; §4).
 5. **Execution model:** async throughout; GPU lock awaitable; compile (Phase
    F) never holds the GPU lock.
 6. **Persistence:** journal (what happened, small artifacts inline) + an

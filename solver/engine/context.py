@@ -50,6 +50,8 @@ class RunContext:
         self.deadline: float | None = None          # monotonic wall-clock stop (live-only, per run)
         self.recent_failures: list[dict] = []       # last few INCORRECT attempts (fed back to agents)
         self.sibling_hint: dict | None = None       # best same-op sibling's kernel to adapt (transfer)
+        self.playbook: list[dict] = []              # accepted candidates' handoffs = reserve plays
+        self._playbook_seen: set[str] = set()       # dedup playbook entries by handoff text
         self._pending: dict[str, dict] = {}
         self._replaying = False
 
@@ -142,6 +144,7 @@ class RunContext:
                     "solution": e.get("solution"), "scores": None, "all_passed": False,
                     "agent": e.get("agent", ""), "model": e.get("model", ""),
                     "strategy": e.get("strategy", ""), "parent": e.get("parent"),
+                    "handoff": e.get("handoff"),
                 }
             if self._replaying:
                 self.frontier.select(self.rng)      # advance rng exactly as the live select() did
@@ -162,6 +165,10 @@ class RunContext:
                     "agent": "", "model": "", "parent": None,
                     "sol_score_cal": e.get("sol_score_cal"),
                 }
+        elif ev == "verify_done":
+            self.evals += 1                           # a re-verification consumed a GPU eval;
+            # deliberately does NOT touch _pending/seen/frontier — it re-runs an
+            # already-scored candidate purely to confirm correctness stability.
         elif ev == "accept":
             cid = e.get("cand")
             if self._replaying:
@@ -170,6 +177,7 @@ class RunContext:
                     self.frontier.accept(self._member(cid, p))
             if e.get("verdict") == "entered":
                 self.planned_since_gain = 0
+                self._playbook_add(cid)          # bank the handoff (live and replay alike)
         elif ev == "agent_changed":
             if e.get("trigger") == "escalation":
                 self.tier_idx = int(e.get("tier", self.tier_idx + 1))
@@ -179,8 +187,8 @@ class RunContext:
             self.terminated_reason = e.get("reason")
         elif ev == "reopened":
             self.terminated_reason = None                 # a cap-terminated run resumes
-        # iter / check / novelty / exec_enqueued / exec_started / reflect_done /
-        # run_started / solver_error carry no core-state delta.
+        # iter / check / novelty / flaky / verify_started / exec_enqueued /
+        # exec_started / run_started / solver_error carry no core-state delta.
 
     # ---- helpers used by the loop ----
     def _member(self, cand_id: str, p: dict) -> Member:
@@ -205,6 +213,21 @@ class RunContext:
         repeating it (live-only; keeps the last few)."""
         self.recent_failures.append({"strategy": strategy or "", "reason": reason, "cand": cand_id})
         self.recent_failures = self.recent_failures[-4:]
+
+    def _playbook_add(self, cand_id: str) -> None:
+        """A candidate ENTERED the frontier — bank its handoff (the higher-ceiling
+        idea it flagged but didn't ship) into the per-problem playbook, deduped by
+        text. Runs in both live and replay (state is journal-derived), so the next
+        agent gets accumulated reserve plays instead of losing them to trajectory."""
+        p = self._pending.get(cand_id) or {}
+        text = (p.get("handoff") or "").strip()
+        if not text:
+            return
+        key = " ".join(text.split()).lower()[:200]
+        if key in self._playbook_seen:
+            return
+        self._playbook_seen.add(key)
+        self.playbook.append({"cand": cand_id, "strategy": p.get("strategy", ""), "handoff": text})
 
     def accept_candidate(self, cand_id: str) -> str:
         """Live-accept a candidate whose scores are already recorded (exec_done)."""
