@@ -12,3 +12,6 @@ cuFFT R2C **store callback** to fuse div+split directly into cuFFT's output writ
 ## 3. from `7536acee` — DFT-as-GEMM for small/Bluestein shapes (self-validates at 1e-5 and keeps it only if on-device timing beats cuFFT after a
 Higher-ceiling idea not shipped: a cuFFT LTO store callback (or a hand-written fused Stockham R2C kernel for the pow2 sizes) that writes the scaled real/imag outputs directly during the FFT store, eliminating the intermediate (B,256,L+1) complex HBM buffer entirely. Trigger to try it: if the large power-of-2 memory-bound shapes (L = 4096, 8192, 32768) still score below ~0.7 SOL after this round.
 
+## 4. from `7b09e3a1` — Combined DFT matrix (one matmul instead of two, halves launches + reads x once) + implicit cuFFT padding (no pre-zeroed
+Higher-ceiling idea not shipped: a cuFFT LTO **store callback** that writes the scaled real/imag outputs directly during the cuFFT store pass, eliminating the (B,256,L+1) complex intermediate buffer entirely — saves 1 full HBM round-trip (~2 GB on the largest workload B64 L8192). Trigger: if the large power-of-2 memory-bound shapes (L=4096,8192,32768) still score below ~0.7 SOL after this round. Implementation: write a .cu file using the cuFFT C API (`cufftXtSetCallback` with `CUTFXT_CALLBACK_STORE`), where the callback receives each complex element and writes `elem.x/N` to out_r and `elem.y/N
+

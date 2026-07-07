@@ -1,0 +1,245 @@
+{
+  "cand_id": "152b0e6515c8",
+  "task_id": 30,
+  "verdict": "entered",
+  "sol_score": 0.4258473325310217,
+  "sol_score_calibrated": 0.34147265790769826,
+  "correct": true,
+  "vector": [
+    0.4710441662709105,
+    0.44622684139177593,
+    0.4703310878601118,
+    0.3694205132855717,
+    0.45071138211382106,
+    0.4065768068789217,
+    0.47654201738650476,
+    0.4530045487191765,
+    0.4716291732339876,
+    0.47023463427288426,
+    0.4728723404255319,
+    0.18521931441208997,
+    0.43848167539267013,
+    0.35519951632406294,
+    0.43551523007128967,
+    0.4405480724570366
+  ],
+  "strategy": "Single cuBLASLt GEMM via torch.addmm(beta=1.0) with the residual pre-loaded as C, fusing the matmul and residual add int",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "7e9d1f46430c",
+  "trajectory": "runs/30/work/152b0e6515c8/trajectory.jsonl",
+  "gpu_s": 7.9,
+  "job_id": "30-152b0e6515c8",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 322.89,
+      "samples": 21,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.089216,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.0859844999999999,
+      "sol_score": 0.4710441662709105,
+      "sol_score_cal": 0.3612913211184249,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.013904,
+      "sol_ms": 0.0041,
+      "baseline_latency_ms": 0.012,
+      "sol_score": 0.44622684139177593,
+      "sol_score_cal": 0.3882872893418579,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.089264,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085952,
+      "sol_score": 0.4703310878601118,
+      "sol_score_cal": 0.36072252232049623,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0291835,
+      "sol_ms": 0.0118,
+      "baseline_latency_ms": 0.021984,
+      "sol_score": 0.3694205132855717,
+      "sol_score_cal": 0.3075588228143777,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.047296000000000005,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044192,
+      "sol_score": 0.45071138211382106,
+      "sol_score_cal": 0.3506427792096899,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.050528,
+      "sol_ms": 0.0301,
+      "baseline_latency_ms": 0.044096,
+      "sol_score": 0.4065768068789217,
+      "sol_score_cal": 0.31791518869570284,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.088448,
+      "sol_ms": 0.0581,
+      "baseline_latency_ms": 0.085728,
+      "sol_score": 0.47654201738650476,
+      "sol_score_cal": 0.3694515407097407,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.047136,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.0441915,
+      "sol_score": 0.4530045487191765,
+      "sol_score_cal": 0.3522920393393399,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.0892,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": 0.4716291732339876,
+      "sol_score_cal": 0.36180269304754054,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0893115,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085984,
+      "sol_score": 0.47023463427288426,
+      "sol_score_cal": 0.36072344236443216,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.045856,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044224,
+      "sol_score": 0.4728723404255319,
+      "sol_score_cal": 0.3666674915654103,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.043168,
+      "sol_ms": 0.0078,
+      "baseline_latency_ms": 0.01584,
+      "sol_score": 0.18521931441208997,
+      "sol_score_cal": 0.15578400431544948,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.028928,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.02592,
+      "sol_score": 0.43848167539267013,
+      "sol_score_cal": 0.35799777720783105,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.021664,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.014,
+      "sol_score": 0.35519951632406294,
+      "sol_score_cal": 0.3073888429622344,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.029136000000000002,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.025952,
+      "sol_score": 0.43551523007128967,
+      "sol_score_cal": 0.3557456630262732,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.011936,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.009888,
+      "sol_score": 0.4405480724570366,
+      "sol_score_cal": 0.3892911084843709,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection + residual add.\n\n    Computes output = attn_output @ o_proj_weight.T + residual by treating\n    the leading batch*seq dimensions as the GEMM M dimension and using a\n    single cuBLASLt call with the residual pre-loaded as the C matrix and\n    beta=1.0, fusing the matmul and add epilogue and eliminating the\n    intermediate projected tensor.\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n\n    attn_2d = attn_output.view(M, H)\n    residual_2d = residual.view(M, H)\n\n    out_2d = torch.addmm(\n        residual_2d,\n        attn_2d,\n        o_proj_weight.t(),\n        beta=1.0,\n        alpha=1.0,\n    )\n\n    return out_2d.view(B, S, H)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t30_152b0e6515c8",
+    "definition": "030_attention_output_projection_with_residual",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection + residual add.\n\n    Computes output = attn_output @ o_proj_weight.T + residual by treating\n    the leading batch*seq dimensions as the GEMM M dimension and using a\n    single cuBLASLt call with the residual pre-loaded as the C matrix and\n    beta=1.0, fusing the matmul and add epilogue and eliminating the\n    intermediate projected tensor.\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n\n    attn_2d = attn_output.view(M, H)\n    residual_2d = residual.view(M, H)\n\n    out_2d = torch.addmm(\n        residual_2d,\n        attn_2d,\n        o_proj_weight.t(),\n        beta=1.0,\n        alpha=1.0,\n    )\n\n    return out_2d.view(B, S, H)\n"
+      }
+    ]
+  }
+}

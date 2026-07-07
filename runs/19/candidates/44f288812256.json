@@ -1,0 +1,247 @@
+{
+  "cand_id": "44f288812256",
+  "task_id": 19,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "CUDA C++ persistent grid-stride kernel with explicit float4 vectorization: fills 148 SMs with float4 loads/stores and __",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "e1087095482e",
+  "trajectory": "runs/19/work/44f288812256/trajectory.jsonl",
+  "gpu_s": 3.816,
+  "job_id": "19-44f288812256",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  019_vision_3d_rotary_embedding_with_spatial_merge_indexing_backward\nSolution: t19_19-44f288812256\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u2839 Evaluating 16 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_3ruawzyf/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 991, in exec_module\n  File \"<frozen importlib._bootstrap_external>\", line 1129, in get_code\n  File \"<frozen importlib._bootstrap_external>\", line 1059, in source_to_code\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_3ruawzyf/kernel.py\", line 49\n    __global__ void _rope_backward_kernel(\n               ^^^^\nSyntaxError: invalid syntax\n[W707 17:39:57.098434854 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 840.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 40.0,
+      "power_w_max": 258.43,
+      "samples": 9,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.0702885,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0013,
+      "baseline_latency_ms": 0.0168955,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.02496,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.014896,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0114,
+      "baseline_latency_ms": 0.072129,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.017,
+      "baseline_latency_ms": 0.102176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.01504,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0066,
+      "baseline_latency_ms": 0.046449,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0183,
+      "baseline_latency_ms": 0.1085765,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.0189599999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0101,
+      "baseline_latency_ms": 0.0635999999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.0356314999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.0251845,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0031,
+      "baseline_latency_ms": 0.027296,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0049,
+      "baseline_latency_ms": 0.035856,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0143,
+      "baseline_latency_ms": 0.0872805,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n# CUDA C++ persistent grid-stride kernel with explicit float4 vectorization.\n# Grid-sized to fill all SMs, each CTA claims work via grid-stride loop.\n# Eliminates launch overhead and targets HBM bandwidth ceiling (~85-95% of achievable BW).\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    embeddings: torch.Tensor,\n):\n    if seq_len <= 0:\n        return (\n            torch.empty_like(q),\n            torch.empty_like(k),\n            torch.empty_like(embeddings),\n        )\n\n    half = head_dim // 2\n    block_s = 64\n\n    # Grid over seq_len, sized to 148 SMs for minimal launch overhead\n    grid_size = min(148, (seq_len + block_s - 1) // block_s + 1)\n\n    _rope_backward_kernel[grid_size](\n        grad_q_embed,\n        grad_k_embed,\n        q,\n        k,\n        embeddings,\n        grad_q,\n        grad_k,\n        grad_embeddings,\n        seq_len,\n        num_heads=num_heads,\n        half=half,\n        head_dim=head_dim,\n        block_s=block_s,\n    )\n\n    return grad_q, grad_k, grad_embeddings\n\n\n# CUDA C++ kernel (sm_100) - persistent grid-stride with float4\n__global__ void _rope_backward_kernel(\n    const float* __restrict__ grad_q_embed,\n    const float* __restrict__ grad_k_embed,\n    const float* __restrict__ q,\n    const float* __restrict__ k,\n    const float* __restrict__ embeddings,\n    float* __restrict__ grad_q,\n    float* __restrict__ grad_k,\n    float* __restrict__ grad_embeddings,\n    int seq_len,\n    int num_heads,\n    int half,\n    int head_dim,\n    int block_s,\n) {\n    // Persistent grid-stride loop\n    int s = blockIdx.x * block_s + threadIdx.x;\n    for (; s < seq_len; s += block_s * blockDim.x) {\n        // Load embeddings using float4\n        float4 emb0 = __ldg(embeddings + s * head_dim);\n        float4 emb1 = __ldg(embeddings + s * head_dim + half);\n\n        float c0[4], s0[4], c1[4], s1[4];\n        sincosf(emb0.x, &s0[0], &c0[0]);\n        sincosf(emb0.y, &s0[1], &c0[1]);\n        sincosf(emb0.z, &s0[2], &c0[2]);\n        sincosf(emb0.w, &s0[3], &c0[3]);\n        sincosf(emb1.x, &s1[0], &c1[0]);\n        sincosf(emb1.y, &s1[1], &c1[1]);\n        sincosf(emb1.z, &s1[2], &c1[2]);\n        sincosf(emb1.w, &s1[3], &c1[3]);\n\n        // Process all 16 heads\n        #pragma unroll\n        for (int h = 0; h < num_heads; h++) {\n            int base = s * head_dim * num_heads + h * head_dim;\n\n            float4 q_val = __ldg(q + base);\n            float4 k_val = __ldg(k + base);\n            float4 grad_q_embed_val = __ldg(grad_q_embed + base);\n            float4 grad_k_embed_val = __ldg(grad_k_embed + base);\n\n            // Rotate half: [x0,x1,x2,x3] -> [-x3,x0,x1,x2]\n            float4 q_rot, k_rot;\n            q_rot.x = -q_val.w; q_rot.y = q_val.x; q_rot.z = q_val.y; q_rot.w = q_val.z;\n            k_rot.x = -k_val.w; k_rot.y = k_val.x; k_rot.z = k_val.y; k_rot.w = k_val.z;\n\n            // Gradient rotation backward: [g0,g1,g2,g3] -> [g3,-g0,-g1,-g2]\n            float4 grad_q_rot, grad_k_rot;\n            grad_q_rot.x = grad_q_embed_val.w;\n            grad_q_rot.y = -grad_q_embed_val.x;\n            grad_q_rot.z = -grad_q_embed_val.y;\n            grad_q_rot.w = grad_q_embed_val.z;\n            grad_k_rot.x = grad_k_embed_val.w;\n            grad_k_rot.y = -grad_k_embed_val.x;\n            grad_k_rot.z = -grad_k_embed_val.y;\n            grad_k_rot.w = grad_k_embed_val.z;\n\n            // grad_q = g * cos + rotate_half_backward(g * sin)\n            float4 grad_q;\n            grad_q.x = grad_q_embed_val.x * c0[0] + grad_q_rot.x * s0[0];\n            grad_q.y = grad_q_embed_val.y * c0[1] + grad_q_rot.y * s0[1];\n            grad_q.z = grad_q_embed_val.z * c0[2] + grad_q_rot.z * s0[2];\n            grad_q.w = grad_q_embed_val.w * c0[3] + grad_q_rot.w * s0[3];\n            __stwt(grad_q + base, grad_q);\n\n            // grad_k (same pattern)\n            float4 grad_k;\n            grad_k.x = grad_k_embed_val.x * c0[0] + grad_k_rot.x * s0[0];\n            grad_k.y = grad_k_embed_val.y * c0[1] + grad_k_rot.y * s0[1];\n            grad_k.z = grad_k_embed_val.z * c0[2] + grad_k_rot.z * s0[2];\n            grad_k.w = grad_k_embed_val.w * c0[3] + grad_k_rot.w * s0[3];\n            __stwt(grad_k + base, grad_k);\n\n            // Gradient w.r.t. embeddings (sum over all heads)\n            float sum_cos0 = q_val.x * grad_q_embed_val.x + q_val.y * grad_q_embed_val.y +\n                            q_val.z * grad_q_embed_val.z + q_val.w * grad_q_embed_val.w;\n            float sum_sin0 = -q_rot.x * grad_q_embed_val.x - q_rot.y * grad_q_embed_val.y -\n                            q_rot.z * grad_q_embed_val.z - q_rot.w * grad_q_embed_val.w;\n            float sum_cos1 = q_val.w * grad_q_embed_val.w + q_val.x * grad_q_embed_val.x +\n                            q_val.y * grad_q_embed_val.y + q_val.z * grad_q_embed_val.z;\n            float sum_sin1 = q_rot.x * grad_q_embed_val.w + q_rot.y * grad_q_embed_val.x +\n                            q_rot.z * grad_q_embed_val.y + q_rot.w * grad_q_embed_val.z;\n\n            float sum_cos2 = k_val.x * grad_k_embed_val.x + k_val.y * grad_k_embed_val.y +\n                            k_val.z * grad_k_embed_val.z + k_val.w * grad_k_embed_val.w;\n            float sum_sin2 = -k_rot.x * grad_k_embed_val.x - k_rot.y * grad_k_embed_val.y -\n                            k_rot.z * grad_k_embed_val.z - k_rot.w * grad_k_embed_val.w;\n            float sum_cos3 = k_val.w * grad_k_embed_val.w + k_val.x * grad_k_embed_val.x +\n                            k_val.y * grad_k_embed_val.y + k_val.z * grad_k_embed_val.z;\n            float sum_sin3 = k_rot.x * grad_k_embed_val.w + k_rot.y * grad_k_embed_val.x +\n                            k_rot.z * grad_k_embed_val.y + k_rot.w * grad_k_embed_val.z;\n\n            // Backprop through cos/sin\n            float4 grad_emb0, grad_emb1;\n            grad_emb0.x = -s0[0] * (sum_cos0 + sum_cos2) + c0[0] * sum_sin0;\n            grad_emb0.y = -s0[1] * (sum_cos0 + sum_cos2) + c0[1] * sum_sin0;\n            grad_emb0.z = -s0[2] * (sum_cos0 + sum_cos2) + c0[2] * sum_sin0;\n            grad_emb0.w = -s0[3] * (sum_cos0 + sum_cos2) + c0[3] * sum_sin0;\n            __stwt(grad_embeddings + s * head_dim, grad_emb0);\n\n            grad_emb1.x = -s1[0] * (sum_cos1 + sum_cos3) + c1[0] * sum_sin1;\n            grad_emb1.y = -s1[1] * (sum_cos1 + sum_cos3) + c1[1] * sum_sin1;\n            grad_emb1.z = -s1[2] * (sum_cos1 + sum_cos3) + c1[2] * sum_sin1;\n            grad_emb1.w = -s1[3] * (sum_cos1 + sum_cos3) + c1[3] * sum_sin1;\n            __stwt(grad_embeddings + s * head_dim + half, grad_emb1);\n        }\n    }\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t19_44f288812256",
+    "definition": "019_vision_3d_rotary_embedding_with_spatial_merge_indexing_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n# CUDA C++ persistent grid-stride kernel with explicit float4 vectorization.\n# Grid-sized to fill all SMs, each CTA claims work via grid-stride loop.\n# Eliminates launch overhead and targets HBM bandwidth ceiling (~85-95% of achievable BW).\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    embeddings: torch.Tensor,\n):\n    if seq_len <= 0:\n        return (\n            torch.empty_like(q),\n            torch.empty_like(k),\n            torch.empty_like(embeddings),\n        )\n\n    half = head_dim // 2\n    block_s = 64\n\n    # Grid over seq_len, sized to 148 SMs for minimal launch overhead\n    grid_size = min(148, (seq_len + block_s - 1) // block_s + 1)\n\n    _rope_backward_kernel[grid_size](\n        grad_q_embed,\n        grad_k_embed,\n        q,\n        k,\n        embeddings,\n        grad_q,\n        grad_k,\n        grad_embeddings,\n        seq_len,\n        num_heads=num_heads,\n        half=half,\n        head_dim=head_dim,\n        block_s=block_s,\n    )\n\n    return grad_q, grad_k, grad_embeddings\n\n\n# CUDA C++ kernel (sm_100) - persistent grid-stride with float4\n__global__ void _rope_backward_kernel(\n    const float* __restrict__ grad_q_embed,\n    const float* __restrict__ grad_k_embed,\n    const float* __restrict__ q,\n    const float* __restrict__ k,\n    const float* __restrict__ embeddings,\n    float* __restrict__ grad_q,\n    float* __restrict__ grad_k,\n    float* __restrict__ grad_embeddings,\n    int seq_len,\n    int num_heads,\n    int half,\n    int head_dim,\n    int block_s,\n) {\n    // Persistent grid-stride loop\n    int s = blockIdx.x * block_s + threadIdx.x;\n    for (; s < seq_len; s += block_s * blockDim.x) {\n        // Load embeddings using float4\n        float4 emb0 = __ldg(embeddings + s * head_dim);\n        float4 emb1 = __ldg(embeddings + s * head_dim + half);\n\n        float c0[4], s0[4], c1[4], s1[4];\n        sincosf(emb0.x, &s0[0], &c0[0]);\n        sincosf(emb0.y, &s0[1], &c0[1]);\n        sincosf(emb0.z, &s0[2], &c0[2]);\n        sincosf(emb0.w, &s0[3], &c0[3]);\n        sincosf(emb1.x, &s1[0], &c1[0]);\n        sincosf(emb1.y, &s1[1], &c1[1]);\n        sincosf(emb1.z, &s1[2], &c1[2]);\n        sincosf(emb1.w, &s1[3], &c1[3]);\n\n        // Process all 16 heads\n        #pragma unroll\n        for (int h = 0; h < num_heads; h++) {\n            int base = s * head_dim * num_heads + h * head_dim;\n\n            float4 q_val = __ldg(q + base);\n            float4 k_val = __ldg(k + base);\n            float4 grad_q_embed_val = __ldg(grad_q_embed + base);\n            float4 grad_k_embed_val = __ldg(grad_k_embed + base);\n\n            // Rotate half: [x0,x1,x2,x3] -> [-x3,x0,x1,x2]\n            float4 q_rot, k_rot;\n            q_rot.x = -q_val.w; q_rot.y = q_val.x; q_rot.z = q_val.y; q_rot.w = q_val.z;\n            k_rot.x = -k_val.w; k_rot.y = k_val.x; k_rot.z = k_val.y; k_rot.w = k_val.z;\n\n            // Gradient rotation backward: [g0,g1,g2,g3] -> [g3,-g0,-g1,-g2]\n            float4 grad_q_rot, grad_k_rot;\n            grad_q_rot.x = grad_q_embed_val.w;\n            grad_q_rot.y = -grad_q_embed_val.x;\n            grad_q_rot.z = -grad_q_embed_val.y;\n            grad_q_rot.w = grad_q_embed_val.z;\n            grad_k_rot.x = grad_k_embed_val.w;\n            grad_k_rot.y = -grad_k_embed_val.x;\n            grad_k_rot.z = -grad_k_embed_val.y;\n            grad_k_rot.w = grad_k_embed_val.z;\n\n            // grad_q = g * cos + rotate_half_backward(g * sin)\n            float4 grad_q;\n            grad_q.x = grad_q_embed_val.x * c0[0] + grad_q_rot.x * s0[0];\n            grad_q.y = grad_q_embed_val.y * c0[1] + grad_q_rot.y * s0[1];\n            grad_q.z = grad_q_embed_val.z * c0[2] + grad_q_rot.z * s0[2];\n            grad_q.w = grad_q_embed_val.w * c0[3] + grad_q_rot.w * s0[3];\n            __stwt(grad_q + base, grad_q);\n\n            // grad_k (same pattern)\n            float4 grad_k;\n            grad_k.x = grad_k_embed_val.x * c0[0] + grad_k_rot.x * s0[0];\n            grad_k.y = grad_k_embed_val.y * c0[1] + grad_k_rot.y * s0[1];\n            grad_k.z = grad_k_embed_val.z * c0[2] + grad_k_rot.z * s0[2];\n            grad_k.w = grad_k_embed_val.w * c0[3] + grad_k_rot.w * s0[3];\n            __stwt(grad_k + base, grad_k);\n\n            // Gradient w.r.t. embeddings (sum over all heads)\n            float sum_cos0 = q_val.x * grad_q_embed_val.x + q_val.y * grad_q_embed_val.y +\n                            q_val.z * grad_q_embed_val.z + q_val.w * grad_q_embed_val.w;\n            float sum_sin0 = -q_rot.x * grad_q_embed_val.x - q_rot.y * grad_q_embed_val.y -\n                            q_rot.z * grad_q_embed_val.z - q_rot.w * grad_q_embed_val.w;\n            float sum_cos1 = q_val.w * grad_q_embed_val.w + q_val.x * grad_q_embed_val.x +\n                            q_val.y * grad_q_embed_val.y + q_val.z * grad_q_embed_val.z;\n            float sum_sin1 = q_rot.x * grad_q_embed_val.w + q_rot.y * grad_q_embed_val.x +\n                            q_rot.z * grad_q_embed_val.y + q_rot.w * grad_q_embed_val.z;\n\n            float sum_cos2 = k_val.x * grad_k_embed_val.x + k_val.y * grad_k_embed_val.y +\n                            k_val.z * grad_k_embed_val.z + k_val.w * grad_k_embed_val.w;\n            float sum_sin2 = -k_rot.x * grad_k_embed_val.x - k_rot.y * grad_k_embed_val.y -\n                            k_rot.z * grad_k_embed_val.z - k_rot.w * grad_k_embed_val.w;\n            float sum_cos3 = k_val.w * grad_k_embed_val.w + k_val.x * grad_k_embed_val.x +\n                            k_val.y * grad_k_embed_val.y + k_val.z * grad_k_embed_val.z;\n            float sum_sin3 = k_rot.x * grad_k_embed_val.w + k_rot.y * grad_k_embed_val.x +\n                            k_rot.z * grad_k_embed_val.y + k_rot.w * grad_k_embed_val.z;\n\n            // Backprop through cos/sin\n            float4 grad_emb0, grad_emb1;\n            grad_emb0.x = -s0[0] * (sum_cos0 + sum_cos2) + c0[0] * sum_sin0;\n            grad_emb0.y = -s0[1] * (sum_cos0 + sum_cos2) + c0[1] * sum_sin0;\n            grad_emb0.z = -s0[2] * (sum_cos0 + sum_cos2) + c0[2] * sum_sin0;\n            grad_emb0.w = -s0[3] * (sum_cos0 + sum_cos2) + c0[3] * sum_sin0;\n            __stwt(grad_embeddings + s * head_dim, grad_emb0);\n\n            grad_emb1.x = -s1[0] * (sum_cos1 + sum_cos3) + c1[0] * sum_sin1;\n            grad_emb1.y = -s1[1] * (sum_cos1 + sum_cos3) + c1[1] * sum_sin1;\n            grad_emb1.z = -s1[2] * (sum_cos1 + sum_cos3) + c1[2] * sum_sin1;\n            grad_emb1.w = -s1[3] * (sum_cos1 + sum_cos3) + c1[3] * sum_sin1;\n            __stwt(grad_embeddings + s * head_dim + half, grad_emb1);\n        }\n    }\n}\n"
+      }
+    ]
+  }
+}

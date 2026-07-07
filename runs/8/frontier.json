@@ -3,7 +3,7 @@
   "family": "reduction",
   "name": "reduction_8",
   "epsilon": 0.02,
-  "size": 3,
+  "size": 4,
   "best_cand": "acf29c27de11",
   "best_score": 0.8675818479713744,
   "best_score_cal": 0.8440842787979743,
@@ -13,7 +13,7 @@
       "sol_score": 0.8675818479713744,
       "sol_score_cal": 0.8440842787979743,
       "all_passed": true,
-      "shapes_won": 14,
+      "shapes_won": 8,
       "vector": [
         0.8869655456147569,
         0.8886239642799447,
@@ -36,6 +36,35 @@
       "agent": "claude",
       "model": "opus",
       "candidate": "candidates/acf29c27de11.json"
+    },
+    {
+      "cand_id": "9cf3918880bb",
+      "sol_score": 0.8675533257123412,
+      "sol_score_cal": 0.8440507763130698,
+      "all_passed": true,
+      "shapes_won": 7,
+      "vector": [
+        0.8867894797157918,
+        0.8880673805425067,
+        0.8256770205856162,
+        0.9000920494267044,
+        0.887772698877363,
+        0.8326308453088181,
+        0.8957033248081842,
+        0.86991115236706,
+        0.869675701839303,
+        0.8145960034752389,
+        0.8691967575534267,
+        0.8925787251608595,
+        0.830900758910242,
+        0.8176678445229683,
+        0.8999882830196116,
+        0.8996051852837655
+      ],
+      "strategy": "Fused Triton bf16 atomic scatter-add (grid=N, one program per eo row, BLOCK=1024, 4 warps): clone-seed output, 3\u00d71024 ho",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/9cf3918880bb.json"
     },
     {
       "cand_id": "29623a03e534",

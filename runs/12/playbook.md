@@ -12,3 +12,14 @@ If this only ties the prior Triton frontier or large-shape bandwidth stays below
 ## 3. from `00e3ba87` — Triton fused flat RoPE kernel (frontier-winning layout) with an expanded autotune superset — adds large BLOCK_SIZE 4096/
 Higher-ceiling idea NOT shipped: a **fixed-grid cuda_cpp kernel that does NOT over-spread**. The prior CUDA attempt (75ffe60e, 0.8986 raw) lost only because it *forced* grid>=148 blocks (shrinking block to 32) on the tiny shapes, adding block-scheduling overhead — the exact opposite of what these SOL~0.5us / L2-resident workloads want. A CUDA kernel that instead uses a natural `grid = cdiv(elems, block)` with a per-shape block heuristic matching Triton's autotune winners (few large blocks for tiny shapes, more blocks only for idx4/B=64), plus `__nv_bfloat162` packed 128-bit stores and accurate
 
+## 4. from `996a46d3` — Fixed-grid CUDA RoPE: 2 freqs/thread via float2 load + packed __nv_bfloat162 stores to both output halves, natural grid
+Higher-ceiling idea NOT shipped: **4-freqs/thread** — one `float4` load + two 64-bit
+packed stores (4 bf16 as a `uint2`/`int2`) per half, instead of this round's
+2-freq `float2`+`bfloat162`. Trigger: if this CUDA kernel BEATS the Triton 0.894
+frontier but the one DRAM-bound shape (idx4, B=64/S=541) still trails SOL, widen to
+float4/int2 — it only helps that single memory-bound shape (~1%), tiny shapes are
+launch-floor-limited and won't move.
+
+FALLBACK if this round REGRESSES or fails to compile: the proven Triton flat kernel
+(frontier e9827f4b, 0.894) is still the retained frontier and the nex
+
