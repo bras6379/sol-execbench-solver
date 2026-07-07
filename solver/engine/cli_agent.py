@@ -81,7 +81,15 @@ _PLAN = (
     "output tensor(s) (do not write in place). It is the entry point the grader calls\n"
     "(kernel.py::run); a mismatch scores zero. Any imports (triton, torch) go in that\n"
     "file. Follow the ladder torch -> Triton -> CuTe/CUTLASS -> C++/PTX; escalate only\n"
-    "when needed. Do not print the code — only write the files."
+    "when needed.\n"
+    "HOW THIS WORKS — your ONLY job is to write the kernel file (and strategy.txt).\n"
+    "Do NOT try to run, benchmark, or numerically test it yourself: there is NO GPU,\n"
+    "torch, or triton in your environment, so any local execution will fail — that is\n"
+    "EXPECTED and not your concern. After you finish, the SYSTEM ships your kernel to\n"
+    "a real B200, runs it in the official harness (correctness + latency), scores it,\n"
+    "and hands you the measured score + a reflection on the NEXT round. So spend all\n"
+    "your effort making the kernel correct and fast — not on verifying it locally.\n"
+    "Do not print the code — only write the files."
 )
 _DESIGN = (
     "Analyze reference.py and definition.json for NVIDIA B200. Consult the kb/\n"

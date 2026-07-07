@@ -28,6 +28,17 @@ def _esc(s) -> str:
     return html.escape(str(s), quote=True)
 
 
+def _localtime(ts: str | None) -> str:
+    """UTC journal timestamp → local HH:MM:SS (the dashboard is viewed where it's
+    rendered, so this is the user's timezone)."""
+    if not ts:
+        return ""
+    try:
+        return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).astimezone().strftime("%H:%M:%S")
+    except ValueError:
+        return ts[11:19]
+
+
 def _fmt_s(sec: float | None) -> str:
     if sec is None:
         return "–"
@@ -674,7 +685,7 @@ def _progression_table(p: dict, has_traj: set | None = None) -> str:
     has_traj = has_traj or set()
     rows = []
     for c in p["candidates"]:
-        t = (c["ts"] or "")[11:19]
+        t = _localtime(c["ts"])
         chip = (f'<span class="chip" style="background:var(--{_STATUS_CHIP.get(c["status"], "o-dominated")})">'
                 f'{_esc(c["status"])}</span>')
         raw = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
