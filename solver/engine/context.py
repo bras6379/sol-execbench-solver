@@ -49,6 +49,7 @@ class RunContext:
         self.terminated_reason: str | None = None
         self.deadline: float | None = None          # monotonic wall-clock stop (live-only, per run)
         self.recent_failures: list[dict] = []       # last few INCORRECT attempts (fed back to agents)
+        self.sibling_hint: dict | None = None       # best same-op sibling's kernel to adapt (transfer)
         self._pending: dict[str, dict] = {}
         self._replaying = False
 

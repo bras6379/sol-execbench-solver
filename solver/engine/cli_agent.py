@@ -231,6 +231,8 @@ class CliAgent:
         psol = getattr(parent, "solution", None)
         for s in (psol or {}).get("sources", []):     # starting point = the parent's kernel
             (wd / s["path"]).write_text(s.get("content", ""))
+        for s in (getattr(ctx, "sibling_hint", None) or {}).get("sources", []):   # cross-op warm start
+            (wd / f"sibling_{s['path']}").write_text(s.get("content", ""))
 
     def _write_problem(self, wd: Path, task_id) -> None:
         pdir = self.problems_dir / str(task_id)
@@ -306,6 +308,16 @@ def _context_md(parent, ctx) -> str:
         lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
         if getattr(parent, "reflection", None):
             lines += ["", "## Reflection on it", parent.reflection]
+    hint = getattr(ctx, "sibling_hint", None)
+    if hint and hint.get("sources"):
+        est = hint.get("score")
+        lines += ["", "## Warm start — a SIBLING problem (same op) is already solved",
+                  f"Sibling '{hint.get('sibling')}' (op `{hint.get('op')}`) scored ~"
+                  f"{est:.3f} raw with: {hint.get('strategy')}." if isinstance(est, (int, float))
+                  else f"Sibling '{hint.get('sibling')}' (op `{hint.get('op')}`): {hint.get('strategy')}.",
+                  "Its kernel is in `sibling_kernel.py` — this is your best STARTING POINT.",
+                  "ADAPT it to THIS problem's shapes/constants (it likely hardcodes the sibling's",
+                  "shape, e.g. a fixed hidden size); do not just copy it verbatim."]
     fr = getattr(ctx, "frontier", None)
     members = list(getattr(fr, "members", None) or []) if fr else []
     if members:

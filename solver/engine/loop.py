@@ -20,6 +20,7 @@ from .agent import Agent, solution_hash
 from .config import Config, Perspective
 from .context import RunContext
 from .executor import EvalResult, Executor
+from .knowledge import op_key_of
 
 SeedsFn = Callable[[int], list[dict]]
 CheckFn = Callable[[dict, int], "tuple[bool, list[str]]"]
@@ -129,8 +130,12 @@ async def solve_problem(
             design = ""
             ctx.record("design_error", error=repr(exc)[:200])
         ctx.record("design_done", text=design, dur_s=0.0)
-        # sibling seeding (best same-family Solution so far) then the scaffold seed
-        seeds = (knowledge.sibling_seed(task_id, family) if knowledge else []) + seeds_fn(task_id)
+        # cross-problem transfer: hand the agent the best SAME-OP sibling's kernel as a
+        # warm start to adapt (NOT eval'd — a sibling kernel usually hardcodes its shape).
+        if knowledge is not None:
+            ctx.sibling_hint = knowledge.sibling_hint(op_key_of(task_id, problems_dir),
+                                                      exclude_task=task_id)
+        seeds = seeds_fn(task_id)
         for sol in seeds:
             cid = solution_hash(sol)[:12]
             ctx.record("exec_enqueued", job=cid, cand=cid)
@@ -222,7 +227,7 @@ async def solve_problem(
         pass
 
     if knowledge is not None:                              # serialized curator (§8)
-        await knowledge.curate(ctx, family, name)
+        await knowledge.curate(ctx, op_key_of(task_id, problems_dir), name)
     return ctx
 
 
