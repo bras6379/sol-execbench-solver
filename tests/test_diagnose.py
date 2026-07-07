@@ -33,7 +33,7 @@ def _mk_problem(runs, task, scores, strategies, status_expect):
 def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
     calls = []
 
-    async def fake_call(prompt, model, timeout):
+    async def fake_call(prompt, model, timeout, cwd=None):
         calls.append((model, prompt))
         return "**Root cause:** memory-bound.\n**Spent:** bf16 cublas.\n**The one lever:** try fp8."
 
@@ -64,7 +64,7 @@ def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
 
 
 def test_attach_is_idempotent(tmp_path, monkeypatch):
-    async def fake_call(p, m, t):
+    async def fake_call(p, m, t, cwd=None):
         return "**The one lever:** try split-K."
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
@@ -77,7 +77,7 @@ def test_attach_is_idempotent(tmp_path, monkeypatch):
 
 
 def test_fable_failure_is_graceful(tmp_path, monkeypatch):
-    async def fail(p, m, t):
+    async def fail(p, m, t, cwd=None):
         return None                                 # e.g. quota exceeded
     monkeypatch.setattr(diagnose, "_call_fable", fail)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")

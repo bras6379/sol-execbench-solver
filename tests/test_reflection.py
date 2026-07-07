@@ -102,6 +102,36 @@ def test_reflect_all_writes_cards_and_prior(tmp_path):
     assert priors and any("0.700" in f.name for f in priors)
 
 
+def test_failed_correctness_attempts_surface(tmp_path):
+    # correct=False candidates carry NO score (sol_score=None) — they must still be
+    # mined as tried-and-failed dead-ends, not silently skipped.
+    p = tmp_path / "20"
+    (p / "candidates").mkdir(parents=True)
+    ev = []
+    specs = [("g1", True, "triton fused"), ("f1", False, "cublas gemm fusion"),
+             ("f2", False, "fp8 megakernel")]
+    for cid, ok, strat in specs:
+        ev.append({"ev": "plan_done", "cand": cid, "model": "opus", "strategy": strat})
+        e = {"ev": "exec_done", "cand": cid}
+        if ok:
+            e["sol_score_cal"] = 0.6
+        ev.append(e)
+        c = {"cand_id": cid, "strategy": strat, "correct": ok,
+             "solution": {"sources": [{"path": "k.py", "content": f"#{cid}"}]}}
+        if ok:
+            c["sol_score_calibrated"] = 0.6
+        (p / "candidates" / f"{cid}.json").write_text(json.dumps(c))
+    (p / "journal.jsonl").write_text("\n".join(json.dumps(x) for x in ev) + "\n")
+
+    r = R.reflect_all(tmp_path, [20])[20]
+    assert len(r.failed) == 2 and r.best == 0.6      # 2 failed, the good one is the ceiling
+    assert "Tried and FAILED" in (p / "reflection.md").read_text()
+    # a technique that only ever FAILED is not re-suggested as "untried"
+    assert "fp8" not in r.techniques_untried
+    # failed kernels staged so the agent can read the bug
+    assert list((p / "prior").glob("0.000_*.py"))
+
+
 def test_reflect_all_survives_a_bad_problem(tmp_path):
     (tmp_path / "5").mkdir()
     (tmp_path / "5" / "journal.jsonl").write_text("not json\n{bad\n")

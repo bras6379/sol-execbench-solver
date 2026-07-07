@@ -117,7 +117,23 @@ class ProblemReflection:
     techniques_untried: list[str] = field(default_factory=list)
     dominant_family: tuple[str, ...] = ()
     dominant_share: float = 0.0
+    failed: list[dict] = field(default_factory=list)  # approaches that FAILED correctness (don't retry)
     headline: str = ""             # one-line directive for the agent
+
+
+def _failed_ledger(bad: list) -> list[dict]:
+    """Distinct approaches that FAILED correctness (score 0), grouped by family, so
+    the card can say 'these don't even pass — don't retry'."""
+    fam: dict[frozenset[str], dict] = {}
+    for a in bad:
+        sig = _sig(a.strategy)
+        rec = fam.setdefault(sig, {"n": 0, "strategy": a.strategy, "cand": a.cand_id})
+        rec["n"] += 1
+    out = [{"family": " + ".join(sorted(sig)) or "misc", "n": rec["n"],
+            "cand": rec["cand"][:8], "strategy": _clip(rec["strategy"], 150)}
+           for sig, rec in fam.items()]
+    out.sort(key=lambda d: -d["n"])
+    return out
 
 
 def analyze(events: list[dict], candidates: dict[str, dict], *,
@@ -146,33 +162,47 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
     for e in events:
         if e.get("ev") != "exec_done":
             continue
+        cid = e.get("cand", "")
+        m = meta.get(cid, {})
         s = e.get("sol_score_cal")
         if not isinstance(s, (int, float)):
             s = e.get("sol_score")
         if not isinstance(s, (int, float)):
-            continue
-        cid = e.get("cand", "")
-        m = meta.get(cid, {})
+            # No score: a correctness FAILURE (correct=False) is a tried-and-failed
+            # attempt (score 0) — the strongest 'don't retry'. A genuinely unscored /
+            # pending candidate (correct unknown) is skipped.
+            if m.get("correct") is False:
+                s = 0.0
+            else:
+                continue
         attempts.append(Attempt(
             order=len(attempts) + 1, score=float(s), cand_id=cid,
             strategy=m.get("strategy", ""), model=m.get("model", "?"),
             correct=bool(m.get("correct", True))))
     r.n_evals = len(attempts)
-    if not attempts:
+    # An attempt that FAILED correctness scores 0 with correct=False — a stronger
+    # "don't retry" than a merely-slow one. Split them out so the main ledger reflects
+    # real ceilings and the failures get their own dead-end list.
+    ok = [a for a in attempts if a.correct and a.score > 0]
+    bad = [a for a in attempts if not a.correct or a.score <= 0]
+    if not ok:
         r.status = "broken" if any(e.get("ev") == "plan_done" for e in events) else "thin"
         r.headline = ("No correct kernel yet — the whole score is gated on producing "
                       "ONE that passes all workloads. Prioritize correctness over speed.")
+        r.failed = _failed_ledger(bad)
         return r
 
-    best_a = max(attempts, key=lambda a: a.score)
+    best_a = max(ok, key=lambda a: a.score)
     r.best, r.best_order = round(best_a.score, 4), best_a.order
     r.best_strategy, r.best_cand = best_a.strategy, best_a.cand_id
     r.stale_evals = r.n_evals - best_a.order
+    r.failed = _failed_ledger(bad)
 
     # --- attempt ledger: distinct families, their ceiling, how many times tried ---
+    # (correct attempts only — failures are in r.failed, not the "best score each" list)
     fam_best: dict[frozenset[str], dict] = {}
     fam_counts: dict[frozenset[str], int] = {}
-    for a in attempts:
+    for a in ok:
         sig = _sig(a.strategy)
         fam_counts[sig] = fam_counts.get(sig, 0) + 1
         cur = fam_best.get(sig)
@@ -282,6 +312,14 @@ def render_card(r: ProblemReflection) -> str:
                      f"→ `prior/{d['best']:.3f}_{d['cand']}.py`")
         L.append("")
 
+    if r.failed:
+        total = sum(d["n"] for d in r.failed)
+        L += [f"**Tried and FAILED correctness — do NOT retry ({total} attempt(s) that don't even",
+              "pass the tolerance/compile gate; the kernel in `prior/0.000_<cand>.py` shows the bug):**"]
+        for d in r.failed[:6]:
+            L.append(f"- ×{d['n']}  [{d['family']}]  {d['strategy']}  → `prior/0.000_{d['cand']}.py`")
+        L.append("")
+
     if r.techniques_untried:
         L += [f"**Untried rungs that fit this op:** {', '.join(r.techniques_untried)} "
               f"— at least one is likely the axis you haven't explored (tailored to this "
@@ -367,7 +405,7 @@ def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
             attach_diagnosis(runs_dir, t)               # re-attach any stored fable prose (cheap)
             _append_snapshot(runs_dir / str(t), r, card, now_iso)
         if dump_prior:
-            _dump_prior(runs_dir, t, dump_prior)
+            _dump_prior(runs_dir, t, r)
     log(f"[reflect] wrote {sum(1 for r in refls.values() if r.status not in ('thin',))} "
         f"coach card(s) across {len(refls)} problem(s)")
     return refls
@@ -415,29 +453,30 @@ def _append_snapshot(pdir: Path, r: ProblemReflection, card: str, ts: str) -> No
                             "headline": r.headline, "card": card}) + "\n")
 
 
-def _dump_prior(runs_dir: Path, task_id: int, top_n: int) -> None:
-    """Stage the top-N distinct earlier kernels under `<task>/prior/` (named by
-    score) so an agent can read exactly what a past approach did, without bloating
-    the prompt. One kernel per family signature, best-first."""
+def _dump_prior(runs_dir: Path, task_id: int, r: ProblemReflection) -> None:
+    """Stage EXACTLY the kernels the coach card references (each ledger entry + each
+    failed dead-end) under `<task>/prior/<score>_<cand>.py`, so every `→ prior/…`
+    link in the card resolves and an agent can read what an approach really did."""
     cands = _load_candidates(runs_dir / str(task_id))
-    scored = [(c.get("sol_score_calibrated") or c.get("sol_score") or 0.0, cid, c)
-              for cid, c in cands.items()]
-    scored.sort(key=lambda x: -x[0])
+    by_prefix: dict[str, tuple] = {}
+    for cid, c in cands.items():
+        by_prefix.setdefault(cid[:8], (cid, c))
     pdir = runs_dir / str(task_id) / "prior"
-    seen: set = set()
-    n = 0
-    for score, cid, c in scored:
-        if n >= top_n:
-            break
-        sig = _sig(c.get("strategy") or "")
-        if sig in seen:
-            continue
+
+    def _stage(cand8: str, score: float) -> None:
+        item = by_prefix.get(cand8)
+        if not item:
+            return
+        cid, c = item
         srcs = (c.get("solution") or {}).get("sources") or []
         if not srcs:
-            continue
-        seen.add(sig)
+            return
         pdir.mkdir(parents=True, exist_ok=True)
         body = "\n\n".join(f"# --- {s.get('path')} ---\n{s.get('content','')}" for s in srcs)
-        (pdir / f"{score:.3f}_{cid[:8]}.py").write_text(
+        (pdir / f"{score:.3f}_{cand8}.py").write_text(
             f"# score={score:.4f}  strategy: {c.get('strategy','')[:200]}\n\n{body}")
-        n += 1
+
+    for d in r.ledger[:8]:
+        _stage(d["cand"], d["best"])
+    for d in r.failed[:6]:
+        _stage(d["cand"], 0.0)

@@ -56,6 +56,11 @@ one-line strategy titles — READ THE CODE and derive for yourself what each rea
 got wrong, and why it capped:
 {prior_src}
 
+A curated B200 optimization knowledge base is on disk (index below). Before you recommend the \
+lever, READ the 1-2 files most relevant to THIS op's bottleneck class (use your file tools on the \
+`kb/…` paths) and ground your recommendation in them — cite the file you used:
+{kb_index}
+
 In UNDER 220 words, blunt and concrete, output exactly these three sections:
 
 **Root cause:** the bottleneck class (memory-bandwidth-bound / tensor-core-bound / \
@@ -77,9 +82,11 @@ def fingerprint(r: R.ProblemReflection) -> str:
     return f"{r.status}:{r.best}:{r.n_evals}"
 
 
-async def _call_fable(prompt: str, model: str, timeout: float) -> str | None:
+async def _call_fable(prompt: str, model: str, timeout: float,
+                      cwd: str | None = None) -> str | None:
     """One-shot claude CLI call (real Anthropic auth), returns the final text or
-    None on any failure — quota/credits, timeout, non-zero exit, empty output."""
+    None on any failure — quota/credits, timeout, non-zero exit, empty output. Runs
+    with file tools enabled and cwd at the kb root so it can Read the knowledge base."""
     if not shutil.which("claude"):
         return None
     cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json",
@@ -88,7 +95,7 @@ async def _call_fable(prompt: str, model: str, timeout: float) -> str | None:
         proc = await asyncio.create_subprocess_exec(
             *cmd, stdin=asyncio.subprocess.DEVNULL,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-            env={**os.environ})
+            env={**os.environ}, cwd=cwd)
         out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
     except (asyncio.TimeoutError, Exception):
         try:
@@ -152,6 +159,26 @@ def _prior_sources(runs_dir: Path, task_id: int, top: int = 4, budget: int = 900
     return "\n\n".join(out) if out else "(no prior kernels staged)"
 
 
+def _kb_index(kb_dir: Path) -> str:
+    """Compact index of the curated kb (filename + first heading) so fable knows
+    which docs exist and can Read the relevant ones on demand."""
+    kb_dir = Path(kb_dir)
+    if not kb_dir.is_dir():
+        return "(no knowledge base found)"
+    lines = []
+    for f in sorted(kb_dir.glob("*.md")):
+        head = ""
+        try:
+            for ln in f.read_text(errors="replace").splitlines():
+                if ln.strip():
+                    head = ln.strip().lstrip("#").strip()[:80]
+                    break
+        except Exception:
+            pass
+        lines.append(f"- kb/{f.name}" + (f" — {head}" if head else ""))
+    return "\n".join(lines) if lines else "(no knowledge base found)"
+
+
 def _reference_source(runs_dir: Path, task_id: int) -> str:
     # any candidate's workdir carries the reference; grab the first we find
     wroot = runs_dir / str(task_id) / "work"
@@ -165,7 +192,8 @@ def _reference_source(runs_dir: Path, task_id: int) -> str:
 
 
 async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
-                       timeout: float, log=lambda *_: None) -> bool:
+                       timeout: float, kb_dir: str | Path = "kb",
+                       log=lambda *_: None) -> bool:
     """Diagnose one stuck problem with fable; persist to diagnosis.json. Returns
     True if a fresh diagnosis was written. Deduped on the state fingerprint."""
     pdir = Path(runs_dir) / str(r.task_id)
@@ -178,13 +206,16 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
         except Exception:
             pass
     card = pdir / "reflection.md"
+    kb_dir = Path(kb_dir)
     prompt = _PROMPT.format(
         task=r.task_id, name=r.name or "?", family=r.family or "?", status=r.status,
         card=(card.read_text(errors="replace") if card.is_file() else r.headline),
         best=("?" if r.best is None else f"{r.best:.3f}"),
         best_src=_best_source(pdir.parent, r), ref_src=_reference_source(pdir.parent, r.task_id),
-        prior_src=_prior_sources(pdir.parent, r.task_id))
-    prose = await _call_fable(prompt, model, timeout)
+        prior_src=_prior_sources(pdir.parent, r.task_id), kb_index=_kb_index(kb_dir))
+    # run at the kb root so fable's file tools can Read the `kb/…` docs it cites
+    cwd = str(kb_dir.parent.resolve()) if kb_dir.is_dir() else None
+    prose = await _call_fable(prompt, model, timeout, cwd=cwd)
     if not prose:
         log(f"[diagnose] task {r.task_id}: fable unavailable/failed — deterministic card stands")
         return False
@@ -195,8 +226,9 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
 
 
 async def diagnose_stuck(runs_dir: str | Path, refls: dict[int, R.ProblemReflection], *,
-                         model: str = "claude-fable-5", timeout: float = 240,
-                         max_concurrency: int = 4, log=lambda *_: None) -> int:
+                         model: str = "claude-fable-5", timeout: float = 360,
+                         kb_dir: str | Path = "kb", max_concurrency: int = 4,
+                         log=lambda *_: None) -> int:
     """Run fable on every STUCK problem whose state moved since its last diagnosis.
     Returns how many fresh diagnoses were written. After writing, re-attach the
     stored prose to each card so agents pick it up on the next plan."""
@@ -209,7 +241,8 @@ async def diagnose_stuck(runs_dir: str | Path, refls: dict[int, R.ProblemReflect
     async def _guard(r):
         async with sem:
             try:
-                return await diagnose_one(runs_dir, r, model=model, timeout=timeout, log=log)
+                return await diagnose_one(runs_dir, r, model=model, timeout=timeout,
+                                          kb_dir=kb_dir, log=log)
             except Exception as exc:                    # one bad diagnosis never aborts the sweep
                 log(f"[diagnose] task {r.task_id}: {exc!r}")
                 return False
