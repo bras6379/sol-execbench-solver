@@ -388,6 +388,7 @@ const SL = i => 'var(--s'+(i%8+1)+')';
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fs = s => s==null?'–':(s<90?s.toFixed(1)+'s':(s<5400?(s/60).toFixed(1)+'m':(s/3600).toFixed(1)+'h'));
 const pct=(a,p)=>{if(!a.length)return null;const v=[...a].sort((x,y)=>x-y);return v[Math.min(v.length-1,Math.max(0,Math.round(p*(v.length-1))))]};
+const bigN=n=>{n=n||0;const a=Math.abs(n);return a>=1e9?(n/1e9).toFixed(1)+'B':a>=1e6?(n/1e6).toFixed(1)+'M':a>=1e3?(n/1e3).toFixed(1)+'K':String(n);};
 const idx = {}; RECS.forEach((r,i)=>idx[r.t]=i);   // stable color slot by task order
 
 function matches(r){
@@ -476,7 +477,7 @@ function render(){
     tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
     tile('problems', sub.filter(r=>r.s==='running').length+' active · '+sub.filter(r=>r.s!=='running').length+' done'),
-    tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+sub.reduce((a,r)=>a+r.ak,0).toLocaleString()),
+    tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+bigN(sub.reduce((a,r)=>a+r.ak,0))),
   ].join('');
   // fleet-score-over-time (scoped)
   const fsr=fleetSeries(sub);
