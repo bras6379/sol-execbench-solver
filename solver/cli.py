@@ -127,6 +127,24 @@ def _cmd_report(args) -> None:
     print(f"dashboard site -> {path}")
 
 
+def _parse_tiers(specs: list[str]):
+    """Parse `--tier NAME=agent/model[,agent/model...]` into Tier objects."""
+    from .engine import Perspective, Tier
+    tiers = []
+    for s in specs:
+        name, sep, pool_s = s.partition("=")
+        if not sep or not pool_s.strip():
+            raise SystemExit(f"bad --tier {s!r}; use NAME=agent/model[,agent/model]")
+        pool = []
+        for pm in pool_s.split(","):
+            agent, _, model = pm.strip().partition("/")
+            if not agent or not model:
+                raise SystemExit(f"bad perspective {pm!r} in --tier; use agent/model")
+            pool.append(Perspective(agent.strip(), model.strip()))
+        tiers.append(Tier(name.strip(), pool))
+    return tiers
+
+
 def _cmd_solve(args) -> None:
     import asyncio
 
@@ -141,7 +159,7 @@ def _cmd_solve(args) -> None:
     families = {t: sim.family_of(t) for t in ids}
     names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
 
-    if args.agent == "sim":
+    if args.agent == "sim" and not args.tier:
         if args.gpu:
             raise SystemExit("--gpu needs a real --agent (codex/claude), not the sim agent")
         cfg = Config(
@@ -154,13 +172,19 @@ def _cmd_solve(args) -> None:
         seeds_fn = sim.sim_seeds
         print(f"solving {len(ids)} problem(s) with the stub sim agent (no GPU/model) -> {runs_dir}/")
     else:
+        if args.tier:
+            # multi-tier ladder (cheap → strong), escalates on plateau (§6b)
+            tiers = _parse_tiers(args.tier)
+        else:
+            tiers = [Tier(args.agent, [Perspective(args.agent, args.model)])]
         cfg = Config(
-            tiers=[Tier(args.agent, [Perspective(args.agent, args.model)])],
-            plateau_cycles=2, escalate_ceiling=0.9, epsilon=0.02,
-            max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
+            tiers=tiers, plateau_cycles=args.plateau_cycles, escalate_ceiling=0.9,
+            epsilon=0.02, max_iterations=args.max_iters, max_gpu_evals=args.max_evals,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
+        ladder = " → ".join(t.name + "(" + ",".join(str(p) for p in t.pool) + ")" for t in cfg.tiers)
+        print(f"ladder: {ladder}  ·  design: {cfg.design_model}")
 
     if args.gpu:
         # Real end-to-end: rent an ephemeral B200, bootstrap the harness, score
@@ -173,7 +197,8 @@ def _cmd_solve(args) -> None:
         spec = PodSpec(gpu_type=args.gpu_type, cloud_type=args.gpu_cloud)
         hcfg = {"warmup_runs": 10, "iterations": args.gpu_iterations,
                 "lock_clocks": False, "seed": 200}   # containers can't lock; we measure unlocked
-        print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} on a rented "
+        who = args.tier and "the ladder above" or f"`{args.agent}`/{args.model}"
+        print(f"solving {len(ids)} problem(s) with {who} on a rented "
               f"{args.gpu_type} via RunPod (auto-provision → bootstrap → run → terminate) -> {runs_dir}/")
         asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
                                  knowledge=knowledge, families=families, names=names,
@@ -402,6 +427,12 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--model", default="gpt-5.5", help="model for a real --agent (e.g. gpt-5.5)")
     p_solve.add_argument("--runs-dir", default="runs")
     p_solve.add_argument("--knowledge-dir", default="knowledge")
+    p_solve.add_argument("--tier", action="append", default=None,
+                         help="multi-tier ladder (repeatable), cheap→strong; escalates on plateau. "
+                              "NAME=agent/model[,agent/model]. E.g. "
+                              "--tier cheap=claude/haiku,codex/gpt-5.5 --tier strong=claude/opus")
+    p_solve.add_argument("--plateau-cycles", type=int, default=2,
+                         help="M: full pool-cycles with no ε-gain before escalating a tier")
     p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
     p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
     p_solve.add_argument("--timeout", type=float, default=600.0, help="per agent-call timeout (s)")
