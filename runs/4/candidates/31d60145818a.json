@@ -1,0 +1,245 @@
+{
+  "cand_id": "31d60145818a",
+  "task_id": 4,
+  "verdict": "entered",
+  "sol_score": 0.6596863899076147,
+  "sol_score_calibrated": 0.582654960862872,
+  "correct": true,
+  "vector": [
+    0.6878659255754169,
+    0.7001453703461903,
+    0.6875589017016632,
+    0.701144611948632,
+    0.6958263297341957,
+    0.6951896865061336,
+    0.6869084726551432,
+    0.6170870218807415,
+    0.5146548399537215,
+    0.608365990799114,
+    0.6177551361282779,
+    0.6883816780918929,
+    0.7005727037369572,
+    0.5582210719578826,
+    0.7007533482142857,
+    0.694551149291587
+  ],
+  "strategy": "bf16 tensor-core GEMMs (fp32 accumulate): cuBLAS for wgrad; a fused Triton dgrad kernel whose epilogue scatters directly",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "99df22f345f7",
+  "trajectory": "runs/4/work/31d60145818a/trajectory.jsonl",
+  "gpu_s": 14.465,
+  "job_id": "4-31d60145818a",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 40.0,
+      "power_w_max": 645.35,
+      "samples": 47,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.12049599999999999,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.6878659255754169,
+      "sol_score_cal": 0.5921249575347001,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0366235,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7001453703461903,
+      "sol_score_cal": 0.6244917832419083,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.120559,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.6875589017016632,
+      "sol_score_cal": 0.5918539616536554,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.036528000000000005,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.701144611948632,
+      "sol_score_cal": 0.6254093237411504,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.064992,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.6958263297341957,
+      "sol_score_cal": 0.6099890330744016,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0651355,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.6951896865061336,
+      "sol_score_cal": 0.6095109885406915,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.12049599999999999,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.6869084726551432,
+      "sol_score_cal": 0.591048423984653,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.02824,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.6170870218807415,
+      "sol_score_cal": 0.5549213692416299,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.023136,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.5146548399537215,
+      "sol_score_cal": 0.4653490204830285,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.028288,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.608365990799114,
+      "sol_score_cal": 0.5458778994746852,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.028207999999999997,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.6177551361282779,
+      "sol_score_cal": 0.5555855993895094,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.120303,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.6883816780918929,
+      "sol_score_cal": 0.5924765324010395,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.036575,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.7005727037369572,
+      "sol_score_cal": 0.6248683110774195,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0250715,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.5582210719578826,
+      "sol_score_cal": 0.5050070956743853,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.036559999999999995,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7007533482142857,
+      "sol_score_cal": 0.6250388860545276,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.065216,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.694551149291587,
+      "sol_score_cal": 0.6089261882385668,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - fallback if triton missing\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    def _dgrad_configs():\n        cfgs = []\n        space = [\n            (128, 256, 64, 4, 8),\n            (128, 128, 64, 4, 8),\n            (128, 256, 128, 3, 8),\n            (64, 256, 64, 4, 4),\n            (128, 128, 128, 4, 8),\n            (256, 128, 64, 3, 8),\n            (64, 128, 64, 4, 4),\n            (128, 64, 64, 4, 4),\n        ]\n        for bm, bn, bk, ns, nw in space:\n            cfgs.append(\n                triton.Config(\n                    {\"BLOCK_M\": bm, \"BLOCK_N\": bn, \"BLOCK_K\": bk, \"GROUP_M\": 8},\n                    num_stages=ns,\n                    num_warps=nw,\n                )\n            )\n        return cfgs\n\n    @triton.autotune(configs=_dgrad_configs(), key=[\"M\"])\n    @triton.jit\n    def _dgrad_transpose_kernel(\n        A,            # (M, K) bf16, row-major  == grad_output_2d\n        W,            # (K, N) bf16, row-major  == weight\n        Out,         # flat (B*H*S*D) bf16      == grad_attn_output view\n        M, S,\n        stride_am, stride_ak,\n        stride_wk, stride_wn,\n        N: tl.constexpr, K: tl.constexpr,\n        H: tl.constexpr, D: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr, BLOCK_K: tl.constexpr,\n        GROUP_M: tl.constexpr,\n    ):\n        # ---- grouped tile schedule (L2 friendly) ----\n        pid = tl.program_id(0)\n        num_pid_m = tl.cdiv(M, BLOCK_M)\n        num_pid_n = tl.cdiv(N, BLOCK_N)\n        num_pid_in_group = GROUP_M * num_pid_n\n        group_id = pid // num_pid_in_group\n        first_pid_m = group_id * GROUP_M\n        group_size_m = min(num_pid_m - first_pid_m, GROUP_M)\n        pid_m = first_pid_m + (pid % group_size_m)\n        pid_n = (pid % num_pid_in_group) // group_size_m\n\n        ram = (pid_m * BLOCK_M + tl.arange(0, BLOCK_M)).to(tl.int64)\n        rbn = (pid_n * BLOCK_N + tl.arange(0, BLOCK_N)).to(tl.int64)\n        rk = tl.arange(0, BLOCK_K).to(tl.int64)\n\n        a_ptrs = A + ram[:, None] * stride_am + rk[None, :] * stride_ak\n        w_ptrs = W + rk[:, None] * stride_wk + rbn[None, :] * stride_wn\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        # K == N == hidden == 2048 is a multiple of every BLOCK_K/BLOCK_N here,\n        # so only the M dimension needs masking.\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=ram[:, None] < M, other=0.0)\n            w = tl.load(w_ptrs)\n            acc = tl.dot(a, w, acc)\n            a_ptrs += BLOCK_K * stride_ak\n            w_ptrs += BLOCK_K * stride_wk\n\n        c = acc.to(Out.dtype.element_ty)\n\n        # ---- fused reshape + transpose(1,2) scatter epilogue ----\n        # output element (m, n) with m=(b,s), n=(h*D+d) -> grad_attn[b, h, s, d]\n        b = ram // S\n        s = ram % S\n        h = rbn // D\n        d = rbn % D\n        row_base = b * (S * (H * D)) + s * D          # (BLOCK_M,)\n        col_base = h * (S * D) + d                    # (BLOCK_N,)\n        dst = Out + row_base[:, None] + col_base[None, :]\n        tl.store(dst, c, mask=ram[:, None] < M)\n\n\ndef _dgrad_transpose_triton(go2d, weight, B, S, H, D):\n    M, hidden = go2d.shape\n    grad_attn = torch.empty((B, H, S, D), dtype=go2d.dtype, device=go2d.device)\n    out_flat = grad_attn.view(-1)\n    go2d = go2d.contiguous()\n    weight = weight.contiguous()\n\n    def grid(meta):\n        return (triton.cdiv(M, meta[\"BLOCK_M\"]) * triton.cdiv(hidden, meta[\"BLOCK_N\"]),)\n\n    _dgrad_transpose_kernel[grid](\n        go2d, weight, out_flat,\n        M, S,\n        go2d.stride(0), go2d.stride(1),\n        weight.stride(0), weight.stride(1),\n        N=hidden, K=hidden, H=H, D=D,\n    )\n    return grad_attn\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for attention output projection with reshape.\n\n    grad_weight       = grad_output_2d^T @ reshaped_2d          (2048, 2048)\n    grad_attn_output  = (grad_output_2d @ weight) reshaped/transposed to (B,H,S,D)\n\n    All operands are already bf16, so we run both GEMMs on bf16 tensor cores\n    with fp32 accumulation (numerically equivalent to the fp32 reference up to\n    the final bf16 rounding) and fuse the reshape/transpose/cast of the input\n    gradient into the dgrad GEMM's store epilogue.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    head_dim = 64\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    # grad_weight: TN GEMM, bf16 in / fp32 accumulate / bf16 out (cuBLAS).\n    grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n    if _HAS_TRITON and grad_output.is_cuda:\n        grad_attn_output = _dgrad_transpose_triton(\n            go2d, weight, batch_size, seq_len, num_heads, head_dim\n        )\n    else:\n        grad_reshaped_2d = go2d.mm(weight)\n        grad_attn_output = (\n            grad_reshaped_2d.reshape(batch_size, seq_len, num_heads, head_dim)\n            .transpose(1, 2)\n            .contiguous()\n        )\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_31d60145818a",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - fallback if triton missing\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    def _dgrad_configs():\n        cfgs = []\n        space = [\n            (128, 256, 64, 4, 8),\n            (128, 128, 64, 4, 8),\n            (128, 256, 128, 3, 8),\n            (64, 256, 64, 4, 4),\n            (128, 128, 128, 4, 8),\n            (256, 128, 64, 3, 8),\n            (64, 128, 64, 4, 4),\n            (128, 64, 64, 4, 4),\n        ]\n        for bm, bn, bk, ns, nw in space:\n            cfgs.append(\n                triton.Config(\n                    {\"BLOCK_M\": bm, \"BLOCK_N\": bn, \"BLOCK_K\": bk, \"GROUP_M\": 8},\n                    num_stages=ns,\n                    num_warps=nw,\n                )\n            )\n        return cfgs\n\n    @triton.autotune(configs=_dgrad_configs(), key=[\"M\"])\n    @triton.jit\n    def _dgrad_transpose_kernel(\n        A,            # (M, K) bf16, row-major  == grad_output_2d\n        W,            # (K, N) bf16, row-major  == weight\n        Out,         # flat (B*H*S*D) bf16      == grad_attn_output view\n        M, S,\n        stride_am, stride_ak,\n        stride_wk, stride_wn,\n        N: tl.constexpr, K: tl.constexpr,\n        H: tl.constexpr, D: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr, BLOCK_K: tl.constexpr,\n        GROUP_M: tl.constexpr,\n    ):\n        # ---- grouped tile schedule (L2 friendly) ----\n        pid = tl.program_id(0)\n        num_pid_m = tl.cdiv(M, BLOCK_M)\n        num_pid_n = tl.cdiv(N, BLOCK_N)\n        num_pid_in_group = GROUP_M * num_pid_n\n        group_id = pid // num_pid_in_group\n        first_pid_m = group_id * GROUP_M\n        group_size_m = min(num_pid_m - first_pid_m, GROUP_M)\n        pid_m = first_pid_m + (pid % group_size_m)\n        pid_n = (pid % num_pid_in_group) // group_size_m\n\n        ram = (pid_m * BLOCK_M + tl.arange(0, BLOCK_M)).to(tl.int64)\n        rbn = (pid_n * BLOCK_N + tl.arange(0, BLOCK_N)).to(tl.int64)\n        rk = tl.arange(0, BLOCK_K).to(tl.int64)\n\n        a_ptrs = A + ram[:, None] * stride_am + rk[None, :] * stride_ak\n        w_ptrs = W + rk[:, None] * stride_wk + rbn[None, :] * stride_wn\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        # K == N == hidden == 2048 is a multiple of every BLOCK_K/BLOCK_N here,\n        # so only the M dimension needs masking.\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=ram[:, None] < M, other=0.0)\n            w = tl.load(w_ptrs)\n            acc = tl.dot(a, w, acc)\n            a_ptrs += BLOCK_K * stride_ak\n            w_ptrs += BLOCK_K * stride_wk\n\n        c = acc.to(Out.dtype.element_ty)\n\n        # ---- fused reshape + transpose(1,2) scatter epilogue ----\n        # output element (m, n) with m=(b,s), n=(h*D+d) -> grad_attn[b, h, s, d]\n        b = ram // S\n        s = ram % S\n        h = rbn // D\n        d = rbn % D\n        row_base = b * (S * (H * D)) + s * D          # (BLOCK_M,)\n        col_base = h * (S * D) + d                    # (BLOCK_N,)\n        dst = Out + row_base[:, None] + col_base[None, :]\n        tl.store(dst, c, mask=ram[:, None] < M)\n\n\ndef _dgrad_transpose_triton(go2d, weight, B, S, H, D):\n    M, hidden = go2d.shape\n    grad_attn = torch.empty((B, H, S, D), dtype=go2d.dtype, device=go2d.device)\n    out_flat = grad_attn.view(-1)\n    go2d = go2d.contiguous()\n    weight = weight.contiguous()\n\n    def grid(meta):\n        return (triton.cdiv(M, meta[\"BLOCK_M\"]) * triton.cdiv(hidden, meta[\"BLOCK_N\"]),)\n\n    _dgrad_transpose_kernel[grid](\n        go2d, weight, out_flat,\n        M, S,\n        go2d.stride(0), go2d.stride(1),\n        weight.stride(0), weight.stride(1),\n        N=hidden, K=hidden, H=H, D=D,\n    )\n    return grad_attn\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for attention output projection with reshape.\n\n    grad_weight       = grad_output_2d^T @ reshaped_2d          (2048, 2048)\n    grad_attn_output  = (grad_output_2d @ weight) reshaped/transposed to (B,H,S,D)\n\n    All operands are already bf16, so we run both GEMMs on bf16 tensor cores\n    with fp32 accumulation (numerically equivalent to the fp32 reference up to\n    the final bf16 rounding) and fuse the reshape/transpose/cast of the input\n    gradient into the dgrad GEMM's store epilogue.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    head_dim = 64\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    # grad_weight: TN GEMM, bf16 in / fp32 accumulate / bf16 out (cuBLAS).\n    grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n    if _HAS_TRITON and grad_output.is_cuda:\n        grad_attn_output = _dgrad_transpose_triton(\n            go2d, weight, batch_size, seq_len, num_heads, head_dim\n        )\n    else:\n        grad_reshaped_2d = go2d.mm(weight)\n        grad_attn_output = (\n            grad_reshaped_2d.reshape(batch_size, seq_len, num_heads, head_dim)\n            .transpose(1, 2)\n            .contiguous()\n        )\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}

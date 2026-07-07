@@ -1,0 +1,245 @@
+{
+  "cand_id": "a63651c333dc",
+  "task_id": 8,
+  "verdict": "dominated",
+  "sol_score": 0.8419921544367285,
+  "sol_score_calibrated": 0.816854388795878,
+  "correct": true,
+  "vector": [
+    0.8799913084269675,
+    0.8824117203656816,
+    0.8273411502891993,
+    0.8978552888819875,
+    0.8812732421275289,
+    0.819226750261233,
+    0.8909646159439724,
+    0.8588700023940627,
+    0.8587644879913968,
+    0.8111158432708688,
+    0.8575063613231553,
+    0.8884916998127811,
+    0.8182375458938459,
+    0.5044691519511664,
+    0.8980791508391928,
+    0.8972761512146163
+  ],
+  "strategy": "Fused Triton bf16 atomic scatter-add (H=3072): clone seeds output=fhs, then a grid of N/2 programs each consumes two adj",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "acf29c27de11",
+  "trajectory": "runs/8/work/a63651c333dc/trajectory.jsonl",
+  "gpu_s": 11.437,
+  "job_id": "8-a63651c333dc",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 294.68,
+      "samples": 27,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.033248,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2203675,
+      "sol_score": 0.8799913084269675,
+      "sol_score_cal": 0.8579782683124263,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0343195,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.2321755,
+      "sol_score": 0.8824117203656816,
+      "sol_score_cal": 0.860716374243373,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.009024,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.0402075,
+      "sol_score": 0.8273411502891993,
+      "sol_score_cal": 0.7985946598370771,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.108224,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846127,
+      "sol_score": 0.8978552888819875,
+      "sol_score_cal": 0.8783786150289906,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.03328,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2232635,
+      "sol_score": 0.8812732421275289,
+      "sol_score_cal": 0.8594603523668642,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.01504,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.06392,
+      "sol_score": 0.819226750261233,
+      "sol_score_cal": 0.7897493754533,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0584315,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.427264,
+      "sol_score": 0.8909646159439724,
+      "sol_score_cal": 0.8704767797205903,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.020864,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.1168,
+      "sol_score": 0.8588700023940627,
+      "sol_score_cal": 0.8341316195755287,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.020912,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.116992,
+      "sol_score": 0.8587644879913968,
+      "sol_score_cal": 0.8340170331181467,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.007696,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.031072,
+      "sol_score": 0.8111158432708688,
+      "sol_score_cal": 0.7807279688774652,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.020816,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.115232,
+      "sol_score": 0.8575063613231553,
+      "sol_score_cal": 0.8325696249142666,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0547035,
+      "sol_ms": 0.0064,
+      "baseline_latency_ms": 0.3912795,
+      "sol_score": 0.8884916998127811,
+      "sol_score_cal": 0.8676730098054188,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.015136,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.0639355,
+      "sol_score": 0.8182375458938459,
+      "sol_score_cal": 0.7886561637384731,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.037168,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.037824,
+      "sol_score": 0.5044691519511664,
+      "sol_score_cal": 0.46018888824808046,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.10808,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846895,
+      "sol_score": 0.8980791508391928,
+      "sol_score_cal": 0.8786357806168031,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.108687,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.844943,
+      "sol_score": 0.8972761512146163,
+      "sol_score_cal": 0.8777157068772435,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Reference semantics (008 \u00b7 MoE expert-output combine):\n#   output = final_hidden_states.clone()\n#   output.index_add_(0, token_indices, expert_outputs)\n#     i.e.  out[t] = fhs[t] + \u03a3_{i : idx[i]==t} eo[i]\n#\n# Roofline: deeply memory-bound. The dominant term is the *read-once* coalesced\n# stream of `expert_outputs` (8\u00b7T\u00b7H\u00b72 B \u2248 80% of all traffic). The output buffer\n# (\u226450 MB at the largest workload T=8192) fits entirely in the 126 MB L2, so the\n# bf16x2 atomic read-modify-writes stay L2-resident (~21 TB/s) \u2014 provided the\n# ~400 MB `eo` stream does not evict it (hence `eviction_policy='evict_first'`,\n# since eo is touched exactly once and never re-read). At these shapes the score\n# is set by the *achieved* HBM bandwidth on the eo stream (KB rule: rank\n# memory-bound kernels by effective BW, not raw time), so the lever is memory-\n# level parallelism \u2014 how many eo transactions are in flight per SM.\n#\n# Parent (single expert row per program, 3 hoisted loads) hits ~0.87. The change\n# here: each program consumes **two adjacent expert rows** (rows 2p, 2p+1). Their\n# eo data is 2\u00d73072 bf16 = 12 KB *contiguous* in memory, and all six 1024-wide\n# (128-bit-coalesced) loads are hoisted ahead of every atomic. That doubles the\n# outstanding memory transactions per program \u2192 higher achieved eo bandwidth,\n# the term that sets the roofline \u2014 while the six live bf16 tiles cost only ~24\n# registers, keeping occupancy high enough (~48 warps/SM) to hide the atomic RMW\n# latency. It also halves the launched-block count, trimming schedule overhead on\n# the launch-bound small-T shapes. The two target token indices are independent\n# random rows, so no extra atomic contention is introduced; correctness is\n# unaffected even if they happen to coincide (each atomic is still atomic).\n#\n# num_selected_tokens = 8\u00b7T is always even, so the two-row kernel tiles N exactly\n# with no remainder; a one-row kernel covers the (never-hit, odd-N) generic case.\n#\n# The seed `output = fhs.clone()` is mandatory: the harness reuses the input\n# tensors across timing iterations, so accumulating in place would corrupt later\n# iterations, and empty token buckets (Poisson(8) \u21d2 some rows get 0 experts) are\n# never touched by the scatter and must already carry fhs. A single fused\n# seed+scatter kernel is not possible without a grid-wide barrier (a scatter\n# program could atomic-add before the seed of its token is written), so the\n# clone+scatter pair is the correctness-safe minimum; the clone write stays in\n# warm L2, adding no extra HBM traffic beyond the (unavoidable) fhs read.\n\n\n@triton.jit\ndef _scatter2_kernel(\n    out_ptr,        # bf16 [T, 3072], pre-seeded with final_hidden_states\n    eo_ptr,         # bf16 [N, 3072], N = 8T (even)\n    idx_ptr,        # int64 [N]\n    BLOCK: tl.constexpr,\n):\n    pid = tl.program_id(0).to(tl.int64)\n    r0 = pid * 2\n    r1 = r0 + 1\n\n    o0 = tl.load(idx_ptr + r0)      # int64 target token of expert row 2p\n    o1 = tl.load(idx_ptr + r1)      # int64 target token of expert row 2p+1\n    offs = tl.arange(0, BLOCK)\n\n    e0 = r0 * 3072\n    e1 = r1 * 3072                  # = e0 + 3072 \u2192 the two rows are contiguous\n    b0 = o0 * 3072\n    b1 = o1 * 3072\n\n    # Hoist all six coalesced eo loads (two adjacent rows = 12 KB contiguous, the\n    # dominant read-once traffic) ahead of every atomic so twice as many memory\n    # transactions are outstanding per program \u2192 higher achieved eo HBM BW, the\n    # term that sets the roofline. evict_first keeps eo out of L2 so the\n    # L2-resident output accumulator is not thrashed by the 8\u00d7-larger eo stream.\n    v00 = tl.load(eo_ptr + e0 + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v01 = tl.load(eo_ptr + e0 + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v02 = tl.load(eo_ptr + e0 + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v10 = tl.load(eo_ptr + e1 + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v11 = tl.load(eo_ptr + e1 + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v12 = tl.load(eo_ptr + e1 + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    # Commutative sum \u2192 atomicity without ordering: relaxed drops the per-atomic\n    # fence. Disjoint columns (and independent target rows) make order irrelevant.\n    tl.atomic_add(out_ptr + b0 + 0 * BLOCK + offs, v00, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b0 + 1 * BLOCK + offs, v01, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b0 + 2 * BLOCK + offs, v02, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 0 * BLOCK + offs, v10, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 1 * BLOCK + offs, v11, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 2 * BLOCK + offs, v12, sem=\"relaxed\")\n\n\n@triton.jit\ndef _scatter1_kernel(\n    out_ptr,\n    eo_ptr,\n    idx_ptr,\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)\n    out_row = tl.load(idx_ptr + row)\n    offs = tl.arange(0, BLOCK)\n\n    in_base = row * 3072\n    out_base = out_row * 3072\n\n    v0 = tl.load(eo_ptr + in_base + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v1 = tl.load(eo_ptr + in_base + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v2 = tl.load(eo_ptr + in_base + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    tl.atomic_add(out_ptr + out_base + 0 * BLOCK + offs, v0, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 1 * BLOCK + offs, v1, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 2 * BLOCK + offs, v2, sem=\"relaxed\")\n\n\ndef _launch(output, expert_outputs, token_indices, N):\n    if N % 2 == 0:\n        _scatter2_kernel[(N // 2,)](\n            output,\n            expert_outputs,\n            token_indices,\n            BLOCK=1024,\n            num_warps=4,\n        )\n    else:\n        # N = 8\u00b7T is always even for the scored workloads; this covers the\n        # generic odd-N case without a masked tail on the hot path.\n        _scatter1_kernel[(N,)](\n            output,\n            expert_outputs,\n            token_indices,\n            BLOCK=1024,\n            num_warps=4,\n        )\n\n\ndef _fast_path_ok(output, expert_outputs, token_indices):\n    return (\n        expert_outputs.shape[1] == 3072\n        and output.is_contiguous()\n        and expert_outputs.is_contiguous()\n        and token_indices.is_contiguous()\n    )\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    output = final_hidden_states.clone()\n\n    N = expert_outputs.shape[0]\n    if N == 0:\n        return output\n\n    if _fast_path_ok(output, expert_outputs, token_indices):\n        _launch(output, expert_outputs, token_indices, N)\n    else:\n        # Generic fallback (never hit by the scored H=3072 workloads).\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t8_a63651c333dc",
+    "definition": "008_expert_output_weighted_index_add_accumulation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Reference semantics (008 \u00b7 MoE expert-output combine):\n#   output = final_hidden_states.clone()\n#   output.index_add_(0, token_indices, expert_outputs)\n#     i.e.  out[t] = fhs[t] + \u03a3_{i : idx[i]==t} eo[i]\n#\n# Roofline: deeply memory-bound. The dominant term is the *read-once* coalesced\n# stream of `expert_outputs` (8\u00b7T\u00b7H\u00b72 B \u2248 80% of all traffic). The output buffer\n# (\u226450 MB at the largest workload T=8192) fits entirely in the 126 MB L2, so the\n# bf16x2 atomic read-modify-writes stay L2-resident (~21 TB/s) \u2014 provided the\n# ~400 MB `eo` stream does not evict it (hence `eviction_policy='evict_first'`,\n# since eo is touched exactly once and never re-read). At these shapes the score\n# is set by the *achieved* HBM bandwidth on the eo stream (KB rule: rank\n# memory-bound kernels by effective BW, not raw time), so the lever is memory-\n# level parallelism \u2014 how many eo transactions are in flight per SM.\n#\n# Parent (single expert row per program, 3 hoisted loads) hits ~0.87. The change\n# here: each program consumes **two adjacent expert rows** (rows 2p, 2p+1). Their\n# eo data is 2\u00d73072 bf16 = 12 KB *contiguous* in memory, and all six 1024-wide\n# (128-bit-coalesced) loads are hoisted ahead of every atomic. That doubles the\n# outstanding memory transactions per program \u2192 higher achieved eo bandwidth,\n# the term that sets the roofline \u2014 while the six live bf16 tiles cost only ~24\n# registers, keeping occupancy high enough (~48 warps/SM) to hide the atomic RMW\n# latency. It also halves the launched-block count, trimming schedule overhead on\n# the launch-bound small-T shapes. The two target token indices are independent\n# random rows, so no extra atomic contention is introduced; correctness is\n# unaffected even if they happen to coincide (each atomic is still atomic).\n#\n# num_selected_tokens = 8\u00b7T is always even, so the two-row kernel tiles N exactly\n# with no remainder; a one-row kernel covers the (never-hit, odd-N) generic case.\n#\n# The seed `output = fhs.clone()` is mandatory: the harness reuses the input\n# tensors across timing iterations, so accumulating in place would corrupt later\n# iterations, and empty token buckets (Poisson(8) \u21d2 some rows get 0 experts) are\n# never touched by the scatter and must already carry fhs. A single fused\n# seed+scatter kernel is not possible without a grid-wide barrier (a scatter\n# program could atomic-add before the seed of its token is written), so the\n# clone+scatter pair is the correctness-safe minimum; the clone write stays in\n# warm L2, adding no extra HBM traffic beyond the (unavoidable) fhs read.\n\n\n@triton.jit\ndef _scatter2_kernel(\n    out_ptr,        # bf16 [T, 3072], pre-seeded with final_hidden_states\n    eo_ptr,         # bf16 [N, 3072], N = 8T (even)\n    idx_ptr,        # int64 [N]\n    BLOCK: tl.constexpr,\n):\n    pid = tl.program_id(0).to(tl.int64)\n    r0 = pid * 2\n    r1 = r0 + 1\n\n    o0 = tl.load(idx_ptr + r0)      # int64 target token of expert row 2p\n    o1 = tl.load(idx_ptr + r1)      # int64 target token of expert row 2p+1\n    offs = tl.arange(0, BLOCK)\n\n    e0 = r0 * 3072\n    e1 = r1 * 3072                  # = e0 + 3072 \u2192 the two rows are contiguous\n    b0 = o0 * 3072\n    b1 = o1 * 3072\n\n    # Hoist all six coalesced eo loads (two adjacent rows = 12 KB contiguous, the\n    # dominant read-once traffic) ahead of every atomic so twice as many memory\n    # transactions are outstanding per program \u2192 higher achieved eo HBM BW, the\n    # term that sets the roofline. evict_first keeps eo out of L2 so the\n    # L2-resident output accumulator is not thrashed by the 8\u00d7-larger eo stream.\n    v00 = tl.load(eo_ptr + e0 + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v01 = tl.load(eo_ptr + e0 + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v02 = tl.load(eo_ptr + e0 + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v10 = tl.load(eo_ptr + e1 + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v11 = tl.load(eo_ptr + e1 + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v12 = tl.load(eo_ptr + e1 + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    # Commutative sum \u2192 atomicity without ordering: relaxed drops the per-atomic\n    # fence. Disjoint columns (and independent target rows) make order irrelevant.\n    tl.atomic_add(out_ptr + b0 + 0 * BLOCK + offs, v00, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b0 + 1 * BLOCK + offs, v01, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b0 + 2 * BLOCK + offs, v02, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 0 * BLOCK + offs, v10, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 1 * BLOCK + offs, v11, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + b1 + 2 * BLOCK + offs, v12, sem=\"relaxed\")\n\n\n@triton.jit\ndef _scatter1_kernel(\n    out_ptr,\n    eo_ptr,\n    idx_ptr,\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)\n    out_row = tl.load(idx_ptr + row)\n    offs = tl.arange(0, BLOCK)\n\n    in_base = row * 3072\n    out_base = out_row * 3072\n\n    v0 = tl.load(eo_ptr + in_base + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v1 = tl.load(eo_ptr + in_base + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v2 = tl.load(eo_ptr + in_base + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    tl.atomic_add(out_ptr + out_base + 0 * BLOCK + offs, v0, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 1 * BLOCK + offs, v1, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 2 * BLOCK + offs, v2, sem=\"relaxed\")\n\n\ndef _launch(output, expert_outputs, token_indices, N):\n    if N % 2 == 0:\n        _scatter2_kernel[(N // 2,)](\n            output,\n            expert_outputs,\n            token_indices,\n            BLOCK=1024,\n            num_warps=4,\n        )\n    else:\n        # N = 8\u00b7T is always even for the scored workloads; this covers the\n        # generic odd-N case without a masked tail on the hot path.\n        _scatter1_kernel[(N,)](\n            output,\n            expert_outputs,\n            token_indices,\n            BLOCK=1024,\n            num_warps=4,\n        )\n\n\ndef _fast_path_ok(output, expert_outputs, token_indices):\n    return (\n        expert_outputs.shape[1] == 3072\n        and output.is_contiguous()\n        and expert_outputs.is_contiguous()\n        and token_indices.is_contiguous()\n    )\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    output = final_hidden_states.clone()\n\n    N = expert_outputs.shape[0]\n    if N == 0:\n        return output\n\n    if _fast_path_ok(output, expert_outputs, token_indices):\n        _launch(output, expert_outputs, token_indices, N)\n    else:\n        # Generic fallback (never hit by the scored H=3072 workloads).\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  }
+}

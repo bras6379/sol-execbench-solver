@@ -1,0 +1,245 @@
+{
+  "cand_id": "adf508383cc6",
+  "task_id": 10,
+  "verdict": "entered",
+  "sol_score": 0.6109264327861826,
+  "sol_score_calibrated": 0.5103194946245796,
+  "correct": true,
+  "vector": [
+    0.5614574187884109,
+    0.5804559168622192,
+    0.6004771568035978,
+    0.6100754549489569,
+    0.5793331378768091,
+    0.664140599806514,
+    0.5813715730850978,
+    0.5600877192982456,
+    0.6904033180778033,
+    0.6981693363844392,
+    0.5685446009389646,
+    0.5483221476510067,
+    0.6664823008849555,
+    0.5779555767852878,
+    0.6849486919260261,
+    0.6025979744605879
+  ],
+  "strategy": "Use cuBLAS-backed torch linear and return the transposed [B,8,S,128] view, avoiding the reference's extra contiguous cop",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "673c75e6be22",
+  "trajectory": "runs/10/work/adf508383cc6/trajectory.jsonl",
+  "gpu_s": 7.216,
+  "job_id": "10-adf508383cc6",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 31.0,
+      "power_w_max": 275.62,
+      "samples": 19,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.010192,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012432,
+      "sol_score": 0.5614574187884109,
+      "sol_score_cal": 0.5075275985492409,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.022912000000000002,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.026752,
+      "sol_score": 0.5804559168622192,
+      "sol_score_cal": 0.49090486396987953,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0195845,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232485,
+      "sol_score": 0.6004771568035978,
+      "sol_score_cal": 0.4987005817376333,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.019328,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.023296,
+      "sol_score": 0.6100754549489569,
+      "sol_score_cal": 0.5068140587896933,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0141915,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.017168,
+      "sol_score": 0.5793331378768091,
+      "sol_score_cal": 0.5065276962474398,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.032432,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.040576,
+      "sol_score": 0.664140599806514,
+      "sol_score_cal": 0.5319973342012678,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.01408,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.0171045,
+      "sol_score": 0.5813715730850978,
+      "sol_score_cal": 0.5082150735899378,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.010224,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012416,
+      "sol_score": 0.5600877192982456,
+      "sol_score_cal": 0.5061795926780349,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.058623499999999995,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0719365,
+      "sol_score": 0.6904033180778033,
+      "sol_score_cal": 0.5235857636474447,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.058352,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.072208,
+      "sol_score": 0.6981693363844392,
+      "sol_score_cal": 0.5300684867248335,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.010752,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.0130879999999999,
+      "sol_score": 0.5685446009389646,
+      "sol_score_cal": 0.5076801824462529,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.012768,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.015072,
+      "sol_score": 0.5483221476510067,
+      "sol_score_cal": 0.4976791218430574,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.032240500000000005,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.0403675,
+      "sol_score": 0.6664823008849555,
+      "sol_score_cal": 0.5327720736058966,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0183355,
+      "sol_ms": 0.0095,
+      "baseline_latency_ms": 0.0215995,
+      "sol_score": 0.5779555767852878,
+      "sol_score_cal": 0.49550048538530533,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.0589755,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0720965,
+      "sol_score": 0.6849486919260261,
+      "sol_score_cal": 0.5205201795432024,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.01952,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232479999999999,
+      "sol_score": 0.6025979744605879,
+      "sol_score_cal": 0.5004388210341527,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t10_adf508383cc6",
+    "definition": "010_attention_value_projection_with_transpose",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2)\n"
+      }
+    ]
+  }
+}

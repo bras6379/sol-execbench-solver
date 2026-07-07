@@ -1,0 +1,245 @@
+{
+  "cand_id": "a6da90527377",
+  "task_id": 10,
+  "verdict": "dominated",
+  "sol_score": 0.5399214806079192,
+  "sol_score_calibrated": 0.44405025499759615,
+  "correct": true,
+  "vector": [
+    0.26502279320348116,
+    0.5804559168622193,
+    0.6004936240230357,
+    0.614421814321236,
+    0.5798122065727699,
+    0.6632850241545895,
+    0.582892749244713,
+    0.2650477376504774,
+    0.6888270547945207,
+    0.694672131147541,
+    0.2532380118411231,
+    0.31159420289855067,
+    0.6686876991059499,
+    0.5761803852472679,
+    0.6899180781735835,
+    0.6041942604856491
+  ],
+  "strategy": "Dispatch on T=B*S: small T (<=512, bandwidth-bound) uses a single fused Triton kernel that tiles M to spread ~32 CTAs ac",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "5ac3df9fdde0",
+  "trajectory": "runs/10/work/a6da90527377/trajectory.jsonl",
+  "gpu_s": 8.686,
+  "job_id": "10-a6da90527377",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 31.0,
+      "power_w_max": 270.37,
+      "samples": 25,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.030576,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012432,
+      "sol_score": 0.26502279320348116,
+      "sol_score_cal": 0.23035996671577652,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.022912,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.026752,
+      "sol_score": 0.5804559168622193,
+      "sol_score_cal": 0.49090486396987953,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.019584,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232485,
+      "sol_score": 0.6004936240230357,
+      "sol_score_cal": 0.4987140979144062,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0192005,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.023296,
+      "sol_score": 0.614421814321236,
+      "sol_score_cal": 0.5103832306896464,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.014176,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.017168,
+      "sol_score": 0.5798122065727699,
+      "sol_score_cal": 0.5069635180320038,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.032464,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.040576,
+      "sol_score": 0.6632850241545895,
+      "sol_score_cal": 0.5313440075128611,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0140315,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.0171045,
+      "sol_score": 0.582892749244713,
+      "sol_score_cal": 0.5095985116487913,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.030528,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012416,
+      "sol_score": 0.2650477376504774,
+      "sol_score_cal": 0.23037899780625798,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.0587035,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0719365,
+      "sol_score": 0.6888270547945207,
+      "sol_score_cal": 0.5225067116887132,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.058528,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.072208,
+      "sol_score": 0.694672131147541,
+      "sol_score_cal": 0.5276684353619138,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0319685,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.0130879999999999,
+      "sol_score": 0.2532380118411231,
+      "sol_score_cal": 0.2185402087027395,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.03088,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.015072,
+      "sol_score": 0.31159420289855067,
+      "sol_score_cal": 0.27336300063572794,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.03216,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.0403675,
+      "sol_score": 0.6686876991059499,
+      "sol_score_cal": 0.5344488285985564,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0184,
+      "sol_ms": 0.0095,
+      "baseline_latency_ms": 0.0215995,
+      "sol_score": 0.5761803852472679,
+      "sol_score_cal": 0.49394786797575074,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.058719999999999994,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0720965,
+      "sol_score": 0.6899180781735835,
+      "sol_score_cal": 0.5239329527982698,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.019472,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232479999999999,
+      "sol_score": 0.6041942604856491,
+      "sol_score_cal": 0.5017488799102439,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Problem 010 \u2014 GQA value projection: one skinny bf16 GEMM (M=B*S, N=1024,\n# K=5120) followed by view+transpose to [B,8,S,128]. The reshape/transpose is a\n# pure stride fold, so we NEVER materialize a contiguous copy \u2014 we either write\n# the final [B,8,S,128] layout directly (Triton path) or return the strided view\n# (cuBLAS path), deleting the reference's `.contiguous()` round-trip.\n#\n# The whole game is set by T = B*S:\n#   * Large T (compute-bound tail, T>512): cuBLAS bf16 GEMM is at/near practical\n#     peak; Triton dense GEMM only reaches ~62-70% of cuBLAS on B200, so we KEEP\n#     cuBLAS here and just return the transposed view (zero extra HBM traffic).\n#   * Small T (T<=512, bandwidth-bound): N=1024 is only 8 column tiles, so cuBLAS\n#     launches ~8 CTAs and STARVES the HBM during the cold 10.5 MB weight read \u2014\n#     the real bottleneck (the FLOPs are trivial). The lever is to SPREAD the\n#     work across many SMs so the weight streams from HBM in parallel. We tile M\n#     (BLOCK_M chosen so ~32 CTAs = num_m*8_heads light up ~4x more SMs than\n#     cuBLAS) and fuse the transpose into a coalesced scatter store. A single\n#     fused kernel \u2014 deliberately NO split-K: an explicit split-K needs an fp32\n#     partial-workspace HBM round-trip (~8 MB) that, at these tiny T, costs more\n#     than the 10.5 MB weight read it parallelizes. M-tiling fills SMs for free;\n#     the modest weight re-read it induces is served by the ~21 TB/s L2 (3x HBM),\n#     which the resident 10.5 MB weight fits in.\n#\n# fp32 accumulate, single bf16 round at the store \u2014 as precise as the reference\n# cuBLAS GEMM, and the tolerance (|x-y| <= 1e-5 + 5e-2*|y| at 99%) is enormous.\n\ntry:\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True\nexcept AttributeError:\n    pass\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover - triton always present in the harness\n    _HAVE_TRITON = False\n\n\nif _HAVE_TRITON:\n\n    @triton.jit\n    def _vproj_fused(\n        A_ptr, W_ptr, OUT_ptr,\n        M, S, K,\n        stride_am, stride_ak,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # program = (M-tile, head h == N-tile of 128 columns)\n        pid_m = tl.program_id(0)\n        pid_h = tl.program_id(1)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        offs_d = tl.arange(0, HEAD_DIM)            # column within the head [0,128)\n        offs_n = pid_h * HEAD_DIM + offs_d         # row index into W [0,1024)\n        mask_m = offs_m < M\n        offs_k = tl.arange(0, BLOCK_K)\n\n        # A: hidden flattened [M,K] (row-major). W: [1024,K] row-major -> load the\n        # [HEAD_DIM,BLOCK_K] tile coalesced along k (stride 1), transpose for dot.\n        A_ptrs = A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak\n        W_ptrs = W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk\n\n        acc = tl.zeros((BLOCK_M, HEAD_DIM), dtype=tl.float32)\n        for kk in range(0, K, BLOCK_K):\n            k_rem = K - kk\n            a = tl.load(A_ptrs, mask=mask_m[:, None] & (offs_k[None, :] < k_rem), other=0.0)\n            w = tl.load(W_ptrs, mask=offs_k[None, :] < k_rem, other=0.0)\n            acc += tl.dot(a, tl.trans(w))          # [BM,BK] @ [BK,HD] -> [BM,HD]\n            A_ptrs += BLOCK_K * stride_ak\n            W_ptrs += BLOCK_K * stride_wk\n\n        # fuse view+transpose: scatter straight to out[b, h, s, d], m = b*S + s.\n        # For rows within one batch this is a fully coalesced contiguous store.\n        b = offs_m // S\n        s = offs_m % S\n        out_ptrs = (OUT_ptr + b[:, None] * stride_ob + pid_h * stride_oh\n                    + s[:, None] * stride_os + offs_d[None, :] * stride_od)\n        tl.store(out_ptrs, acc.to(tl.bfloat16), mask=mask_m[:, None])\n\n\ndef _cublas_path(hidden_states, v_proj_weight, B, S):\n    # cuBLAS bf16 GEMM at/near peak; view+transpose fold away for free (no copy).\n    vp = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return vp.view(B, S, 8, 128).transpose(1, 2)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    B, S, Hn = hidden_states.shape\n    M = B * S\n\n    # Compute-bound tail (and any non-Triton env): cuBLAS is best here.\n    if (not _HAVE_TRITON) or M > 512 or M == 0:\n        return _cublas_path(hidden_states, v_proj_weight, B, S)\n\n    # ---- small-T fused path: tile M to spread the cold weight read over SMs ----\n    K = Hn                                    # 5120\n    HEAD_DIM = 128\n    BLOCK_K = 64\n    # Target ~32 CTAs (= num_m * 8 heads, num_m~4): ~4x cuBLAS's SM count without\n    # the L2 weight re-read exploding. Bigger BLOCK_M for bigger M keeps num_m~4.\n    if M <= 128:\n        BLOCK_M, num_warps = 32, 4\n    elif M <= 256:\n        BLOCK_M, num_warps = 64, 4\n    else:                                     # 256 < M <= 512\n        BLOCK_M, num_warps = 128, 8\n\n    a = hidden_states.reshape(M, K)           # contiguous view of hidden\n    out = torch.empty((B, 8, S, HEAD_DIM), dtype=hidden_states.dtype,\n                      device=hidden_states.device)\n\n    num_m = triton.cdiv(M, BLOCK_M)\n    stride_am, stride_ak = a.stride()\n    stride_wn, stride_wk = v_proj_weight.stride()\n    stride_ob, stride_oh, stride_os, stride_od = out.stride()\n\n    _vproj_fused[(num_m, 8)](\n        a, v_proj_weight, out,\n        M, S, K,\n        stride_am, stride_ak,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM, BLOCK_M, BLOCK_K,\n        num_warps=num_warps, num_stages=4,\n    )\n    return out\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t10_a6da90527377",
+    "definition": "010_attention_value_projection_with_transpose",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Problem 010 \u2014 GQA value projection: one skinny bf16 GEMM (M=B*S, N=1024,\n# K=5120) followed by view+transpose to [B,8,S,128]. The reshape/transpose is a\n# pure stride fold, so we NEVER materialize a contiguous copy \u2014 we either write\n# the final [B,8,S,128] layout directly (Triton path) or return the strided view\n# (cuBLAS path), deleting the reference's `.contiguous()` round-trip.\n#\n# The whole game is set by T = B*S:\n#   * Large T (compute-bound tail, T>512): cuBLAS bf16 GEMM is at/near practical\n#     peak; Triton dense GEMM only reaches ~62-70% of cuBLAS on B200, so we KEEP\n#     cuBLAS here and just return the transposed view (zero extra HBM traffic).\n#   * Small T (T<=512, bandwidth-bound): N=1024 is only 8 column tiles, so cuBLAS\n#     launches ~8 CTAs and STARVES the HBM during the cold 10.5 MB weight read \u2014\n#     the real bottleneck (the FLOPs are trivial). The lever is to SPREAD the\n#     work across many SMs so the weight streams from HBM in parallel. We tile M\n#     (BLOCK_M chosen so ~32 CTAs = num_m*8_heads light up ~4x more SMs than\n#     cuBLAS) and fuse the transpose into a coalesced scatter store. A single\n#     fused kernel \u2014 deliberately NO split-K: an explicit split-K needs an fp32\n#     partial-workspace HBM round-trip (~8 MB) that, at these tiny T, costs more\n#     than the 10.5 MB weight read it parallelizes. M-tiling fills SMs for free;\n#     the modest weight re-read it induces is served by the ~21 TB/s L2 (3x HBM),\n#     which the resident 10.5 MB weight fits in.\n#\n# fp32 accumulate, single bf16 round at the store \u2014 as precise as the reference\n# cuBLAS GEMM, and the tolerance (|x-y| <= 1e-5 + 5e-2*|y| at 99%) is enormous.\n\ntry:\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True\nexcept AttributeError:\n    pass\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover - triton always present in the harness\n    _HAVE_TRITON = False\n\n\nif _HAVE_TRITON:\n\n    @triton.jit\n    def _vproj_fused(\n        A_ptr, W_ptr, OUT_ptr,\n        M, S, K,\n        stride_am, stride_ak,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # program = (M-tile, head h == N-tile of 128 columns)\n        pid_m = tl.program_id(0)\n        pid_h = tl.program_id(1)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        offs_d = tl.arange(0, HEAD_DIM)            # column within the head [0,128)\n        offs_n = pid_h * HEAD_DIM + offs_d         # row index into W [0,1024)\n        mask_m = offs_m < M\n        offs_k = tl.arange(0, BLOCK_K)\n\n        # A: hidden flattened [M,K] (row-major). W: [1024,K] row-major -> load the\n        # [HEAD_DIM,BLOCK_K] tile coalesced along k (stride 1), transpose for dot.\n        A_ptrs = A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak\n        W_ptrs = W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk\n\n        acc = tl.zeros((BLOCK_M, HEAD_DIM), dtype=tl.float32)\n        for kk in range(0, K, BLOCK_K):\n            k_rem = K - kk\n            a = tl.load(A_ptrs, mask=mask_m[:, None] & (offs_k[None, :] < k_rem), other=0.0)\n            w = tl.load(W_ptrs, mask=offs_k[None, :] < k_rem, other=0.0)\n            acc += tl.dot(a, tl.trans(w))          # [BM,BK] @ [BK,HD] -> [BM,HD]\n            A_ptrs += BLOCK_K * stride_ak\n            W_ptrs += BLOCK_K * stride_wk\n\n        # fuse view+transpose: scatter straight to out[b, h, s, d], m = b*S + s.\n        # For rows within one batch this is a fully coalesced contiguous store.\n        b = offs_m // S\n        s = offs_m % S\n        out_ptrs = (OUT_ptr + b[:, None] * stride_ob + pid_h * stride_oh\n                    + s[:, None] * stride_os + offs_d[None, :] * stride_od)\n        tl.store(out_ptrs, acc.to(tl.bfloat16), mask=mask_m[:, None])\n\n\ndef _cublas_path(hidden_states, v_proj_weight, B, S):\n    # cuBLAS bf16 GEMM at/near peak; view+transpose fold away for free (no copy).\n    vp = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return vp.view(B, S, 8, 128).transpose(1, 2)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    B, S, Hn = hidden_states.shape\n    M = B * S\n\n    # Compute-bound tail (and any non-Triton env): cuBLAS is best here.\n    if (not _HAVE_TRITON) or M > 512 or M == 0:\n        return _cublas_path(hidden_states, v_proj_weight, B, S)\n\n    # ---- small-T fused path: tile M to spread the cold weight read over SMs ----\n    K = Hn                                    # 5120\n    HEAD_DIM = 128\n    BLOCK_K = 64\n    # Target ~32 CTAs (= num_m * 8 heads, num_m~4): ~4x cuBLAS's SM count without\n    # the L2 weight re-read exploding. Bigger BLOCK_M for bigger M keeps num_m~4.\n    if M <= 128:\n        BLOCK_M, num_warps = 32, 4\n    elif M <= 256:\n        BLOCK_M, num_warps = 64, 4\n    else:                                     # 256 < M <= 512\n        BLOCK_M, num_warps = 128, 8\n\n    a = hidden_states.reshape(M, K)           # contiguous view of hidden\n    out = torch.empty((B, 8, S, HEAD_DIM), dtype=hidden_states.dtype,\n                      device=hidden_states.device)\n\n    num_m = triton.cdiv(M, BLOCK_M)\n    stride_am, stride_ak = a.stride()\n    stride_wn, stride_wk = v_proj_weight.stride()\n    stride_ob, stride_oh, stride_os, stride_od = out.stride()\n\n    _vproj_fused[(num_m, 8)](\n        a, v_proj_weight, out,\n        M, S, K,\n        stride_am, stride_ak,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM, BLOCK_M, BLOCK_K,\n        num_warps=num_warps, num_stages=4,\n    )\n    return out\n"
+      }
+    ]
+  }
+}

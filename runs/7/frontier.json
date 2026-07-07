@@ -1,0 +1,70 @@
+{
+  "task_id": 7,
+  "family": "elementwise",
+  "name": "elementwise_7",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "298bd0219287",
+  "best_score": 0.5982327807528593,
+  "best_score_cal": 0.5542493985702884,
+  "members": [
+    {
+      "cand_id": "298bd0219287",
+      "sol_score": 0.5982327807528593,
+      "sol_score_cal": 0.5542493985702884,
+      "all_passed": true,
+      "shapes_won": 11,
+      "vector": [
+        0.6401440144014401,
+        0.5643110277256619,
+        0.5904487759767113,
+        0.5662678730819994,
+        0.6109573292999823,
+        0.6611075716123874,
+        0.5710648142641743,
+        0.6318312559923298,
+        0.5721572126445622,
+        0.5936789959725783,
+        0.5677635117203738,
+        0.5536024702117391,
+        0.6152988380671961,
+        0.6319261080255343,
+        0.5659490067745692,
+        0.6352156862745099
+      ],
+      "strategy": "cuFFT rfft (same lib as reference) + one fused Triton epilogue (divide-by-2L and split real/imag into two contiguous fp3",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/298bd0219287.json"
+    },
+    {
+      "cand_id": "f34cd44ef0ed",
+      "sol_score": 0.5979236552843665,
+      "sol_score_cal": 0.5539317021043366,
+      "all_passed": true,
+      "shapes_won": 5,
+      "vector": [
+        0.6406052963430013,
+        0.5640657019546587,
+        0.5901989376106656,
+        0.566224113899852,
+        0.6099217262534378,
+        0.6595256788923368,
+        0.571232435510119,
+        0.631521129394166,
+        0.572470336330769,
+        0.5922363342049558,
+        0.5675644584333394,
+        0.552937928065163,
+        0.6154315309213563,
+        0.6323355233187896,
+        0.5658827390874626,
+        0.6346246143297908
+      ],
+      "strategy": "cuFFT rfft for numerical equivalence, with a specialized Triton epilogue that multiplies by 1/(2L) and splits real/imag ",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/f34cd44ef0ed.json"
+    }
+  ]
+}

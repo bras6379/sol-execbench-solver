@@ -1,0 +1,148 @@
+{
+  "cand_id": "76541cebc106",
+  "task_id": 231,
+  "verdict": "entered",
+  "sol_score": 0.5465838841891919,
+  "correct": true,
+  "vector": [
+    0.5111111111111111,
+    0.49993176855895194,
+    0.5228426395939086,
+    0.5229591836734694,
+    0.5337078651685393,
+    0.6250801939574785,
+    0.623868778280543,
+    0.5331695331695332
+  ],
+  "strategy": "Fused Triton kernel: one block per row with parallel reduction for mean-of-squares, rsqrt, and fused scaling by inv_rms*",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "8bc0dc7a7eec",
+  "trajectory": "runs/231/work/76541cebc106/trajectory.jsonl",
+  "gpu_s": 5.965,
+  "job_id": "231-76541cebc106",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 26.0,
+      "power_w_max": 245.95,
+      "samples": 15,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.003568,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003712,
+      "sol_score": 0.5111111111111111,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0040645,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.004063499999999999,
+      "sol_score": 0.49993176855895194,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.003408,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003696,
+      "sol_score": 0.5228426395939086,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.003392,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00368,
+      "sol_score": 0.5229591836734694,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.003488,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.00392,
+      "sol_score": 0.5337078651685393,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0168645,
+      "sol_ms": 0.0043,
+      "baseline_latency_ms": 0.025248,
+      "sol_score": 0.6250801939574785,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.01424,
+      "sol_ms": 0.0036,
+      "baseline_latency_ms": 0.021248,
+      "sol_score": 0.623868778280543,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0034400000000000003,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003872,
+      "sol_score": 0.5331695331695332,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef rmsnorm_kernel(\n    hidden_states_ptr,\n    weight_ptr,\n    output_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Fused RMSNorm kernel.\n\n    Grid: (batch_size,) - one block per row\n    Block: BLOCK_SIZE threads\n\n    Each block computes:\n    1. Load hidden_states[batch_idx, :] and weight[:]\n    2. Compute mean-of-squares via parallel reduction\n    3. Compute rsqrt(mean_sq + eps)\n    4. Scale and write output\n    \"\"\"\n    batch_idx = tl.program_id(0)\n    tid = tl.arange(0, BLOCK_SIZE)\n\n    # Accumulate sum of squares across all iterations\n    sum_sq = 0.0\n\n    # Process all elements in parallel, with grid-stride loop\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        # Load hidden_states[batch_idx, idx] as float32\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n\n        # Accumulate sum of squares (scalar reduction)\n        sum_sq += tl.sum(x * x)\n\n    # Compute mean and rsqrt\n    mean_sq = sum_sq / hidden_size\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Second pass: load, scale, and write output\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        # Load hidden_states and weight\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n        w = tl.load(weight_ptr + idx, mask=mask, other=0.0).to(tl.float32)\n\n        # Compute output: (x * inv_rms) * w\n        out = (x * inv_rms) * w\n\n        # Write output, converting back to bfloat16\n        output_offset = batch_idx * hidden_size + idx\n        tl.store(output_ptr + output_offset, out.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, weight):\n    \"\"\"\n    RMSNorm kernel entry point.\n\n    Args:\n        hidden_states: [batch_size, 512] in bfloat16\n        weight: [512] in bfloat16\n\n    Returns:\n        output: [batch_size, 512] in bfloat16\n    \"\"\"\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 512\n\n    EPS = 1e-6\n\n    # Allocate output tensor\n    output = torch.empty_like(hidden_states)\n\n    # Determine block size\n    BLOCK_SIZE = 256\n\n    # Launch kernel: one block per batch element\n    grid = (batch_size,)\n    rmsnorm_kernel[grid](\n        hidden_states,\n        weight,\n        output,\n        batch_size,\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t231_76541cebc106",
+    "definition": "022_rmsnorm_h512",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef rmsnorm_kernel(\n    hidden_states_ptr,\n    weight_ptr,\n    output_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Fused RMSNorm kernel.\n\n    Grid: (batch_size,) - one block per row\n    Block: BLOCK_SIZE threads\n\n    Each block computes:\n    1. Load hidden_states[batch_idx, :] and weight[:]\n    2. Compute mean-of-squares via parallel reduction\n    3. Compute rsqrt(mean_sq + eps)\n    4. Scale and write output\n    \"\"\"\n    batch_idx = tl.program_id(0)\n    tid = tl.arange(0, BLOCK_SIZE)\n\n    # Accumulate sum of squares across all iterations\n    sum_sq = 0.0\n\n    # Process all elements in parallel, with grid-stride loop\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        # Load hidden_states[batch_idx, idx] as float32\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n\n        # Accumulate sum of squares (scalar reduction)\n        sum_sq += tl.sum(x * x)\n\n    # Compute mean and rsqrt\n    mean_sq = sum_sq / hidden_size\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Second pass: load, scale, and write output\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        # Load hidden_states and weight\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n        w = tl.load(weight_ptr + idx, mask=mask, other=0.0).to(tl.float32)\n\n        # Compute output: (x * inv_rms) * w\n        out = (x * inv_rms) * w\n\n        # Write output, converting back to bfloat16\n        output_offset = batch_idx * hidden_size + idx\n        tl.store(output_ptr + output_offset, out.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, weight):\n    \"\"\"\n    RMSNorm kernel entry point.\n\n    Args:\n        hidden_states: [batch_size, 512] in bfloat16\n        weight: [512] in bfloat16\n\n    Returns:\n        output: [batch_size, 512] in bfloat16\n    \"\"\"\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 512\n\n    EPS = 1e-6\n\n    # Allocate output tensor\n    output = torch.empty_like(hidden_states)\n\n    # Determine block size\n    BLOCK_SIZE = 256\n\n    # Launch kernel: one block per batch element\n    grid = (batch_size,)\n    rmsnorm_kernel[grid](\n        hidden_states,\n        weight,\n        output,\n        batch_size,\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

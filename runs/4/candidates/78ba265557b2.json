@@ -1,0 +1,245 @@
+{
+  "cand_id": "78ba265557b2",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": 0.7824591577545893,
+  "sol_score_calibrated": 0.6965046422187957,
+  "correct": true,
+  "vector": [
+    0.8865193033236397,
+    0.7469539375928678,
+    0.885740788737774,
+    0.7419497784342688,
+    0.8430975919584668,
+    0.8456405048600029,
+    0.8865847414234511,
+    0.7183550456931752,
+    0.6475012130033965,
+    0.714242848569714,
+    0.7222222222222222,
+    0.8861873113985906,
+    0.7441505171248415,
+    0.666486193827829,
+    0.7421690307328606,
+    0.8415454951703275
+  ],
+  "strategy": "bf16 cuBLAS tensor-core wgrad+dgrad with a zero-copy transposed dgrad view; overlap the two independent GEMMs on two CUD",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "5eef7e4f28f4",
+  "trajectory": "runs/4/work/78ba265557b2/trajectory.jsonl",
+  "gpu_s": 8.184,
+  "job_id": "4-78ba265557b2",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 310.76,
+      "samples": 23,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0887675,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.8865193033236397,
+      "sol_score_cal": 0.7685374435834517,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.033024,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7469539375928678,
+      "sol_score_cal": 0.6689893430144045,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.088864,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.885740788737774,
+      "sol_score_cal": 0.7678407589251292,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.033376,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7419497784342688,
+      "sol_score_cal": 0.6641825384652003,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0496635,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8430975919584668,
+      "sol_score_cal": 0.7459131629079454,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.049472,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8456405048600029,
+      "sol_score_cal": 0.7484392154292363,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.088704,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.8865847414234511,
+      "sol_score_cal": 0.7682035173649933,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.021488,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.7183550456931752,
+      "sol_score_cal": 0.653507484071363,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.014624,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.6475012130033965,
+      "sol_score_cal": 0.5971825691604091,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.021328,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.714242848569714,
+      "sol_score_cal": 0.6485285730373407,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.02128,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.7222222222222222,
+      "sol_score_cal": 0.657347504621072,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.088784,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.8861873113985906,
+      "sol_score_cal": 0.7680670579709091,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.033216,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.7441505171248415,
+      "sol_score_cal": 0.6662821078685771,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.017728,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.666486193827829,
+      "sol_score_cal": 0.612039439442644,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.03336,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7421690307328606,
+      "sol_score_cal": 0.6643916246709786,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.049824,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8415454951703275,
+      "sol_score_cal": 0.7446219349670767,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Reused across calls so we never pay stream-creation overhead inside `run`.\n_side_stream = None\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    # Backward of: transpose(B,H,S,D)->(B,S,H,D), reshape ->(B,S,H*D), y = x @ W^T.\n    #   grad_weight      = grad_output^T @ reshaped     (2048x2048, reduce over M)\n    #   grad_attn_output = (grad_output @ W) reshaped+transposed back to (B,H,S,D)\n    #\n    # Both GEMMs run directly in bf16 on the tensor cores (fp32 accumulate) \u2014\n    # the reference's .to(float32) is pure waste since the operands are already\n    # bf16, so bf16-TC reproduces the fp32 result within bf16 rounding. The final\n    # transpose is returned as a zero-copy strided view (never materialized).\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n    go2d_t = go2d.transpose(0, 1)\n\n    # wgrad (2048x2048 out) and dgrad (Mx2048 out) are independent. For large,\n    # compute-bound token counts the B200 co-schedules them across two streams\n    # so each fills the other's wave-quantization / epilogue tails (~4-5% win,\n    # measured reliable at M>=4096). At smaller M the second stream only adds\n    # launch/scheduling contention and hurts, so run those single-stream.\n    if M >= 3000:\n        global _side_stream\n        if _side_stream is None:\n            _side_stream = torch.cuda.Stream()\n        cur = torch.cuda.current_stream()\n        _side_stream.wait_stream(cur)          # order after any pending input work\n        with torch.cuda.stream(_side_stream):\n            grad_reshaped_2d = go2d.mm(weight)  # dgrad on the side stream\n        grad_weight = go2d_t.mm(rs2d)           # wgrad on the current stream\n        cur.wait_stream(_side_stream)           # current waits for dgrad to finish\n    else:\n        grad_weight = go2d_t.mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_78ba265557b2",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Reused across calls so we never pay stream-creation overhead inside `run`.\n_side_stream = None\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    # Backward of: transpose(B,H,S,D)->(B,S,H,D), reshape ->(B,S,H*D), y = x @ W^T.\n    #   grad_weight      = grad_output^T @ reshaped     (2048x2048, reduce over M)\n    #   grad_attn_output = (grad_output @ W) reshaped+transposed back to (B,H,S,D)\n    #\n    # Both GEMMs run directly in bf16 on the tensor cores (fp32 accumulate) \u2014\n    # the reference's .to(float32) is pure waste since the operands are already\n    # bf16, so bf16-TC reproduces the fp32 result within bf16 rounding. The final\n    # transpose is returned as a zero-copy strided view (never materialized).\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n    go2d_t = go2d.transpose(0, 1)\n\n    # wgrad (2048x2048 out) and dgrad (Mx2048 out) are independent. For large,\n    # compute-bound token counts the B200 co-schedules them across two streams\n    # so each fills the other's wave-quantization / epilogue tails (~4-5% win,\n    # measured reliable at M>=4096). At smaller M the second stream only adds\n    # launch/scheduling contention and hurts, so run those single-stream.\n    if M >= 3000:\n        global _side_stream\n        if _side_stream is None:\n            _side_stream = torch.cuda.Stream()\n        cur = torch.cuda.current_stream()\n        _side_stream.wait_stream(cur)          # order after any pending input work\n        with torch.cuda.stream(_side_stream):\n            grad_reshaped_2d = go2d.mm(weight)  # dgrad on the side stream\n        grad_weight = go2d_t.mm(rs2d)           # wgrad on the current stream\n        cur.wait_stream(_side_stream)           # current waits for dgrad to finish\n    else:\n        grad_weight = go2d_t.mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}

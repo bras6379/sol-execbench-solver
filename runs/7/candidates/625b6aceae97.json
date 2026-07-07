@@ -1,0 +1,245 @@
+{
+  "cand_id": "625b6aceae97",
+  "task_id": 7,
+  "verdict": "dominated",
+  "sol_score": 0.5866504504281312,
+  "sol_score_calibrated": 0.542363959921433,
+  "correct": true,
+  "vector": [
+    0.6196201428820352,
+    0.560224344037865,
+    0.5807662496556937,
+    0.5509595401482525,
+    0.60643220731143,
+    0.6291730074186799,
+    0.5721164256056258,
+    0.6090435723463247,
+    0.5727210821502021,
+    0.5901809707352444,
+    0.5551642285060789,
+    0.5451024447407393,
+    0.5987738709941808,
+    0.6088583905177791,
+    0.5656991491056023,
+    0.6215715806943659
+  ],
+  "strategy": "cuFFT rfft (same lib as reference) + one fused Triton epilogue (divide-by-2L, de-interleave real/imag into two contiguou",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "298bd0219287",
+  "trajectory": "runs/7/work/625b6aceae97/trajectory.jsonl",
+  "gpu_s": 8.585,
+  "job_id": "7-625b6aceae97",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 34.0,
+      "power_w_max": 428.88,
+      "samples": 24,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.036928,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.058896,
+      "sol_score": 0.6196201428820352,
+      "sol_score_cal": 0.575635530115645,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.15268700000000002,
+      "sol_ms": 0.005,
+      "baseline_latency_ms": 0.1931365,
+      "sol_score": 0.560224344037865,
+      "sol_score_cal": 0.5156769504204418,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0334235,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.046032,
+      "sol_score": 0.5807662496556937,
+      "sol_score_cal": 0.537071047052184,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.590909,
+      "sol_ms": 0.0206,
+      "baseline_latency_ms": 0.7203525,
+      "sol_score": 0.5509595401482525,
+      "sol_score_cal": 0.5062107954341952,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.077344,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.117824,
+      "sol_score": 0.60643220731143,
+      "sol_score_cal": 0.5629313118753886,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0160955,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0269605,
+      "sol_score": 0.6291730074186799,
+      "sol_score_cal": 0.5865233620187195,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 1.362219,
+      "sol_ms": 0.1054,
+      "baseline_latency_ms": 1.785873,
+      "sol_score": 0.5721164256056258,
+      "sol_score_cal": 0.5257863784135007,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.026416000000000002,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0409285,
+      "sol_score": 0.6090435723463247,
+      "sol_score_cal": 0.5663288875871707,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.33886249999999996,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.4451199999999999,
+      "sol_score": 0.5727210821502021,
+      "sol_score_cal": 0.5263367271351571,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.109087,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.1556,
+      "sol_score": 0.5901809707352444,
+      "sol_score_cal": 0.5462764137836378,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.3004625,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.3725279999999999,
+      "sol_score": 0.5551642285060789,
+      "sol_score_cal": 0.5105434893748524,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.1055995,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.1251515,
+      "sol_score": 0.5451024447407393,
+      "sol_score_cal": 0.49891918754015924,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.06299199999999999,
+      "sol_ms": 0.0018,
+      "baseline_latency_ms": 0.0931205,
+      "sol_score": 0.5987738709941808,
+      "sol_score_cal": 0.5552040120383525,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.020864,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.032032,
+      "sol_score": 0.6088583905177791,
+      "sol_score_cal": 0.5651811359214306,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.24910300000000002,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.320385,
+      "sol_score": 0.5656991491056023,
+      "sol_score_cal": 0.5203049478502311,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0202235,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.032896,
+      "sol_score": 0.6215715806943659,
+      "sol_score_cal": 0.5788931821818623,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# ---------------------------------------------------------------------------\n# Problem 007: hyena_fft_size_padding_rfft  (NVIDIA B200)\n#\n# reference:  x_freq = rfft(x.float(), n=2*seqlen) / (2*seqlen)\n#             return x_freq.real.contiguous(), x_freq.imag.contiguous()\n#\n# The op is a batched real FFT (cuFFT R2C -- exactly what the reference's\n# torch.fft.rfft calls under the hood) followed by a trivial pointwise\n# epilogue: divide by fft_size and split the complex output into two\n# contiguous fp32 tensors.\n#\n# Levers (per DESIGN.md / kb/library-playbook.md \"cuFFT + custom gating fusion\"):\n#\n#   1. FUSE the epilogue.  The reference performs (divide, real-split,\n#      imag-split) as three separate strided kernels over the complex output.\n#      We do it in ONE Triton pass -> one read of the complex array, two\n#      contiguous writes = minimum HBM traffic for the post-FFT stage.\n#\n#   2. COLLAPSE LAUNCHES.  ~11 of the 16 scored workloads are launch-overhead\n#      bound (real work is microseconds; the eager baseline spends tens of us\n#      on ~5 separate launches, and for the 10 PRIME sizes cuFFT uses Bluestein\n#      which itself dispatches many kernels).  For those shapes we capture the\n#      rfft in a CUDA graph and replay it, bundling all of cuFFT's internal\n#      kernels into a single graph launch.\n#\n#      IMPORTANT: only the rfft is captured.  The epilogue runs OUTSIDE the\n#      graph and writes to FRESHLY allocated output tensors on every call, so\n#      we never hand back a reused static graph buffer (doing so silently\n#      corrupts results when the grader keeps/compares outputs across calls).\n#\n#   3. Large memory-bound shapes (idx 6/8/14 etc.) skip the graph: copying the\n#      big input into the graph's static buffer would add a wasteful full HBM\n#      round-trip that outweighs the launch savings.  They run the fused path\n#      directly.\n#\n# Numerics: identical cuFFT to the reference, and we DIVIDE by float(2*seqlen)\n# (2*seqlen <= 65536, exactly representable in fp32) -- (a+bi)/N has real part\n# a/N, matching xf.real/N bit-for-bit -> passes the tight 1e-5 tolerance\n# trivially.\n# ---------------------------------------------------------------------------\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n    @triton.jit\n    def _split_scale_kernel(cplx_ptr, out_r_ptr, out_i_ptr, n_elem, scale,\n                            BLOCK: tl.constexpr):\n        # cplx_ptr points at the rfft output reinterpreted as interleaved fp32\n        # pairs [re0, im0, re1, im1, ...].  For complex element k:\n        #   real = cplx[2k], imag = cplx[2k+1].\n        # The two strided loads together touch every float once (cache-line\n        # efficient), then write the de-interleaved, scaled halves contiguously.\n        pid = tl.program_id(0)\n        offs = pid * BLOCK + tl.arange(0, BLOCK)\n        mask = offs < n_elem\n        base = offs * 2\n        r = tl.load(cplx_ptr + base, mask=mask, other=0.0)\n        i = tl.load(cplx_ptr + base + 1, mask=mask, other=0.0)\n        tl.store(out_r_ptr + offs, r / scale, mask=mask)\n        tl.store(out_i_ptr + offs, i / scale, mask=mask)\n\n\n_BLOCK = 1024\n\n# Use the CUDA-graph fast path when the input fits under this budget: below it\n# the launch savings dominate the input-copy cost.  Prime (Bluestein) sizes get\n# a larger budget because their many-kernel dispatch benefits far more from\n# graph capture and stays worth it even at larger byte counts.\n_GRAPH_BYTES_LIMIT = 52 * 1024 * 1024\n_BLUESTEIN_BYTES_LIMIT = 160 * 1024 * 1024\n\n_cache = {}\n_triton_checked = False\n_triton_ok = _HAS_TRITON\n\n\ndef _max_prime_factor(n):\n    \"\"\"Largest prime factor of n (n <= 65536).  cuFFT falls back to Bluestein\n    for transform sizes with a large prime factor -> those dispatch many\n    kernels and gain the most from graph capture.\"\"\"\n    m = 1\n    d = 2\n    while d * d <= n:\n        while n % d == 0:\n            m = d\n            n //= d\n        d += 1\n    if n > 1:\n        m = n if n > m else m\n    return m\n\n\ndef _check_triton(device):\n    \"\"\"One-time validation that the Triton epilogue matches torch on this GPU.\"\"\"\n    global _triton_checked, _triton_ok\n    if _triton_checked:\n        return\n    _triton_checked = True\n    if not _HAS_TRITON:\n        _triton_ok = False\n        return\n    try:\n        t = torch.randn(2, 3, 5, device=device, dtype=torch.float32)\n        xf = torch.fft.rfft(t, n=10)\n        B, C, F = xf.shape\n        orr = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        oii = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        n_elem = B * C * F\n        grid = ((n_elem + _BLOCK - 1) // _BLOCK,)\n        _split_scale_kernel[grid](torch.view_as_real(xf), orr, oii,\n                                  n_elem, 10.0, BLOCK=_BLOCK)\n        ref_r = xf.real / 10.0\n        ref_i = xf.imag / 10.0\n        if not (torch.allclose(orr, ref_r, atol=1e-6, rtol=1e-5) and\n                torch.allclose(oii, ref_i, atol=1e-6, rtol=1e-5)):\n            _triton_ok = False\n    except Exception:\n        _triton_ok = False\n\n\ndef _epilogue(xf, B, C, F, scale, out_r, out_i):\n    \"\"\"Scale by `scale` and split complex `xf` into contiguous out_r / out_i.\"\"\"\n    xr = torch.view_as_real(xf)  # (B, C, F, 2) fp32, shares xf's storage\n    if _triton_ok:\n        n_elem = B * C * F\n        grid = ((n_elem + _BLOCK - 1) // _BLOCK,)\n        _split_scale_kernel[grid](xr, out_r, out_i, n_elem, scale, BLOCK=_BLOCK)\n    else:\n        torch.div(xr[..., 0], scale, out=out_r)\n        torch.div(xr[..., 1], scale, out=out_i)\n\n\ndef _torch_ref(x):\n    \"\"\"Exact reference path (CPU fallback + graph validation).\"\"\"\n    seqlen = x.shape[2]\n    N = 2 * seqlen\n    xf = torch.fft.rfft(x.to(torch.float32), n=N)\n    xf = xf / N\n    return xf.real.contiguous(), xf.imag.contiguous()\n\n\ndef _make_direct(B, C, seqlen, device):\n    \"\"\"Fused path with no graph: rfft(x) + one Triton epilogue -> fresh out.\"\"\"\n    N = 2 * seqlen\n    F = seqlen + 1\n    scale = float(N)\n\n    def execute(x):\n        xf = torch.fft.rfft(x, n=N)\n        out_r = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        out_i = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        _epilogue(xf, B, C, F, scale, out_r, out_i)\n        return out_r, out_i\n\n    return execute\n\n\ndef _make_graph(x, B, C, seqlen):\n    \"\"\"Capture the rfft in a CUDA graph (bundles cuFFT's internal kernels into a\n    single replay), then run a FRESH epilogue outside the graph so every call\n    returns freshly-allocated, non-aliased outputs.  Raises on any failure so\n    the caller can fall back to the direct path.\"\"\"\n    N = 2 * seqlen\n    F = seqlen + 1\n    scale = float(N)\n    dev = x.device\n\n    static_in = torch.empty((B, C, seqlen), device=dev, dtype=torch.float32)\n    static_in.copy_(x)\n\n    # Warm up on a side stream so the cuFFT plan + workspace are built and\n    # cached before capture (capture itself must not plan/allocate lazily).\n    s = torch.cuda.Stream()\n    s.wait_stream(torch.cuda.current_stream())\n    with torch.cuda.stream(s):\n        for _ in range(3):\n            _ = torch.fft.rfft(static_in, n=N)\n    torch.cuda.current_stream().wait_stream(s)\n\n    g = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(g):\n        xf = torch.fft.rfft(static_in, n=N)\n    # xf is backed by the graph's private pool; on each g.replay() its storage\n    # is overwritten with the new transform.  We keep the reference alive via\n    # the returned closure so the pool memory is never reclaimed.\n\n    def execute(x):\n        static_in.copy_(x)\n        g.replay()\n        out_r = torch.empty((B, C, F), device=dev, dtype=torch.float32)\n        out_i = torch.empty((B, C, F), device=dev, dtype=torch.float32)\n        _epilogue(xf, B, C, F, scale, out_r, out_i)\n        return out_r, out_i\n\n    # Validate the full captured path against the reference once (untimed).\n    r, i = execute(x)\n    torch.cuda.synchronize()\n    ref_r, ref_i = _torch_ref(x)\n    if not (torch.allclose(r, ref_r, atol=1e-5, rtol=1e-5) and\n            torch.allclose(i, ref_i, atol=1e-5, rtol=1e-5)):\n        raise RuntimeError(\"cuda graph output mismatch\")\n\n    return execute\n\n\ndef _setup(x, B, C, seqlen):\n    \"\"\"Build the per-shape execution plan (first call only).  All the risky\n    graph-capture logic lives here, behind try/except, so the returned hot path\n    is a clean, exception-free dispatch.\"\"\"\n    bytes_in = B * C * seqlen * 4\n    use_graph = bytes_in <= _GRAPH_BYTES_LIMIT\n    if not use_graph and _max_prime_factor(seqlen) > 127:\n        use_graph = bytes_in <= _BLUESTEIN_BYTES_LIMIT\n    if use_graph:\n        try:\n            return _make_graph(x, B, C, seqlen)\n        except Exception:\n            pass\n    return _make_direct(B, C, seqlen, x.device)\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor):\n    if not x.is_cuda:\n        return _torch_ref(x)\n\n    if x.dtype != torch.float32:\n        x = x.to(torch.float32)\n\n    _check_triton(x.device)\n\n    B, C, seqlen = x.shape\n    key = (B, C, seqlen, x.device)\n    execute = _cache.get(key)\n    if execute is None:\n        execute = _setup(x, B, C, seqlen)\n        _cache[key] = execute\n\n    return execute(x)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t7_625b6aceae97",
+    "definition": "007_hyena_fft_size_padding_rfft",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# ---------------------------------------------------------------------------\n# Problem 007: hyena_fft_size_padding_rfft  (NVIDIA B200)\n#\n# reference:  x_freq = rfft(x.float(), n=2*seqlen) / (2*seqlen)\n#             return x_freq.real.contiguous(), x_freq.imag.contiguous()\n#\n# The op is a batched real FFT (cuFFT R2C -- exactly what the reference's\n# torch.fft.rfft calls under the hood) followed by a trivial pointwise\n# epilogue: divide by fft_size and split the complex output into two\n# contiguous fp32 tensors.\n#\n# Levers (per DESIGN.md / kb/library-playbook.md \"cuFFT + custom gating fusion\"):\n#\n#   1. FUSE the epilogue.  The reference performs (divide, real-split,\n#      imag-split) as three separate strided kernels over the complex output.\n#      We do it in ONE Triton pass -> one read of the complex array, two\n#      contiguous writes = minimum HBM traffic for the post-FFT stage.\n#\n#   2. COLLAPSE LAUNCHES.  ~11 of the 16 scored workloads are launch-overhead\n#      bound (real work is microseconds; the eager baseline spends tens of us\n#      on ~5 separate launches, and for the 10 PRIME sizes cuFFT uses Bluestein\n#      which itself dispatches many kernels).  For those shapes we capture the\n#      rfft in a CUDA graph and replay it, bundling all of cuFFT's internal\n#      kernels into a single graph launch.\n#\n#      IMPORTANT: only the rfft is captured.  The epilogue runs OUTSIDE the\n#      graph and writes to FRESHLY allocated output tensors on every call, so\n#      we never hand back a reused static graph buffer (doing so silently\n#      corrupts results when the grader keeps/compares outputs across calls).\n#\n#   3. Large memory-bound shapes (idx 6/8/14 etc.) skip the graph: copying the\n#      big input into the graph's static buffer would add a wasteful full HBM\n#      round-trip that outweighs the launch savings.  They run the fused path\n#      directly.\n#\n# Numerics: identical cuFFT to the reference, and we DIVIDE by float(2*seqlen)\n# (2*seqlen <= 65536, exactly representable in fp32) -- (a+bi)/N has real part\n# a/N, matching xf.real/N bit-for-bit -> passes the tight 1e-5 tolerance\n# trivially.\n# ---------------------------------------------------------------------------\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n    @triton.jit\n    def _split_scale_kernel(cplx_ptr, out_r_ptr, out_i_ptr, n_elem, scale,\n                            BLOCK: tl.constexpr):\n        # cplx_ptr points at the rfft output reinterpreted as interleaved fp32\n        # pairs [re0, im0, re1, im1, ...].  For complex element k:\n        #   real = cplx[2k], imag = cplx[2k+1].\n        # The two strided loads together touch every float once (cache-line\n        # efficient), then write the de-interleaved, scaled halves contiguously.\n        pid = tl.program_id(0)\n        offs = pid * BLOCK + tl.arange(0, BLOCK)\n        mask = offs < n_elem\n        base = offs * 2\n        r = tl.load(cplx_ptr + base, mask=mask, other=0.0)\n        i = tl.load(cplx_ptr + base + 1, mask=mask, other=0.0)\n        tl.store(out_r_ptr + offs, r / scale, mask=mask)\n        tl.store(out_i_ptr + offs, i / scale, mask=mask)\n\n\n_BLOCK = 1024\n\n# Use the CUDA-graph fast path when the input fits under this budget: below it\n# the launch savings dominate the input-copy cost.  Prime (Bluestein) sizes get\n# a larger budget because their many-kernel dispatch benefits far more from\n# graph capture and stays worth it even at larger byte counts.\n_GRAPH_BYTES_LIMIT = 52 * 1024 * 1024\n_BLUESTEIN_BYTES_LIMIT = 160 * 1024 * 1024\n\n_cache = {}\n_triton_checked = False\n_triton_ok = _HAS_TRITON\n\n\ndef _max_prime_factor(n):\n    \"\"\"Largest prime factor of n (n <= 65536).  cuFFT falls back to Bluestein\n    for transform sizes with a large prime factor -> those dispatch many\n    kernels and gain the most from graph capture.\"\"\"\n    m = 1\n    d = 2\n    while d * d <= n:\n        while n % d == 0:\n            m = d\n            n //= d\n        d += 1\n    if n > 1:\n        m = n if n > m else m\n    return m\n\n\ndef _check_triton(device):\n    \"\"\"One-time validation that the Triton epilogue matches torch on this GPU.\"\"\"\n    global _triton_checked, _triton_ok\n    if _triton_checked:\n        return\n    _triton_checked = True\n    if not _HAS_TRITON:\n        _triton_ok = False\n        return\n    try:\n        t = torch.randn(2, 3, 5, device=device, dtype=torch.float32)\n        xf = torch.fft.rfft(t, n=10)\n        B, C, F = xf.shape\n        orr = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        oii = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        n_elem = B * C * F\n        grid = ((n_elem + _BLOCK - 1) // _BLOCK,)\n        _split_scale_kernel[grid](torch.view_as_real(xf), orr, oii,\n                                  n_elem, 10.0, BLOCK=_BLOCK)\n        ref_r = xf.real / 10.0\n        ref_i = xf.imag / 10.0\n        if not (torch.allclose(orr, ref_r, atol=1e-6, rtol=1e-5) and\n                torch.allclose(oii, ref_i, atol=1e-6, rtol=1e-5)):\n            _triton_ok = False\n    except Exception:\n        _triton_ok = False\n\n\ndef _epilogue(xf, B, C, F, scale, out_r, out_i):\n    \"\"\"Scale by `scale` and split complex `xf` into contiguous out_r / out_i.\"\"\"\n    xr = torch.view_as_real(xf)  # (B, C, F, 2) fp32, shares xf's storage\n    if _triton_ok:\n        n_elem = B * C * F\n        grid = ((n_elem + _BLOCK - 1) // _BLOCK,)\n        _split_scale_kernel[grid](xr, out_r, out_i, n_elem, scale, BLOCK=_BLOCK)\n    else:\n        torch.div(xr[..., 0], scale, out=out_r)\n        torch.div(xr[..., 1], scale, out=out_i)\n\n\ndef _torch_ref(x):\n    \"\"\"Exact reference path (CPU fallback + graph validation).\"\"\"\n    seqlen = x.shape[2]\n    N = 2 * seqlen\n    xf = torch.fft.rfft(x.to(torch.float32), n=N)\n    xf = xf / N\n    return xf.real.contiguous(), xf.imag.contiguous()\n\n\ndef _make_direct(B, C, seqlen, device):\n    \"\"\"Fused path with no graph: rfft(x) + one Triton epilogue -> fresh out.\"\"\"\n    N = 2 * seqlen\n    F = seqlen + 1\n    scale = float(N)\n\n    def execute(x):\n        xf = torch.fft.rfft(x, n=N)\n        out_r = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        out_i = torch.empty((B, C, F), device=device, dtype=torch.float32)\n        _epilogue(xf, B, C, F, scale, out_r, out_i)\n        return out_r, out_i\n\n    return execute\n\n\ndef _make_graph(x, B, C, seqlen):\n    \"\"\"Capture the rfft in a CUDA graph (bundles cuFFT's internal kernels into a\n    single replay), then run a FRESH epilogue outside the graph so every call\n    returns freshly-allocated, non-aliased outputs.  Raises on any failure so\n    the caller can fall back to the direct path.\"\"\"\n    N = 2 * seqlen\n    F = seqlen + 1\n    scale = float(N)\n    dev = x.device\n\n    static_in = torch.empty((B, C, seqlen), device=dev, dtype=torch.float32)\n    static_in.copy_(x)\n\n    # Warm up on a side stream so the cuFFT plan + workspace are built and\n    # cached before capture (capture itself must not plan/allocate lazily).\n    s = torch.cuda.Stream()\n    s.wait_stream(torch.cuda.current_stream())\n    with torch.cuda.stream(s):\n        for _ in range(3):\n            _ = torch.fft.rfft(static_in, n=N)\n    torch.cuda.current_stream().wait_stream(s)\n\n    g = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(g):\n        xf = torch.fft.rfft(static_in, n=N)\n    # xf is backed by the graph's private pool; on each g.replay() its storage\n    # is overwritten with the new transform.  We keep the reference alive via\n    # the returned closure so the pool memory is never reclaimed.\n\n    def execute(x):\n        static_in.copy_(x)\n        g.replay()\n        out_r = torch.empty((B, C, F), device=dev, dtype=torch.float32)\n        out_i = torch.empty((B, C, F), device=dev, dtype=torch.float32)\n        _epilogue(xf, B, C, F, scale, out_r, out_i)\n        return out_r, out_i\n\n    # Validate the full captured path against the reference once (untimed).\n    r, i = execute(x)\n    torch.cuda.synchronize()\n    ref_r, ref_i = _torch_ref(x)\n    if not (torch.allclose(r, ref_r, atol=1e-5, rtol=1e-5) and\n            torch.allclose(i, ref_i, atol=1e-5, rtol=1e-5)):\n        raise RuntimeError(\"cuda graph output mismatch\")\n\n    return execute\n\n\ndef _setup(x, B, C, seqlen):\n    \"\"\"Build the per-shape execution plan (first call only).  All the risky\n    graph-capture logic lives here, behind try/except, so the returned hot path\n    is a clean, exception-free dispatch.\"\"\"\n    bytes_in = B * C * seqlen * 4\n    use_graph = bytes_in <= _GRAPH_BYTES_LIMIT\n    if not use_graph and _max_prime_factor(seqlen) > 127:\n        use_graph = bytes_in <= _BLUESTEIN_BYTES_LIMIT\n    if use_graph:\n        try:\n            return _make_graph(x, B, C, seqlen)\n        except Exception:\n            pass\n    return _make_direct(B, C, seqlen, x.device)\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor):\n    if not x.is_cuda:\n        return _torch_ref(x)\n\n    if x.dtype != torch.float32:\n        x = x.to(torch.float32)\n\n    _check_triton(x.device)\n\n    B, C, seqlen = x.shape\n    key = (B, C, seqlen, x.device)\n    execute = _cache.get(key)\n    if execute is None:\n        execute = _setup(x, B, C, seqlen)\n        _cache[key] = execute\n\n    return execute(x)\n"
+      }
+    ]
+  }
+}

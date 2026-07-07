@@ -1,0 +1,245 @@
+{
+  "cand_id": "1c8754ea74bb",
+  "task_id": 8,
+  "verdict": "entered",
+  "sol_score": 0.8128592608638192,
+  "sol_score_calibrated": 0.7829500322980243,
+  "correct": true,
+  "vector": [
+    0.8277618805658813,
+    0.8292740076615269,
+    0.7891680267545134,
+    0.8284994159099367,
+    0.8287432224069632,
+    0.7876230661040788,
+    0.8296185165079208,
+    0.8183166058394161,
+    0.8162407722884725,
+    0.782135523613963,
+    0.8160776640252537,
+    0.8284256169129225,
+    0.787511140680115,
+    0.7796495956873315,
+    0.8286307872884849,
+    0.8280723315743267
+  ],
+  "strategy": "Fused single-kernel Triton scatter-add: seed output=fhs.clone(), then stream expert_outputs once coalesced (128-bit vect",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "679516c76501",
+  "trajectory": "runs/8/work/1c8754ea74bb/trajectory.jsonl",
+  "gpu_s": 7.642,
+  "job_id": "8-1c8754ea74bb",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 31.0,
+      "power_w_max": 312.09,
+      "samples": 21,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0487835,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2203675,
+      "sol_score": 0.8277618805658813,
+      "sol_score_cal": 0.7994524681797771,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.050896,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.2321755,
+      "sol_score": 0.8292740076615269,
+      "sol_score_cal": 0.8011304345934015,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.011328,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.0402075,
+      "sol_score": 0.7891680267545134,
+      "sol_score_cal": 0.7565588269964073,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.185855,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846127,
+      "sol_score": 0.8284994159099367,
+      "sol_score_cal": 0.8003762780816528,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.049072000000000005,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2232635,
+      "sol_score": 0.8287432224069632,
+      "sol_score_cal": 0.8005693738309871,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.018112,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.06392,
+      "sol_score": 0.7876230661040788,
+      "sol_score_cal": 0.7549960709388146,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.093311,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.427264,
+      "sol_score": 0.8296185165079208,
+      "sol_score_cal": 0.8015653663888069,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.027488,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.1168,
+      "sol_score": 0.8183166058394161,
+      "sol_score_cal": 0.7889453093215401,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.027888000000000003,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.116992,
+      "sol_score": 0.8162407722884725,
+      "sol_score_cal": 0.7866534882779107,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.009088,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.031072,
+      "sol_score": 0.782135523613963,
+      "sol_score_cal": 0.7489421609802903,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0275195,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.115232,
+      "sol_score": 0.8160776640252537,
+      "sol_score_cal": 0.786441441724576,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.086112,
+      "sol_ms": 0.0064,
+      "baseline_latency_ms": 0.3912795,
+      "sol_score": 0.8284256169129225,
+      "sol_score_cal": 0.8002438409858033,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.018127499999999998,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.0639355,
+      "sol_score": 0.787511140680115,
+      "sol_score_cal": 0.754874200167314,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.011264,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.037824,
+      "sol_score": 0.7796495956873315,
+      "sol_score_cal": 0.7460280614876715,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.18585449999999998,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846895,
+      "sol_score": 0.8286307872884849,
+      "sol_score_cal": 0.800523999604231,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.1861275,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.844943,
+      "sol_score": 0.8280723315743267,
+      "sol_score_cal": 0.7998991952092037,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# 008 \u00b7 Expert-output weighted index-add accumulation  (B200)\n#\n# Reference semantics (pure scatter-add, no weight multiply):\n#     output = final_hidden_states.clone()\n#     output.index_add_(0, token_indices, expert_outputs)\n#\n# This is a deeply memory-bound MoE \"combine\": stream `expert_outputs`\n# (8T x 3072 bf16 = 80% of all traffic) exactly once, coalesced, and\n# atomic-add each row into its target token row.  Blackwell has native\n# packed bf16x2 global atomics, so accumulate straight into the bf16\n# output buffer -- no fp32 shadow pass, minimal traffic.\n#\n# Layout: H = 3072 is contiguous per row, so a column-tile of a row is a\n# fully-coalesced 128-bit-vectorizable load and a vectorized atomic store.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _scatter_add_kernel(\n    out_ptr,        # bf16  [T, H]   (pre-seeded with final_hidden_states)\n    eo_ptr,         # bf16  [N, H]   N = 8T\n    idx_ptr,        # int64 [N]      target token row for each eo row, in [0, T)\n    H,\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)     # which expert-output row\n    tile = tl.program_id(1)                  # which column tile of that row\n\n    out_row = tl.load(idx_ptr + row)         # int64 target token row\n\n    col = tile * BLOCK + tl.arange(0, BLOCK)\n    mask = col < H\n\n    eo_off = row * H + col\n    vals = tl.load(eo_ptr + eo_off, mask=mask, other=0.0)\n\n    out_off = out_row * H + col\n    tl.atomic_add(out_ptr + out_off, vals, mask=mask)\n\n\ndef _launch(output, expert_outputs, token_indices, N, H):\n    BLOCK = 1024                              # 3072 = 3 * 1024 -> exact tiling\n    grid = (N, triton.cdiv(H, BLOCK))\n    _scatter_add_kernel[grid](\n        output, expert_outputs, token_indices, H,\n        BLOCK=BLOCK, num_warps=4,\n    )\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    # Seed the output with the accumulation buffer (bandwidth-optimal copy).\n    output = final_hidden_states.clone()\n\n    N, H = expert_outputs.shape\n    if N == 0:\n        return output\n\n    # Contiguity guards are free no-ops when already contiguous.\n    eo = expert_outputs.contiguous()\n    idx = token_indices.contiguous()\n\n    try:\n        _launch(output, eo, idx, N, H)\n    except Exception:\n        # Robust fallback: reproduce reference semantics exactly if the\n        # Triton path fails to compile/run on this stack (e.g. no bf16 atomic).\n        output = final_hidden_states.clone()\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t8_1c8754ea74bb",
+    "definition": "008_expert_output_weighted_index_add_accumulation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# 008 \u00b7 Expert-output weighted index-add accumulation  (B200)\n#\n# Reference semantics (pure scatter-add, no weight multiply):\n#     output = final_hidden_states.clone()\n#     output.index_add_(0, token_indices, expert_outputs)\n#\n# This is a deeply memory-bound MoE \"combine\": stream `expert_outputs`\n# (8T x 3072 bf16 = 80% of all traffic) exactly once, coalesced, and\n# atomic-add each row into its target token row.  Blackwell has native\n# packed bf16x2 global atomics, so accumulate straight into the bf16\n# output buffer -- no fp32 shadow pass, minimal traffic.\n#\n# Layout: H = 3072 is contiguous per row, so a column-tile of a row is a\n# fully-coalesced 128-bit-vectorizable load and a vectorized atomic store.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _scatter_add_kernel(\n    out_ptr,        # bf16  [T, H]   (pre-seeded with final_hidden_states)\n    eo_ptr,         # bf16  [N, H]   N = 8T\n    idx_ptr,        # int64 [N]      target token row for each eo row, in [0, T)\n    H,\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)     # which expert-output row\n    tile = tl.program_id(1)                  # which column tile of that row\n\n    out_row = tl.load(idx_ptr + row)         # int64 target token row\n\n    col = tile * BLOCK + tl.arange(0, BLOCK)\n    mask = col < H\n\n    eo_off = row * H + col\n    vals = tl.load(eo_ptr + eo_off, mask=mask, other=0.0)\n\n    out_off = out_row * H + col\n    tl.atomic_add(out_ptr + out_off, vals, mask=mask)\n\n\ndef _launch(output, expert_outputs, token_indices, N, H):\n    BLOCK = 1024                              # 3072 = 3 * 1024 -> exact tiling\n    grid = (N, triton.cdiv(H, BLOCK))\n    _scatter_add_kernel[grid](\n        output, expert_outputs, token_indices, H,\n        BLOCK=BLOCK, num_warps=4,\n    )\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    # Seed the output with the accumulation buffer (bandwidth-optimal copy).\n    output = final_hidden_states.clone()\n\n    N, H = expert_outputs.shape\n    if N == 0:\n        return output\n\n    # Contiguity guards are free no-ops when already contiguous.\n    eo = expert_outputs.contiguous()\n    idx = token_indices.contiguous()\n\n    try:\n        _launch(output, eo, idx, N, H)\n    except Exception:\n        # Robust fallback: reproduce reference semantics exactly if the\n        # Triton path fails to compile/run on this stack (e.g. no bf16 atomic).\n        output = final_hidden_states.clone()\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  }
+}

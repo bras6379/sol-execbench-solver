@@ -1,0 +1,245 @@
+{
+  "cand_id": "5eef7e4f28f4",
+  "task_id": 4,
+  "verdict": "entered",
+  "sol_score": 0.7968982116606752,
+  "sol_score_calibrated": 0.710059283224467,
+  "correct": true,
+  "vector": [
+    0.9049705225111382,
+    0.7832658148956062,
+    0.9060434525775257,
+    0.7841086481423666,
+    0.8404922331500306,
+    0.8397003642549922,
+    0.9056723611331646,
+    0.7222962157406616,
+    0.6519296531509526,
+    0.711964107676969,
+    0.7211045172611287,
+    0.9046659562488076,
+    0.784363288569644,
+    0.6659233945983032,
+    0.7836193447737909,
+    0.8402515118857213
+  ],
+  "strategy": "bf16 cuBLAS tensor-core GEMMs for wgrad and dgrad, returning dgrad as a transposed (B,32,S,64) view to avoid materializi",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "31d60145818a",
+  "trajectory": "runs/4/work/5eef7e4f28f4/trajectory.jsonl",
+  "gpu_s": 7.486,
+  "job_id": "4-5eef7e4f28f4",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 29.0,
+      "power_w_max": 315.26,
+      "samples": 22,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.08652750000000001,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.9049705225111382,
+      "sol_score_cal": 0.7850499003645074,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.030528,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7832658148956062,
+      "sol_score_cal": 0.7037619836932175,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0864,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.9060434525775257,
+      "sol_score_cal": 0.7860102895188135,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.030464,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7841086481423666,
+      "sol_score_cal": 0.7045355087018481,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.049888,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8404922331500306,
+      "sol_score_cal": 0.7434867514083638,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.049984,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8397003642549922,
+      "sol_score_cal": 0.7429041483776384,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.086399,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.9056723611331646,
+      "sol_score_cal": 0.7852683387538315,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.021263499999999998,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.7222962157406616,
+      "sol_score_cal": 0.6573907020675134,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.0144,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.6519296531509526,
+      "sol_score_cal": 0.601668169522092,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.021456000000000003,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.711964107676969,
+      "sol_score_cal": 0.6462934738930379,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0213435,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.7211045172611287,
+      "sol_score_cal": 0.6562457962996459,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0865435,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.9046659562488076,
+      "sol_score_cal": 0.7845961351829963,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.030447500000000002,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.784363288569644,
+      "sol_score_cal": 0.7047807211968705,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.01776,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.6659233945983032,
+      "sol_score_cal": 0.6114747067475327,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.030496,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7836193447737909,
+      "sol_score_cal": 0.7040654417824925,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.049936,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8402515118857213,
+      "sol_score_cal": 0.7434164640810695,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n    grad_reshaped_2d = go2d.mm(weight)\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_5eef7e4f28f4",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n    grad_reshaped_2d = go2d.mm(weight)\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}

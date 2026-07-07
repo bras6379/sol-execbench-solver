@@ -1,0 +1,25 @@
+{
+  "name": "t211_67ae13eac196",
+  "definition": "002_fused_add_rmsnorm_h4096",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr, residual_ptr, weight_ptr, output_ptr,\n    batch_size, hidden_size,\n    BLOCK_SIZE: tl.constexpr = 1024\n):\n    batch_id = tl.program_id(0)\n\n    if batch_id >= batch_size:\n        return\n\n    # First pass: compute sum of squares\n    sum_sq = 0.0\n    for h_start in tl.range(0, hidden_size, BLOCK_SIZE):\n        h_range = h_start + tl.arange(0, BLOCK_SIZE)\n        mask = h_range < hidden_size\n\n        h_idx = batch_id * hidden_size + h_range\n\n        h_val = tl.load(hidden_ptr + h_idx, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_ptr + h_idx, mask=mask, other=0.0).to(tl.float32)\n\n        x = h_val + r_val\n        sum_sq += tl.sum(x * x)\n\n    # Compute inverse RMS norm\n    eps = 1e-5\n    inv_rms = tl.rsqrt(sum_sq / hidden_size + eps)\n\n    # Second pass: normalize and scale\n    for h_start in tl.range(0, hidden_size, BLOCK_SIZE):\n        h_range = h_start + tl.arange(0, BLOCK_SIZE)\n        mask = h_range < hidden_size\n\n        h_idx = batch_id * hidden_size + h_range\n\n        h_val = tl.load(hidden_ptr + h_idx, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_ptr + h_idx, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + h_range, mask=mask, other=0.0).to(tl.float32)\n\n        x = h_val + r_val\n        y = (x * inv_rms) * w_val\n\n        tl.store(output_ptr + h_idx, y.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    _, hidden_size = hidden_states.shape\n    assert hidden_size == 4096\n\n    batch_size = hidden_states.shape[0]\n\n    # Ensure contiguous layout\n    hidden_states = hidden_states.contiguous()\n    residual = residual.contiguous()\n    weight = weight.contiguous()\n\n    output = torch.empty_like(hidden_states)\n\n    grid = (batch_size,)\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        batch_size,\n        hidden_size,\n        BLOCK_SIZE=1024\n    )\n\n    return output\n"
+    }
+  ]
+}

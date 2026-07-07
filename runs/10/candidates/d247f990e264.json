@@ -1,0 +1,245 @@
+{
+  "cand_id": "d247f990e264",
+  "task_id": 10,
+  "verdict": "dominated",
+  "sol_score": 0.23677345603417652,
+  "sol_score_calibrated": 0.19982556481596928,
+  "correct": true,
+  "vector": [
+    0.2862578334825425,
+    0.38988966448997986,
+    0.13429046284428145,
+    0.13479619981612018,
+    0.22000445353144796,
+    0.29192579599213314,
+    0.21892507978319237,
+    0.28314855875831485,
+    0.22038541081725174,
+    0.22414046429620924,
+    0.21556193400529383,
+    0.34113179973642666,
+    0.2879840672715202,
+    0.18406620572150093,
+    0.22155502970450514,
+    0.1343123362961044
+  ],
+  "strategy": "Single Triton bf16 GEMM computes the value projection and stores each N tile directly into the final contiguous [B,8,S,1",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "673c75e6be22",
+  "trajectory": "runs/10/work/d247f990e264/trajectory.jsonl",
+  "gpu_s": 7.963,
+  "job_id": "10-d247f990e264",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 27.0,
+      "power_w_max": 292.14,
+      "samples": 23,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.027712,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012432,
+      "sol_score": 0.2862578334825425,
+      "sol_score_cal": 0.2495045023955554,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.034575999999999996,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.026752,
+      "sol_score": 0.38988966448997986,
+      "sol_score_cal": 0.3290461367722124,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.08288,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232485,
+      "sol_score": 0.13429046284428145,
+      "sol_score_cal": 0.11255123324735777,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.082879,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.023296,
+      "sol_score": 0.13479619981612018,
+      "sol_score_cal": 0.11298574700625277,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.044831,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.017168,
+      "sol_score": 0.22000445353144796,
+      "sol_score_cal": 0.18764819727026086,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.064063,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.040576,
+      "sol_score": 0.29192579599213314,
+      "sol_score_cal": 0.24013652627269375,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.044848,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.0171045,
+      "sol_score": 0.21892507978319237,
+      "sol_score_cal": 0.1866912766127296,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.028064,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012416,
+      "sol_score": 0.28314855875831485,
+      "sol_score_cal": 0.24669082704210554,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.133183,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0719365,
+      "sol_score": 0.22038541081725174,
+      "sol_score_cal": 0.17902192238830592,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.132288,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.072208,
+      "sol_score": 0.22414046429620924,
+      "sol_score_cal": 0.18210750490633787,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.038655,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.0130879999999999,
+      "sol_score": 0.21556193400529383,
+      "sol_score_cal": 0.18528346668273016,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0272475,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.015072,
+      "sol_score": 0.34113179973642666,
+      "sol_score_cal": 0.30052975496318385,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.06432,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.0403675,
+      "sol_score": 0.2879840672715202,
+      "sol_score_cal": 0.23676178860487013,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.063135,
+      "sol_ms": 0.0095,
+      "baseline_latency_ms": 0.0215995,
+      "sol_score": 0.18406620572150093,
+      "sol_score_cal": 0.15566031970863303,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.13316699999999998,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0720965,
+      "sol_score": 0.22155502970450514,
+      "sol_score_cal": 0.18002043933833922,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0828635,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232479999999999,
+      "sol_score": 0.1343123362961044,
+      "sol_score_cal": 0.11256939384394006,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _vproj_store_kernel(\n    hidden_states,\n    v_proj_weight,\n    value_states,\n    seq_len,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    EVEN_S: tl.constexpr,\n):\n    pid_s = tl.program_id(0)\n    pid_b = tl.program_id(1)\n    pid_n = tl.program_id(2)\n\n    offs_m = pid_s * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n    offs_k = tl.arange(0, BLOCK_K)\n\n    a_ptrs = hidden_states + (pid_b * seq_len + offs_m[:, None]) * 5120 + offs_k[None, :]\n    b_ptrs = v_proj_weight + offs_n[:, None] * 5120 + offs_k[None, :]\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n\n    if EVEN_S:\n        for k0 in tl.range(0, 5120, BLOCK_K):\n            a = tl.load(a_ptrs + k0)\n            b = tl.trans(tl.load(b_ptrs + k0))\n            acc = tl.dot(a, b, acc)\n    else:\n        m_mask = offs_m < seq_len\n        a_mask = m_mask[:, None] & (offs_k[None, :] >= 0)\n        for k0 in tl.range(0, 5120, BLOCK_K):\n            a = tl.load(a_ptrs + k0, mask=a_mask, other=0.0)\n            b = tl.trans(tl.load(b_ptrs + k0))\n            acc = tl.dot(a, b, acc)\n\n    head = offs_n // 128\n    dim = offs_n - head * 128\n    out_ptrs = (\n        value_states\n        + ((pid_b * 8 + head[None, :]) * seq_len + offs_m[:, None]) * 128\n        + dim[None, :]\n    )\n    if EVEN_S:\n        tl.store(out_ptrs, acc)\n    else:\n        c_mask = (offs_m[:, None] < seq_len) & (offs_n[None, :] < 1024)\n        tl.store(out_ptrs, acc, mask=c_mask)\n\n\ndef _fallback(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2).contiguous()\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    if (\n        hidden_states.device.type != \"cuda\"\n        or hidden_states.dtype != torch.bfloat16\n        or v_proj_weight.dtype != torch.bfloat16\n        or hidden_size != 5120\n        or v_proj_weight.shape != (1024, 5120)\n        or not hidden_states.is_contiguous()\n        or not v_proj_weight.is_contiguous()\n    ):\n        return _fallback(hidden_states, v_proj_weight)\n\n    value_states = torch.empty(\n        (batch_size, 8, seq_len, 128),\n        device=hidden_states.device,\n        dtype=hidden_states.dtype,\n    )\n    if batch_size == 0 or seq_len == 0:\n        return value_states\n\n    tokens = batch_size * seq_len\n    if tokens <= 512:\n        block_m = 16\n        block_n = 64\n        num_warps = 4\n    elif tokens <= 2048:\n        block_m = 32\n        block_n = 128\n        num_warps = 4\n    else:\n        block_m = 64\n        block_n = 128\n        num_warps = 4\n\n    grid = (triton.cdiv(seq_len, block_m), batch_size, 1024 // block_n)\n    _vproj_store_kernel[grid](\n        hidden_states,\n        v_proj_weight,\n        value_states,\n        seq_len,\n        BLOCK_M=block_m,\n        BLOCK_N=block_n,\n        BLOCK_K=64,\n        EVEN_S=(seq_len % block_m) == 0,\n        num_warps=num_warps,\n        num_stages=4,\n    )\n    return value_states\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t10_d247f990e264",
+    "definition": "010_attention_value_projection_with_transpose",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _vproj_store_kernel(\n    hidden_states,\n    v_proj_weight,\n    value_states,\n    seq_len,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    EVEN_S: tl.constexpr,\n):\n    pid_s = tl.program_id(0)\n    pid_b = tl.program_id(1)\n    pid_n = tl.program_id(2)\n\n    offs_m = pid_s * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n    offs_k = tl.arange(0, BLOCK_K)\n\n    a_ptrs = hidden_states + (pid_b * seq_len + offs_m[:, None]) * 5120 + offs_k[None, :]\n    b_ptrs = v_proj_weight + offs_n[:, None] * 5120 + offs_k[None, :]\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n\n    if EVEN_S:\n        for k0 in tl.range(0, 5120, BLOCK_K):\n            a = tl.load(a_ptrs + k0)\n            b = tl.trans(tl.load(b_ptrs + k0))\n            acc = tl.dot(a, b, acc)\n    else:\n        m_mask = offs_m < seq_len\n        a_mask = m_mask[:, None] & (offs_k[None, :] >= 0)\n        for k0 in tl.range(0, 5120, BLOCK_K):\n            a = tl.load(a_ptrs + k0, mask=a_mask, other=0.0)\n            b = tl.trans(tl.load(b_ptrs + k0))\n            acc = tl.dot(a, b, acc)\n\n    head = offs_n // 128\n    dim = offs_n - head * 128\n    out_ptrs = (\n        value_states\n        + ((pid_b * 8 + head[None, :]) * seq_len + offs_m[:, None]) * 128\n        + dim[None, :]\n    )\n    if EVEN_S:\n        tl.store(out_ptrs, acc)\n    else:\n        c_mask = (offs_m[:, None] < seq_len) & (offs_n[None, :] < 1024)\n        tl.store(out_ptrs, acc, mask=c_mask)\n\n\ndef _fallback(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2).contiguous()\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    if (\n        hidden_states.device.type != \"cuda\"\n        or hidden_states.dtype != torch.bfloat16\n        or v_proj_weight.dtype != torch.bfloat16\n        or hidden_size != 5120\n        or v_proj_weight.shape != (1024, 5120)\n        or not hidden_states.is_contiguous()\n        or not v_proj_weight.is_contiguous()\n    ):\n        return _fallback(hidden_states, v_proj_weight)\n\n    value_states = torch.empty(\n        (batch_size, 8, seq_len, 128),\n        device=hidden_states.device,\n        dtype=hidden_states.dtype,\n    )\n    if batch_size == 0 or seq_len == 0:\n        return value_states\n\n    tokens = batch_size * seq_len\n    if tokens <= 512:\n        block_m = 16\n        block_n = 64\n        num_warps = 4\n    elif tokens <= 2048:\n        block_m = 32\n        block_n = 128\n        num_warps = 4\n    else:\n        block_m = 64\n        block_n = 128\n        num_warps = 4\n\n    grid = (triton.cdiv(seq_len, block_m), batch_size, 1024 // block_n)\n    _vproj_store_kernel[grid](\n        hidden_states,\n        v_proj_weight,\n        value_states,\n        seq_len,\n        BLOCK_M=block_m,\n        BLOCK_N=block_n,\n        BLOCK_K=64,\n        EVEN_S=(seq_len % block_m) == 0,\n        num_warps=num_warps,\n        num_stages=4,\n    )\n    return value_states\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "name": "t234_fa72d66a676d",
+  "definition": "025_rmsnorm_h4096",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _rmsnorm_fused_kernel(\n    out_ptr,\n    hidden_ptr,\n    weight_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Fused RMSNorm kernel: one pass over hidden_states, compute mean-of-squares,\n    rsqrt, apply scaling, multiply weight, cast back to bf16.\"\"\"\n\n    # One CTA per batch element\n    batch_idx = tl.program_id(axis=0)\n    if batch_idx >= batch_size:\n        return\n\n    # Compute row index in the output\n    row_offset = batch_idx * hidden_size\n\n    # Phase 1: Accumulate sum of squares in float32\n    sum_sq = tl.zeros((), dtype=tl.float32)\n\n    # Load and compute in blocks to manage register pressure\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        block_size = min(BLOCK_SIZE, hidden_size - block_start)\n\n        # Load hidden_states chunk (bf16)\n        h_offsets = row_offset + block_start + tl.arange(0, BLOCK_SIZE)\n        h_mask = (block_start + tl.arange(0, BLOCK_SIZE)) < hidden_size\n        h_val = tl.load(hidden_ptr + h_offsets, mask=h_mask, other=0.0)\n\n        # Cast to float32 and accumulate sum of squares\n        h_f32 = h_val.to(tl.float32)\n        sum_sq += tl.sum(h_f32 * h_f32)\n\n    # Phase 2: Compute mean and rsqrt (synchronize across threads via shared reduction)\n    mean_sq = sum_sq / hidden_size\n    inv_rms = tl.math.rsqrt(mean_sq + eps)\n\n    # Phase 3: Apply scaling and write output\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        block_size = min(BLOCK_SIZE, hidden_size - block_start)\n\n        # Load hidden_states and weight\n        h_offsets = row_offset + block_start + tl.arange(0, BLOCK_SIZE)\n        w_offsets = block_start + tl.arange(0, BLOCK_SIZE)\n\n        h_mask = (block_start + tl.arange(0, BLOCK_SIZE)) < hidden_size\n\n        h_val = tl.load(hidden_ptr + h_offsets, mask=h_mask, other=0.0)\n        w_val = tl.load(weight_ptr + w_offsets, mask=h_mask, other=0.0)\n\n        # Cast to float32, apply scaling, cast back\n        h_f32 = h_val.to(tl.float32)\n        result = h_f32 * inv_rms * w_val.to(tl.float32)\n        result_bf16 = result.to(tl.bfloat16)\n\n        # Store output\n        out_offsets = row_offset + block_start + tl.arange(0, BLOCK_SIZE)\n        tl.store(out_ptr + out_offsets, result_bf16, mask=h_mask)\n\n\ndef run(hidden_states, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 4096\n\n    eps = 1e-5\n    device = hidden_states.device\n\n    # Output tensor\n    output = torch.empty_like(hidden_states)\n\n    # Kernel parameters\n    BLOCK_SIZE = 256\n    grid = (batch_size,)\n\n    # Launch fused kernel\n    _rmsnorm_fused_kernel[grid](\n        out_ptr=output,\n        hidden_ptr=hidden_states,\n        weight_ptr=weight,\n        batch_size=batch_size,\n        hidden_size=hidden_size,\n        eps=eps,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+    }
+  ]
+}

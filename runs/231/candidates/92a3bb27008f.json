@@ -1,0 +1,148 @@
+{
+  "cand_id": "92a3bb27008f",
+  "task_id": 231,
+  "verdict": "dominated",
+  "sol_score": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Fused Triton kernel with corrected parallel reduction: one block per row, per-thread accumulation of sum-of-squares, tre",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "76541cebc106",
+  "trajectory": "runs/231/work/92a3bb27008f/trajectory.jsonl",
+  "gpu_s": 5.396,
+  "job_id": "231-92a3bb27008f",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 26.0,
+      "power_w_max": 235.52,
+      "samples": 14,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003712,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.004063499999999999,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003696,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00368,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.00392,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0043,
+      "baseline_latency_ms": 0.025248,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0036,
+      "baseline_latency_ms": 0.021248,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003872,
+      "sol_score": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef rmsnorm_kernel(\n    hidden_states_ptr,\n    weight_ptr,\n    output_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    batch_idx = tl.program_id(0)\n    tid = tl.arange(0, BLOCK_SIZE)\n\n    # Phase 1: Compute sum of squares with per-thread accumulation\n    sum_sq = tl.zeros([BLOCK_SIZE], dtype=tl.float32)\n\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n\n        sum_sq[tid] += x * x\n\n    # Reduce across threads to compute total sum of squares\n    total_sum_sq = tl.sum(sum_sq)\n\n    # Compute inverse RMS\n    mean_sq = total_sum_sq / hidden_size\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Phase 2: Load, scale, and write output\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n        w = tl.load(weight_ptr + idx, mask=mask, other=0.0).to(tl.float32)\n\n        out = (x * inv_rms) * w\n\n        output_offset = batch_idx * hidden_size + idx\n        tl.store(output_ptr + output_offset, out.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 512\n\n    EPS = 1e-6\n\n    output = torch.empty_like(hidden_states)\n    BLOCK_SIZE = 256\n    grid = (batch_size,)\n\n    rmsnorm_kernel[grid](\n        hidden_states,\n        weight,\n        output,\n        batch_size,\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t231_92a3bb27008f",
+    "definition": "022_rmsnorm_h512",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef rmsnorm_kernel(\n    hidden_states_ptr,\n    weight_ptr,\n    output_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    batch_idx = tl.program_id(0)\n    tid = tl.arange(0, BLOCK_SIZE)\n\n    # Phase 1: Compute sum of squares with per-thread accumulation\n    sum_sq = tl.zeros([BLOCK_SIZE], dtype=tl.float32)\n\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n\n        sum_sq[tid] += x * x\n\n    # Reduce across threads to compute total sum of squares\n    total_sum_sq = tl.sum(sum_sq)\n\n    # Compute inverse RMS\n    mean_sq = total_sum_sq / hidden_size\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Phase 2: Load, scale, and write output\n    for offset in range(0, hidden_size, BLOCK_SIZE):\n        idx = offset + tid\n        mask = idx < hidden_size\n\n        hidden_offset = batch_idx * hidden_size + idx\n        x = tl.load(hidden_states_ptr + hidden_offset, mask=mask, other=0.0).to(tl.float32)\n        w = tl.load(weight_ptr + idx, mask=mask, other=0.0).to(tl.float32)\n\n        out = (x * inv_rms) * w\n\n        output_offset = batch_idx * hidden_size + idx\n        tl.store(output_ptr + output_offset, out.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 512\n\n    EPS = 1e-6\n\n    output = torch.empty_like(hidden_states)\n    BLOCK_SIZE = 256\n    grid = (batch_size,)\n\n    rmsnorm_kernel[grid](\n        hidden_states,\n        weight,\n        output,\n        batch_size,\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

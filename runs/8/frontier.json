@@ -1,0 +1,70 @@
+{
+  "task_id": 8,
+  "family": "reduction",
+  "name": "reduction_8",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "acf29c27de11",
+  "best_score": 0.8675818479713744,
+  "best_score_cal": 0.8440842787979743,
+  "members": [
+    {
+      "cand_id": "acf29c27de11",
+      "sol_score": 0.8675818479713744,
+      "sol_score_cal": 0.8440842787979743,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.8869655456147569,
+        0.8886239642799447,
+        0.8273411502891993,
+        0.9001538406651798,
+        0.887772698877363,
+        0.8324485028668508,
+        0.8955506307534946,
+        0.8715986394557822,
+        0.86914983673963,
+        0.8135412217001282,
+        0.8679209127457105,
+        0.8927112241974972,
+        0.8314238193372252,
+        0.81651376146789,
+        0.9000971492972472,
+        0.8994966692540916
+      ],
+      "strategy": "Fused Triton bf16 atomic scatter-add (H=3072): seed output=fhs.clone(), grid=N=8T one program per expert row, hoist all ",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/acf29c27de11.json"
+    },
+    {
+      "cand_id": "8c234180a4aa",
+      "sol_score": 0.8549948127719762,
+      "sol_score_cal": 0.8298906429907822,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.8710478866784459,
+        0.8730683250243342,
+        0.820724557694911,
+        0.882596994009856,
+        0.8729759871815007,
+        0.8243953732912723,
+        0.8783020129739851,
+        0.8580483138005263,
+        0.8582517315500359,
+        0.8080186677980484,
+        0.8576102762966553,
+        0.8756824213715204,
+        0.8237383386182945,
+        0.8105078809106829,
+        0.8826181742699478,
+        0.8823300628816022
+      ],
+      "strategy": "Fused Triton bf16 atomic scatter-add (seed output=fhs.clone, stream expert_outputs once coalesced, packed bf16x2 atomics",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/8c234180a4aa.json"
+    }
+  ]
+}

@@ -1,0 +1,245 @@
+{
+  "cand_id": "8dbd0659cb3a",
+  "task_id": 10,
+  "verdict": "dominated",
+  "sol_score": 0.28283300904817227,
+  "sol_score_calibrated": 0.2387861392632251,
+  "correct": true,
+  "vector": [
+    0.27852787456445993,
+    0.21760713836873194,
+    0.33305954825462003,
+    0.3345096130445364,
+    0.3014241932576167,
+    0.28340443098940415,
+    0.30126310506357357,
+    0.27760869565217394,
+    0.2141279276082328,
+    0.21703041431219905,
+    0.273240072202164,
+    0.3281124497991968,
+    0.27959437975336227,
+    0.33692549740333877,
+    0.21454147295549167,
+    0.3343513315416545
+  ],
+  "strategy": "Single fused Triton bf16 GEMM (M=B*S,N=1024,K=5120, fp32 accum) with a per-head grid (B,ceil(S/BM),8) whose epilogue sto",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "673c75e6be22",
+  "trajectory": "runs/10/work/8dbd0659cb3a/trajectory.jsonl",
+  "gpu_s": 8.248,
+  "job_id": "10-8dbd0659cb3a",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 31.0,
+      "power_w_max": 272.17,
+      "samples": 24,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.028704,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012432,
+      "sol_score": 0.27852787456445993,
+      "sol_score_cal": 0.24252330423306503,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.062704,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.026752,
+      "sol_score": 0.21760713836873194,
+      "sol_score_cal": 0.18330083356093765,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.034224000000000004,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232485,
+      "sol_score": 0.33305954825462003,
+      "sol_score_cal": 0.27805671915166597,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.034176,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.023296,
+      "sol_score": 0.3345096130445364,
+      "sol_score_cal": 0.2793313119324972,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0314875,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.017168,
+      "sol_score": 0.3014241932576167,
+      "sol_score_cal": 0.2585272297468072,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.06576,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.040576,
+      "sol_score": 0.28340443098940415,
+      "sol_score_cal": 0.2332706596592968,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0313595,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.0171045,
+      "sol_score": 0.30126310506357357,
+      "sol_score_cal": 0.2583430062020733,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.028783999999999997,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.012416,
+      "sol_score": 0.27760869565217394,
+      "sol_score_cal": 0.24169035623303722,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.1363835,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0719365,
+      "sol_score": 0.2141279276082328,
+      "sol_score_cal": 0.1741037379556428,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.1358555,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.072208,
+      "sol_score": 0.21703041431219905,
+      "sol_score_cal": 0.17651647470825477,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.029168,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.0130879999999999,
+      "sol_score": 0.273240072202164,
+      "sol_score_cal": 0.23630467106623762,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.028768,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.015072,
+      "sol_score": 0.3281124497991968,
+      "sol_score_cal": 0.28852741540178417,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.066015,
+      "sol_ms": 0.0241,
+      "baseline_latency_ms": 0.0403675,
+      "sol_score": 0.27959437975336227,
+      "sol_score_cal": 0.23000946619564272,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.033312,
+      "sol_ms": 0.0095,
+      "baseline_latency_ms": 0.0215995,
+      "sol_score": 0.33692549740333877,
+      "sol_score_cal": 0.28644120681483626,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.13675199999999998,
+      "sol_ms": 0.0478,
+      "baseline_latency_ms": 0.0720965,
+      "sol_score": 0.21454147295549167,
+      "sol_score_cal": 0.17450448311293043,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.034096,
+      "sol_ms": 0.0123,
+      "baseline_latency_ms": 0.0232479999999999,
+      "sol_score": 0.3343513315416545,
+      "sol_score_cal": 0.27912735223689233,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - fallback if triton is unavailable\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _vproj_fused_kernel(\n        hidden_ptr,          # [B, S, K] bf16\n        w_ptr,               # [N=1024, K] bf16   (F.linear weight, out = hidden @ W.T)\n        out_ptr,             # [B, 8, S, 128] bf16 (final transposed layout)\n        S,\n        stride_hb, stride_hs, stride_hk,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM: tl.constexpr,   # 128 == BLOCK_N (one head per program)\n        K: tl.constexpr,          # 5120\n        BLOCK_M: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # program = (batch b, seq-tile, head h) -> owns one [BLOCK_M, 128] output tile\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n        pid_h = tl.program_id(2)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)   # seq positions (s)\n        offs_n = tl.arange(0, HEAD_DIM)                    # within-head dim (d)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        m_mask = offs_m < S\n\n        # A = hidden[b, offs_m, offs_k]                -> [BLOCK_M, BLOCK_K]\n        a_ptrs = (\n            hidden_ptr\n            + pid_b * stride_hb\n            + offs_m[:, None] * stride_hs\n            + offs_k[None, :] * stride_hk\n        )\n        # B_eff[k, n] = W[pid_h*128 + n, k]            -> [BLOCK_K, HEAD_DIM]\n        w_row = pid_h * HEAD_DIM + offs_n\n        b_ptrs = (\n            w_ptr\n            + offs_k[:, None] * stride_wk\n            + w_row[None, :] * stride_wn\n        )\n\n        acc = tl.zeros((BLOCK_M, HEAD_DIM), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=m_mask[:, None], other=0.0)\n            b = tl.load(b_ptrs)   # K divisible by BLOCK_K, n < 128 -> no mask needed\n            acc += tl.dot(a, b)\n            a_ptrs += BLOCK_K * stride_hk\n            b_ptrs += BLOCK_K * stride_wk\n\n        out = acc.to(out_ptr.dtype.element_ty)\n        # store to out[b, pid_h, offs_m, offs_n]  (contiguous in d -> fully coalesced)\n        out_ptrs = (\n            out_ptr\n            + pid_b * stride_ob\n            + pid_h * stride_oh\n            + offs_m[:, None] * stride_os\n            + offs_n[None, :] * stride_od\n        )\n        tl.store(out_ptrs, out, mask=m_mask[:, None])\n\n\ndef _pick_config(T):\n    # Heuristic tile/schedule per token count T = B*S (no autotune: deterministic,\n    # avoids benchmarking overhead inside the scored call). Shared mem kept < 200KB.\n    if T <= 512:\n        # launch/weight-stream bound: small BLOCK_M -> many programs -> fill SMs\n        return dict(BLOCK_M=32, BLOCK_K=128, num_warps=4, num_stages=3)\n    elif T <= 2048:\n        return dict(BLOCK_M=64, BLOCK_K=64, num_warps=4, num_stages=4)\n    else:\n        # compute bound: wide BLOCK_M for MMA efficiency\n        return dict(BLOCK_M=128, BLOCK_K=64, num_warps=8, num_stages=4)\n\n\ndef _run_torch(hidden_states, v_proj_weight):\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2).contiguous()\n\n\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"Fused GQA value projection + reshape + transpose in a single Triton kernel.\n\n    Equivalent to:\n        F.linear(hidden_states, v_proj_weight)      # [B,S,5120]@[1024,5120].T -> [B,S,1024]\n          .view(B, S, 8, 128).transpose(1, 2).contiguous()   # -> [B, 8, S, 128]\n    but the GEMM epilogue writes directly into the final transposed layout, so the\n    intermediate [B,S,1024] never touches HBM and the contiguous() copy is deleted.\n    \"\"\"\n    B, S, Hs = hidden_states.shape\n    HEAD_DIM = 128\n    NUM_KV = 8\n    N = NUM_KV * HEAD_DIM  # 1024\n\n    if (not _HAS_TRITON) or (not hidden_states.is_cuda):\n        return _run_torch(hidden_states, v_proj_weight)\n\n    hidden_states = hidden_states.contiguous()\n    v_proj_weight = v_proj_weight.contiguous()\n    assert Hs == v_proj_weight.shape[1] and v_proj_weight.shape[0] == N\n\n    out = torch.empty((B, NUM_KV, S, HEAD_DIM),\n                      dtype=hidden_states.dtype, device=hidden_states.device)\n\n    cfg = _pick_config(B * S)\n    BLOCK_M = cfg[\"BLOCK_M\"]\n    grid = (B, triton.cdiv(S, BLOCK_M), NUM_KV)\n\n    _vproj_fused_kernel[grid](\n        hidden_states, v_proj_weight, out,\n        S,\n        hidden_states.stride(0), hidden_states.stride(1), hidden_states.stride(2),\n        v_proj_weight.stride(0), v_proj_weight.stride(1),\n        out.stride(0), out.stride(1), out.stride(2), out.stride(3),\n        HEAD_DIM=HEAD_DIM, K=Hs,\n        BLOCK_M=BLOCK_M, BLOCK_K=cfg[\"BLOCK_K\"],\n        num_warps=cfg[\"num_warps\"], num_stages=cfg[\"num_stages\"],\n    )\n    return out\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t10_8dbd0659cb3a",
+    "definition": "010_attention_value_projection_with_transpose",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - fallback if triton is unavailable\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _vproj_fused_kernel(\n        hidden_ptr,          # [B, S, K] bf16\n        w_ptr,               # [N=1024, K] bf16   (F.linear weight, out = hidden @ W.T)\n        out_ptr,             # [B, 8, S, 128] bf16 (final transposed layout)\n        S,\n        stride_hb, stride_hs, stride_hk,\n        stride_wn, stride_wk,\n        stride_ob, stride_oh, stride_os, stride_od,\n        HEAD_DIM: tl.constexpr,   # 128 == BLOCK_N (one head per program)\n        K: tl.constexpr,          # 5120\n        BLOCK_M: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        # program = (batch b, seq-tile, head h) -> owns one [BLOCK_M, 128] output tile\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n        pid_h = tl.program_id(2)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)   # seq positions (s)\n        offs_n = tl.arange(0, HEAD_DIM)                    # within-head dim (d)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        m_mask = offs_m < S\n\n        # A = hidden[b, offs_m, offs_k]                -> [BLOCK_M, BLOCK_K]\n        a_ptrs = (\n            hidden_ptr\n            + pid_b * stride_hb\n            + offs_m[:, None] * stride_hs\n            + offs_k[None, :] * stride_hk\n        )\n        # B_eff[k, n] = W[pid_h*128 + n, k]            -> [BLOCK_K, HEAD_DIM]\n        w_row = pid_h * HEAD_DIM + offs_n\n        b_ptrs = (\n            w_ptr\n            + offs_k[:, None] * stride_wk\n            + w_row[None, :] * stride_wn\n        )\n\n        acc = tl.zeros((BLOCK_M, HEAD_DIM), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=m_mask[:, None], other=0.0)\n            b = tl.load(b_ptrs)   # K divisible by BLOCK_K, n < 128 -> no mask needed\n            acc += tl.dot(a, b)\n            a_ptrs += BLOCK_K * stride_hk\n            b_ptrs += BLOCK_K * stride_wk\n\n        out = acc.to(out_ptr.dtype.element_ty)\n        # store to out[b, pid_h, offs_m, offs_n]  (contiguous in d -> fully coalesced)\n        out_ptrs = (\n            out_ptr\n            + pid_b * stride_ob\n            + pid_h * stride_oh\n            + offs_m[:, None] * stride_os\n            + offs_n[None, :] * stride_od\n        )\n        tl.store(out_ptrs, out, mask=m_mask[:, None])\n\n\ndef _pick_config(T):\n    # Heuristic tile/schedule per token count T = B*S (no autotune: deterministic,\n    # avoids benchmarking overhead inside the scored call). Shared mem kept < 200KB.\n    if T <= 512:\n        # launch/weight-stream bound: small BLOCK_M -> many programs -> fill SMs\n        return dict(BLOCK_M=32, BLOCK_K=128, num_warps=4, num_stages=3)\n    elif T <= 2048:\n        return dict(BLOCK_M=64, BLOCK_K=64, num_warps=4, num_stages=4)\n    else:\n        # compute bound: wide BLOCK_M for MMA efficiency\n        return dict(BLOCK_M=128, BLOCK_K=64, num_warps=8, num_stages=4)\n\n\ndef _run_torch(hidden_states, v_proj_weight):\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2).contiguous()\n\n\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"Fused GQA value projection + reshape + transpose in a single Triton kernel.\n\n    Equivalent to:\n        F.linear(hidden_states, v_proj_weight)      # [B,S,5120]@[1024,5120].T -> [B,S,1024]\n          .view(B, S, 8, 128).transpose(1, 2).contiguous()   # -> [B, 8, S, 128]\n    but the GEMM epilogue writes directly into the final transposed layout, so the\n    intermediate [B,S,1024] never touches HBM and the contiguous() copy is deleted.\n    \"\"\"\n    B, S, Hs = hidden_states.shape\n    HEAD_DIM = 128\n    NUM_KV = 8\n    N = NUM_KV * HEAD_DIM  # 1024\n\n    if (not _HAS_TRITON) or (not hidden_states.is_cuda):\n        return _run_torch(hidden_states, v_proj_weight)\n\n    hidden_states = hidden_states.contiguous()\n    v_proj_weight = v_proj_weight.contiguous()\n    assert Hs == v_proj_weight.shape[1] and v_proj_weight.shape[0] == N\n\n    out = torch.empty((B, NUM_KV, S, HEAD_DIM),\n                      dtype=hidden_states.dtype, device=hidden_states.device)\n\n    cfg = _pick_config(B * S)\n    BLOCK_M = cfg[\"BLOCK_M\"]\n    grid = (B, triton.cdiv(S, BLOCK_M), NUM_KV)\n\n    _vproj_fused_kernel[grid](\n        hidden_states, v_proj_weight, out,\n        S,\n        hidden_states.stride(0), hidden_states.stride(1), hidden_states.stride(2),\n        v_proj_weight.stride(0), v_proj_weight.stride(1),\n        out.stride(0), out.stride(1), out.stride(2), out.stride(3),\n        HEAD_DIM=HEAD_DIM, K=Hs,\n        BLOCK_M=BLOCK_M, BLOCK_K=cfg[\"BLOCK_K\"],\n        num_warps=cfg[\"num_warps\"], num_stages=cfg[\"num_stages\"],\n    )\n    return out\n"
+      }
+    ]
+  }
+}

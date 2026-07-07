@@ -1,0 +1,245 @@
+{
+  "cand_id": "66adc61a3057",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.62090267233864,
+  "sol_score_calibrated": 0.36755568086977614,
+  "correct": true,
+  "vector": [
+    0.489575067382718,
+    0.537540286067593,
+    0.37706835341421047,
+    0.5184138031027982,
+    0.743864504751641,
+    0.7955508378469106,
+    0.5973354376072567,
+    0.7917885906344276,
+    0.6328492327947294,
+    0.7217246307765602,
+    0.5774292744556363,
+    0.5255950334674727,
+    0.5344720012478553,
+    0.6302231500242184,
+    0.670611057225994,
+    0.7904014966182186
+  ],
+  "strategy": "Full bf16 LM-head GEMM as one flattened cuBLAS torch.mm with 32 MiB cuBLASLt workspace, plus a correctness- and cold-L2-",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "7d12b2e7b23e",
+  "trajectory": "runs/3/work/66adc61a3057/trajectory.jsonl",
+  "gpu_s": 11.736,
+  "job_id": "3-66adc61a3057",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 611.76,
+      "samples": 34,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.0624305,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.489575067382718,
+      "sol_score_cal": 0.25665042197609045,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.085648,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.537540286067593,
+      "sol_score_cal": 0.4081871365783644,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.257452,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.37706835341421047,
+      "sol_score_cal": 0.21644793782748892,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.08507200000000001,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.5184138031027982,
+      "sol_score_cal": 0.4009549804540754,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.495615,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.743864504751641,
+      "sol_score_cal": 0.3454670425374178,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.24876749999999997,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.7955508378469106,
+      "sol_score_cal": 0.4282588942424508,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0944795,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.5973354376072567,
+      "sol_score_cal": 0.4684786493990485,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.24899149999999998,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.7917885906344276,
+      "sol_score_cal": 0.42634194174949575,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.894239,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.6328492327947294,
+      "sol_score_cal": 0.3952033796986327,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.498064,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.7217246307765602,
+      "sol_score_cal": 0.339298208835147,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.028671,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.5774292744556363,
+      "sol_score_cal": 0.2837011392785215,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.041199,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.5255950334674727,
+      "sol_score_cal": 0.29198162022927804,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.08577599999999999,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.5344720012478553,
+      "sol_score_cal": 0.4055903164942036,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.751903,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.6302231500242184,
+      "sol_score_cal": 0.3191630093457964,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.187568,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.670611057225994,
+      "sol_score_cal": 0.46827780238595457,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.24915199999999998,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.7904014966182186,
+      "sol_score_cal": 0.42688841288445256,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"33554432\")\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _stream_gemm_kernel(\n        a_ptr,\n        b_ptr,\n        c_ptr,\n        M: tl.constexpr,\n        N: tl.constexpr,\n        K: tl.constexpr,\n        stride_am: tl.constexpr,\n        stride_ak: tl.constexpr,\n        stride_bn: tl.constexpr,\n        stride_bk: tl.constexpr,\n        stride_cm: tl.constexpr,\n        stride_cn: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        a_ptrs = a_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak\n        b_ptrs = b_ptr + offs_n[:, None] * stride_bn + offs_k[None, :] * stride_bk\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=offs_m[:, None] < M, other=0.0)\n            b = tl.load(b_ptrs, mask=offs_n[:, None] < N, other=0.0)\n            acc += tl.dot(a, tl.trans(b))\n            a_ptrs += BLOCK_K * stride_ak\n            b_ptrs += BLOCK_K * stride_bk\n\n        c = acc.to(tl.bfloat16)\n        c_ptrs = c_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn\n        tl.store(c_ptrs, c, mask=(offs_m[:, None] < M) & (offs_n[None, :] < N))\n\n\n    def _triton_linear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n        m = x.shape[0]\n        k = x.shape[1]\n        n = weight.shape[0]\n        block_m = 128 if m <= 128 else 256\n        out = torch.empty((m, n), device=x.device, dtype=torch.bfloat16)\n        grid = (triton.cdiv(m, block_m), triton.cdiv(n, 128))\n        _stream_gemm_kernel[grid](\n            x,\n            weight,\n            out,\n            m,\n            n,\n            k,\n            x.stride(0),\n            x.stride(1),\n            weight.stride(0),\n            weight.stride(1),\n            out.stride(0),\n            out.stride(1),\n            BLOCK_M=block_m,\n            BLOCK_N=128,\n            BLOCK_K=64,\n            num_warps=8,\n            num_stages=4,\n        )\n        return out\n\n\n_CHOICE = {}\n_FLUSH = None\n_TRITON_MAX_M = 256\n_TRITON_MARGIN = 0.95\n\n\ndef _cublas(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    x = hidden_states.reshape(batch_size * seq_len, hidden_size)\n    out = torch.mm(x, weight.t())\n    return out.view(batch_size, seq_len, weight.shape[0])\n\n\ndef _cold_time_ms(fn, warmup: int = 3, iters: int = 15) -> float:\n    global _FLUSH\n    if _FLUSH is None:\n        l2_bytes = int(torch.cuda.get_device_properties(0).L2_cache_size)\n        _FLUSH = torch.empty(2 * l2_bytes, device=\"cuda\", dtype=torch.int8)\n\n    for _ in range(warmup):\n        _FLUSH.zero_()\n        fn()\n    torch.cuda.synchronize()\n\n    times = []\n    for _ in range(iters):\n        _FLUSH.zero_()\n        start = torch.cuda.Event(enable_timing=True)\n        end = torch.cuda.Event(enable_timing=True)\n        start.record()\n        fn()\n        end.record()\n        torch.cuda.synchronize()\n        times.append(start.elapsed_time(end))\n    times.sort()\n    return times[len(times) // 2]\n\n\ndef _choose_small_m(x: torch.Tensor, weight: torch.Tensor) -> str:\n    if not _HAS_TRITON or not x.is_cuda:\n        return \"cublas\"\n\n    try:\n        ref = torch.mm(x, weight.t())\n        tri = _triton_linear(x, weight)\n        diff = (tri.float() - ref.float()).abs()\n        tol = 1.0e-5 + 0.05 * ref.float().abs()\n        if (diff <= tol).float().mean().item() < 0.999:\n            return \"cublas\"\n\n        tri_ms = _cold_time_ms(lambda: _triton_linear(x, weight))\n        cub_ms = _cold_time_ms(lambda: torch.mm(x, weight.t()))\n        if tri_ms < _TRITON_MARGIN * cub_ms:\n            return \"triton\"\n    except Exception:\n        pass\n    return \"cublas\"\n\n\ndef _project(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    m = batch_size * seq_len\n\n    if _HAS_TRITON and m <= _TRITON_MAX_M:\n        x = hidden_states.reshape(m, hidden_size)\n        choice = _CHOICE.get(m)\n        if choice is None:\n            choice = _choose_small_m(x, weight)\n            _CHOICE[m] = choice\n        if choice == \"triton\":\n            return _triton_linear(x, weight).view(batch_size, seq_len, vocab_size)\n\n    return _cublas(hidden_states, weight)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    return _project(hidden_states, weight)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_66adc61a3057",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"33554432\")\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _stream_gemm_kernel(\n        a_ptr,\n        b_ptr,\n        c_ptr,\n        M: tl.constexpr,\n        N: tl.constexpr,\n        K: tl.constexpr,\n        stride_am: tl.constexpr,\n        stride_ak: tl.constexpr,\n        stride_bn: tl.constexpr,\n        stride_bk: tl.constexpr,\n        stride_cm: tl.constexpr,\n        stride_cn: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n\n        offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        a_ptrs = a_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak\n        b_ptrs = b_ptr + offs_n[:, None] * stride_bn + offs_k[None, :] * stride_bk\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            a = tl.load(a_ptrs, mask=offs_m[:, None] < M, other=0.0)\n            b = tl.load(b_ptrs, mask=offs_n[:, None] < N, other=0.0)\n            acc += tl.dot(a, tl.trans(b))\n            a_ptrs += BLOCK_K * stride_ak\n            b_ptrs += BLOCK_K * stride_bk\n\n        c = acc.to(tl.bfloat16)\n        c_ptrs = c_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn\n        tl.store(c_ptrs, c, mask=(offs_m[:, None] < M) & (offs_n[None, :] < N))\n\n\n    def _triton_linear(x: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n        m = x.shape[0]\n        k = x.shape[1]\n        n = weight.shape[0]\n        block_m = 128 if m <= 128 else 256\n        out = torch.empty((m, n), device=x.device, dtype=torch.bfloat16)\n        grid = (triton.cdiv(m, block_m), triton.cdiv(n, 128))\n        _stream_gemm_kernel[grid](\n            x,\n            weight,\n            out,\n            m,\n            n,\n            k,\n            x.stride(0),\n            x.stride(1),\n            weight.stride(0),\n            weight.stride(1),\n            out.stride(0),\n            out.stride(1),\n            BLOCK_M=block_m,\n            BLOCK_N=128,\n            BLOCK_K=64,\n            num_warps=8,\n            num_stages=4,\n        )\n        return out\n\n\n_CHOICE = {}\n_FLUSH = None\n_TRITON_MAX_M = 256\n_TRITON_MARGIN = 0.95\n\n\ndef _cublas(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    x = hidden_states.reshape(batch_size * seq_len, hidden_size)\n    out = torch.mm(x, weight.t())\n    return out.view(batch_size, seq_len, weight.shape[0])\n\n\ndef _cold_time_ms(fn, warmup: int = 3, iters: int = 15) -> float:\n    global _FLUSH\n    if _FLUSH is None:\n        l2_bytes = int(torch.cuda.get_device_properties(0).L2_cache_size)\n        _FLUSH = torch.empty(2 * l2_bytes, device=\"cuda\", dtype=torch.int8)\n\n    for _ in range(warmup):\n        _FLUSH.zero_()\n        fn()\n    torch.cuda.synchronize()\n\n    times = []\n    for _ in range(iters):\n        _FLUSH.zero_()\n        start = torch.cuda.Event(enable_timing=True)\n        end = torch.cuda.Event(enable_timing=True)\n        start.record()\n        fn()\n        end.record()\n        torch.cuda.synchronize()\n        times.append(start.elapsed_time(end))\n    times.sort()\n    return times[len(times) // 2]\n\n\ndef _choose_small_m(x: torch.Tensor, weight: torch.Tensor) -> str:\n    if not _HAS_TRITON or not x.is_cuda:\n        return \"cublas\"\n\n    try:\n        ref = torch.mm(x, weight.t())\n        tri = _triton_linear(x, weight)\n        diff = (tri.float() - ref.float()).abs()\n        tol = 1.0e-5 + 0.05 * ref.float().abs()\n        if (diff <= tol).float().mean().item() < 0.999:\n            return \"cublas\"\n\n        tri_ms = _cold_time_ms(lambda: _triton_linear(x, weight))\n        cub_ms = _cold_time_ms(lambda: torch.mm(x, weight.t()))\n        if tri_ms < _TRITON_MARGIN * cub_ms:\n            return \"triton\"\n    except Exception:\n        pass\n    return \"cublas\"\n\n\ndef _project(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    m = batch_size * seq_len\n\n    if _HAS_TRITON and m <= _TRITON_MAX_M:\n        x = hidden_states.reshape(m, hidden_size)\n        choice = _CHOICE.get(m)\n        if choice is None:\n            choice = _choose_small_m(x, weight)\n            _CHOICE[m] = choice\n        if choice == \"triton\":\n            return _triton_linear(x, weight).view(batch_size, seq_len, vocab_size)\n\n    return _cublas(hidden_states, weight)\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    return _project(hidden_states, weight)\n"
+      }
+    ]
+  }
+}

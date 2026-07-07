@@ -1,0 +1,68 @@
+{
+    "name": "010_attention_value_projection_with_transpose",
+    "hf_id": "NousResearch/DeepHermes-3-Mistral-24B-Preview",
+    "description": "Fused attention value projection with reshape and transpose for GQA attention. Projects hidden states from hidden_size=5120 to num_kv_heads*head_dim=1024, then reshapes and transposes to [batch, num_kv_heads, seq_len, head_dim] format for attention computation.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_size": {
+            "type": "const",
+            "value": 5120,
+            "description": "Hidden dimension size"
+        },
+        "num_kv_heads": {
+            "type": "const",
+            "value": 8,
+            "description": "Number of key-value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per attention head"
+        },
+        "kv_projection_size": {
+            "type": "expr",
+            "expression": "num_kv_heads * head_dim",
+            "description": "Total KV projection size (1024)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Input hidden states"
+        },
+        "v_proj_weight": {
+            "shape": [
+                "kv_projection_size",
+                "hidden_size"
+            ],
+            "dtype": "bfloat16",
+            "description": "Value projection weight matrix"
+        }
+    },
+    "outputs": {
+        "value_states": {
+            "shape": [
+                "batch_size",
+                "num_kv_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Projected, reshaped, and transposed value states"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused value projection with reshape and transpose for GQA attention.\n    \n    Args:\n        hidden_states: Input tensor of shape [batch_size, seq_len, 5120]\n        v_proj_weight: Weight matrix of shape [1024, 5120]\n        \n    Returns:\n        value_states: Reshaped and transposed tensor of shape [batch_size, 8, seq_len, 128]\n    \"\"\"\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_kv_heads = 8\n    head_dim = 128\n    \n    # Project to value space: [batch, seq_len, 5120] @ [5120, 1024] -> [batch, seq_len, 1024]\n    # F.linear computes input @ weight.T, so with weight [1024, 5120], we get [batch, seq_len, 1024]\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    \n    # Reshape to separate heads: [batch, seq_len, 1024] -> [batch, seq_len, 8, 128]\n    value_states = value_proj.view(batch_size, seq_len, num_kv_heads, head_dim)\n    \n    # Transpose to attention format: [batch, seq_len, 8, 128] -> [batch, 8, seq_len, 128]\n    value_states = value_states.transpose(1, 2).contiguous()\n    \n    return value_states\n"
+}

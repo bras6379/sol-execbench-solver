@@ -1,0 +1,25 @@
+{
+  "name": "t3_7d12b2e7b23e",
+  "definition": "003_lm_head_projection_with_logit_slicing",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\n\ndef get_inputs(axes_and_scalars: dict, device: torch.device) -> dict:\n    \"\"\"\n    Generate inputs for the LM head projection kernel.\n    \n    Args:\n        axes_and_scalars: Dictionary containing axis values\n        device: Target device for tensors\n    \n    Returns:\n        Dictionary of input tensors\n    \"\"\"\n    batch_size = axes_and_scalars[\"batch_size\"]\n    seq_len = axes_and_scalars[\"seq_len\"]\n    hidden_size = axes_and_scalars[\"hidden_size\"]\n    vocab_size = axes_and_scalars[\"vocab_size\"]\n    \n    # Generate random hidden states\n    hidden_states = torch.randn(\n        batch_size, seq_len, hidden_size,\n        dtype=torch.bfloat16, device=device\n    )\n    \n    # Generate random weight matrix with proper initialization\n    std = 1.0 / (hidden_size ** 0.5)\n    weight = torch.randn(\n        vocab_size, hidden_size,\n        dtype=torch.bfloat16, device=device\n    ) * std\n    \n    return {\n        \"hidden_states\": hidden_states,\n        \"weight\": weight\n    }\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    LM head projection with logit slicing.\n    \n    This kernel performs:\n    1. Slice the last logits_to_keep positions from hidden_states\n    2. Project sliced hidden states to vocabulary space via matmul with weight\n    \n    Args:\n        hidden_states: [batch_size, seq_len, 2048] input hidden states\n        weight: [102400, 2048] projection weight matrix\n    \n    Returns:\n        logits: [batch_size, logits_to_keep, 102400] vocabulary logits\n    \n    Note: logits_to_keep is determined by the output shape requirement.\n    The kernel slices hidden_states[:, -logits_to_keep:, :] before projection.\n    For this reference implementation, we compute all positions and the\n    slicing is handled by the benchmark framework based on output shape.\n    \"\"\"\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    \n    # Perform the projection: [B, S, H] @ [H, V] = [B, S, V]\n    # Using matmul with transposed weight\n    # The slicing to logits_to_keep is implicit in the output shape\n    logits = torch.matmul(hidden_states, weight.t())\n    \n    return logits\n"
+    }
+  ]
+}

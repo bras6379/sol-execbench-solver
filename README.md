@@ -1,176 +1,166 @@
 # SOL-ExecBench Solver
 
-Engine for solving the [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench)
-GPU-kernel benchmark on B200. Runs locally (laptop); no pod/GPU required for
-the current stage.
+An autonomous solver for the [SOL-ExecBench](https://research.nvidia.com/benchmarks/sol-execbench)
+GPU-kernel benchmark on NVIDIA **B200**. Given a problem's PyTorch reference, it
+drives coding agents (Claude, GPT-5.5) to write optimized kernels, evaluates each
+on a **real B200** through the official harness, keeps a per-shape **ε-Pareto
+frontier**, and can submit the best straight to the leaderboard — end to end,
+one command.
 
-- `kb/` — B200 / Blackwell kernel-engineering knowledge base (21 files,
-  built from four fact-checked deep-research passes). Start at `kb/README.md`.
-- `.claude/skills/design-kernel/` — recipe for turning a problem's PyTorch
-  reference into optimized kernel candidate designs.
-- `designs/` — per-problem design docs.
-- `solver/` — the Python package, organized by concern:
-  - `engine/` — the optimization engine (loop, frontier, tiers, resume).
-  - `bench/` — problem fetching + candidate Solution model/validation.
-  - `dashboard/` — the static performance site (`solver report`).
-  - `journal.py` / `scoring.py` — shared primitives; `cli.py` — the entry point.
-- `docs/orchestration.md` — the orchestrator engine design (see **Engine** below).
-- `problems/<N>/` — fetched problem packs (see below).
+```bash
+solver solve --gpu 1-10 --tier main=claude/opus,codex/gpt-5.5 --time-limit-min 120
+solver submit 8 --poll          # → real leaderboard SOL + our rank + the #1
+solver report --watch 15        # live dashboard at out/index.html
+```
+
+**Validated live on a rented B200.** A naive reference rmsnorm scores ~0.05; agent
+kernels reach 0.5–0.87. Submissions are accepted by the real leaderboard (e.g.
+task-4 attention-backward at SOL 0.66, task-8 reduction ~0.84 est).
+
+## Layout
+
+- `solver/` — the Python package:
+  - `engine/` — the optimization engine: the async `solve_problem` loop + fleet,
+    the ε-Pareto `frontier`, `context` (journal replay/resume), the `--tier`
+    ladders, the real `SshExecutor` + pod lifecycle (`ssh_exec.py`, `pod.py`,
+    `gpu_run.py`), the harness bridge (`harness.py`), durable `store`, and the
+    cross-problem `knowledge` transfer.
+  - `bench/` — problem fetching, the candidate Solution model/validation, and the
+    `leaderboard` client (submit/poll/board).
+  - `dashboard/` — the static, live-updating performance site (`solver report`).
+  - `scoring.py` (the vendored SOL formula + the leaderboard calibration factor),
+    `journal.py`, `cli.py` (the entry point).
+- `kb/` — hand-curated B200/Blackwell kernel-engineering knowledge base (21 files);
+  **fed into every agent workdir** so agents consult the recipes. Start at `kb/README.md`.
+- `docs/` — `orchestration.md` (engine design), `gpu-execution.md` (the GPU path +
+  the measured calibration table), `agent.md`.
+- `problems/<N>/` — fetched problem packs.
 
 ## Setup
 
 ```bash
 uv venv --python 3.12
-uv pip install -e .          # laptop base: just the fetcher + scoring (pyarrow)
+uv pip install -e '.[dev,gpu]'      # engine + tests + the runpod SDK (auto-provisioning)
+cp .env.example .env                # then fill in the keys below
 ```
 
-## Execution model
+`.env` (gitignored): `OPENAI_API_KEY` (codex/gpt-5.5), `RUNPOD_API_KEY` (rent B200s),
+`SOLBENCH_TOKEN` (leaderboard submit/poll). The `claude` agent uses your local
+`claude` CLI auth. The pinned harness itself installs on the pod only.
 
-The laptop **never runs a workload**. Local tooling prepares candidates and,
-later, ingests results; the actual run (correctness + timing) happens on a
-GPU via the official harness, which returns data we then handle.
+## The pipeline
 
 ```
-  laptop                                   GPU box
-  ------                                   -------
-  fetch problems         ─────────────▶
-  design (design-kernel skill)
-  scaffold candidate  ──┐
-  check (static, no GPU)│
-                        └── solution ────▶  run in SOL-ExecBench harness
-                                            (correctness + cold-L2 timing)
-  handle results / score  ◀────────────    returns latencies + correctness
-  iterate
+  laptop (orchestrator, authoritative)          RunPod B200 (ephemeral, per run)
+  ------------------------------------          -------------------------------
+  solve --gpu  ── auto-provision ────────────▶  create pod, bootstrap the pinned
+                                                 harness (uv sync torch/cu13 + …)
+  agents write kernel.py (Claude/GPT) ──────▶   run in the SOL-ExecBench harness
+  ε-Pareto frontier · score · reflect  ◀────    (correctness + cold-L2 CUPTI timing)
+  … iterate until the time budget …
+  terminate the pod (guaranteed teardown)  ──▶  pod destroyed, nothing left billing
+  submit best → leaderboard
 ```
 
-The GPU-run transport (submit solution → run harness → return data) is a
-later build phase; everything below runs on the laptop today.
+The laptop is authoritative (scoring, the frontier, durable artifacts); the pod
+only holds the harness and is torn down on any exit path (finally + atexit +
+signals + reap of stragglers).
 
-## Engine (orchestrator)
+## GPU execution — `solver solve --gpu`
 
-`docs/orchestration.md` is the full design for the optimization engine: a
-GEPA-style reflective loop per problem (reflect on the harness trace → mutate
-the kernel → evaluate → keep a per-shape **ε-Pareto frontier**), a fleet of
-these running concurrently over one single-flight GPU, with knowledge
-transferred across problems (sibling seeding + curated family learnings).
-Diverse `(agent, model)` **tiers** (Claude / GPT / DeepSeek / GLM / … pools)
-round-robin for exploration and escalate cheap→strong when a problem plateaus
-with headroom left. It runs autonomously and is fully resumable (journal
-replay).
-
-**Laptop-first:** the loop is built and tested entirely against a StubExecutor
-(no GPU) and StubAgent (no API / credits) — the §12 stub contract makes every
-routing / frontier / budget / escalation / resume invariant deterministically
-assertable. Real agents and GPU transport are later phases.
+One command provisions an ephemeral B200 on RunPod, bootstraps the pinned harness,
+runs the fleet, and terminates the pod:
 
 ```bash
-uv pip install -e '.[dev]'   # pytest
-python -m pytest tests/      # the §12 acceptance tests (no GPU, no API)
+solver solve --gpu 1-10 \
+  --tier main=claude/opus,codex/gpt-5.5 \   # models round-robin within a tier (or cheap→strong ladders)
+  --time-limit-min 120 \                    # wall-clock budget PER problem (lifts iter/eval caps)
+  --gpu-iterations 50                        # harness timed iters/workload
 ```
 
-Drive real runs through the engine (stub sim agent, no GPU/model) and view them:
+- **Resumes from journals** — re-running the same ids continues where it left off,
+  keeping every frontier (kill the process to pause).
+- **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier round-robins its
+  models; multiple tiers escalate cheap→strong on plateau.
+- **Calibration.** RunPod containers can't lock GPU clocks, so we measure *unlocked*
+  (boost) — a constant **~1.19×** faster than the leaderboard's locked 1500 MHz
+  (measured across 6 submissions; `docs/gpu-execution.md` §8). Every score therefore
+  carries a **leaderboard estimate** (`scoring.LEADERBOARD_LATENCY_FACTOR`, env
+  `SOLBENCH_CALIBRATION_FACTOR`) shown to the agent and the dashboard. A constant
+  factor preserves ranking; the leaderboard is the authoritative gate.
+
+## Engine
+
+`docs/orchestration.md` is the full design: a GEPA-style reflective loop per problem
+(reflect on the trace → mutate the kernel → evaluate → ε-Pareto accept), a fleet over
+one single-flight GPU, fully resumable via journal replay. What the agents get each
+iteration: the problem reference + `kb/`, the current **frontier** (best-first, with
+the leaderboard estimate), a reflection on the parent, **recent FAILED attempts**
+(so they don't repeat mistakes), and — for same-op siblings — a **warm-start kernel**
+to adapt (cross-problem transfer, `knowledge.py`).
+
+Agents are existing coding-agent CLIs, shelled out to — no per-agent code (`CliAgent`,
+`docs/agent.md`): `claude` and `codex` today. A timed-out or failed agent call *skips
+the iteration*, it never aborts the problem.
+
+**Laptop-first + tested.** The whole loop runs against a `StubExecutor`/`StubAgent`
+(no GPU, no API), so every routing / frontier / budget / escalation / resume invariant
+is deterministically asserted:
 
 ```bash
-solver solve 1-40 --runs-dir runs                 # deterministic sim agent (no GPU/model)
-solver solve 1-40 --agent codex --model gpt-5.5   # a real agent CLI (needs it installed + authed)
-solver status --runs-dir runs                     # per-problem summary
-solver report --runs-dir runs                     # → out/ dashboard site
+python -m pytest -q          # 50 tests, no GPU / no API
 ```
 
-Status: **Phases A–E built** — the engine (`solver/engine/`): the async
-`solve_problem` loop, RunContext with journal replay/resume, the ε-Pareto
-frontier, the tier ladder with headroom-gated escalation, novelty gates, the
-fleet, the serialized knowledge curator, and bootstrap sibling seeding — all
-covered by the §12 stub tests and verified end-to-end on the dashboard
-(`docs/screenshots/real-*.png`). **Real agents** plug in by shelling out to
-existing coding-agent CLIs (`CliAgent`; `docs/agent.md`) — a `CliSpec` per CLI,
-no per-agent code. Next: **GPU execution** (`docs/gpu-execution.md`, designed) —
-a `GpuQueueExecutor` that runs kernels in the harness on a rented B200 over SSH;
-Phase F1 (transport + durability) is testable on-laptop with a fake harness
-before renting a GPU.
+## Leaderboard
 
-Run progress is inspectable as a static dashboard (no server/CDN):
+The loop is closed in-tool (`SOLBENCH_TOKEN` required; `kernel_id == task_id`):
 
 ```bash
-solver report --demo      # synthetic 235-problem run -> .cache/demo/out/index.html
-solver report             # a real run under runs/ -> publishable out/ site
+solver submit 8 --poll       # upload runs/8/best_solution.json, wait for the score
+solver poll 8                # our SOL + our rank + the current #1
+solver export                # bundle every best_solution.json → submissions/ + manifest.json
 ```
 
-## Candidates
+## Durable artifacts + dashboard
 
-A **candidate** is a *Solution* (the harness's JSON: build `spec` + `sources`,
-called in Destination Passing Style — inputs then pre-allocated outputs,
-written in place). See `docs/solution.md` in the upstream repo; the format is
-captured in `solver/bench/solution.py`.
+`solve` writes to `runs/<task>/`: `journal.jsonl`, `candidates/<cid>.json` (every
+candidate + a ready-to-submit `submit` form), `frontier.json`, `best_solution.json`,
+`submissions.jsonl`. The dashboard renders it live (no server/CDN — self-contained):
 
 ```bash
-solver scaffold 69                 # correct PyTorch DPS baseline for task 69
-solver scaffold 69 --lang triton   # signature-correct Triton stub to build from
-solver check <solution.json>       # static pre-flight (schema, DPS signature, reward-hack lints)
+solver report --runs-dir runs --out-dir out --watch 15   # regenerates out/ every 15s
+python -m http.server 8765 --directory out               # view at localhost:8765
 ```
 
-`scaffold` writes to `problems/<id>/candidates/<name>.json` (git-ignored;
-regenerable). `check` runs no GPU and executes no candidate code — it only
-AST-parses — so it's the cheap gate before spending a GPU run.
+Problems are sorted by leaderboard estimate; each problem's detail page shows every
+candidate's **agent · score · kernel · trajectory** and the real leaderboard submissions.
 
-## Scoring and the grader
+## Candidates, scoring, fetching
 
-The score is `S = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))` — 0.5 when a
-candidate matches the baseline `T_b`, 1.0 at the Speed-of-Light `T_SOL`. Both
-numbers are in each problem's `metadata.json` (`sol.per_workload`). The
-formula is vendored (`solver/scoring.py`) so you can project scores during
-design without a GPU:
-
-```python
-from solver.scoring import sol_score, score_from_metadata
-```
-
-The **real grader** (correctness, cold-L2 CUPTI timing, input generation,
-reward-hack defenses — see `kb/benchmark-grader.md`) is the official
-`NVIDIA/SOL-ExecBench` harness. It runs on a **Linux + CUDA-13 + Blackwell
-GPU** box, not the laptop, and is wired as a pinned optional dependency:
+A **candidate** is a *Solution* (harness JSON: build `spec` + `sources`, entry
+`kernel.py::run`). Score: `S = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))` — 0.5 at the
+optimized baseline `T_b`, 1.0 at Speed-of-Light `T_SOL`; both in each problem's
+`metadata.json`. The formula is vendored (`solver/scoring.py`); the **real grader**
+(correctness, cold-L2 CUPTI timing, reward-hack defenses — `kb/benchmark-grader.md`)
+is the pinned `NVIDIA/SOL-ExecBench` harness, installed on the pod (`.[bench]`).
 
 ```bash
-uv pip install -e '.[bench]'   # GPU box only; pulls torch(cu130), cupti, cutlass-dsl, ...
+solver fetch 1 2 5-10        # by global task number 1–235 (L1 1–94, L2 95–176,
+solver fetch --all           #   Quant 177–209, FlashInfer-Bench 210–235)
+solver check <solution.json> # static pre-flight (schema, DPS signature, reward-hack lints)
+solver scaffold 69           # a signature-correct baseline to start from
 ```
 
-Driving that harness on the GPU (candidate → measured latency → score) is the
-next build phase; nothing in the current laptop flow requires it.
+Each `fetch` writes `problems/<N>/`: `definition.json`, `reference.py`,
+`workload.jsonl` (byte-identical to the official unpack, incl. tolerances), and
+`metadata.json` (SOL/baseline targets from the website API). Authoritative source:
+the [`nvidia/SOL-ExecBench`](https://huggingface.co/datasets/nvidia/SOL-ExecBench)
+HuggingFace dataset.
 
-## Fetching problems
+## Status
 
-Problems are addressed by their **global task number 1–235**, which maps
-onto the four benchmark subsets (L1 1–94, L2 95–176, Quant 177–209,
-FlashInfer-Bench 210–235).
-
-```bash
-solver fetch 69            # one problem
-solver fetch 1 2 5-10      # lists and ranges
-solver fetch --all         # all 235
-solver fetch 69 --refresh  # re-download, ignore cache
-solver fetch 67 --no-sol   # skip the website SOL-baseline enrichment
-solver list --all          # print task-id -> subset / name
-```
-
-Each `solver fetch` writes `problems/<N>/`:
-
-| File | Source | Contents |
-|---|---|---|
-| `definition.json` | dataset | name, hf_id, description, axes, inputs/outputs, reference |
-| `reference.py` | dataset | PyTorch reference + input generator (verbatim) |
-| `workload.jsonl` | dataset | one workload per line: axes, inputs, **tolerance** |
-| `metadata.json` | + website API | provenance + Speed-of-Light baselines (`sol_ms`) |
-
-**Data source.** The authoritative problem data is the
-[`nvidia/SOL-ExecBench`](https://huggingface.co/datasets/nvidia/SOL-ExecBench)
-HuggingFace dataset (four parquet files, cached under `.cache/`). The
-`workload.jsonl` we write is byte-identical to the official unpack. The
-public website API (`/api/kernels/<id>`) is used only to enrich
-`metadata.json` with per-workload SOL targets and the reference baseline
-latency — it does **not** carry tolerances, so it is enrichment, not the
-source of truth.
-
-Note: 18 of the 26 FlashInfer-Bench problems (rmsnorm/gemm/moe: ids 210–220,
-229–235) carry no `tolerance` field; the 8 paged/ragged GQA/MLA attention
-problems (221–228) do. `metadata.json` records this per problem as
-`workloads_have_tolerance`. All L1/L2/Quant problems have tolerance.
+**Built and validated live on a B200** (`docs/gpu-execution.md`): auto-provision →
+bootstrap → real harness scoring → guaranteed teardown → leaderboard submission.
+Deferred: network-volume harness caching (fresh `uv sync` each run, ~5 min), ncu
+deep-profiling, and same-op transfer only helps runs with sibling shapes (the 2xx
+FlashInfer groups / full 235). 50 tests pass on the laptop.

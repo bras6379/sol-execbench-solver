@@ -1,0 +1,208 @@
+{
+  "cand_id": "e202e298aab6",
+  "task_id": 211,
+  "verdict": "entered",
+  "sol_score": 0.18676973701753855,
+  "correct": true,
+  "vector": [
+    0.285845946616568,
+    0.268793091652667,
+    0.2774769585253456,
+    0.26677347315273325,
+    0.020373376053820905,
+    0.022138288292052367,
+    0.27825356735342766,
+    0.27718915450023973,
+    0.022943567487204285,
+    0.02449902190705417,
+    0.27898819259865065,
+    0.2792926704254229,
+    0.020086419561457926,
+    0.29212259011889535
+  ],
+  "strategy": "seed",
+  "agent": "",
+  "model": "",
+  "parent": null,
+  "trajectory": null,
+  "gpu_s": 10.802,
+  "job_id": "211-e202e298aab6",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 28.0,
+      "power_w_max": 320.7,
+      "samples": 33,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0507675,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.02056,
+      "sol_score": 0.285845946616568,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0484955,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.01808,
+      "sol_score": 0.268793091652667,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0569435,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0221765,
+      "sol_score": 0.2774769585253456,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.061312,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.02288,
+      "sol_score": 0.26677347315273325,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.954059,
+      "sol_ms": 0.0466,
+      "baseline_latency_ms": 0.0654725,
+      "sol_score": 0.020373376053820905,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.79894,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0555205,
+      "sol_score": 0.022138288292052367,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0568955,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0223035,
+      "sol_score": 0.27825356735342766,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.056816000000000005,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0220964999999999,
+      "sol_score": 0.27718915450023973,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.734349,
+      "sol_ms": 0.0351,
+      "baseline_latency_ms": 0.05152,
+      "sol_score": 0.022943567487204285,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.5978375,
+      "sol_ms": 0.0286,
+      "baseline_latency_ms": 0.042896,
+      "sol_score": 0.02449902190705417,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0570235,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0224325,
+      "sol_score": 0.27898819259865065,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.056943999999999995,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.022496,
+      "sol_score": 0.2792926704254229,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.9622995000000001,
+      "sol_ms": 0.0469,
+      "baseline_latency_ms": 0.065664,
+      "sol_score": 0.020086419561457926,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.052704,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0219845,
+      "sol_score": 0.29212259011889535,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "reference.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    _, hidden_size = hidden_states.shape\n    # Check constants\n    assert hidden_size == 4096\n\n    EPS = 1e-5\n\n    x = hidden_states.to(torch.float32) + residual.to(torch.float32)\n    inv_rms = torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + EPS)\n    y = (x * inv_rms) * weight.to(torch.float32)\n    return y.to(hidden_states.dtype)"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t211_e202e298aab6",
+    "definition": "002_fused_add_rmsnorm_h4096",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "reference.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "reference.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    _, hidden_size = hidden_states.shape\n    # Check constants\n    assert hidden_size == 4096\n\n    EPS = 1e-5\n\n    x = hidden_states.to(torch.float32) + residual.to(torch.float32)\n    inv_rms = torch.rsqrt(x.pow(2).mean(dim=-1, keepdim=True) + EPS)\n    y = (x * inv_rms) * weight.to(torch.float32)\n    return y.to(hidden_states.dtype)"
+      }
+    ]
+  }
+}

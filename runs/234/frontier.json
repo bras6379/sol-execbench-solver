@@ -1,0 +1,63 @@
+{
+  "task_id": 234,
+  "family": "gemm",
+  "name": "gemm_234",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "fa72d66a676d",
+  "best_score": 0.2879040776637263,
+  "members": [
+    {
+      "cand_id": "fa72d66a676d",
+      "sol_score": 0.2879040776637263,
+      "all_passed": true,
+      "shapes_won": 7,
+      "vector": [
+        0.2848984771573604,
+        0.30684371061715776,
+        0.30918975797965625,
+        0.3062234794908062,
+        0.24740338193088107,
+        0.25776917383134995,
+        0.3066153612035044,
+        0.3096551724137931,
+        0.258896382067269,
+        0.2697201017811705,
+        0.3087565674255692,
+        0.3073943661971831,
+        0.2476277786178739,
+        0.3096633765785928
+      ],
+      "strategy": "Fused Triton kernel combining cast, square-accumulate, rsqrt, and scaled output in single pass to achieve minimum-byte b",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/fa72d66a676d.json"
+    },
+    {
+      "cand_id": "8cc4dafe327f",
+      "sol_score": 0.28785757003298584,
+      "all_passed": true,
+      "shapes_won": 8,
+      "vector": [
+        0.2848984771573604,
+        0.30737704918032793,
+        0.3102780711017247,
+        0.3064334210584514,
+        0.24702471772963075,
+        0.2580968832486731,
+        0.30682881197380724,
+        0.3102971665514858,
+        0.25859554199877743,
+        0.269221888709305,
+        0.30703587600139326,
+        0.3069620253164557,
+        0.24792536028235918,
+        0.30903069015204987
+      ],
+      "strategy": "Triton fused single-pass: vectorized loads (256 elem/thread), block-level reduce for mean-of-squares, in-place scaling w",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/8cc4dafe327f.json"
+    }
+  ]
+}

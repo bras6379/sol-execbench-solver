@@ -1,0 +1,138 @@
+{
+  "cand_id": "a24fae939088",
+  "task_id": 210,
+  "verdict": "entered",
+  "sol_score": 0.22442084284017425,
+  "correct": true,
+  "vector": [
+    0.23285899094437254,
+    0.21670702179176754,
+    0.23613540937718686,
+    0.22466806429070582,
+    0.2080107563716073,
+    0.23352814825915374,
+    0.21903750884642603
+  ],
+  "strategy": "Triton fused Add+RMSNorm: block-per-batch, two-pass with BLOCK_SIZE=256 for improved coalescing and 2x fewer iterations",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "9b33989565c3",
+  "trajectory": "runs/210/work/a24fae939088/trajectory.jsonl",
+  "gpu_s": 6.207,
+  "job_id": "210-a24fae939088",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 26.0,
+      "power_w_max": 268.66,
+      "samples": 15,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.009888000000000001,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00328,
+      "sol_score": 0.23285899094437254,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.010752,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003264,
+      "sol_score": 0.21670702179176754,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0092325,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0031995,
+      "sol_score": 0.23613540937718686,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.009376,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.003072,
+      "sol_score": 0.22466806429070582,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0726395,
+      "sol_ms": 0.0264,
+      "baseline_latency_ms": 0.0385444999999999,
+      "sol_score": 0.2080107563716073,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.05856,
+      "sol_ms": 0.0202,
+      "baseline_latency_ms": 0.0318875,
+      "sol_score": 0.23352814825915374,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.009328,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.002976,
+      "sol_score": 0.21903750884642603,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr,\n    residual_ptr,\n    weight_ptr,\n    output_ptr,\n    stride_h,\n    stride_w,\n    H,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Optimized fused Add + RMSNorm kernel.\n    - One block per batch element\n    - Two-pass approach: accumulate sum_sq, then normalize + scale\n    - Larger block size (256) for better bandwidth utilization and fewer iterations\n    - Coalesced loads/stores with proper masking\n    \"\"\"\n    batch_idx = tl.program_id(0)\n\n    hidden_base = hidden_ptr + batch_idx * stride_h\n    residual_base = residual_ptr + batch_idx * stride_h\n    output_base = output_ptr + batch_idx * stride_h\n\n    sum_sq = tl.zeros((1,), dtype=tl.float32)\n\n    # Pass 1: Accumulate sum of squares\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        sum_sq += tl.sum(x_val * x_val)\n\n    # Compute inverse RMS\n    mean_sq = sum_sq / H\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Pass 2: Normalize and scale\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        y_val = (x_val * inv_rms) * w_val\n\n        tl.store(output_base + col, y_val.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 2048\n\n    output = torch.empty_like(hidden_states, dtype=hidden_states.dtype, device=hidden_states.device)\n\n    EPS = 1e-6\n    # Increased block size: 256 vs 128 reduces iterations from 16 to 8\n    # Better for memory coalescing and reducing synchronization overhead\n    BLOCK_SIZE = 256\n\n    grid = (batch_size,)\n\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        hidden_states.stride(0),\n        hidden_states.stride(1),\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t210_a24fae939088",
+    "definition": "001_fused_add_rmsnorm_h2048",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr,\n    residual_ptr,\n    weight_ptr,\n    output_ptr,\n    stride_h,\n    stride_w,\n    H,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Optimized fused Add + RMSNorm kernel.\n    - One block per batch element\n    - Two-pass approach: accumulate sum_sq, then normalize + scale\n    - Larger block size (256) for better bandwidth utilization and fewer iterations\n    - Coalesced loads/stores with proper masking\n    \"\"\"\n    batch_idx = tl.program_id(0)\n\n    hidden_base = hidden_ptr + batch_idx * stride_h\n    residual_base = residual_ptr + batch_idx * stride_h\n    output_base = output_ptr + batch_idx * stride_h\n\n    sum_sq = tl.zeros((1,), dtype=tl.float32)\n\n    # Pass 1: Accumulate sum of squares\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        sum_sq += tl.sum(x_val * x_val)\n\n    # Compute inverse RMS\n    mean_sq = sum_sq / H\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Pass 2: Normalize and scale\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        y_val = (x_val * inv_rms) * w_val\n\n        tl.store(output_base + col, y_val.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 2048\n\n    output = torch.empty_like(hidden_states, dtype=hidden_states.dtype, device=hidden_states.device)\n\n    EPS = 1e-6\n    # Increased block size: 256 vs 128 reduces iterations from 16 to 8\n    # Better for memory coalescing and reducing synchronization overhead\n    BLOCK_SIZE = 256\n\n    grid = (batch_size,)\n\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        hidden_states.stride(0),\n        hidden_states.stride(1),\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

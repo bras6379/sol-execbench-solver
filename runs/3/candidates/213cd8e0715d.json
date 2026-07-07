@@ -1,0 +1,245 @@
+{
+  "cand_id": "213cd8e0715d",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.6176860879191879,
+  "sol_score_calibrated": 0.36643556140244654,
+  "correct": true,
+  "vector": [
+    0.55447747704168,
+    0.5363756485241824,
+    0.36573215989287006,
+    0.5196239611244834,
+    0.7339503860607308,
+    0.7857488485456725,
+    0.5967502449179525,
+    0.7851945018417035,
+    0.6320327729206322,
+    0.7200950683303627,
+    0.5135024366804608,
+    0.5454377570721057,
+    0.532815005588221,
+    0.6129673311901377,
+    0.665071482679428,
+    0.7832023242963835
+  ],
+  "strategy": "Single dense bf16 GEMM via the canonical LM head: reshape to 2D (free view) then one cuBLASLt F.linear ([out,in] weight ",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "7d12b2e7b23e",
+  "trajectory": "runs/3/work/213cd8e0715d/trajectory.jsonl",
+  "gpu_s": 11.508,
+  "job_id": "3-213cd8e0715d",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 618.08,
+      "samples": 32,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.0363955,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.55447747704168,
+      "sol_score_cal": 0.27686750780049346,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0857595,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.5363756485241824,
+      "sol_score_cal": 0.4073878085912656,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.2753674999999998,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.36573215989287006,
+      "sol_score_cal": 0.21196008592716234,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0849435,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.5196239611244834,
+      "sol_score_cal": 0.4018162645823279,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.496718,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.7339503860607308,
+      "sol_score_cal": 0.3429071385045409,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.249455,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.7857488485456725,
+      "sol_score_cal": 0.42486369311825267,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0945435,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.5967502449179525,
+      "sol_score_cal": 0.46805028114292657,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.24945499999999998,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.7851945018417035,
+      "sol_score_cal": 0.4240600205043211,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.894604,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.6320327729206322,
+      "sol_score_cal": 0.3948243558508947,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.498254,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.7200950683303627,
+      "sol_score_cal": 0.33886919602058546,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.052172,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.5135024366804608,
+      "sol_score_cal": 0.2644525991681777,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.0322040000000001,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.5454377570721057,
+      "sol_score_cal": 0.2991766908676655,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.0859355,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.532815005588221,
+      "sol_score_cal": 0.4044544582612723,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7560294999999999,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.6129673311901377,
+      "sol_score_cal": 0.313838620193117,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.188255,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.665071482679428,
+      "sol_score_cal": 0.4650589878795599,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.249663,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.7832023242963835,
+      "sol_score_cal": 0.4243812740265818,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"003_lm_head_projection_with_logit_slicing \u2014 B200 optimized kernel.\n\nThe op is a single dense bf16 GEMM: logits = hidden_states @ weight\u1d40, with\nhidden_states [B, S, 2048] and weight [102400, 2048]. There is no fusion, no\nepilogue, and no accessible slicing lever (`run` never receives\n`logits_to_keep`; reference and candidate both materialize the full [B, S, V]).\n\nPer the B200 knowledge base (library-playbook.md): a plain dense bf16 GEMM is\nwon by cuBLAS/cuBLASLt \u2014 Triton reaches only 62\u201370% and no hand kernel reliably\nbeats it. So the fastest *and* numerically-faithful path is the canonical LM\nhead: collapse to 2D and issue one cuBLASLt GEMM via F.linear (the [out, in]\nweight layout cuBLASLt is most tuned for). fp8 is deliberately avoided \u2014 it\nblows the accuracy gate, and a single failed workload zeroes the whole problem.\n\nLevers applied:\n  * F.linear on a 2D view  -> the plain-GEMM cuBLAS path (no batched-matmul\n    dispatch, no physical transpose; weight\u1d40 is a stride flip).\n  * reshape() is a free view for the contiguous inputs the harness generates.\n  * cuBLASLt workspace hint >= 32 MiB (below that cuBLAS silently restricts\n    algorithm selection); set defensively and unit-safe.\n  * bf16 in / fp32 accumulate / bf16 out \u2014 exactly the reference semantics, so\n    correctness matches torch.matmul(hidden_states, weight.t()).\n\"\"\"\n\nimport os\n\n# cuBLASLt restricts its algorithm search below a 32 MiB workspace. PyTorch reads\n# CUBLASLT_WORKSPACE_SIZE in KiB; 32768 KiB == 32 MiB. `setdefault` keeps any\n# larger value the harness already chose, and the value is harmless under either\n# unit interpretation (never large enough to OOM).\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"32768\")\n\nimport torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"LM head projection: logits = hidden_states @ weight\u1d40.\n\n    Args:\n        hidden_states: [batch, seq_len, hidden=2048] bf16\n        weight:        [vocab=102400, hidden=2048] bf16\n\n    Returns:\n        logits: [batch, seq_len, vocab=102400] bf16\n    \"\"\"\n    *lead, hidden = hidden_states.shape\n    vocab = weight.shape[0]\n\n    # Collapse the leading (batch, seq_len) dims to a single GEMM M dimension.\n    # Contiguous input -> this is a zero-copy view; F.linear then dispatches the\n    # plain [M, H] @ [H, V] cuBLASLt GEMM (weight\u1d40 handled as a stride flip).\n    x = hidden_states.reshape(-1, hidden)\n    logits = F.linear(x, weight)                 # [M, V] bf16, fp32 accumulate\n    return logits.reshape(*lead, vocab)          # free view back to [B, S, V]\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_213cd8e0715d",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"003_lm_head_projection_with_logit_slicing \u2014 B200 optimized kernel.\n\nThe op is a single dense bf16 GEMM: logits = hidden_states @ weight\u1d40, with\nhidden_states [B, S, 2048] and weight [102400, 2048]. There is no fusion, no\nepilogue, and no accessible slicing lever (`run` never receives\n`logits_to_keep`; reference and candidate both materialize the full [B, S, V]).\n\nPer the B200 knowledge base (library-playbook.md): a plain dense bf16 GEMM is\nwon by cuBLAS/cuBLASLt \u2014 Triton reaches only 62\u201370% and no hand kernel reliably\nbeats it. So the fastest *and* numerically-faithful path is the canonical LM\nhead: collapse to 2D and issue one cuBLASLt GEMM via F.linear (the [out, in]\nweight layout cuBLASLt is most tuned for). fp8 is deliberately avoided \u2014 it\nblows the accuracy gate, and a single failed workload zeroes the whole problem.\n\nLevers applied:\n  * F.linear on a 2D view  -> the plain-GEMM cuBLAS path (no batched-matmul\n    dispatch, no physical transpose; weight\u1d40 is a stride flip).\n  * reshape() is a free view for the contiguous inputs the harness generates.\n  * cuBLASLt workspace hint >= 32 MiB (below that cuBLAS silently restricts\n    algorithm selection); set defensively and unit-safe.\n  * bf16 in / fp32 accumulate / bf16 out \u2014 exactly the reference semantics, so\n    correctness matches torch.matmul(hidden_states, weight.t()).\n\"\"\"\n\nimport os\n\n# cuBLASLt restricts its algorithm search below a 32 MiB workspace. PyTorch reads\n# CUBLASLT_WORKSPACE_SIZE in KiB; 32768 KiB == 32 MiB. `setdefault` keeps any\n# larger value the harness already chose, and the value is harmless under either\n# unit interpretation (never large enough to OOM).\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"32768\")\n\nimport torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"LM head projection: logits = hidden_states @ weight\u1d40.\n\n    Args:\n        hidden_states: [batch, seq_len, hidden=2048] bf16\n        weight:        [vocab=102400, hidden=2048] bf16\n\n    Returns:\n        logits: [batch, seq_len, vocab=102400] bf16\n    \"\"\"\n    *lead, hidden = hidden_states.shape\n    vocab = weight.shape[0]\n\n    # Collapse the leading (batch, seq_len) dims to a single GEMM M dimension.\n    # Contiguous input -> this is a zero-copy view; F.linear then dispatches the\n    # plain [M, H] @ [H, V] cuBLASLt GEMM (weight\u1d40 handled as a stride flip).\n    x = hidden_states.reshape(-1, hidden)\n    logits = F.linear(x, weight)                 # [M, V] bf16, fp32 accumulate\n    return logits.reshape(*lead, vocab)          # free view back to [B, S, V]\n"
+      }
+    ]
+  }
+}

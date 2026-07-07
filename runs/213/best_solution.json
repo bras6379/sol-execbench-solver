@@ -1,0 +1,25 @@
+{
+  "name": "t213_4eedd0759372",
+  "definition": "004_gemm_n128_k2048",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\n\ndef run(A, B):\n    C = torch.matmul(A, B.T)\n    return C"
+    }
+  ]
+}

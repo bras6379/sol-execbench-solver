@@ -1,0 +1,245 @@
+{
+  "cand_id": "040300cbe347",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.5731447188964288,
+  "sol_score_calibrated": 0.3284709646447049,
+  "correct": true,
+  "vector": [
+    0.5809315240963376,
+    0.13647364192571534,
+    0.5188241091429345,
+    0.392268186150481,
+    0.7136680335091823,
+    0.7937145857093717,
+    0.6002787016506528,
+    0.7767093827204373,
+    0.6280171603878121,
+    0.7442945930675313,
+    0.5173212408553003,
+    0.5524823358359334,
+    0.1358482337549063,
+    0.6200104028591085,
+    0.669057655903183,
+    0.790415714773974
+  ],
+  "strategy": "Hybrid bf16 LM-head GEMM: Triton N-tiled streaming for skinny M<=256 to stream the 102400x2048 weight once, with cuBLAS/",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "7d12b2e7b23e",
+  "trajectory": "runs/3/work/040300cbe347/trajectory.jsonl",
+  "gpu_s": 11.69,
+  "job_id": "3-040300cbe347",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 628.3,
+      "samples": 35,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.0274524999999999,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.5809315240963376,
+      "sol_score_cal": 0.284567449597585,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.23655900000000002,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.13647364192571534,
+      "sol_score_cal": 0.11166070968939566,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.099529,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.5188241091429345,
+      "sol_score_cal": 0.2661152481568279,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.1028155,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.392268186150481,
+      "sol_score_cal": 0.3093848002656876,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.49907,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.7136680335091823,
+      "sol_score_cal": 0.33757321422319175,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.248895,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.7937145857093717,
+      "sol_score_cal": 0.42762514623904146,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.09415950000000001,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.6002787016506528,
+      "sol_score_cal": 0.4706323062648983,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.25006300000000004,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.7767093827204373,
+      "sol_score_cal": 0.42110347032622597,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.896413,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.6280171603878121,
+      "sol_score_cal": 0.3929565312116982,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.495518,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.7442945930675313,
+      "sol_score_cal": 0.3451535926652184,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.050605,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.5173212408553003,
+      "sol_score_cal": 0.2656544107961392,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.029166,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.5524823358359334,
+      "sol_score_cal": 0.30168755693668947,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.23627199999999998,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.1358482337549063,
+      "sol_score_cal": 0.11112566913771156,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7543175,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.6200104028591085,
+      "sol_score_cal": 0.3160258872342117,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.1877595,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.669057655903183,
+      "sol_score_cal": 0.46737609330554647,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.249151,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.790415714773974,
+      "sol_score_cal": 0.426893348265209,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"33554432\")\n\nimport torch\nimport torch.nn.functional as F\n\ntry:\n    import triton\n    import triton.language as tl\n\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\n_TRITON_DISABLED = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _stream_lm_head_kernel(\n        x_ptr,\n        w_ptr,\n        out_ptr,\n        M: tl.constexpr,\n        N: tl.constexpr,\n        K: tl.constexpr,\n        stride_xm: tl.constexpr,\n        stride_xk: tl.constexpr,\n        stride_wn: tl.constexpr,\n        stride_wk: tl.constexpr,\n        stride_om: tl.constexpr,\n        stride_on: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        pid_n = tl.program_id(0)\n\n        offs_m = tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        x_ptrs = x_ptr + offs_m[:, None] * stride_xm + offs_k[None, :] * stride_xk\n        w_ptrs = w_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk\n        m_mask = offs_m < M\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0)\n            w = tl.load(w_ptrs)\n            acc += tl.dot(x, tl.trans(w))\n            x_ptrs += BLOCK_K * stride_xk\n            w_ptrs += BLOCK_K * stride_wk\n\n        out_ptrs = out_ptr + offs_m[:, None] * stride_om + offs_n[None, :] * stride_on\n        tl.store(out_ptrs, acc.to(tl.bfloat16), mask=m_mask[:, None])\n\n\ndef _triton_config(m: int):\n    if m <= 0 or m > 256:\n        return None\n    if m <= 16:\n        return 16, 128, 4\n    if m <= 32:\n        return 32, 128, 4\n    if m <= 64:\n        return 64, 128, 4\n    if m <= 128:\n        return 128, 64, 4\n    return 256, 64, 8\n\n\ndef _stream_lm_head(x: torch.Tensor, weight: torch.Tensor, block_m: int, block_n: int, num_warps: int):\n    m, k = x.shape\n    n = weight.shape[0]\n    out = torch.empty((m, n), device=x.device, dtype=torch.bfloat16)\n    grid = (triton.cdiv(n, block_n),)\n    _stream_lm_head_kernel[grid](\n        x,\n        weight,\n        out,\n        m,\n        n,\n        k,\n        x.stride(0),\n        x.stride(1),\n        weight.stride(0),\n        weight.stride(1),\n        out.stride(0),\n        out.stride(1),\n        BLOCK_M=block_m,\n        BLOCK_N=block_n,\n        BLOCK_K=64,\n        num_warps=num_warps,\n        num_stages=3,\n    )\n    return out\n\n\ndef _cublas_lm_head(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    x = hidden_states.reshape(batch_size * seq_len, hidden_size)\n    out = F.linear(x, weight)\n    return out.reshape(batch_size, seq_len, weight.shape[0])\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    global _TRITON_DISABLED\n\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    m = batch_size * seq_len\n\n    cfg = _triton_config(m)\n    if (\n        _HAS_TRITON\n        and not _TRITON_DISABLED\n        and cfg is not None\n        and hidden_size == weight.shape[1]\n        and hidden_size % 64 == 0\n        and vocab_size % cfg[1] == 0\n        and hidden_states.is_cuda\n        and hidden_states.dtype == torch.bfloat16\n        and weight.dtype == torch.bfloat16\n        and weight.stride(1) == 1\n    ):\n        try:\n            x = hidden_states.reshape(m, hidden_size)\n            if x.stride(1) == 1:\n                block_m, block_n, num_warps = cfg\n                out = _stream_lm_head(x, weight, block_m, block_n, num_warps)\n                return out.reshape(batch_size, seq_len, vocab_size)\n        except Exception:\n            _TRITON_DISABLED = True\n\n    return _cublas_lm_head(hidden_states, weight)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_040300cbe347",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"33554432\")\n\nimport torch\nimport torch.nn.functional as F\n\ntry:\n    import triton\n    import triton.language as tl\n\n    _HAS_TRITON = True\nexcept Exception:\n    _HAS_TRITON = False\n\n\n_TRITON_DISABLED = False\n\n\nif _HAS_TRITON:\n\n    @triton.jit\n    def _stream_lm_head_kernel(\n        x_ptr,\n        w_ptr,\n        out_ptr,\n        M: tl.constexpr,\n        N: tl.constexpr,\n        K: tl.constexpr,\n        stride_xm: tl.constexpr,\n        stride_xk: tl.constexpr,\n        stride_wn: tl.constexpr,\n        stride_wk: tl.constexpr,\n        stride_om: tl.constexpr,\n        stride_on: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n    ):\n        pid_n = tl.program_id(0)\n\n        offs_m = tl.arange(0, BLOCK_M)\n        offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        offs_k = tl.arange(0, BLOCK_K)\n\n        x_ptrs = x_ptr + offs_m[:, None] * stride_xm + offs_k[None, :] * stride_xk\n        w_ptrs = w_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk\n        m_mask = offs_m < M\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n        for _ in range(0, K, BLOCK_K):\n            x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0)\n            w = tl.load(w_ptrs)\n            acc += tl.dot(x, tl.trans(w))\n            x_ptrs += BLOCK_K * stride_xk\n            w_ptrs += BLOCK_K * stride_wk\n\n        out_ptrs = out_ptr + offs_m[:, None] * stride_om + offs_n[None, :] * stride_on\n        tl.store(out_ptrs, acc.to(tl.bfloat16), mask=m_mask[:, None])\n\n\ndef _triton_config(m: int):\n    if m <= 0 or m > 256:\n        return None\n    if m <= 16:\n        return 16, 128, 4\n    if m <= 32:\n        return 32, 128, 4\n    if m <= 64:\n        return 64, 128, 4\n    if m <= 128:\n        return 128, 64, 4\n    return 256, 64, 8\n\n\ndef _stream_lm_head(x: torch.Tensor, weight: torch.Tensor, block_m: int, block_n: int, num_warps: int):\n    m, k = x.shape\n    n = weight.shape[0]\n    out = torch.empty((m, n), device=x.device, dtype=torch.bfloat16)\n    grid = (triton.cdiv(n, block_n),)\n    _stream_lm_head_kernel[grid](\n        x,\n        weight,\n        out,\n        m,\n        n,\n        k,\n        x.stride(0),\n        x.stride(1),\n        weight.stride(0),\n        weight.stride(1),\n        out.stride(0),\n        out.stride(1),\n        BLOCK_M=block_m,\n        BLOCK_N=block_n,\n        BLOCK_K=64,\n        num_warps=num_warps,\n        num_stages=3,\n    )\n    return out\n\n\ndef _cublas_lm_head(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    x = hidden_states.reshape(batch_size * seq_len, hidden_size)\n    out = F.linear(x, weight)\n    return out.reshape(batch_size, seq_len, weight.shape[0])\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    global _TRITON_DISABLED\n\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    vocab_size = weight.shape[0]\n    m = batch_size * seq_len\n\n    cfg = _triton_config(m)\n    if (\n        _HAS_TRITON\n        and not _TRITON_DISABLED\n        and cfg is not None\n        and hidden_size == weight.shape[1]\n        and hidden_size % 64 == 0\n        and vocab_size % cfg[1] == 0\n        and hidden_states.is_cuda\n        and hidden_states.dtype == torch.bfloat16\n        and weight.dtype == torch.bfloat16\n        and weight.stride(1) == 1\n    ):\n        try:\n            x = hidden_states.reshape(m, hidden_size)\n            if x.stride(1) == 1:\n                block_m, block_n, num_warps = cfg\n                out = _stream_lm_head(x, weight, block_m, block_n, num_warps)\n                return out.reshape(batch_size, seq_len, vocab_size)\n        except Exception:\n            _TRITON_DISABLED = True\n\n    return _cublas_lm_head(hidden_states, weight)\n"
+      }
+    ]
+  }
+}

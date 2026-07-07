@@ -1,0 +1,41 @@
+{
+  "task_id": 1,
+  "family": "rope",
+  "name": "rope_1",
+  "epsilon": 0.02,
+  "size": 1,
+  "best_cand": "9d66689d4dd3",
+  "best_score": 0.6642164521278474,
+  "best_score_cal": 0.6185141284401524,
+  "members": [
+    {
+      "cand_id": "9d66689d4dd3",
+      "sol_score": 0.6642164521278474,
+      "sol_score_cal": 0.6185141284401524,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.48766364640109355,
+        0.5203224665520227,
+        0.6417773467293062,
+        0.881246058814645,
+        0.7026833036852506,
+        0.501758750626307,
+        0.8446941426873428,
+        0.7188842527159004,
+        0.548965918892256,
+        0.7793239120361529,
+        0.7836261022927689,
+        0.562216888165716,
+        0.6778936620951413,
+        0.8758713729677616,
+        0.5432623274628313,
+        0.5572730819210617
+      ],
+      "strategy": "Two fused Triton kernels with bf16 tensor-core dots and f32 accumulation: dS fuses dO@V^T, dropout, and softmax backward",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/9d66689d4dd3.json"
+    }
+  ]
+}

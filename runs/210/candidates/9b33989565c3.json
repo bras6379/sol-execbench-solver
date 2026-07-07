@@ -1,0 +1,138 @@
+{
+  "cand_id": "9b33989565c3",
+  "task_id": 210,
+  "verdict": "entered",
+  "sol_score": 0.13390799069859732,
+  "correct": true,
+  "vector": [
+    0.14150943396226415,
+    0.1338818249813014,
+    0.14614405976775033,
+    0.13839862247094276,
+    0.11193448636591882,
+    0.1305114933864871,
+    0.13497601395551678
+  ],
+  "strategy": "Triton fused Add+RMSNorm: one block per batch, two-pass reduction (sum squares first, then normalize+scale), coalesced r",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "db0122c617f7",
+  "trajectory": "runs/210/work/9b33989565c3/trajectory.jsonl",
+  "gpu_s": 6.344,
+  "job_id": "210-9b33989565c3",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 28.0,
+      "power_w_max": 270.81,
+      "samples": 17,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.017872,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00328,
+      "sol_score": 0.14150943396226415,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.018928,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.003264,
+      "sol_score": 0.1338818249813014,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.016272000000000002,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0031995,
+      "sol_score": 0.14614405976775033,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.016512,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.003072,
+      "sol_score": 0.13839862247094276,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.122752,
+      "sol_ms": 0.0264,
+      "baseline_latency_ms": 0.0385444999999999,
+      "sol_score": 0.11193448636591882,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.098064,
+      "sol_ms": 0.0202,
+      "baseline_latency_ms": 0.0318875,
+      "sol_score": 0.1305114933864871,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.016368,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.002976,
+      "sol_score": 0.13497601395551678,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr,\n    residual_ptr,\n    weight_ptr,\n    output_ptr,\n    stride_h,\n    stride_w,\n    H,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Fused Add + RMSNorm kernel.\n    - Load hidden_states[b, :] and residual[b, :] (coalesced)\n    - Compute x = hidden + residual (float32)\n    - Compute inv_rms = rsqrt(mean(x^2) + eps)\n    - Output = (x * inv_rms) * weight (cast to bfloat16)\n    \"\"\"\n    batch_idx = tl.program_id(0)\n\n    hidden_base = hidden_ptr + batch_idx * stride_h\n    residual_base = residual_ptr + batch_idx * stride_h\n    output_base = output_ptr + batch_idx * stride_h\n\n    sum_sq = tl.zeros((1,), dtype=tl.float32)\n\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        sum_sq += tl.sum(x_val * x_val)\n\n    mean_sq = sum_sq / H\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        y_val = (x_val * inv_rms) * w_val\n\n        tl.store(output_base + col, y_val.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 2048\n\n    output = torch.empty_like(hidden_states, dtype=hidden_states.dtype, device=hidden_states.device)\n\n    EPS = 1e-6\n    BLOCK_SIZE = 128\n\n    grid = (batch_size,)\n\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        hidden_states.stride(0),\n        hidden_states.stride(1),\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t210_9b33989565c3",
+    "definition": "001_fused_add_rmsnorm_h2048",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr,\n    residual_ptr,\n    weight_ptr,\n    output_ptr,\n    stride_h,\n    stride_w,\n    H,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Fused Add + RMSNorm kernel.\n    - Load hidden_states[b, :] and residual[b, :] (coalesced)\n    - Compute x = hidden + residual (float32)\n    - Compute inv_rms = rsqrt(mean(x^2) + eps)\n    - Output = (x * inv_rms) * weight (cast to bfloat16)\n    \"\"\"\n    batch_idx = tl.program_id(0)\n\n    hidden_base = hidden_ptr + batch_idx * stride_h\n    residual_base = residual_ptr + batch_idx * stride_h\n    output_base = output_ptr + batch_idx * stride_h\n\n    sum_sq = tl.zeros((1,), dtype=tl.float32)\n\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        sum_sq += tl.sum(x_val * x_val)\n\n    mean_sq = sum_sq / H\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        y_val = (x_val * inv_rms) * w_val\n\n        tl.store(output_base + col, y_val.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 2048\n\n    output = torch.empty_like(hidden_states, dtype=hidden_states.dtype, device=hidden_states.device)\n\n    EPS = 1e-6\n    BLOCK_SIZE = 128\n\n    grid = (batch_size,)\n\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        hidden_states.stride(0),\n        hidden_states.stride(1),\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

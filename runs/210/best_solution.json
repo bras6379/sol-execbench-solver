@@ -1,0 +1,25 @@
+{
+  "name": "t210_a24fae939088",
+  "definition": "001_fused_add_rmsnorm_h2048",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef fused_add_rmsnorm_kernel(\n    hidden_ptr,\n    residual_ptr,\n    weight_ptr,\n    output_ptr,\n    stride_h,\n    stride_w,\n    H,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Optimized fused Add + RMSNorm kernel.\n    - One block per batch element\n    - Two-pass approach: accumulate sum_sq, then normalize + scale\n    - Larger block size (256) for better bandwidth utilization and fewer iterations\n    - Coalesced loads/stores with proper masking\n    \"\"\"\n    batch_idx = tl.program_id(0)\n\n    hidden_base = hidden_ptr + batch_idx * stride_h\n    residual_base = residual_ptr + batch_idx * stride_h\n    output_base = output_ptr + batch_idx * stride_h\n\n    sum_sq = tl.zeros((1,), dtype=tl.float32)\n\n    # Pass 1: Accumulate sum of squares\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        sum_sq += tl.sum(x_val * x_val)\n\n    # Compute inverse RMS\n    mean_sq = sum_sq / H\n    inv_rms = tl.rsqrt(mean_sq + eps)\n\n    # Pass 2: Normalize and scale\n    for offset in range(0, H, BLOCK_SIZE):\n        col = offset + tl.arange(0, BLOCK_SIZE)\n        mask = col < H\n\n        h_val = tl.load(hidden_base + col, mask=mask, other=0.0).to(tl.float32)\n        r_val = tl.load(residual_base + col, mask=mask, other=0.0).to(tl.float32)\n        w_val = tl.load(weight_ptr + col, mask=mask, other=0.0).to(tl.float32)\n\n        x_val = h_val + r_val\n        y_val = (x_val * inv_rms) * w_val\n\n        tl.store(output_base + col, y_val.to(tl.bfloat16), mask=mask)\n\n\n@torch.no_grad()\ndef run(hidden_states, residual, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 2048\n\n    output = torch.empty_like(hidden_states, dtype=hidden_states.dtype, device=hidden_states.device)\n\n    EPS = 1e-6\n    # Increased block size: 256 vs 128 reduces iterations from 16 to 8\n    # Better for memory coalescing and reducing synchronization overhead\n    BLOCK_SIZE = 256\n\n    grid = (batch_size,)\n\n    fused_add_rmsnorm_kernel[grid](\n        hidden_states,\n        residual,\n        weight,\n        output,\n        hidden_states.stride(0),\n        hidden_states.stride(1),\n        hidden_size,\n        EPS,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+    }
+  ]
+}

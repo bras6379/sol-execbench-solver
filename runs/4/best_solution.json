@@ -1,0 +1,25 @@
+{
+  "name": "t4_5eef7e4f28f4",
+  "definition": "004_attention_output_projection_with_reshape_backward",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n\n    go2d = grad_output.reshape(-1, hidden_size)\n    rs2d = reshaped.reshape(-1, hidden_size)\n\n    grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n    grad_reshaped_2d = go2d.mm(weight)\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, 32, 64\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+    }
+  ]
+}

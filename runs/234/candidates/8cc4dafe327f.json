@@ -1,0 +1,208 @@
+{
+  "cand_id": "8cc4dafe327f",
+  "task_id": 234,
+  "verdict": "entered",
+  "sol_score": 0.28785757003298584,
+  "correct": true,
+  "vector": [
+    0.2848984771573604,
+    0.30737704918032793,
+    0.3102780711017247,
+    0.3064334210584514,
+    0.24702471772963075,
+    0.2580968832486731,
+    0.30682881197380724,
+    0.3102971665514858,
+    0.25859554199877743,
+    0.269221888709305,
+    0.30703587600139326,
+    0.3069620253164557,
+    0.24792536028235918,
+    0.30903069015204987
+  ],
+  "strategy": "Triton fused single-pass: vectorized loads (256 elem/thread), block-level reduce for mean-of-squares, in-place scaling w",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "fa72d66a676d",
+  "trajectory": "runs/234/work/8cc4dafe327f/trajectory.jsonl",
+  "gpu_s": 7.341,
+  "job_id": "234-8cc4dafe327f",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 28.0,
+      "power_w_max": 299.19,
+      "samples": 21,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.018432,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.007584,
+      "sol_score": 0.2848984771573604,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.019327999999999998,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0088,
+      "sol_score": 0.30737704918032793,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.016176000000000003,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.007552,
+      "sol_score": 0.3102780711017247,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.016480500000000002,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.007728,
+      "sol_score": 0.3064334210584514,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.11016000000000001,
+      "sol_ms": 0.0312,
+      "baseline_latency_ms": 0.057104,
+      "sol_score": 0.24702471772963075,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0907675,
+      "sol_ms": 0.0257,
+      "baseline_latency_ms": 0.048336,
+      "sol_score": 0.2580968832486731,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0164315,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.007552,
+      "sol_score": 0.30682881197380724,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.016368,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.007584,
+      "sol_score": 0.3102971665514858,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.08475150000000001,
+      "sol_ms": 0.0235,
+      "baseline_latency_ms": 0.044864,
+      "sol_score": 0.25859554199877743,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.06984,
+      "sol_ms": 0.0192,
+      "baseline_latency_ms": 0.037856,
+      "sol_score": 0.269221888709305,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.016416,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.007552,
+      "sol_score": 0.30703587600139326,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.016368,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.007584,
+      "sol_score": 0.3069620253164557,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.11088,
+      "sol_ms": 0.0314,
+      "baseline_latency_ms": 0.057601,
+      "sol_score": 0.24792536028235918,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.016464,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0075844999999999,
+      "sol_score": 0.30903069015204987,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _rmsnorm_kernel(\n    out_ptr,\n    hidden_ptr,\n    weight_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Fused RMSNorm kernel: single-pass minimum-byte bound.\n\n    One block per batch, vectorized reduction:\n    - Load and accumulate sum-of-squares in parallel chunks\n    - Single reduction tree for mean computation\n    - Epilogue: apply inv_rms * weight scaling in-place\n    - Total I/O: 1 read input + 1 read weight + 1 write output per element\n    \"\"\"\n\n    batch_idx = tl.program_id(axis=0)\n    if batch_idx >= batch_size:\n        return\n\n    row_offset = batch_idx * hidden_size\n\n    # Phase 1: Vectorized accumulation of sum-of-squares\n    # Process all hidden_size elements in BLOCK_SIZE chunks\n    sum_sq = tl.zeros((), dtype=tl.float32)\n\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        # Vectorized offsets for this chunk\n        block_offsets = tl.arange(0, BLOCK_SIZE)\n        elem_offsets = block_start + block_offsets\n\n        # Mask for boundary elements\n        mask = elem_offsets < hidden_size\n\n        # Vectorized load from HBM\n        h_vals = tl.load(hidden_ptr + row_offset + elem_offsets, mask=mask, other=0.0)\n\n        # Accumulate sum of squares (vectorized multiply, then reduce)\n        h_f32 = h_vals.to(tl.float32)\n        sum_sq += tl.sum(h_f32 * h_f32)\n\n    # Phase 2: Compute normalization factor (mean and reciprocal square root)\n    mean_sq = sum_sq / hidden_size\n    inv_rms = tl.math.rsqrt(mean_sq + eps)\n\n    # Phase 3: Apply scaling and write output (second vectorized pass)\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        block_offsets = tl.arange(0, BLOCK_SIZE)\n        elem_offsets = block_start + block_offsets\n\n        mask = elem_offsets < hidden_size\n\n        # Vectorized loads for both hidden and weight\n        h_vals = tl.load(hidden_ptr + row_offset + elem_offsets, mask=mask, other=0.0)\n        w_vals = tl.load(weight_ptr + elem_offsets, mask=mask, other=0.0)\n\n        # Apply normalization and weight scaling\n        h_f32 = h_vals.to(tl.float32)\n        w_f32 = w_vals.to(tl.float32)\n        result = h_f32 * inv_rms * w_f32\n\n        # Convert back to bfloat16 and store\n        result_bf16 = result.to(tl.bfloat16)\n        tl.store(out_ptr + row_offset + elem_offsets, result_bf16, mask=mask)\n\n\ndef run(hidden_states, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 4096\n\n    eps = 1e-5\n    output = torch.empty_like(hidden_states)\n\n    # One block per batch element\n    # Each block processes vectorized chunks of 256 elements\n    BLOCK_SIZE = 256\n    grid = (batch_size,)\n\n    _rmsnorm_kernel[grid](\n        out_ptr=output,\n        hidden_ptr=hidden_states,\n        weight_ptr=weight,\n        batch_size=batch_size,\n        hidden_size=hidden_size,\n        eps=eps,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t234_8cc4dafe327f",
+    "definition": "025_rmsnorm_h4096",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _rmsnorm_kernel(\n    out_ptr,\n    hidden_ptr,\n    weight_ptr,\n    batch_size,\n    hidden_size,\n    eps,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Fused RMSNorm kernel: single-pass minimum-byte bound.\n\n    One block per batch, vectorized reduction:\n    - Load and accumulate sum-of-squares in parallel chunks\n    - Single reduction tree for mean computation\n    - Epilogue: apply inv_rms * weight scaling in-place\n    - Total I/O: 1 read input + 1 read weight + 1 write output per element\n    \"\"\"\n\n    batch_idx = tl.program_id(axis=0)\n    if batch_idx >= batch_size:\n        return\n\n    row_offset = batch_idx * hidden_size\n\n    # Phase 1: Vectorized accumulation of sum-of-squares\n    # Process all hidden_size elements in BLOCK_SIZE chunks\n    sum_sq = tl.zeros((), dtype=tl.float32)\n\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        # Vectorized offsets for this chunk\n        block_offsets = tl.arange(0, BLOCK_SIZE)\n        elem_offsets = block_start + block_offsets\n\n        # Mask for boundary elements\n        mask = elem_offsets < hidden_size\n\n        # Vectorized load from HBM\n        h_vals = tl.load(hidden_ptr + row_offset + elem_offsets, mask=mask, other=0.0)\n\n        # Accumulate sum of squares (vectorized multiply, then reduce)\n        h_f32 = h_vals.to(tl.float32)\n        sum_sq += tl.sum(h_f32 * h_f32)\n\n    # Phase 2: Compute normalization factor (mean and reciprocal square root)\n    mean_sq = sum_sq / hidden_size\n    inv_rms = tl.math.rsqrt(mean_sq + eps)\n\n    # Phase 3: Apply scaling and write output (second vectorized pass)\n    for block_start in range(0, hidden_size, BLOCK_SIZE):\n        block_offsets = tl.arange(0, BLOCK_SIZE)\n        elem_offsets = block_start + block_offsets\n\n        mask = elem_offsets < hidden_size\n\n        # Vectorized loads for both hidden and weight\n        h_vals = tl.load(hidden_ptr + row_offset + elem_offsets, mask=mask, other=0.0)\n        w_vals = tl.load(weight_ptr + elem_offsets, mask=mask, other=0.0)\n\n        # Apply normalization and weight scaling\n        h_f32 = h_vals.to(tl.float32)\n        w_f32 = w_vals.to(tl.float32)\n        result = h_f32 * inv_rms * w_f32\n\n        # Convert back to bfloat16 and store\n        result_bf16 = result.to(tl.bfloat16)\n        tl.store(out_ptr + row_offset + elem_offsets, result_bf16, mask=mask)\n\n\ndef run(hidden_states, weight):\n    batch_size, hidden_size = hidden_states.shape\n    assert hidden_size == 4096\n\n    eps = 1e-5\n    output = torch.empty_like(hidden_states)\n\n    # One block per batch element\n    # Each block processes vectorized chunks of 256 elements\n    BLOCK_SIZE = 256\n    grid = (batch_size,)\n\n    _rmsnorm_kernel[grid](\n        out_ptr=output,\n        hidden_ptr=hidden_states,\n        weight_ptr=weight,\n        batch_size=batch_size,\n        hidden_size=hidden_size,\n        eps=eps,\n        BLOCK_SIZE=BLOCK_SIZE,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

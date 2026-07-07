@@ -1,0 +1,245 @@
+{
+  "cand_id": "9477cf8b0cdc",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.6117630579130133,
+  "sol_score_calibrated": 0.36371632460923325,
+  "correct": true,
+  "vector": [
+    0.5725244219182114,
+    0.5372055231737815,
+    0.380450967693508,
+    0.5179632044038823,
+    0.7067509075677189,
+    0.7834952063545957,
+    0.5976284645572725,
+    0.7845178895212106,
+    0.554152365752183,
+    0.729663501773103,
+    0.558637902273152,
+    0.49073147522288585,
+    0.5343105246230765,
+    0.590944564563796,
+    0.6673745173745173,
+    0.7818574898353186
+  ],
+  "strategy": "Use native PyTorch torch.matmul so cuBLAS selects the fastest BF16 GEMM path for the full [B,S,V] output; all graded wor",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "7d12b2e7b23e",
+  "trajectory": "runs/3/work/9477cf8b0cdc/trajectory.jsonl",
+  "gpu_s": 11.4,
+  "job_id": "3-9477cf8b0cdc",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 39.0,
+      "power_w_max": 627.97,
+      "samples": 32,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.030205,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.5725244219182114,
+      "sol_score_cal": 0.28215230492960053,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.08568,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.5372055231737815,
+      "sol_score_cal": 0.4079574122818037,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.252313,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.380450967693508,
+      "sol_score_cal": 0.21777055228821887,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.08512,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.5179632044038823,
+      "sol_score_cal": 0.400634202093091,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.499903,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.7067509075677189,
+      "sol_score_cal": 0.3357236901340151,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.2496155,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.7834952063545957,
+      "sol_score_cal": 0.4240788045280017,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0944475,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.5976284645572725,
+      "sol_score_cal": 0.46869312769962623,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.249503,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.7845178895212106,
+      "sol_score_cal": 0.42382510008624896,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.934365,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.554152365752183,
+      "sol_score_cal": 0.3574771117188819,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.4971505,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.729663501773103,
+      "sol_score_cal": 0.3413761165559784,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.035021,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.558637902273152,
+      "sol_score_cal": 0.2782292151128174,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.0587650000000002,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.49073147522288585,
+      "sol_score_cal": 0.2788837054990986,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.08579149999999999,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.5343105246230765,
+      "sol_score_cal": 0.4054796554961302,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.761646,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.590944564563796,
+      "sol_score_cal": 0.3068708034055683,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.187968,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.6673745173745173,
+      "sol_score_cal": 0.466398277415908,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.24975950000000002,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.7818574898353186,
+      "sol_score_cal": 0.4239111145027432,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    return torch.matmul(hidden_states, weight.t())\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_9477cf8b0cdc",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    return torch.matmul(hidden_states, weight.t())\n"
+      }
+    ]
+  }
+}

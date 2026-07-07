@@ -1,0 +1,25 @@
+{
+  "name": "t10_adf508383cc6",
+  "definition": "010_attention_value_projection_with_transpose",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\n\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, v_proj_weight: torch.Tensor) -> torch.Tensor:\n    batch_size, seq_len, _ = hidden_states.shape\n    value_proj = torch.nn.functional.linear(hidden_states, v_proj_weight)\n    return value_proj.view(batch_size, seq_len, 8, 128).transpose(1, 2)\n"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "cand_id": "613b720bb609",
+  "task_id": 2,
+  "verdict": "dominated",
+  "sol_score": 0.4843197014911985,
+  "sol_score_calibrated": 0.4332349981600653,
+  "correct": true,
+  "vector": [
+    0.5817069032362239,
+    0.4042113466252096,
+    0.4096425738148932,
+    0.47621597548107647,
+    0.5082414584673935,
+    0.5327058237986599,
+    0.46131344492928106,
+    0.45987841263431817,
+    0.49592172377395816,
+    0.44841785466262696,
+    0.33065863659369354,
+    0.529568612513094,
+    0.5084126730381255,
+    0.4916234027904523,
+    0.5056260636080673,
+    0.4378560519926904,
+    0.5556108455117482,
+    0.5478391801190601,
+    0.5232762616059766,
+    0.47766678462742257
+  ],
+  "strategy": "FP16 channels-last cuDNN tensor-core convs with cached fp16/NHWC input and weight transforms, fp32 GroupNorm/SiLU/residu",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "d1e35b459a0b",
+  "trajectory": "runs/2/work/613b720bb609/trajectory.jsonl",
+  "gpu_s": 34.25,
+  "job_id": "2-613b720bb609",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 39.0,
+      "power_w_max": 765.9,
+      "samples": 110,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.3280145,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.42264,
+      "sol_score": 0.5817069032362239,
+      "sol_score_cal": 0.5251823281447672,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.24799900000000002,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.175232,
+      "sol_score": 0.4042113466252096,
+      "sol_score_cal": 0.3596011446845598,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.2546065,
+      "sol_ms": 0.0228,
+      "baseline_latency_ms": 0.183648,
+      "sol_score": 0.4096425738148932,
+      "sol_score_cal": 0.36471010282333904,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 2.8220219999999996,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 2.6277915,
+      "sol_score": 0.47621597548107647,
+      "sol_score_cal": 0.4209404850374346,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.284207,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2922884999999999,
+      "sol_score": 0.5082414584673935,
+      "sol_score_cal": 0.45781897285337053,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.41065450000000003,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4561275,
+      "sol_score": 0.5327058237986599,
+      "sol_score_cal": 0.4789504090405464,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.9915005,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.873664,
+      "sol_score": 0.46131344492928106,
+      "sol_score_cal": 0.4105321332664353,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.190239,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.1652,
+      "sol_score": 0.45987841263431817,
+      "sol_score_cal": 0.4121379242683496,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.430267,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.412656,
+      "sol_score": 0.49592172377395816,
+      "sol_score_cal": 0.44048194967329707,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.1743195,
+      "sol_ms": 0.0111,
+      "baseline_latency_ms": 0.1437919999999999,
+      "sol_score": 0.44841785466262696,
+      "sol_score_cal": 0.4032796728818686,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 10.167406,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 5.714099,
+      "sol_score": 0.33065863659369354,
+      "sol_score_cal": 0.288301968742439,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.56915,
+      "sol_ms": 0.1122,
+      "baseline_latency_ms": 0.6265925,
+      "sol_score": 0.529568612513094,
+      "sol_score_cal": 0.47651834539005317,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 1.5565704999999999,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.5981445,
+      "sol_score": 0.5084126730381255,
+      "sol_score_cal": 0.454064814053753,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.733758,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.715216,
+      "sol_score": 0.4916234027904523,
+      "sol_score_cal": 0.43662432254805333,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.251247,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2559845,
+      "sol_score": 0.5056260636080673,
+      "sol_score_cal": 0.45413574459355127,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 4.5139700000000005,
+      "sol_ms": 0.7687,
+      "baseline_latency_ms": 3.685905,
+      "sol_score": 0.4378560519926904,
+      "sol_score_cal": 0.38791952686239045,
+      "error": null
+    },
+    {
+      "index": 16,
+      "correct": true,
+      "latency_ms": 0.326063,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.391552,
+      "sol_score": 0.5556108455117482,
+      "sol_score_cal": 0.5027175856820146,
+      "error": null
+    },
+    {
+      "index": 17,
+      "correct": true,
+      "latency_ms": 0.326559,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3820325,
+      "sol_score": 0.5478391801190601,
+      "sol_score_cal": 0.4948797726453311,
+      "error": null
+    },
+    {
+      "index": 18,
+      "correct": true,
+      "latency_ms": 0.40827,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4397594999999999,
+      "sol_score": 0.5232762616059766,
+      "sol_score_cal": 0.46944180961081206,
+      "error": null
+    },
+    {
+      "index": 19,
+      "correct": true,
+      "latency_ms": 0.7402055000000001,
+      "sol_ms": 0.1284,
+      "baseline_latency_ms": 0.687888,
+      "sol_score": 0.47766678462742257,
+      "sol_score_cal": 0.42646095039893994,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nimport torch\nimport torch.nn.functional as F\n\n\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\n\ntry:\n    import torch._dynamo as _dynamo\n\n    if hasattr(_dynamo.config, \"cache_size_limit\"):\n        _dynamo.config.cache_size_limit = max(_dynamo.config.cache_size_limit, 64)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 128\n        )\nexcept Exception:\n    pass\n\n\n_NUM_GROUPS = 32\n_CHANNELS_LAST = torch.channels_last\n_CONV_DTYPE = torch.float16\n\n_x_cache = None\n_weight_cache = {}\n_weight_cache_order = []\n_MAX_WEIGHT_CACHE = 4\n\n_compiled = None\n_compiled_disabled = False\n\n\ndef _tensor_meta(t):\n    return (\n        t.data_ptr(),\n        tuple(t.shape),\n        tuple(t.stride()),\n        t.dtype,\n        t.device,\n        getattr(t, \"_version\", 0),\n    )\n\n\ndef _cached_x(x):\n    global _x_cache\n    meta = _tensor_meta(x)\n    if _x_cache is not None and _x_cache[0] is x and _x_cache[1] == meta:\n        return _x_cache[2], _x_cache[3]\n    x_cl = x.contiguous(memory_format=_CHANNELS_LAST)\n    x_h = x_cl.to(_CONV_DTYPE)\n    _x_cache = (x, meta, x_cl, x_h)\n    return x_cl, x_h\n\n\ndef _cached_weight(weight):\n    key = id(weight)\n    meta = _tensor_meta(weight)\n    entry = _weight_cache.get(key)\n    if entry is not None and entry[0] is weight and entry[1] == meta:\n        return entry[2]\n\n    weight_h = weight.to(_CONV_DTYPE).contiguous(memory_format=_CHANNELS_LAST)\n    _weight_cache[key] = (weight, meta, weight_h)\n    if key in _weight_cache_order:\n        _weight_cache_order.remove(key)\n    _weight_cache_order.append(key)\n    while len(_weight_cache_order) > _MAX_WEIGHT_CACHE:\n        old = _weight_cache_order.pop(0)\n        _weight_cache.pop(old, None)\n    return weight_h\n\n\ndef _core_impl(\n    x_cl,\n    x_h,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    out = F.conv2d(x_h, conv1_weight, bias=None, stride=1, padding=1)\n    out = F.group_norm(\n        out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps\n    )\n    out = F.silu(out)\n\n    out = F.conv2d(out.to(_CONV_DTYPE), conv2_weight, bias=None, stride=1, padding=1)\n    out = F.group_norm(\n        out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps\n    )\n    out = F.silu(out)\n\n    return out + x_cl\n\n\ndef _get_compiled():\n    global _compiled, _compiled_disabled\n    if _compiled is not None or _compiled_disabled:\n        return _compiled\n    if not hasattr(torch, \"compile\"):\n        _compiled_disabled = True\n        return None\n\n    mode = os.environ.get(\"KERNEL_COMPILE_MODE\", \"default\")\n    for m in (mode, None):\n        try:\n            _compiled = (\n                torch.compile(_core_impl, mode=m)\n                if m and m != \"default\"\n                else torch.compile(_core_impl)\n            )\n            return _compiled\n        except Exception:\n            _compiled = None\n    _compiled_disabled = True\n    return None\n\n\n@torch.no_grad()\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    global _compiled_disabled\n    x_cl, x_h = _cached_x(x)\n    w1 = _cached_weight(conv1_weight)\n    w2 = _cached_weight(conv2_weight)\n\n    fn = _get_compiled()\n    if fn is not None:\n        try:\n            return fn(\n                x_cl,\n                x_h,\n                w1,\n                norm1_weight,\n                norm1_bias,\n                w2,\n                norm2_weight,\n                norm2_bias,\n                eps,\n            )\n        except Exception:\n            _compiled_disabled = True\n\n    return _core_impl(\n        x_cl,\n        x_h,\n        w1,\n        norm1_weight,\n        norm1_bias,\n        w2,\n        norm2_weight,\n        norm2_bias,\n        eps,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t2_613b720bb609",
+    "definition": "002_vae_conv3x3_groupnorm_silu_residual_fused",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import os\n\nimport torch\nimport torch.nn.functional as F\n\n\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\n\ntry:\n    import torch._dynamo as _dynamo\n\n    if hasattr(_dynamo.config, \"cache_size_limit\"):\n        _dynamo.config.cache_size_limit = max(_dynamo.config.cache_size_limit, 64)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 128\n        )\nexcept Exception:\n    pass\n\n\n_NUM_GROUPS = 32\n_CHANNELS_LAST = torch.channels_last\n_CONV_DTYPE = torch.float16\n\n_x_cache = None\n_weight_cache = {}\n_weight_cache_order = []\n_MAX_WEIGHT_CACHE = 4\n\n_compiled = None\n_compiled_disabled = False\n\n\ndef _tensor_meta(t):\n    return (\n        t.data_ptr(),\n        tuple(t.shape),\n        tuple(t.stride()),\n        t.dtype,\n        t.device,\n        getattr(t, \"_version\", 0),\n    )\n\n\ndef _cached_x(x):\n    global _x_cache\n    meta = _tensor_meta(x)\n    if _x_cache is not None and _x_cache[0] is x and _x_cache[1] == meta:\n        return _x_cache[2], _x_cache[3]\n    x_cl = x.contiguous(memory_format=_CHANNELS_LAST)\n    x_h = x_cl.to(_CONV_DTYPE)\n    _x_cache = (x, meta, x_cl, x_h)\n    return x_cl, x_h\n\n\ndef _cached_weight(weight):\n    key = id(weight)\n    meta = _tensor_meta(weight)\n    entry = _weight_cache.get(key)\n    if entry is not None and entry[0] is weight and entry[1] == meta:\n        return entry[2]\n\n    weight_h = weight.to(_CONV_DTYPE).contiguous(memory_format=_CHANNELS_LAST)\n    _weight_cache[key] = (weight, meta, weight_h)\n    if key in _weight_cache_order:\n        _weight_cache_order.remove(key)\n    _weight_cache_order.append(key)\n    while len(_weight_cache_order) > _MAX_WEIGHT_CACHE:\n        old = _weight_cache_order.pop(0)\n        _weight_cache.pop(old, None)\n    return weight_h\n\n\ndef _core_impl(\n    x_cl,\n    x_h,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    out = F.conv2d(x_h, conv1_weight, bias=None, stride=1, padding=1)\n    out = F.group_norm(\n        out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps\n    )\n    out = F.silu(out)\n\n    out = F.conv2d(out.to(_CONV_DTYPE), conv2_weight, bias=None, stride=1, padding=1)\n    out = F.group_norm(\n        out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps\n    )\n    out = F.silu(out)\n\n    return out + x_cl\n\n\ndef _get_compiled():\n    global _compiled, _compiled_disabled\n    if _compiled is not None or _compiled_disabled:\n        return _compiled\n    if not hasattr(torch, \"compile\"):\n        _compiled_disabled = True\n        return None\n\n    mode = os.environ.get(\"KERNEL_COMPILE_MODE\", \"default\")\n    for m in (mode, None):\n        try:\n            _compiled = (\n                torch.compile(_core_impl, mode=m)\n                if m and m != \"default\"\n                else torch.compile(_core_impl)\n            )\n            return _compiled\n        except Exception:\n            _compiled = None\n    _compiled_disabled = True\n    return None\n\n\n@torch.no_grad()\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    global _compiled_disabled\n    x_cl, x_h = _cached_x(x)\n    w1 = _cached_weight(conv1_weight)\n    w2 = _cached_weight(conv2_weight)\n\n    fn = _get_compiled()\n    if fn is not None:\n        try:\n            return fn(\n                x_cl,\n                x_h,\n                w1,\n                norm1_weight,\n                norm1_bias,\n                w2,\n                norm2_weight,\n                norm2_bias,\n                eps,\n            )\n        except Exception:\n            _compiled_disabled = True\n\n    return _core_impl(\n        x_cl,\n        x_h,\n        w1,\n        norm1_weight,\n        norm1_bias,\n        w2,\n        norm2_weight,\n        norm2_bias,\n        eps,\n    )\n"
+      }
+    ]
+  }
+}
