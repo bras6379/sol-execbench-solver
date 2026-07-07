@@ -244,6 +244,66 @@ def _cmd_frontier(args) -> None:
             print(f"  {label}: {f}")
 
 
+def _submissions_log(runs_dir: Path, task: int) -> Path:
+    return Path(runs_dir) / str(task) / "submissions.jsonl"
+
+
+def _record_submission(runs_dir: Path, task: int, event: dict) -> None:
+    p = _submissions_log(runs_dir, task)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    with p.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(event) + "\n")
+
+
+def _cmd_submit(args) -> None:
+    import time
+
+    from .bench import leaderboard as lb
+
+    task = args.task
+    kernel = args.kernel if args.kernel is not None else task     # kernel_id == task_id
+    runs_dir = Path(args.runs_dir)
+    file_path = Path(args.file) if args.file else runs_dir / str(task) / "best_solution.json"
+    if not file_path.exists():
+        raise SystemExit(f"no solution to submit at {file_path} (run `solver solve --gpu {task}` first, "
+                         f"or pass --file)")
+    print(f"submitting {file_path}  →  kernel {kernel} ({args.mode}, {args.gpu})")
+    resp = lb.submit(kernel, file_path, gpu=args.gpu, mode=args.mode)
+    sid = resp.get("submission_id") or resp.get("id")
+    _record_submission(runs_dir, task, {"event": "submit", "submission_id": sid,
+                                        "kernel_id": kernel, "file": str(file_path),
+                                        "mode": args.mode, "message": resp.get("message")})
+    print(f"submitted → #{sid}")
+    if args.poll and sid:
+        deadline = time.time() + args.timeout
+        while time.time() < deadline:
+            row = lb.poll(sid)
+            print("  " + lb.format_result(row))
+            if row.get("status") in lb.TERMINAL:
+                _record_submission(runs_dir, task, {"event": "poll", **row})
+                break
+            time.sleep(args.poll_interval)
+
+
+def _cmd_poll(args) -> None:
+    from .bench import leaderboard as lb
+
+    sids = args.ids
+    if args.task and not sids:                       # latest submission for a task
+        evs = [json.loads(l) for l in _submissions_log(Path(args.runs_dir), args.task).read_text().splitlines()] \
+            if _submissions_log(Path(args.runs_dir), args.task).exists() else []
+        sids = [max((e["submission_id"] for e in evs if e.get("event") == "submit" and e.get("submission_id")),
+                    default=None)]
+        sids = [s for s in sids if s]
+    if not sids:
+        raise SystemExit("give submission id(s) or --task <n> (with a prior submit)")
+    for sid in sids:
+        row = lb.poll(int(sid))
+        print(lb.format_result(row))
+        if args.task:
+            _record_submission(Path(args.runs_dir), args.task, {"event": "poll", **row})
+
+
 def _cmd_export(args) -> None:
     """Collect every problem's best_solution.json into one submission dir + manifest."""
     import shutil
@@ -378,6 +438,24 @@ def main(argv: list[str] | None = None) -> None:
     p_cand.add_argument("--status", default=None, help="filter by status (accepted/dominated/rejected/...)")
     p_cand.add_argument("--runs-dir", default="runs")
     p_cand.set_defaults(func=_cmd_candidates)
+
+    p_submit = sub.add_parser("submit", help="submit a problem's best_solution.json to the leaderboard")
+    p_submit.add_argument("task", type=int, help="task id (also the leaderboard kernel_id)")
+    p_submit.add_argument("--file", default=None, help="solution.json (default: runs/<task>/best_solution.json)")
+    p_submit.add_argument("--kernel", type=int, default=None, help="leaderboard kernel_id (default: = task)")
+    p_submit.add_argument("--gpu", default="B200")
+    p_submit.add_argument("--mode", default="private", choices=["private", "release"])
+    p_submit.add_argument("--runs-dir", default="runs")
+    p_submit.add_argument("--poll", action="store_true", help="wait and poll until the result is ready")
+    p_submit.add_argument("--poll-interval", type=float, default=10.0)
+    p_submit.add_argument("--timeout", type=float, default=600.0, help="max seconds to poll")
+    p_submit.set_defaults(func=_cmd_submit)
+
+    p_poll = sub.add_parser("poll", help="poll leaderboard submission status/score")
+    p_poll.add_argument("ids", nargs="*", type=int, help="submission id(s)")
+    p_poll.add_argument("--task", type=int, default=None, help="poll the latest submission for this task")
+    p_poll.add_argument("--runs-dir", default="runs")
+    p_poll.set_defaults(func=_cmd_poll)
 
     p_export = sub.add_parser("export", help="collect each problem's best_solution.json into a submission dir")
     p_export.add_argument("--runs-dir", default="runs")

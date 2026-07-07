@@ -289,6 +289,21 @@ What we do instead, to stay honest and calibratable:
   on the (consistent) local number; the **leaderboard is the authoritative gate**.
 - **Reference-as-seed** is the always-present local probe (measure it every run).
 
+**Measured calibration (two real submissions, `solver submit`):**
+
+| task | our latency | leaderboard | ratio | our SOL | LB SOL |
+|---|---|---|---|---|---|
+| 230 rmsnorm_h128 | 0.006950 ms | 0.008469 ms | **1.219×** | 0.530 | 0.481 |
+| 210 fused_add_rmsnorm_h2048 | 0.016719 ms | 0.020238 ms | **1.210×** | 0.224 | 0.188 |
+
+The leaderboard latency is a **stable ~1.21× our unlocked measurement** across two
+different ops/shapes/score-levels (interestingly *below* the raw SM-clock ratio
+1965/1500 = 1.31, because DRAM already runs at the locked 3996 MHz preset). Being
+constant, it **preserves ranking** — the frontier keeps the right kernels — and
+makes leaderboard SOL predictable (scale local latency ×1.21, re-score). The loop
+is closed in-tool: `solver solve --gpu` → `solver submit <task>` (kernel_id =
+task_id) → `solver poll`.
+
 ## 8b. GPU observability & profiling — what we capture, and when
 
 Latency says a kernel is slow; **profiling says *why*** — and "why" is what makes
