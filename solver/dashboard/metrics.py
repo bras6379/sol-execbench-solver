@@ -93,12 +93,15 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             agent["plan"]["n"] += 1
             agent["plan"]["dur"] += e.get("dur_s", 0.0)
             agent["plan"]["tok"] += e.get("tok_in", 0) + e.get("tok_out", 0)
-            candidates[e["cand"]] = {
+            # Two agents can produce the SAME kernel (same content hash = same cand
+            # id). Keep the FIRST occurrence — the one that got evaluated/accepted —
+            # so a later exact-duplicate plan_done doesn't clobber the winner's row.
+            candidates.setdefault(e["cand"], {
                 "cand": e["cand"], "ts": ts, "model": e.get("model", model),
                 "parent": e.get("parent"), "strategy": e.get("strategy", ""),
                 "solution": e.get("solution"), "status": "planned",
                 "sol_score": None,
-            }
+            })
         elif ev == "check" and not e.get("ok", True):
             outcomes["rejected"] += 1
             if e.get("cand") in candidates:
@@ -165,6 +168,8 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             agent["reflect"]["dur"] += e.get("dur_s", 0.0)
         elif ev == "terminated":
             terminated = e.get("reason")
+        elif ev == "reopened":
+            terminated = None            # a reopened run is running again, not "budget:*"
 
     waits = [j["start"] - j["enq"] for j in jobs.values() if "start" in j and "enq" in j]
     return {

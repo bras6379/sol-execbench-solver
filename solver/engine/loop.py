@@ -165,18 +165,16 @@ async def solve_problem(
         if not ok:
             ctx.record("iter", n=ctx.iters, outcome="rejected")
             continue
-        if is_dup_hash:
+        if is_dup_hash:                          # exact same kernel already seen → skip (free)
             ctx.record("novelty", cand=cand.cand_id, verdict="duplicate")
             ctx.record("iter", n=ctx.iters, outcome="duplicate")
             continue
-        try:
-            verdict_nov = await agent.judge(cand, parent, ctx.frontier)
-        except Exception:
-            verdict_nov = "materially-new"      # a judge failure must not drop a real candidate
-        ctx.record("novelty", cand=cand.cand_id, verdict=verdict_nov)
-        if verdict_nov != "materially-new":
-            ctx.record("iter", n=ctx.iters, outcome="duplicate")
-            continue
+        # NO LLM novelty pre-filter. The ε-Pareto frontier IS the novelty gate: it
+        # keeps a candidate only if its MEASURED perf is non-dominated, and discards
+        # a near-duplicate that doesn't actually improve. Pre-judging from one-line
+        # strategy strings wrongly threw away real variants (FP16-vs-TF32, tile/warp
+        # autotuning) after we'd already paid to generate them. We measure; the
+        # frontier decides.
 
         ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
         result = await executor.evaluate(cand.solution, task_id)

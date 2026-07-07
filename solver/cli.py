@@ -439,8 +439,8 @@ def main(argv: list[str] | None = None) -> None:
                               "--tier cheap=claude/haiku,codex/gpt-5.5 --tier strong=claude/opus")
     p_solve.add_argument("--plateau-cycles", type=int, default=2,
                          help="M: full pool-cycles with no ε-gain before escalating a tier")
-    p_solve.add_argument("--max-iters", type=int, default=40, help="per-problem iteration cap")
-    p_solve.add_argument("--max-evals", type=int, default=30, help="per-problem GPU-eval cap")
+    p_solve.add_argument("--max-iters", type=int, default=500, help="per-problem iteration cap (large; use --time-limit-min to gate on time instead)")
+    p_solve.add_argument("--max-evals", type=int, default=500, help="per-problem GPU-eval cap")
     p_solve.add_argument("--time-limit-min", type=float, default=None,
                          help="wall-clock budget per problem (minutes); when set it's the ONLY stop "
                               "condition — iter/eval caps and plateau are lifted so it keeps trying")

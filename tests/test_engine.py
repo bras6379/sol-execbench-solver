@@ -170,14 +170,17 @@ def test_gates_skip_the_gpu(tmp_path):
     assert "rejected" in kinds and "duplicate" in kinds
 
 
-def test_judge_cosmetic_bounces(tmp_path):
+def test_no_novelty_prefilter_measures_candidates(tmp_path):
+    # The LLM novelty judge is removed: a "cosmetic" verdict no longer bounces a
+    # candidate. Every non-exact-duplicate is MEASURED and the ε-Pareto frontier
+    # decides on real performance (exact-hash duplicates are still skipped).
     c = one_tier(max_iterations=3, plateau_cycles=999, escalate_ceiling=1.1)
     agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}),
-                         judge_fn=lambda cand, parent, fr: "cosmetic")
+                         judge_fn=lambda cand, parent, fr: "cosmetic")   # ignored now
     ex = StubExecutor()
     ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
-    assert ex.calls == 1                        # only the seed; every plan bounced at novelty
-    assert ctx.frontier.best_score() == 0.5     # nothing but the seed entered
+    assert ex.calls > 1                          # candidates are measured, not bounced
+    assert ctx.frontier.best_score() >= 0.6      # a 0.6 kernel entered over the 0.5 seed
 
 
 # --------------------------------------------------------------------------- #
