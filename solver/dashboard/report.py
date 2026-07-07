@@ -329,6 +329,8 @@ body{margin:0;background:var(--surface);color:var(--ink);
 font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
 h1{font-size:19px;margin:0 0 2px}
 h2{font-size:14px;font-weight:600;margin:0 0 10px;color:var(--ink)}
+.section-h{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;
+  color:var(--ink3);margin:22px 0 10px}
 .sub{color:var(--ink3);font-size:12px;margin-bottom:20px}
 .sub a{color:var(--ink2)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
@@ -537,12 +539,6 @@ function ocChart(sub){
     o+=`<text x="${L-8}" y="${y+13}" class="ax" text-anchor="end">#${r.t} ${esc(r.n.slice(0,16))}</text><text x="${(x+6).toFixed(1)}" y="${y+13}" class="dl2">${tot}</text>`;});
   return `<svg viewBox="0 0 ${W} ${H}">${o}</svg>`;
 }
-function fleetSeries(sub){
-  const ev=[]; sub.forEach(r=>r.ac.forEach(([ts,b])=>ev.push([ts,r.t,b])));
-  ev.sort((a,b)=>a[0]-b[0]); const cur={},out=[];
-  ev.forEach(([ts,t,b])=>{cur[t]=b;let s=0,n=0;for(const k in cur){s+=cur[k];n++;}out.push([ts,s/n]);});
-  return out;
-}
 function famRollup(sub){
   const m={}; sub.forEach(r=>{(m[r.f]=m[r.f]||[]).push(r);});
   return Object.entries(m).map(([f,rs])=>{const bs=rs.filter(r=>r.bc!=null).map(r=>r.bc);
@@ -560,17 +556,12 @@ function render(){
   const w5=pct(sub.filter(r=>r.w5!=null).map(r=>r.w5),.5), w9=pct(sub.filter(r=>r.w9!=null).map(r=>r.w9),.95);
   const scoped = sub.length!==RECS.length;
   document.getElementById('tiles').innerHTML=[
-    tile('expected SOL (mean of best)', mbc==null?'–':mbc.toFixed(3),'leaderboard estimate · 0.5 baseline · 1.0 SOL'),
     tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
-    tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
     tile('problems', (r=>r.run+' running · '+r.wait+' waiting · '+r.done+' done')(
       sub.reduce((a,r)=>{const s=r.s;a.run+=(s==='running');a.wait+=(s==='waiting'||s==='pending');a.done+=(s!=='running'&&s!=='waiting'&&s!=='pending');return a;},{run:0,wait:0,done:0}))),
     tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+bigN(sub.reduce((a,r)=>a+r.ak,0))),
   ].join('');
-  // fleet-score-over-time (scoped)
-  const fsr=fleetSeries(sub);
-  document.getElementById('c-fleet').innerHTML=fsr.length?lineChart([{label:'mean',color:'var(--seq)',pts:fsr}],{xTime:true,height:240}):'<p class="muted">no accepted results</p>';
   // convergence — top movers in the selection
   const mv=sub.filter(r=>r.c.length).sort((a,b)=>(b.li-a.li)||(b.e-a.e)).slice(0,8);
   document.getElementById('c-conv').innerHTML=mv.length?lineChart(mv.map(r=>({label:'#'+r.t,color:SL(idx[r.t]),pts:r.c})),{xLabel:'GPU evals'}):'<p class="muted">no data</p>';
@@ -799,7 +790,6 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         "prk": _proj_rank(p, _proj(p)),
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
-        "ac": [[round(ts, 1), round(y, 4)] for ts, y in p["accept_times"]],
         "o": [p["outcomes"][k] for k in OUTCOME_KEYS],
         "an": sum(p["agent"][k]["n"] for k in p["agent"]),
         "ak": sum(p["agent"][k]["tok"] for k in p["agent"]),
@@ -832,12 +822,11 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     body = f"""
 {_live_banner(data.get("live"))}
 {filterbar}
+<h2 class="section-h">System diagnostics</h2>
 <div id="tiles" class="tiles"></div>
-<div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
 {_cost_panel(fleet, problems)}
+<div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
 {_recent_attempts_panel(problems)}
-<div class="panel"><h2 id="h-fleet">Fleet expected SOL over time (mean of per-problem best, ↑)</h2>
-<div id="c-fleet"></div></div>
 <div class="panel"><h2 id="h-conv">Convergence — top movers (expected SOL vs GPU evals)</h2>
 <div id="note-conv" class="sub"></div><div id="lg-conv" class="legend"></div><div id="c-conv"></div></div>
 <div class="panel"><h2>GPU occupancy — rented windows, one job at a time <span class="fcount">(fleet-wide)</span></h2>
