@@ -119,6 +119,12 @@ _PLAN = (
     "use threading, monkey-patch torch.cuda.Event.elapsed_time, or wrap the entry\n"
     "function body in try/except — these are rejected as reward-hacking, not scored.\n"
     "Re-read your kernel against this list before finishing.\n"
+    "NEVER leave the kernel file byte-identical to the parent's — a silent no-change\n"
+    "is indistinguishable from a crash and wastes this whole turn for no signal. If you\n"
+    "genuinely believe no further improvement is possible, you MUST still: (1) try ONE\n"
+    "untried technique from CONTEXT.md's ladder even if you doubt it'll help — a real\n"
+    "attempt beats no attempt — and (2) say explicitly in handoff.md why you think this\n"
+    "is at ceiling. Only true, hard-won ceilings look like this; don't reach for it early.\n"
     "Also write handoff.md: 1-2 sentences naming the HIGHER-CEILING idea you did NOT\n"
     "ship this round and the trigger to try it (e.g. 'if this only ties the baseline,\n"
     "switch to a radix-sort + atomic-free segmented reduction that writes output once').\n"
@@ -272,9 +278,11 @@ class CliAgent:
         self._write_kb(wd)                     # same knowledge base the writer consulted
         for s in (cand.solution or {}).get("sources", []):
             (wd / s["path"]).write_text(s.get("content", ""))
-        await self._run(wd, _REVIEW)
+        res = await self._run(wd, _REVIEW)
         f = wd / F_REVIEW
-        return _parse_review(f.read_text() if f.exists() else "", reviewer=f"{self.spec.name}:{self.model}")
+        verdict = _parse_review(f.read_text() if f.exists() else "", reviewer=f"{self.spec.name}:{self.model}")
+        verdict.cost_usd = (res.tokens or {}).get("cost_usd") or 0.0
+        return verdict
 
     # ---- helpers ----
     def _workdir(self, key, sub: str) -> Path:

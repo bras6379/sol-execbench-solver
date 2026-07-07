@@ -119,8 +119,8 @@ def _slot(i: int) -> str:
     return f"var(--s{i % SERIES_N + 1})"
 
 
-def _tile(label: str, value: str, sub: str = "") -> str:
-    return (f'<div class="tile"><div class="tile-v">{value}</div>'
+def _tile(label: str, value: str, sub: str = "", cls: str = "") -> str:
+    return (f'<div class="tile{" " + cls if cls else ""}"><div class="tile-v">{value}</div>'
             f'<div class="tile-l">{_esc(label)}</div>'
             + (f'<div class="tile-s">{_esc(sub)}</div>' if sub else "") + "</div>")
 
@@ -313,17 +313,17 @@ _CSS = """
 :root{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;
 --grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;}
+--o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;}
 @media (prefers-color-scheme: dark){:root{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;
 --grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;--o-flaky:#c07de0;}}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;}}
 :root[data-theme=light]{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;--grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-incorrect:#e87ba4;--o-flaky:#a855c7;}
+--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;}
 :root[data-theme=dark]{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;--grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-incorrect:#d55181;--o-flaky:#c07de0;}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--surface);color:var(--ink);
 font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
@@ -333,6 +333,7 @@ h2{font-size:14px;font-weight:600;margin:0 0 10px;color:var(--ink)}
 .sub a{color:var(--ink2)}
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
 .tile{background:var(--panel);border:1px solid var(--grid);border-radius:10px;padding:14px 16px}
+.tile.warn{border-color:#c98a3a;background:color-mix(in srgb,#c98a3a 10%,var(--panel))}
 .tile-v{font-size:24px;font-weight:650;letter-spacing:-.02em}
 .tile-l{color:var(--ink2);font-size:12px;margin-top:2px}
 .tile-s{color:var(--ink3);font-size:11px;margin-top:2px}
@@ -470,7 +471,8 @@ _HUB_JS = r"""
 const D = JSON.parse(document.getElementById('data').textContent);
 const RECS = D.recs, OC = D.outcomes, DETAIL = D.detail;
 const OCC = {accepted:'--o-accepted',dominated:'--o-dominated',incorrect:'--o-incorrect',
-             rejected:'--o-rejected',duplicate:'--o-duplicate',flaky:'--o-flaky',error:'--o-error'};
+             rejected:'--o-rejected',duplicate:'--o-duplicate',no_op:'--o-no_op',
+             flaky:'--o-flaky',error:'--o-error'};
 const sel = new Set();          // selected families
 let query = '';
 const SL = i => 'var(--s'+(i%8+1)+')';
@@ -670,6 +672,56 @@ def _live_banner(live: dict | None) -> str:
     return '<div class="livebar live">' + ' &nbsp;·&nbsp; '.join(parts) + '</div>'
 
 
+def _cost_panel(fleet: dict, problems: list[dict], top_n: int = 8) -> str:
+    """Real $ spend, broken down by call-type and model, plus the two numbers
+    that answer 'where is the waste': no-op cost (paid calls that changed
+    nothing — see reflection.py/loop.py's ceiling-consensus detection) and
+    reflection health (diagnose calls succeeding vs failing, e.g. an exhausted
+    OpenRouter balance) — both invisible without this panel."""
+    total = fleet.get("total_cost", 0.0)
+    by_kind = fleet.get("cost_by_kind") or {}
+    by_model = fleet.get("cost_by_model") or {}
+    noop_cost = fleet.get("noop_cost", 0.0)
+    rh = fleet.get("reflect_health") or {"success": 0, "fail": 0}
+    rh_total = rh["success"] + rh["fail"]
+
+    kind_row = " · ".join(f"{k} <b>${v:,.2f}</b>" for k, v in by_kind.items() if v)
+    model_rows = "".join(
+        f'<tr><td>{_esc(m)}</td><td data-v="{v}"><b>${v:,.2f}</b></td>'
+        f'<td data-v="{(v/total*100) if total else 0}">{(v/total*100) if total else 0:.0f}%</td></tr>'
+        for m, v in sorted(by_model.items(), key=lambda kv: -kv[1])[:top_n])
+
+    noop_pct = (noop_cost / by_kind.get("plan", 1) * 100) if by_kind.get("plan") else 0
+    noop_cls = "warn" if noop_pct >= 15 else ""
+    reflect_cls = "warn" if rh_total and rh["fail"] / rh_total >= 0.5 else ""
+
+    def _ptotal(p: dict) -> float:
+        return sum((p.get("cost") or {}).values())
+
+    expensive = sorted(problems, key=lambda p: -_ptotal(p))[:top_n]
+    expensive_rows = "".join(
+        f'<tr><td><a href="p/{p["task"]}.html">#{p["task"]}</a></td>'
+        f'<td data-v="{_ptotal(p)}"><b>${_ptotal(p):,.2f}</b></td>'
+        f'<td data-v="{p.get("noop_cost") or 0}">${p.get("noop_cost", 0):,.2f}</td>'
+        f'<td>{p["evals"]}</td></tr>'
+        for p in expensive if _ptotal(p))
+
+    return f"""
+<div class="panel"><h2>Cost & efficiency <span class="fcount">(real $ from the CLI's own billing, where reported)</span></h2>
+<div class="tiles" style="margin-bottom:14px">
+{_tile("total spend", f"${total:,.2f}", kind_row or "no cost data yet")}
+{_tile("no-op waste", f"${noop_cost:,.2f}", f"{noop_pct:.0f}% of plan spend — paid calls that changed nothing", cls=noop_cls)}
+{_tile("reflection health", f"{rh['success']}/{rh_total}" if rh_total else "–", "diagnose calls succeeding" if rh_total else "no reflection attempts yet", cls=reflect_cls)}
+</div>
+<div class="cols">
+<div><h3 class="coach-h">spend by model</h3><table class="sortable"><thead><tr><th>model</th><th>$</th><th>%</th></tr></thead>
+<tbody>{model_rows or '<tr><td colspan=3 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
+<div><h3 class="coach-h">most expensive problems</h3><table class="sortable"><thead><tr><th>problem</th><th>$ spent</th><th>$ no-op</th><th>evals</th></tr></thead>
+<tbody>{expensive_rows or '<tr><td colspan=4 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
+</div>
+</div>"""
+
+
 def _recent_attempts_panel(problems: list[dict], limit: int = 25) -> str:
     """A fleet-wide activity feed: the most recent candidate attempts across ALL
     problems, with WHEN, the agent, its expected SOL, and its verdict (accepted /
@@ -751,6 +803,8 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         "o": [p["outcomes"][k] for k in OUTCOME_KEYS],
         "an": sum(p["agent"][k]["n"] for k in p["agent"]),
         "ak": sum(p["agent"][k]["tok"] for k in p["agent"]),
+        "cost": round(sum((p.get("cost") or {}).values()), 4),
+        "noop_cost": round(p.get("noop_cost", 0.0), 4),
     } for p in problems]
     fams = [f["family"] for f in data["families"]]
     fam_chips = "".join(
@@ -763,6 +817,9 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         "detail": detail_dir,
         "gpu_util": fleet["gpu_util"], "util_basis": fleet["util_basis"],
         "busy_s": fleet["busy_s"], "rented_s": fleet["rented_s"], "span_s": fleet["span_s"],
+        "total_cost": fleet["total_cost"], "cost_by_kind": fleet["cost_by_kind"],
+        "cost_by_model": fleet["cost_by_model"], "noop_cost": fleet["noop_cost"],
+        "reflect_health": fleet["reflect_health"],
     }, separators=(",", ":")).replace("<", "\\u003c")
 
     filterbar = (
@@ -777,6 +834,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 {filterbar}
 <div id="tiles" class="tiles"></div>
 <div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by expected SOL ▼)</span></h2><div id="t-prob"></div></div>
+{_cost_panel(fleet, problems)}
 {_recent_attempts_panel(problems)}
 <div class="panel"><h2 id="h-fleet">Fleet expected SOL over time (mean of per-problem best, ↑)</h2>
 <div id="c-fleet"></div></div>
@@ -803,7 +861,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 
 _STATUS_CHIP = {
     "accepted": "o-accepted", "dominated": "o-dominated", "rejected": "o-rejected",
-    "duplicate": "o-duplicate", "incorrect": "o-incorrect", "flaky": "o-flaky",
+    "duplicate": "o-duplicate", "no_op": "o-no_op", "incorrect": "o-incorrect", "flaky": "o-flaky",
     "error": "o-error", "planned": "o-dominated",
 }
 

@@ -55,6 +55,11 @@ class Config:
                                                   # writer back with the critique for another attempt, up
                                                   # to this many rounds, then ships as-is (never blocks
                                                   # forever on one stubborn candidate)
+    ceiling_consensus: int = 3                    # N consecutive iterations where the agent left the
+                                                  # kernel byte-identical to its parent (a "no-op") is a
+                                                  # real signal the problem is at ceiling — auto-terminate
+                                                  # rather than keep paying for turns that produce nothing.
+                                                  # 0 disables (a no-op still costs 0 GPU evals either way)
 
     def __post_init__(self) -> None:
         if not self.tiers:

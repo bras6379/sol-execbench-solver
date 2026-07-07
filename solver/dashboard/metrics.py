@@ -20,7 +20,7 @@ import statistics
 from pathlib import Path
 from typing import Any
 
-OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "flaky", "error")
+OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "no_op", "flaky", "error")
 
 
 def _t(ts: str) -> float:
@@ -115,6 +115,16 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     best_model_score = -1.0
     first_ts = last_ts = None
     candidates: dict[str, dict] = {}   # cand id -> progression record
+    cost = {"plan": 0.0, "review": 0.0, "diagnose": 0.0}   # $ by call-type
+    cost_by_model: dict[str, float] = {}                    # $ by model, any call-type
+    noop_cost = 0.0                                         # $ spent on iterations that changed nothing
+    reflect_health = {"success": 0, "fail": 0}               # diagnose_cost outcomes
+
+    def _spend(kind: str, model: str, usd: float) -> None:
+        if not usd:
+            return
+        cost[kind] = cost.get(kind, 0.0) + usd
+        cost_by_model[model] = cost_by_model.get(model, 0.0) + usd
 
     for e in events:
         ts = e.get("ts")
@@ -134,6 +144,10 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             agent["plan"]["n"] += 1
             agent["plan"]["dur"] += e.get("dur_s", 0.0)
             agent["plan"]["tok"] += e.get("tok_in", 0) + e.get("tok_out", 0)
+            plan_model = e.get("model", model)
+            _spend("plan", plan_model, e.get("cost_usd", 0.0))
+            if e.get("no_op"):
+                noop_cost += e.get("cost_usd", 0.0)
             # Two agents can produce the SAME kernel (same content hash = same cand
             # id). Keep the FIRST occurrence — the one that got evaluated/accepted —
             # so a later exact-duplicate plan_done doesn't clobber the winner's row.
@@ -143,10 +157,24 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 "solution": e.get("solution"), "status": "planned",
                 "sol_score": None,
             })
+        elif ev == "review":
+            _spend("review", e.get("reviewer", "?"), e.get("cost_usd", 0.0))
+        elif ev == "diagnose_cost":
+            _spend("diagnose", e.get("model", "?"), e.get("cost_usd", 0.0))
+            reflect_health["success" if e.get("success") else "fail"] += 1
         elif ev == "check" and not e.get("ok", True):
             outcomes["rejected"] += 1
             if e.get("cand") in candidates:
                 candidates[e["cand"]]["status"] = "rejected"
+        elif ev == "novelty" and e.get("verdict") == "no_op":
+            # the agent's output hashed EXACTLY to its own parent — it changed
+            # nothing. Distinct from a generic duplicate: this is the dominant
+            # real-world waste mode (measured live: ~97% of iterations on a
+            # stuck problem) and, done paid-for on every call, a direct cost sink.
+            outcomes["no_op"] += 1
+            c = candidates.get(e.get("cand"))
+            if c and c["status"] == "planned":
+                c["status"] = "no_op"
         elif ev == "novelty" and e.get("verdict") != "materially-new":
             outcomes["duplicate"] += 1
             c = candidates.get(e.get("cand"))
@@ -236,6 +264,8 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
         "candidates": sorted(candidates.values(), key=lambda c: c["ts"] or ""),
         "wait_p50": _pct(waits, 0.5), "wait_p95": _pct(waits, 0.95),
         "first_ts": first_ts, "last_ts": last_ts,
+        "cost": cost, "cost_by_model": cost_by_model, "noop_cost": noop_cost,
+        "reflect_health": reflect_health,
     }
 
 
@@ -260,6 +290,21 @@ def fleet_metrics(per_problem: list[dict], rentals: list[dict] | None = None) ->
     rented_s = sum(w["end"] - w["start"] for w in windows)
 
     waits = [j["start"] - j["enq"] for j in jobs if "enq" in j]
+
+    cost_total = {"plan": 0.0, "review": 0.0, "diagnose": 0.0}
+    cost_by_model: dict[str, float] = {}
+    noop_cost = 0.0
+    reflect_health = {"success": 0, "fail": 0}
+    for p in per_problem:
+        for k, v in (p.get("cost") or {}).items():
+            cost_total[k] = cost_total.get(k, 0.0) + v
+        for m, v in (p.get("cost_by_model") or {}).items():
+            cost_by_model[m] = cost_by_model.get(m, 0.0) + v
+        noop_cost += p.get("noop_cost", 0.0)
+        for k, v in (p.get("reflect_health") or {}).items():
+            reflect_health[k] = reflect_health.get(k, 0) + v
+    total_cost = sum(cost_total.values())
+
     return {
         "jobs": jobs, "busy_s": busy, "span_s": span,
         "span_start": span_start, "span_end": span_end,
@@ -276,6 +321,8 @@ def fleet_metrics(per_problem: list[dict], rentals: list[dict] | None = None) ->
                       if any(p["best"] is not None for p in per_problem) else None),
         "mean_best_cal": (statistics.mean([p["best_cal"] for p in per_problem if p.get("best_cal") is not None])
                           if any(p.get("best_cal") is not None for p in per_problem) else None),
+        "total_cost": total_cost, "cost_by_kind": cost_total, "cost_by_model": cost_by_model,
+        "noop_cost": noop_cost, "reflect_health": reflect_health,
     }
 
 

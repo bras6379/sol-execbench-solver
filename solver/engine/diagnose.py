@@ -70,9 +70,9 @@ one-line strategy titles — READ THE CODE and derive for yourself what each rea
 got wrong, and why it capped:
 {prior_src}
 
-A curated B200 optimization knowledge base is on disk (index below). Before you recommend the \
-lever, READ the 1-2 files most relevant to THIS op's bottleneck class (use your file tools on the \
-`kb/…` paths) and ground your recommendation in them — cite the file you used:
+Relevant excerpts from the curated B200 optimization knowledge base (embedded directly below — \
+you have NO file/tool access in this call, so reason from what's given here, don't try to Read \
+anything else). Ground your recommendation in these where relevant and cite the file you used:
 {kb_index}
 
 In UNDER 220 words, blunt and concrete, output exactly these three sections:
@@ -111,9 +111,11 @@ def _provider_env(spec_name: str) -> dict | None:
 
 
 async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
-                     env: dict) -> str | None:
+                     env: dict) -> tuple[str | None, float]:
     """One-shot claude-CLI call against a single (already-resolved) provider env.
-    None on any failure — quota/credits, timeout, non-zero exit, empty output."""
+    Returns (text_or_None, cost_usd) — cost is 0.0 whenever the CLI doesn't report
+    one (e.g. the call failed before producing a result). None text on any
+    failure — quota/credits, timeout, non-zero exit, empty output."""
     cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json",
            "--verbose", "--dangerously-skip-permissions"]
     try:
@@ -127,33 +129,61 @@ async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
             proc.kill()
         except Exception:
             pass
-        return None
+        return None, 0.0
+    raw = out.decode("utf-8", "replace")
+    cost = _extract_cost(raw)
     if proc.returncode:
-        return None
-    return _extract_text(out.decode("utf-8", "replace"))
+        return None, cost                    # a failed call can still have billed something
+    return _extract_text(raw), cost
 
 
 async def _call_fable(prompt: str, model: str, timeout: float,
-                      cwd: str | None = None) -> tuple[str | None, str]:
+                      cwd: str | None = None) -> tuple[str | None, str, float]:
     """Try the requested reflection model, then walk FALLBACK_CHAIN so a single
-    blocked provider (rate limit, no credits) never stalls the Coach. Runs with
-    file tools enabled and cwd at the kb root so it can Read the knowledge base.
-    Returns (prose_or_None, label of the model that actually produced it)."""
+    blocked provider (rate limit, no credits) never stalls the Coach. `cwd` is
+    optional and unused by the diagnose caller (kb content is embedded directly
+    in the prompt — see _kb_index — so no file/tool access is needed for this
+    call); kept as a parameter for callers that do want a specific cwd.
+    Returns (prose_or_None, label of the model that actually produced it,
+    total $ cost across every rung tried — including failed ones that billed)."""
     if not shutil.which("claude"):
-        return None, ""
+        return None, "", 0.0
     seen: set[tuple[str, str]] = set()
+    total_cost = 0.0
     for spec_name, fallback_model in FALLBACK_CHAIN:
         m = fallback_model or model
+        # Skip the native-claude rung entirely when the requested model isn't a
+        # claude-style name (e.g. --reflect-model deepseek/deepseek-v4-pro) — avoids
+        # a wasted round-trip against native auth for a model it was never meant to
+        # serve, so a fully-OpenRouter reflect-model never touches Claude at all.
+        if spec_name == "claude" and fallback_model == "" and not model.startswith("claude"):
+            continue
         if (spec_name, m) in seen:
             continue
         seen.add((spec_name, m))
         env = _provider_env(spec_name)
         if env is None:
             continue                                     # required key missing — skip this rung
-        text = await _try_model(prompt, m, timeout, cwd, env)
+        text, cost = await _try_model(prompt, m, timeout, cwd, env)
+        total_cost += cost
         if text:
-            return text, (m if spec_name == "claude" else f"{spec_name}:{m}")
-    return None, ""
+            return text, (m if spec_name == "claude" else f"{spec_name}:{m}"), total_cost
+    return None, "", total_cost
+
+
+def _extract_cost(raw: str) -> float:
+    """Pull total_cost_usd off the stream's terminal 'result' event, if present."""
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if e.get("type") == "result" and isinstance(e.get("total_cost_usd"), (int, float)):
+            return float(e["total_cost_usd"])
+    return 0.0
 
 
 def _extract_text(raw: str) -> str | None:
@@ -207,24 +237,31 @@ def _prior_sources(runs_dir: Path, task_id: int, top: int = 4, budget: int = 900
     return "\n\n".join(out) if out else "(no prior kernels staged)"
 
 
-def _kb_index(kb_dir: Path) -> str:
-    """Compact index of the curated kb (filename + first heading) so fable knows
-    which docs exist and can Read the relevant ones on demand."""
+# Broadly useful across every op family — embedded directly in the prompt so the
+# diagnosis never needs a tool-call round trip to read them. A prior version told
+# the model to "use your file tools" on kb/ paths; live testing showed real
+# diagnose calls (large prompt + multi-file tool use) reliably HUNG past a 240s
+# timeout with zero output, while an identical trivial no-tool-use prompt
+# completed in seconds. Embedding content directly removes the round trip
+# entirely regardless of the exact cause — a single-turn text-in/text-out call.
+_CORE_KB_DOCS = ("README.md", "optimization-playbook.md", "benchmark-grader.md")
+
+
+def _kb_index(kb_dir: Path, budget: int = 6000) -> str:
+    """Embed the CONTENT of a few broadly-useful kb docs directly (bounded by a
+    char budget), not just a filename index — no tool access needed to use it."""
     kb_dir = Path(kb_dir)
     if not kb_dir.is_dir():
         return "(no knowledge base found)"
-    lines = []
-    for f in sorted(kb_dir.glob("*.md")):
-        head = ""
-        try:
-            for ln in f.read_text(errors="replace").splitlines():
-                if ln.strip():
-                    head = ln.strip().lstrip("#").strip()[:80]
-                    break
-        except Exception:
-            pass
-        lines.append(f"- kb/{f.name}" + (f" — {head}" if head else ""))
-    return "\n".join(lines) if lines else "(no knowledge base found)"
+    per_doc = budget // max(1, len(_CORE_KB_DOCS))
+    parts = []
+    for name in _CORE_KB_DOCS:
+        f = kb_dir / name
+        if not f.is_file():
+            continue
+        text = f.read_text(errors="replace")[:per_doc]
+        parts.append(f"--- kb/{name} ---\n{text}")
+    return "\n\n".join(parts) if parts else "(no knowledge base found)"
 
 
 def _reference_source(runs_dir: Path, task_id: int) -> str:
@@ -261,17 +298,29 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
         best=("?" if r.best is None else f"{r.best:.3f}"),
         best_src=_best_source(pdir.parent, r), ref_src=_reference_source(pdir.parent, r.task_id),
         prior_src=_prior_sources(pdir.parent, r.task_id), kb_index=_kb_index(kb_dir))
-    # run at the kb root so fable's file tools can Read the `kb/…` docs it cites
-    cwd = str(kb_dir.parent.resolve()) if kb_dir.is_dir() else None
-    prose, used_model = await _call_fable(prompt, model, timeout, cwd=cwd)
+    # No cwd pinned to the kb root anymore — kb content is embedded directly in the
+    # prompt (see _kb_index), so this call needs no file/tool access at all; running
+    # with no special cwd avoids inviting any exploratory tool use.
+    prose, used_model, cost = await _call_fable(prompt, model, timeout)
+    # Cost is journaled into the PROBLEM's own journal.jsonl (same file the dashboard
+    # already scans for plan/review costs) whether this attempt succeeded or not — a
+    # failed-but-billed call (e.g. a 402 mid-fallback-chain) still needs to show up in
+    # total spend, or the dashboard would silently under-count real cost.
+    if cost:
+        from .. import journal as journal_mod
+        journal_mod.Journal(pdir / "journal.jsonl", r.task_id).append(
+            "diagnose_cost", model=(used_model or model), cost_usd=cost, success=bool(prose))
     if not prose:
+        billed = f" (billed ${cost:.4f})" if cost else ""
         log(f"[diagnose] task {r.task_id}: {model} + all fallbacks unavailable/failed — "
-            f"deterministic card stands")
+            f"deterministic card stands{billed}")
         return False
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    dfile.write_text(json.dumps({"fingerprint": fp, "model": used_model, "ts": ts, "prose": prose}))
+    dfile.write_text(json.dumps({"fingerprint": fp, "model": used_model, "ts": ts,
+                                 "prose": prose, "cost_usd": cost}))
     note = "" if used_model == model else f" [fell back from {model} to {used_model}]"
-    log(f"[diagnose] task {r.task_id}: fresh diagnosis via {used_model} ({len(prose)} chars){note}")
+    log(f"[diagnose] task {r.task_id}: fresh diagnosis via {used_model} "
+        f"({len(prose)} chars, ${cost:.4f}){note}")
     return True
 
 

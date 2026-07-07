@@ -151,23 +151,24 @@ def test_cap_terminated_reopens_but_converged_does_not(tmp_path):
 # --------------------------------------------------------------------------- #
 def test_gates_skip_the_gpu(tmp_path):
     script = {"claude:haiku": [
-        {"scores": [0.6], "duplicate": True},   # i0: novel → eval
-        {"scores": [0.6], "duplicate": True},   # i1: identical hash → dup, no eval
+        {"scores": [0.6], "duplicate": True},   # i0: novel → eval, becomes the frontier's parent
+        {"scores": [0.6], "duplicate": True},   # i1: hashes IDENTICAL to its own parent (i0) → no_op
         {"scores": [0.7], "invalid": True},     # i2: check fail → reject, no eval
         {"scores": [0.65]},                     # i3: novel → eval
     ]}
-    c = one_tier(max_iterations=4, plateau_cycles=999, escalate_ceiling=1.1)
+    c = one_tier(max_iterations=4, plateau_cycles=999, escalate_ceiling=1.1, ceiling_consensus=0)
     ex = StubExecutor()
     agents = stub_agents(c.perspectives, scripted(script))
     ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
-    assert ex.calls == 3                        # 1 seed + i0 + i3 (dup & invalid skipped)
+    assert ex.calls == 3                        # 1 seed + i0 + i3 (no_op & invalid skipped)
     assert ctx.evals == 3
     evs = events(ctx.path)
     assert evs.count("iter") == 4               # every plan committed one iteration
-    # one rejected, one duplicate outcome recorded
+    # one rejected, one no_op outcome recorded (i1 hash-matches its own parent i0 exactly —
+    # a stronger, more specific signal than a generic "duplicate of some unrelated candidate")
     outcomes = [e for e in journal_mod.read(ctx.path) if e["ev"] == "iter"]
     kinds = [o["outcome"] for o in outcomes]
-    assert "rejected" in kinds and "duplicate" in kinds
+    assert "rejected" in kinds and "no_op" in kinds
 
 
 def test_no_novelty_prefilter_measures_candidates(tmp_path):

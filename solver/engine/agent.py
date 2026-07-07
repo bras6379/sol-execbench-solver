@@ -38,6 +38,7 @@ class ReviewVerdict:
     verdict: str                        # "ship" | "revise"
     issues: list[str] = field(default_factory=list)
     reviewer: str = ""                  # the Perspective that produced this verdict
+    cost_usd: float = 0.0               # $ this review call cost, when the CLI reports it
 
     @property
     def ship(self) -> bool:

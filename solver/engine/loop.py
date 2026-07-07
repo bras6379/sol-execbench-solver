@@ -272,17 +272,38 @@ async def solve_problem(
             continue
 
         is_dup_hash = cand.cand_id in ctx.seen
+        # A NO-OP is a stronger, more specific signal than a generic duplicate: the
+        # agent's output hashes EXACTLY to the parent it was given to improve on —
+        # it changed nothing at all (no kernel edit, no strategy.txt). This is the
+        # dominant real-world failure mode (measured: ~97% of iterations on a
+        # stuck problem), and every model does it at similar rates once a strong
+        # candidate dominates the frontier — it's usually the agent correctly
+        # judging there's nothing left to improve, just with no clean way to say
+        # so. Left undetected, it silently burns a paid API call per iteration
+        # forever; detected, N agents agreeing is real ceiling evidence.
+        is_noop = parent is not None and getattr(parent, "cand_id", None) == cand.cand_id
         tok = cand.tokens or {}
         ctx.record("plan_done", cand=cand.cand_id, parent=cand.parent, agent=persp.agent,
                    model=persp.model, strategy=cand.strategy, solution=cand.solution,
                    dur_s=0.0, tok_in=(tok.get("in") or 0), tok_out=(tok.get("out") or 0),
+                   cost_usd=(tok.get("cost_usd") or 0.0), no_op=is_noop,
                    trajectory=cand.trajectory, handoff=cand.handoff)
 
         ok, _errs = check_fn(cand.solution, task_id)
         ctx.record("check", cand=cand.cand_id, ok=ok)
         if not ok:
+            ctx.noop_streak = 0                  # a real (if invalid) attempt — not a no-op
             ctx.record("iter", n=ctx.iters, outcome="rejected")
             continue
+        if is_noop:
+            ctx.noop_streak += 1
+            ctx.record("novelty", cand=cand.cand_id, verdict="no_op")
+            ctx.record("iter", n=ctx.iters, outcome="no_op")
+            if cfg.ceiling_consensus and ctx.noop_streak >= cfg.ceiling_consensus:
+                ctx.record("terminated", reason="ceiling_consensus")
+                break
+            continue
+        ctx.noop_streak = 0                      # a genuinely new (or re-derived) candidate
         if is_dup_hash:                          # exact same kernel already seen → skip (free)
             ctx.record("novelty", cand=cand.cand_id, verdict="duplicate")
             ctx.record("iter", n=ctx.iters, outcome="duplicate")
@@ -314,7 +335,8 @@ async def solve_problem(
                               error=repr(exc)[:200])
                     break                          # review itself failed → fail open, ship as-is
                 ctx.record("review", cand=cand.cand_id, reviewer=str(review_persp),
-                          verdict=verdict.verdict, issues=verdict.issues, round=round_n)
+                          verdict=verdict.verdict, issues=verdict.issues, round=round_n,
+                          cost_usd=verdict.cost_usd)
                 if verdict.ship or round_n >= cfg.review_max_rounds:
                     break
                 round_n += 1
@@ -331,8 +353,8 @@ async def solve_problem(
                 ctx.record("plan_done", cand=repaired.cand_id, parent=repaired.parent,
                           agent=persp.agent, model=persp.model, strategy=repaired.strategy,
                           solution=repaired.solution, dur_s=0.0, tok_in=(rtok.get("in") or 0),
-                          tok_out=(rtok.get("out") or 0), trajectory=repaired.trajectory,
-                          handoff=repaired.handoff)
+                          tok_out=(rtok.get("out") or 0), cost_usd=(rtok.get("cost_usd") or 0.0),
+                          repair=True, trajectory=repaired.trajectory, handoff=repaired.handoff)
                 rok, _rerrs = check_fn(repaired.solution, task_id)
                 ctx.record("check", cand=repaired.cand_id, ok=rok)
                 if not rok:
