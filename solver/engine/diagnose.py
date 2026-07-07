@@ -11,8 +11,10 @@ Fable is expensive, so this is gated hard:
     problem that's still climbing on its own.
   - deduped on a state fingerprint (status · best · #evals): a 20-min tick only
     re-diagnoses problems whose state actually MOVED since the last diagnosis.
-  - capped concurrency, bounded timeout, and fully graceful: if fable has no
-    credits / errors / times out, the deterministic card stands alone (no crash).
+  - capped concurrency, bounded timeout, and fully graceful: if the requested model
+    is unavailable (no credits, rate-limited, CLI error), FALLBACK_CHAIN tries
+    OpenRouter-routed models before giving up — one blocked provider never stalls
+    the Coach; only total exhaustion leaves the deterministic card standing alone.
 
 The result is persisted to `<task>/diagnosis.json` {fingerprint, model, ts, prose}
 so `reflection.reflect_all` can re-attach it to the card on every (cheap) pass
@@ -31,6 +33,18 @@ from pathlib import Path
 from . import reflection as R
 
 STUCK = {"regressing", "plateaued", "rabbit_hole", "broken"}
+
+# Fallback order when the primary reflection model is unavailable (rate-limited, out
+# of credits, CLI error): try the requested model on native claude auth first, then
+# fall through to OpenRouter-routed models already proven productive in this fleet.
+# Mirrors the agent pool's own graceful-downgrade pattern (cli_agent._provider_env)
+# so a blocked reflection model never stalls the Coach — it just costs a cheaper
+# model's diagnosis instead of none at all.
+FALLBACK_CHAIN: list[tuple[str, str]] = [
+    ("claude", ""),                              # "" = use the caller's requested --reflect-model
+    ("openrouter", "deepseek/deepseek-v4-pro"),
+    ("openrouter", "moonshotai/kimi-k2.7-code"),
+]
 
 _PROMPT = """You are a senior GPU performance engineer. An automated fleet is STUCK optimizing a \
 kernel for NVIDIA B200 (SOL-ExecBench). Score = latency vs a PyTorch reference under a numeric \
@@ -82,20 +96,31 @@ def fingerprint(r: R.ProblemReflection) -> str:
     return f"{r.status}:{r.best}:{r.n_evals}"
 
 
-async def _call_fable(prompt: str, model: str, timeout: float,
-                      cwd: str | None = None) -> str | None:
-    """One-shot claude CLI call (real Anthropic auth), returns the final text or
-    None on any failure — quota/credits, timeout, non-zero exit, empty output. Runs
-    with file tools enabled and cwd at the kb root so it can Read the knowledge base."""
-    if not shutil.which("claude"):
+def _provider_env(spec_name: str) -> dict | None:
+    """Env for a fallback provider (ANTHROPIC_BASE_URL/AUTH_TOKEN via the same
+    CliSpecs the agent pool uses), or None if its API key isn't configured — the
+    caller skips that rung rather than crashing."""
+    from .cli_agent import SPECS
+    spec = SPECS.get(spec_name)
+    if spec is None:
         return None
+    if not spec.base_url:
+        return dict(os.environ)                          # native claude auth
+    key = os.environ.get(spec.api_key_env or "")
+    return {**os.environ, "ANTHROPIC_BASE_URL": spec.base_url, "ANTHROPIC_AUTH_TOKEN": key} if key else None
+
+
+async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
+                     env: dict) -> str | None:
+    """One-shot claude-CLI call against a single (already-resolved) provider env.
+    None on any failure — quota/credits, timeout, non-zero exit, empty output."""
     cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json",
            "--verbose", "--dangerously-skip-permissions"]
     try:
         proc = await asyncio.create_subprocess_exec(
             *cmd, stdin=asyncio.subprocess.DEVNULL,
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE,
-            env={**os.environ}, cwd=cwd)
+            env=env, cwd=cwd)
         out, _ = await asyncio.wait_for(proc.communicate(), timeout=timeout)
     except (asyncio.TimeoutError, Exception):
         try:
@@ -106,6 +131,29 @@ async def _call_fable(prompt: str, model: str, timeout: float,
     if proc.returncode:
         return None
     return _extract_text(out.decode("utf-8", "replace"))
+
+
+async def _call_fable(prompt: str, model: str, timeout: float,
+                      cwd: str | None = None) -> tuple[str | None, str]:
+    """Try the requested reflection model, then walk FALLBACK_CHAIN so a single
+    blocked provider (rate limit, no credits) never stalls the Coach. Runs with
+    file tools enabled and cwd at the kb root so it can Read the knowledge base.
+    Returns (prose_or_None, label of the model that actually produced it)."""
+    if not shutil.which("claude"):
+        return None, ""
+    seen: set[tuple[str, str]] = set()
+    for spec_name, fallback_model in FALLBACK_CHAIN:
+        m = fallback_model or model
+        if (spec_name, m) in seen:
+            continue
+        seen.add((spec_name, m))
+        env = _provider_env(spec_name)
+        if env is None:
+            continue                                     # required key missing — skip this rung
+        text = await _try_model(prompt, m, timeout, cwd, env)
+        if text:
+            return text, (m if spec_name == "claude" else f"{spec_name}:{m}")
+    return None, ""
 
 
 def _extract_text(raw: str) -> str | None:
@@ -215,13 +263,15 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
         prior_src=_prior_sources(pdir.parent, r.task_id), kb_index=_kb_index(kb_dir))
     # run at the kb root so fable's file tools can Read the `kb/…` docs it cites
     cwd = str(kb_dir.parent.resolve()) if kb_dir.is_dir() else None
-    prose = await _call_fable(prompt, model, timeout, cwd=cwd)
+    prose, used_model = await _call_fable(prompt, model, timeout, cwd=cwd)
     if not prose:
-        log(f"[diagnose] task {r.task_id}: fable unavailable/failed — deterministic card stands")
+        log(f"[diagnose] task {r.task_id}: {model} + all fallbacks unavailable/failed — "
+            f"deterministic card stands")
         return False
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    dfile.write_text(json.dumps({"fingerprint": fp, "model": model, "ts": ts, "prose": prose}))
-    log(f"[diagnose] task {r.task_id}: fresh fable diagnosis ({len(prose)} chars)")
+    dfile.write_text(json.dumps({"fingerprint": fp, "model": used_model, "ts": ts, "prose": prose}))
+    note = "" if used_model == model else f" [fell back from {model} to {used_model}]"
+    log(f"[diagnose] task {r.task_id}: fresh diagnosis via {used_model} ({len(prose)} chars){note}")
     return True
 
 

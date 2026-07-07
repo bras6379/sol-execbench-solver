@@ -35,7 +35,7 @@ def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
 
     async def fake_call(prompt, model, timeout, cwd=None):
         calls.append((model, prompt))
-        return "**Root cause:** memory-bound.\n**Spent:** bf16 cublas.\n**The one lever:** try fp8."
+        return "**Root cause:** memory-bound.\n**Spent:** bf16 cublas.\n**The one lever:** try fp8.", model
 
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
 
@@ -65,7 +65,7 @@ def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
 
 def test_attach_is_idempotent(tmp_path, monkeypatch):
     async def fake_call(p, m, t, cwd=None):
-        return "**The one lever:** try split-K."
+        return "**The one lever:** try split-K.", m
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])
@@ -78,7 +78,7 @@ def test_attach_is_idempotent(tmp_path, monkeypatch):
 
 def test_fable_failure_is_graceful(tmp_path, monkeypatch):
     async def fail(p, m, t, cwd=None):
-        return None                                 # e.g. quota exceeded
+        return None, ""                              # e.g. quota exceeded (all fallbacks too)
     monkeypatch.setattr(diagnose, "_call_fable", fail)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])
@@ -87,6 +87,40 @@ def test_fable_failure_is_graceful(tmp_path, monkeypatch):
     assert not (tmp_path / "3" / "diagnosis.json").exists()
     # the deterministic card still stands
     assert "REGRESSING" in (tmp_path / "3" / "reflection.md").read_text()
+
+
+def test_call_fable_falls_back_when_primary_provider_fails(monkeypatch):
+    """Reflection must not go dark just because one provider (e.g. claude, rate-
+    limited) is unavailable — it should walk FALLBACK_CHAIN to a working one."""
+    monkeypatch.setattr(diagnose.shutil, "which", lambda name: "/usr/bin/claude")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    attempts = []
+
+    async def fake_try(prompt, model, timeout, cwd, env):
+        attempts.append((model, env.get("ANTHROPIC_BASE_URL")))
+        if env.get("ANTHROPIC_BASE_URL") is None:
+            return None                     # primary (native claude) fails — e.g. rate-limited
+        return f"diagnosis from {model}"
+
+    monkeypatch.setattr(diagnose, "_try_model", fake_try)
+    prose, used = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
+    assert prose == "diagnosis from deepseek/deepseek-v4-pro"
+    assert used == "openrouter:deepseek/deepseek-v4-pro"
+    # tried native claude first, then the first fallback that has a key configured
+    assert attempts[0] == ("claude-sonnet-5", None)
+    assert attempts[1][0] == "deepseek/deepseek-v4-pro"
+
+
+def test_call_fable_skips_fallback_with_no_api_key(monkeypatch):
+    monkeypatch.setattr(diagnose.shutil, "which", lambda name: "/usr/bin/claude")
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+
+    async def always_fail(prompt, model, timeout, cwd, env):
+        return None
+
+    monkeypatch.setattr(diagnose, "_try_model", always_fail)
+    prose, used = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
+    assert prose is None and used == ""      # graceful — no crash when every rung is unavailable
 
 
 def test_markdown_renders_structure():
