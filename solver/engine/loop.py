@@ -11,6 +11,8 @@ executor is the single serialized GPU.
 from __future__ import annotations
 
 import asyncio
+import datetime
+import json
 import random
 import time
 from pathlib import Path
@@ -325,19 +327,40 @@ async def run_fleet(
     # id ranges), so `solve 1-100 --max-concurrency 10` never spawns 100 CLIs.
     sem = asyncio.Semaphore(max_concurrency) if max_concurrency and max_concurrency > 0 else None
 
-    async def guarded(t: int) -> None:
+    # Working set: which problems currently hold a concurrency slot (are actively
+    # being iterated) vs queued. Published to runs/_active.json (with a heartbeat ts)
+    # so the dashboard can show running / waiting / pending instead of "running" for
+    # every not-yet-terminated problem — the single-flight GPU means a slot-holder
+    # can sit idle for a while, so recency alone can't tell active from queued.
+    active: set[int] = set()
+    active_path = Path(runs_dir) / "_active.json"
+
+    def _write_active() -> None:
         try:
-            if sem is not None:
-                async with sem:
-                    await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
-                                        seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
-                                        problems_dir=problems_dir,
-                                        family=families.get(t, ""), name=names.get(t, f"task-{t}"))
-            else:
+            active_path.write_text(json.dumps({
+                "ts": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                "active": sorted(active), "cap": max_concurrency}))
+        except OSError:
+            pass
+
+    async def guarded(t: int) -> None:
+        async def _do() -> None:
+            active.add(t)
+            _write_active()
+            try:
                 await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
                                     seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
                                     problems_dir=problems_dir,
                                     family=families.get(t, ""), name=names.get(t, f"task-{t}"))
+            finally:
+                active.discard(t)
+                _write_active()
+        try:
+            if sem is not None:
+                async with sem:
+                    await _do()
+            else:
+                await _do()
         except Exception as exc:  # crash isolation: one problem's failure is journaled, not fatal
             journal_mod.Journal(Path(runs_dir) / str(t) / "journal.jsonl", t).append(
                 "solver_error", error=repr(exc))
@@ -357,9 +380,20 @@ async def run_fleet(
         while True:
             await asyncio.sleep(max(30.0, reflect_every_min * 60))
             await _reflect("periodic")
+    # Heartbeat: keep _active.json's ts fresh (the set changes only when a problem
+    # starts/finishes, but the dashboard needs a recent ts to trust it as live).
+    async def _heartbeat() -> None:
+        while True:
+            _write_active()
+            await asyncio.sleep(25)
     refresher = asyncio.create_task(_refresher()) if reflect_every_min > 0 else None
+    heartbeat = asyncio.create_task(_heartbeat())
+    _write_active()
     try:
         await asyncio.gather(*(guarded(t) for t in order))
     finally:
         if refresher is not None:
             refresher.cancel()
+        heartbeat.cancel()
+        active.clear()
+        _write_active()                # publish an empty, fresh set → all idle on exit

@@ -100,3 +100,26 @@ def test_markdown_renders_structure():
 def test_markdown_escapes_html():
     h = _md_to_html("a <script>alert(1)</script> b")
     assert "<script>" not in h and "&lt;script&gt;" in h
+
+
+def test_live_state_from_active_set():
+    from solver.dashboard.metrics import _live_state
+    active = {13, 16}
+    # terminated always wins
+    assert _live_state({"task": 4, "terminated": "budget:time", "evals": 8}, active, True) == "budget:time"
+    # fresh active file: in the set = running; not in set = waiting (has evals) / pending (none)
+    assert _live_state({"task": 13, "terminated": None, "evals": 5}, active, True) == "running"
+    assert _live_state({"task": 28, "terminated": None, "evals": 5}, active, True) == "waiting"
+    assert _live_state({"task": 30, "terminated": None, "evals": 0}, active, True) == "pending"
+
+
+def test_live_state_recency_fallback():
+    import datetime as dt
+    from solver.dashboard.metrics import _live_state
+    now = dt.datetime.now(dt.timezone.utc)
+    recent = (now - dt.timedelta(minutes=3)).isoformat()
+    stale = (now - dt.timedelta(minutes=40)).isoformat()
+    # no engine active-file (active_fresh=False) → recency of last_ts decides
+    assert _live_state({"task": 1, "terminated": None, "evals": 4, "last_ts": recent}, set(), False) == "running"
+    assert _live_state({"task": 2, "terminated": None, "evals": 4, "last_ts": stale}, set(), False) == "waiting"
+    assert _live_state({"task": 3, "terminated": None, "evals": 0, "last_ts": stale}, set(), False) == "pending"

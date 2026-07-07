@@ -329,6 +329,36 @@ def top_movers(per_problem: list[dict], k: int = 8) -> list[dict]:
     return [p for p in ranked if p["convergence"]][:k]
 
 
+def _age_s(ts) -> float | None:
+    """Seconds since an ISO timestamp, or None if unparseable."""
+    if not ts:
+        return None
+    try:
+        d = dt.datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=dt.timezone.utc)
+        return (dt.datetime.now(dt.timezone.utc) - d).total_seconds()
+    except (ValueError, TypeError):
+        return None
+
+
+def _live_state(p: dict, active_set: set, active_fresh: bool) -> str:
+    """running (holds a concurrency slot / actively worked) · waiting (started but
+    queued for a slot) · pending (not started yet) · else the terminal reason.
+    Prefers the engine's exact working-set (runs/_active.json); falls back to the
+    recency of the last journal event when that file is absent or stale."""
+    if p["terminated"]:
+        return p["terminated"]
+    if active_fresh:
+        if p["task"] in active_set:
+            return "running"
+        return "pending" if p["evals"] == 0 else "waiting"
+    age = _age_s(p.get("last_ts"))                 # fallback: no engine active-file
+    if age is not None and age < 720:              # a slot-holder logs within ~12 min
+        return "running"
+    return "pending" if p["evals"] == 0 else "waiting"
+
+
 def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> dict[str, Any]:
     per_problem = [problem_metrics(t, evs) for t, evs in sorted(journals.items())]
     if runs_dir:                                   # attach the real leaderboard result per problem
@@ -342,6 +372,21 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
         for p in per_problem:
             p["lb"] = submission_summary(runs_dir, p["task"])
             p["board"] = board.get(str(p["task"]))   # {top_sol, top_user, n, sol_bound, scores} = the #1 to beat + full distribution for rank projection
+    # live working-set: which problems currently hold a concurrency slot (from the
+    # engine's runs/_active.json) so status shows running vs waiting vs pending.
+    active_set, active_fresh = set(), False
+    if runs_dir:
+        af = Path(runs_dir) / "_active.json"
+        if af.exists():
+            try:
+                a = json.loads(af.read_text())
+                active_set = set(a.get("active", []))
+                age = _age_s(a.get("ts"))
+                active_fresh = age is not None and age < 180
+            except (json.JSONDecodeError, OSError):
+                pass
+    for p in per_problem:
+        p["live_state"] = _live_state(p, active_set, active_fresh)
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,

@@ -361,6 +361,7 @@ td .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}
 td .bar b{position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:var(--ref)}
 .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
 .done{color:var(--ink3)} .run{color:var(--o-accepted);font-weight:600}
+.wait{color:var(--s3,#c98a3a);font-weight:600} .pend{color:var(--ink3);font-style:italic}
 .muted{color:var(--ink3)}
 a{color:inherit}
 input.flt{background:var(--surface);border:1px solid var(--grid);border-radius:7px;
@@ -556,7 +557,8 @@ function render(){
     tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
     tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
-    tile('problems', sub.filter(r=>r.s==='running').length+' active · '+sub.filter(r=>r.s!=='running').length+' done'),
+    tile('problems', (r=>r.run+' running · '+r.wait+' waiting · '+r.done+' done')(
+      sub.reduce((a,r)=>{const s=r.s;a.run+=(s==='running');a.wait+=(s==='waiting'||s==='pending');a.done+=(s!=='running'&&s!=='waiting'&&s!=='pending');return a;},{run:0,wait:0,done:0}))),
     tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+bigN(sub.reduce((a,r)=>a+r.ak,0))),
   ].join('');
   // fleet-score-over-time (scoped)
@@ -588,7 +590,7 @@ function render(){
           ?` <span class="up" title="never submitted — projected board SOL ${r.pr==null?'?':'~'+r.pr.toFixed(3)}${prk?', proj. rank #'+prk.rank+' of '+prk.n:''} — worth a first submit">↑</span>`
           :'';
       const subCell=(lb.sol==null&&subE==null)?'':`${subE==null?'–':subE.toFixed(3)}<span class="muted"> → </span><b class="real">${lb.sol==null?'–':lb.sol.toFixed(4)}</b>`;
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${resub}${bar}</td><td data-v="${prk?prk.rank:9999}" class="proj" title="projected board SOL = best expected × observed est→real ratio; projected rank = where that SOL would place on the live board">${r.pr==null?'':'~'+r.pr.toFixed(3)+projRank}</td><td data-v="${lb.sol??-1}">${subCell}</td><td data-v="${r.b1??-1}">${b1s}</td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':(r.s==='waiting'?'wait':(r.s==='pending'?'pend':'done'))}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${resub}${bar}</td><td data-v="${prk?prk.rank:9999}" class="proj" title="projected board SOL = best expected × observed est→real ratio; projected rank = where that SOL would place on the live board">${r.pr==null?'':'~'+r.pr.toFixed(3)+projRank}</td><td data-v="${lb.sol??-1}">${subCell}</td><td data-v="${r.b1??-1}">${b1s}</td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
     return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>best expected SOL ▼</th><th>proj. board</th><th>submitted (est→real)</th><th>#1 SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
@@ -676,7 +678,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     # compact per-problem records for the client-side filter/renderer
     recs = [{
         "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
-        "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
+        "bc": p.get("best_cal"), "s": p.get("live_state") or p["terminated"] or "running", "e": p["evals"],
         "it": p["iters"], "fr": p["frontier"], "lb": p.get("lb"),
         "b1": (p.get("board") or {}).get("top_sol"), "pr": _proj(p),
         "prk": _proj_rank(p, _proj(p)),
@@ -968,7 +970,7 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
     stats = "".join([
         _tile("expected SOL (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
               "leaderboard estimate"),
-        _tile("status", p["terminated"] or "running"),
+        _tile("status", p.get("live_state") or p["terminated"] or "running"),
         _tile("iterations / evals", f"{p['iters']} / {p['evals']}"),
         _tile("frontier size", str(p["frontier"])),
         _tile("wait p50 / p95", f"{_fmt_s(p['wait_p50'])} / {_fmt_s(p['wait_p95'])}"),
