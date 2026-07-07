@@ -619,6 +619,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     body = f"""
 {filterbar}
 <div id="tiles" class="tiles"></div>
+<div class="panel"><h2 id="h-tbl">Problems <span class="fcount">(sorted by leaderboard estimate ▼)</span></h2><div id="t-prob"></div></div>
 <div class="panel"><h2 id="h-fleet">Fleet SOL score over time (mean of per-problem best, ↑)</h2>
 <div id="c-fleet"></div></div>
 <div class="panel"><h2 id="h-conv">Convergence — top movers (best SOL score vs GPU evals)</h2>
@@ -633,7 +634,6 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 <div class="panel"><h2>Iteration outcomes — 10 most-iterated</h2>
 <div class="legend">{"".join(f'<span class="lg"><i style="background:var(--o-{k})"></i>{k}</span>' for k in OUTCOME_KEYS)}</div>
 <div id="c-oc"></div></div>
-<div class="panel"><h2 id="h-tbl">Problems</h2><div id="t-prob"></div></div>
 <script id="data" type="application/json">{payload}</script>
 """
     sub = (f"generated {gen}"
