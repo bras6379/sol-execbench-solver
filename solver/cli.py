@@ -286,6 +286,28 @@ def _record_submission(runs_dir: Path, task: int, event: dict) -> None:
         f.write(json.dumps(event) + "\n")
 
 
+def _submitted_cand(runs_dir: Path, task: int) -> dict:
+    """Which frontier kernel is in best_solution.json right now (cand + strategy)."""
+    fr = runs_dir / str(task) / "frontier.json"
+    if not fr.exists():
+        return {}
+    d = json.loads(fr.read_text())
+    m = next((x for x in d.get("members", []) if x.get("cand_id") == d.get("best_cand")), {})
+    return {"cand_id": d.get("best_cand"), "cand_strategy": m.get("strategy"),
+            "cand_agent": m.get("model")}
+
+
+def _board_enrich(row: dict, kernel: int) -> dict:
+    """Add leaderboard rank + #1 score to a poll row (best-effort GET, no crash)."""
+    from .bench import leaderboard as lb
+    try:
+        b = lb.board(kernel)
+        return {**row, "board_rank": lb.rank_of(row.get("sol_score"), b["rankings"]),
+                "board_n": b["n"], "board_top_sol": b["top_sol"], "board_top_user": b["top_user"]}
+    except Exception:
+        return row
+
+
 def _cmd_submit(args) -> None:
     import time
 
@@ -303,7 +325,8 @@ def _cmd_submit(args) -> None:
     sid = resp.get("submission_id") or resp.get("id")
     _record_submission(runs_dir, task, {"event": "submit", "submission_id": sid,
                                         "kernel_id": kernel, "file": str(file_path),
-                                        "mode": args.mode, "message": resp.get("message")})
+                                        "mode": args.mode, "message": resp.get("message"),
+                                        **_submitted_cand(runs_dir, task)})   # which kernel
     print(f"submitted → #{sid}")
     if args.poll and sid:
         deadline = time.time() + args.timeout
@@ -311,6 +334,10 @@ def _cmd_submit(args) -> None:
             row = lb.poll(sid)
             print("  " + lb.format_result(row))
             if row.get("status") in lb.TERMINAL:
+                row = _board_enrich(row, kernel)
+                if row.get("board_rank"):
+                    print(f"  → would rank #{row['board_rank']} of {row['board_n']}; "
+                          f"#1 is {row['board_top_user']} at SOL {row['board_top_sol']}")
                 _record_submission(runs_dir, task, {"event": "poll", **row})
                 break
             time.sleep(args.poll_interval)
@@ -330,7 +357,11 @@ def _cmd_poll(args) -> None:
         raise SystemExit("give submission id(s) or --task <n> (with a prior submit)")
     for sid in sids:
         row = lb.poll(int(sid))
-        print(lb.format_result(row))
+        if row.get("kernel_id") is not None:
+            row = _board_enrich(row, row["kernel_id"])
+        print(lb.format_result(row)
+              + (f"  → rank #{row['board_rank']}/{row['board_n']}, #1={row['board_top_user']} "
+                 f"@ {row['board_top_sol']}" if row.get("board_rank") else ""))
         if args.task:
             _record_submission(Path(args.runs_dir), args.task, {"event": "poll", **row})
 

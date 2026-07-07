@@ -748,19 +748,29 @@ def _submissions_panel(p: dict, runs_dir: Path) -> str:
             subs.setdefault(sid, {}).update(e)
     if not subs:
         return ""
+    have_code = {c["cand"] for c in p["candidates"] if c.get("solution")}
     rows = []
     for sid, e in sorted(subs.items()):
         sc = e.get("sol_score")
-        lat = e.get("latency_ms")
         fast = f"{e['fast_1_count']}/{e['fast_1_total']}" if e.get("fast_1_total") else "–"
+        cid = e.get("cand_id")
+        # which kernel we submitted (strategy + a code link if we still have it)
+        kern = _esc((e.get("cand_strategy") or "")[:52]) or (_esc(cid[:10]) if cid else "–")
+        if cid in have_code:
+            kern += f' <button class="link" data-code="{_esc(cid)}">code</button>'
+        # our position on the public board + the current #1
+        rank = e.get("board_rank")
+        rank_s = f"#{rank} of {e.get('board_n','?')}" if rank else "–"
+        top = e.get("board_top_sol")
+        top_s = (f"{top:.4f} ({_esc(str(e.get('board_top_user') or ''))[:14]})" if top is not None else "–")
         rows.append(
-            f"<tr><td>#{sid}</td><td>{_esc(e.get('status', '–'))}</td>"
-            f"<td>{_esc(str(e.get('is_correct', '–')))}</td>"
+            f"<tr><td>#{sid}</td><td class='strat'>{kern}</td><td>{_esc(e.get('status', '–'))}</td>"
             f"<td data-v='{sc or -1}'><b>{'–' if sc is None else f'{sc:.4f}'}</b></td>"
-            f"<td>{'–' if lat is None else f'{lat:.6f}'}</td><td>{fast}</td></tr>")
+            f"<td data-v='{rank or 999}'>{rank_s}</td><td data-v='{top or -1}'>{top_s}</td>"
+            f"<td>{fast}</td></tr>")
     return ('<div class="panel"><h2>Leaderboard submissions (real, not estimate)</h2>'
-            '<table class="sortable"><thead><tr><th>submission</th><th>status</th>'
-            '<th>correct</th><th>SOL score</th><th>latency ms</th><th>fast</th></tr></thead><tbody>'
+            '<table class="sortable"><thead><tr><th>submission</th><th>kernel</th><th>status</th>'
+            '<th>our SOL</th><th>rank</th><th>leaderboard #1</th><th>fast</th></tr></thead><tbody>'
             + "".join(rows) + "</tbody></table></div>")
 
 

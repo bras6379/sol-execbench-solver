@@ -84,6 +84,29 @@ def poll(submission_id: int, *, token: str | None = None) -> dict:
     return {k: d.get(k) for k in RESULT_KEYS if k in d}
 
 
+def board(kernel_id: int, *, gpu: str = "B200", token: str | None = None) -> dict:
+    """Public leaderboard for a kernel: ranked entries + the #1 and SOL bound.
+    Endpoint: /api/leaderboard/kernel/<id>/<gpu>."""
+    req = urllib.request.Request(
+        f"{BASE_URL}/api/leaderboard/kernel/{kernel_id}/{gpu}",
+        headers={"Authorization": f"Bearer {_token(token)}"})
+    d = _send(req)
+    real = [e for e in (d.get("rankings") or [])
+            if not e.get("is_reference") and e.get("rank") is not None and e.get("sol_score") is not None]
+    real.sort(key=lambda e: e["rank"])
+    top = real[0] if real else None
+    return {"rankings": real, "n": len(real),
+            "top_sol": (top or {}).get("sol_score"), "top_user": (top or {}).get("username"),
+            "sol_bound": (d.get("sol_entry") or {}).get("sol_score")}
+
+
+def rank_of(score: float | None, rankings: list[dict]) -> int | None:
+    """1-based position `score` would take on the board (higher SOL = better)."""
+    if score is None:
+        return None
+    return 1 + sum(1 for e in rankings if (e.get("sol_score") or 0) > score)
+
+
 def format_result(row: dict) -> str:
     sid = row.get("id")
     score = row.get("sol_score")
