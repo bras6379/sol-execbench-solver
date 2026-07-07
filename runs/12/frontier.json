@@ -3,7 +3,7 @@
   "family": "softmax",
   "name": "softmax_12",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 3,
   "best_cand": "e9827f4b3147",
   "best_score": 0.9142156452485883,
   "best_score_cal": 0.893692486053788,
@@ -13,7 +13,7 @@
       "sol_score": 0.9142156452485883,
       "sol_score_cal": 0.893692486053788,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 14,
       "vector": [
         0.9140221402214023,
         0.9020656584286242,
@@ -36,6 +36,64 @@
       "agent": "openrouter",
       "model": "deepseek/deepseek-v4-pro",
       "candidate": "candidates/e9827f4b3147.json"
+    },
+    {
+      "cand_id": "ff735becea9b",
+      "sol_score": 0.9083574220789019,
+      "sol_score_cal": 0.887024792819923,
+      "all_passed": true,
+      "shapes_won": 2,
+      "vector": [
+        0.9033552151714077,
+        0.9006951797799365,
+        0.9073529411764706,
+        0.9079601990049752,
+        0.9266349148195641,
+        0.9078751857355126,
+        0.9056257175660161,
+        0.905219282348677,
+        0.9016064257028112,
+        0.9047442550037065,
+        0.9073529411764706,
+        0.9236686390532546,
+        0.9033552151714077,
+        0.9127623879864148,
+        0.9123979897643967,
+        0.9031122638014079
+      ],
+      "strategy": "Row-specialized Triton RoPE kernel: load each contiguous 64-float row once, compute cos/sin/scale in one launch, cast to",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/ff735becea9b.json"
+    },
+    {
+      "cand_id": "00e3ba87cc8f",
+      "sol_score": 0.9081228140603108,
+      "sol_score_cal": 0.8867642673843407,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.9020393299344501,
+        0.8994115483633689,
+        0.9073529411764706,
+        0.9079601990049752,
+        0.9205641492265696,
+        0.9038461538461539,
+        0.9042553191489361,
+        0.9058759521218717,
+        0.906904149834741,
+        0.9101416853094705,
+        0.9113737075332349,
+        0.9176954732510287,
+        0.9073260073260074,
+        0.9163619931807908,
+        0.90507443572915,
+        0.9037819799777531
+      ],
+      "strategy": "Triton fused flat RoPE kernel (frontier-winning layout) with an expanded autotune superset \u2014 adds large BLOCK_SIZE 4096/",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/00e3ba87cc8f.json"
     }
   ]
 }

@@ -1,0 +1,245 @@
+{
+  "cand_id": "ff735becea9b",
+  "task_id": 12,
+  "verdict": "entered",
+  "sol_score": 0.9083574220789019,
+  "sol_score_calibrated": 0.887024792819923,
+  "correct": true,
+  "vector": [
+    0.9033552151714077,
+    0.9006951797799365,
+    0.9073529411764706,
+    0.9079601990049752,
+    0.9266349148195641,
+    0.9078751857355126,
+    0.9056257175660161,
+    0.905219282348677,
+    0.9016064257028112,
+    0.9047442550037065,
+    0.9073529411764706,
+    0.9236686390532546,
+    0.9033552151714077,
+    0.9127623879864148,
+    0.9123979897643967,
+    0.9031122638014079
+  ],
+  "strategy": "Row-specialized Triton RoPE kernel: load each contiguous 64-float row once, compute cos/sin/scale in one launch, cast to",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "e9827f4b3147",
+  "trajectory": "runs/12/work/ff735becea9b/trajectory.jsonl",
+  "gpu_s": 23.588,
+  "job_id": "12-ff735becea9b",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 369.84,
+      "samples": 78,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.00272,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9033552151714077,
+      "sol_score_cal": 0.8825625311765124,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.002657,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020064,
+      "sol_score": 0.9006951797799365,
+      "sol_score_cal": 0.8802370935078689,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.002816,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9073529411764706,
+      "sol_score_cal": 0.8855781375588472,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.003072,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.02144,
+      "sol_score": 0.9079601990049752,
+      "sol_score_cal": 0.8850139939590435,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.007104,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.044368,
+      "sol_score": 0.9266349148195641,
+      "sol_score_cal": 0.8988542429260874,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.002784,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020352,
+      "sol_score": 0.9078751857355126,
+      "sol_score_cal": 0.8861108291154844,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.002655,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.02032,
+      "sol_score": 0.9056257175660161,
+      "sol_score_cal": 0.8851205931923813,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.002592,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02048,
+      "sol_score": 0.905219282348677,
+      "sol_score_cal": 0.8854624613551919,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.002656,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020256,
+      "sol_score": 0.9016064257028112,
+      "sol_score_cal": 0.8813095985839091,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.002656,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020128,
+      "sol_score": 0.9047442550037065,
+      "sol_score_cal": 0.8840743477190085,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.002816,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9073529411764706,
+      "sol_score_cal": 0.8855781375588472,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.003264,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.026176,
+      "sol_score": 0.9236686390532546,
+      "sol_score_cal": 0.9029593465836784,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.00272,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9033552151714077,
+      "sol_score_cal": 0.8825625311765124,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.003232,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0234069999999999,
+      "sol_score": 0.9127623879864148,
+      "sol_score_cal": 0.8903895249606032,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.0024,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020289,
+      "sol_score": 0.9123979897643967,
+      "sol_score_cal": 0.893610295777828,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.002592,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02,
+      "sol_score": 0.9031122638014079,
+      "sol_score_cal": 0.8829730199669633,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({\"BLOCK_ROWS\": 1}, num_warps=1),\n        triton.Config({\"BLOCK_ROWS\": 2}, num_warps=1),\n        triton.Config({\"BLOCK_ROWS\": 4}, num_warps=2),\n        triton.Config({\"BLOCK_ROWS\": 8}, num_warps=4),\n        triton.Config({\"BLOCK_ROWS\": 16}, num_warps=4),\n        triton.Config({\"BLOCK_ROWS\": 16}, num_warps=8),\n        triton.Config({\"BLOCK_ROWS\": 32}, num_warps=8),\n    ],\n    key=[\"N_ROWS\"],\n)\n@triton.jit\ndef _rope_rows_kernel(\n    freqs_ptr,\n    out_ptr,\n    ATTENTION_SCALING: tl.constexpr,\n    N_ROWS: tl.constexpr,\n    BLOCK_ROWS: tl.constexpr,\n):\n    rows = tl.program_id(0) * BLOCK_ROWS + tl.arange(0, BLOCK_ROWS)\n    cols = tl.arange(0, 64)\n\n    freq_offsets = rows[:, None] * 64 + cols[None, :]\n    mask = freq_offsets < (N_ROWS * 64)\n    vals = tl.load(freqs_ptr + freq_offsets, mask=mask, other=0.0)\n\n    cos_vals = (tl.math.cos(vals) * ATTENTION_SCALING).to(tl.bfloat16)\n    sin_vals = (tl.math.sin(vals) * ATTENTION_SCALING).to(tl.bfloat16)\n\n    out_offsets = rows[:, None] * 128 + cols[None, :]\n    plane = N_ROWS * 128\n\n    tl.store(out_ptr + out_offsets, cos_vals, mask=mask)\n    tl.store(out_ptr + out_offsets + 64, cos_vals, mask=mask)\n    tl.store(out_ptr + plane + out_offsets, sin_vals, mask=mask)\n    tl.store(out_ptr + plane + out_offsets + 64, sin_vals, mask=mask)\n\n\n@torch.no_grad()\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    B, S, half_dim = freqs.shape\n\n    if half_dim != 64:\n        emb = torch.cat((freqs, freqs), dim=-1)\n        return (\n            (emb.cos() * attention_scaling).to(torch.bfloat16),\n            (emb.sin() * attention_scaling).to(torch.bfloat16),\n        )\n\n    freqs = freqs.contiguous()\n    n_rows = B * S\n\n    if isinstance(attention_scaling, torch.Tensor):\n        attention_scaling = attention_scaling.item()\n\n    out = torch.empty((2, B, S, 128), device=freqs.device, dtype=torch.bfloat16)\n    grid = lambda meta: (triton.cdiv(n_rows, meta[\"BLOCK_ROWS\"]),)\n\n    _rope_rows_kernel[grid](\n        freqs,\n        out,\n        ATTENTION_SCALING=attention_scaling,\n        N_ROWS=n_rows,\n    )\n\n    return out[0], out[1]\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t12_ff735becea9b",
+    "definition": "012_fused_cos_sin_embedding_generation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({\"BLOCK_ROWS\": 1}, num_warps=1),\n        triton.Config({\"BLOCK_ROWS\": 2}, num_warps=1),\n        triton.Config({\"BLOCK_ROWS\": 4}, num_warps=2),\n        triton.Config({\"BLOCK_ROWS\": 8}, num_warps=4),\n        triton.Config({\"BLOCK_ROWS\": 16}, num_warps=4),\n        triton.Config({\"BLOCK_ROWS\": 16}, num_warps=8),\n        triton.Config({\"BLOCK_ROWS\": 32}, num_warps=8),\n    ],\n    key=[\"N_ROWS\"],\n)\n@triton.jit\ndef _rope_rows_kernel(\n    freqs_ptr,\n    out_ptr,\n    ATTENTION_SCALING: tl.constexpr,\n    N_ROWS: tl.constexpr,\n    BLOCK_ROWS: tl.constexpr,\n):\n    rows = tl.program_id(0) * BLOCK_ROWS + tl.arange(0, BLOCK_ROWS)\n    cols = tl.arange(0, 64)\n\n    freq_offsets = rows[:, None] * 64 + cols[None, :]\n    mask = freq_offsets < (N_ROWS * 64)\n    vals = tl.load(freqs_ptr + freq_offsets, mask=mask, other=0.0)\n\n    cos_vals = (tl.math.cos(vals) * ATTENTION_SCALING).to(tl.bfloat16)\n    sin_vals = (tl.math.sin(vals) * ATTENTION_SCALING).to(tl.bfloat16)\n\n    out_offsets = rows[:, None] * 128 + cols[None, :]\n    plane = N_ROWS * 128\n\n    tl.store(out_ptr + out_offsets, cos_vals, mask=mask)\n    tl.store(out_ptr + out_offsets + 64, cos_vals, mask=mask)\n    tl.store(out_ptr + plane + out_offsets, sin_vals, mask=mask)\n    tl.store(out_ptr + plane + out_offsets + 64, sin_vals, mask=mask)\n\n\n@torch.no_grad()\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    B, S, half_dim = freqs.shape\n\n    if half_dim != 64:\n        emb = torch.cat((freqs, freqs), dim=-1)\n        return (\n            (emb.cos() * attention_scaling).to(torch.bfloat16),\n            (emb.sin() * attention_scaling).to(torch.bfloat16),\n        )\n\n    freqs = freqs.contiguous()\n    n_rows = B * S\n\n    if isinstance(attention_scaling, torch.Tensor):\n        attention_scaling = attention_scaling.item()\n\n    out = torch.empty((2, B, S, 128), device=freqs.device, dtype=torch.bfloat16)\n    grid = lambda meta: (triton.cdiv(n_rows, meta[\"BLOCK_ROWS\"]),)\n\n    _rope_rows_kernel[grid](\n        freqs,\n        out,\n        ATTENTION_SCALING=attention_scaling,\n        N_ROWS=n_rows,\n    )\n\n    return out[0], out[1]\n"
+      }
+    ]
+  }
+}

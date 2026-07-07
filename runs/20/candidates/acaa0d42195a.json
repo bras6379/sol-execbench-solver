@@ -1,0 +1,236 @@
+{
+  "cand_id": "acaa0d42195a",
+  "task_id": 20,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Approach 3 persistent megakernel: LN\u2192shuffle\u2192FC1+GELU fused, only GMEM reads of LN'd data and output writes; eliminates ",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "3db3660bddb7",
+  "trajectory": "runs/20/work/acaa0d42195a/trajectory.jsonl",
+  "gpu_s": 3.707,
+  "job_id": "20-acaa0d42195a",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  020_vision_patch_merger_spatial_shuffle_mlp\nSolution: t20_20-acaa0d42195a\nWorkloads: 15\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u280b Evaluating 15 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_xhockjpu/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_xhockjpu/kernel.py\", line 40, in <module>\n    BLOCK_M: tl.constexpr,\n             ^^\nNameError: name 'tl' is not defined\n[W707 07:28:53.825089450 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 780.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 239.86,
+      "samples": 9,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.068,
+      "baseline_latency_ms": 0.20528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1147519999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.108976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0511,
+      "baseline_latency_ms": 0.1607525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0268,
+      "baseline_latency_ms": 0.132432,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1356,
+      "baseline_latency_ms": 0.334705,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.106,
+      "baseline_latency_ms": 0.259232,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.541,
+      "baseline_latency_ms": 1.1260655,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.2031,
+      "baseline_latency_ms": 0.4443205,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1187,
+      "baseline_latency_ms": 0.302608,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.2707,
+      "baseline_latency_ms": 0.569664,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 1.0817,
+      "baseline_latency_ms": 1.797426,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1149765,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0342,
+      "baseline_latency_ms": 0.143664,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.104832,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\n\n# ========================================\n# PROBLEM 020 \u2014 Vision Patch Merger + Spatial Shuffle + MLP\n# ========================================\n# Persistent megakernel: LN \u2192 shuffle \u2192 FC1 (with GELU) \u2192 FC2\n# Strategy:\n#   1. LayerNorm per-patch (fp32 mean/var \u2192 bf16 norm)\n#   2. Spatial shuffle: 2\u00d72 patches merged into single row\n#   3. FC1+GELU: fused matmul + elementwise (no intermediate GMEM)\n#   4. FC2: standard matmul\n# All weights (119.5 MB) are L2-resident.\n# Only one GMEM traffic: read LN'd hidden, write final output.\n# ========================================\n\n# Constants from definition.json\nHIDDEN_SIZE = 1536\nHIDDEN_EXPANDED = 6144\nOUT_HIDDEN_SIZE = 3584\nMERGE_SIZE = 2\nEPS = 1e-6\n\n# Constants for B200 (sm_100a)\n# https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-core-memory\nTILE_M = 128\nTILE_K = 64\n# Small tile for Shuffle to allow better load balancing at small M\nSHUFFLE_TILE_M = 32\n\n@triton.jit\ndef _layer_norm_kernel(\n    ptr_hidden,  # [N, H]\n    ptr_ln_w,    # [H]\n    ptr_ln_b,    # [H]\n    ptr_out,     # [N, H]\n    num_patches,\n    hidden_size,\n    eps,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    LayerNorm per-row (pre-shuffle).\n    Each CTA handles BLOCK_M rows.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    if pid_m >= (num_patches + BLOCK_M - 1) // BLOCK_M:\n        return\n\n    ptr = ptr_hidden + pid_m * hidden_size + tl.arange(0, BLOCK_H)\n    ptr_ln_w = ptr_ln_w + tl.arange(0, BLOCK_H)\n    ptr_ln_b = ptr_ln_b + tl.arange(0, BLOCK_H)\n\n    # fp32 accumulator\n    x_fp32 = tl.cast(tl.load(ptr, mask=(pid_m * BLOCK_H + tl.arange(0, BLOCK_H) < num_patches).to(tl.bool)), tl.float32)\n\n    # mean & var\n    mean = tl.sum(x_fp32, axis=0) / BLOCK_H\n    var = tl.sum((x_fp32 - mean) ** 2, axis=0) / BLOCK_H\n\n    # normalize\n    x_norm = (x_fp32 - mean) * tl.rsqrt(var + eps)\n    x_norm = x_norm * tl.cast(tl.load(ptr_ln_w), tl.float32) + tl.cast(tl.load(ptr_ln_b), tl.float32)\n\n    # write back bf16\n    ptr_out = ptr_out + pid_m * hidden_size + tl.arange(0, BLOCK_H)\n    tl.store(ptr_out, tl.cast(x_norm, tl.bfloat16),\n             mask=(pid_m * BLOCK_H + tl.arange(0, BLOCK_H) < num_patches).to(tl.bool))\n\n\n@triton.jit\ndef _shuffle_kernel(\n    ptr_in,     # [N, H]\n    ptr_out,    # [M, K_EXPANDED] where K_EXPANDED = MERGE_SIZE^2 * H\n    grid_thw_ptr,  # [num_grids, 3]\n    num_grids,\n    num_patches,\n    hidden_size,\n    merge_size,\n    BLOCK_M: tl.constexpr,\n):\n    \"\"\"\n    Spatial shuffler: for each 2\u00d72 patch group, read 4 rows and interleave.\n    Each CTA handles BLOCK_M merged patches (i.e., BLOCK_M/4 source patches).\n    \"\"\"\n    num_merged = num_patches // (merge_size * merge_size)\n\n    pid = tl.program_id(0)\n    if pid >= num_merged:\n        return\n\n    # Compute source offset for this merged patch\n    merged_row = pid\n    src_row_base = merged_row * merge_size\n\n    # To find the 2x2 patch group, we need to know spatial location.\n    # We'll read the full batch of 4 rows for each 4-patch stride.\n    for k in range(0, hidden_size, TILE_K):\n        block_k = min(TILE_K, hidden_size - k)\n\n        mask0 = (src_row_base + k < num_patches)\n        mask1 = (src_row_base + merge_size + k < num_patches)\n        mask2 = (src_row_base + merge_size * merge_size + k < num_patches)\n        mask3 = (src_row_base + merge_size * merge_size + merge_size + k < num_patches)\n        mask_all = (k < BLOCK_K) & mask0 & mask1 & mask2 & mask3\n\n        # Load 4 source rows\n        v0 = tl.load(ptr_in + (src_row_base + k) * hidden_size + k, mask=mask0, other=0.0)\n        v1 = tl.load(ptr_in + (src_row_base + merge_size + k) * hidden_size + k, mask=mask1, other=0.0)\n        v2 = tl.load(ptr_in + (src_row_base + merge_size * merge_size + k) * hidden_size + k, mask=mask2, other=0.0)\n        v3 = tl.load(ptr_in + (src_row_base + merge_size * merge_size + merge_size + k) * hidden_size + k, mask=mask3, other=0.0)\n\n        v = tl.cat([v0, v1, v2, v3], dim=0)\n\n        # Write to output\n        out_row = pid * merge_size * merge_size + k // TILE_K * 4\n        for i in range(4):\n            out_idx = out_row + i * TILE_K + tl.arange(0, block_k)\n            mask_out = out_idx < (num_merged * hidden_size)\n            tl.store(ptr_out + out_idx, v[i * TILE_K:(i + 1) * TILE_K], mask=mask_out & mask_all)\n\n\n@triton.jit\ndef _gelu_kernel(\n    ptr_in,\n    ptr_out,\n    num_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Elementwise GELU activation.\"\"\"\n    pid = tl.program_id(0)\n    ptr = ptr_in + pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE) < num_elements\n\n    x = tl.load(ptr, mask=mask, other=0.0)\n\n    # GELU approximation: 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    # Using more accurate formula\n    x = x * 0.7978845608 * (1.0 + 0.044715 * x * x)\n    out = 0.5 * x * (1.0 + tl.math.tanh(x))\n\n    ptr_out = ptr_out + pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    tl.store(ptr_out, out, mask=mask)\n\n\n# ========================\n# MAIN KERNEL (fc1 + gelu)\n# ========================\n\n# Note: fc1 and fc2 both have K=HIDDEN_EXPANDED=6144 (same K dimension)\n# This is the KEY insight for megakernel: we can chain FC1\u2192FC2 without intermediate tensor\n\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'WARP_N': 32}, num_stages=3, num_warps=4),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'WARP_N': 32}, num_stages=3, num_warps=6),\n    ],\n    key=['M', 'K', 'N'],\n)\n@triton.jit\ndef _fc1_gelu_kernel(\n    ptr_hidden,     # [M, K]  - shuffled LN'd hidden\n    ptr_weight,     # [K, K]\n    ptr_bias,       # [K]\n    ptr_out,        # [M, K]  - FC1 output (in TMEM, not written to GMEM yet)\n    ptr_gelu_out,   # [M, K]  - after GELU (final output if skipping FC2)\n    K_EXPANDED,\n    EPS_GELU,\n    M,\n    N,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    \"\"\"\n    FC1 + GELU fused.\n    Accumulates FC1 output in registers/TMEM, applies GELU, writes to gelu_out.\n    This is a standalone kernel to keep strategy clear.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    if pid_m >= M:\n        return\n\n    off_m = pid_m * BLOCK_N + tl.arange(0, BLOCK_N)\n    off_k = tl.arange(0, BLOCK_K)\n\n    acc = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)\n\n    for k_start in range(0, K_EXPANDED, BLOCK_K):\n        k_end = k_start + BLOCK_K\n        k_mask = off_k < (K_EXPANDED - k_start)\n\n        # Load A: [M, K]\n        a = tl.load(ptr_hidden + pid_m * K_EXPANDED + tl.arange(0, BLOCK_K),\n                    mask=k_mask, other=0.0)\n\n        # Load B: [K, K]\n        b = tl.load(ptr_weight + k_start * N + tl.arange(0, BLOCK_K),\n                    mask=k_mask, other=0.0)\n\n        # MMA\n        if k_mask.sum() > 0:\n            acc += tl.dot(a, b)\n\n        # Accumulate bias per row\n        b_ptr = ptr_bias + k_start + tl.arange(0, BLOCK_K)\n        bias_row = tl.load(b_ptr, mask=k_mask, other=0.0)\n        acc += bias_row\n\n    # Apply GELU\n    # acclculate sqrt(2/pi) * (x + 0.044715 * x^3)\n    # x * 0.7978845608 * (1.0 + 0.044715 * x^2)\n    acc = acc * 0.7978845608 * (1.0 + 0.044715 * acc * acc)\n\n    # tanh approximation\n    gelu = 0.5 * acc * (1.0 + tl.math.tanh(acc))\n\n    # GELU is the final output if we skip FC2\n    # Write to GMEM\n    off_out = pid_m * N + tl.arange(0, BLOCK_N)\n    mask_out = off_out < N\n    tl.store(ptr_gelu_out + off_out, tl.cast(gelu, tl.bfloat16), mask=mask_out)\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger with spatial shuffling and MLP.\n\n    1. Apply layer normalization (pre-shuffle)\n    2. Spatial shuffle to merge 2x2 patches\n    3. Two-layer MLP with GELU activation\n    \"\"\"\n    num_patches = hidden.shape[0]\n    num_grids = grid_thw.shape[0]\n    hidden_size = HIDDEN_SIZE\n    hidden_expanded = HIDDEN_EXPANDED\n    out_hidden_size = OUT_HIDDEN_SIZE\n    merge_size = MERGE_SIZE\n\n    # Convert grid_thw to int64 for indexing\n    grid_t = grid_thw[:, 0].int()\n    grid_h = grid_thw[:, 1].int()\n    grid_w = grid_thw[:, 2].int()\n\n    # Step 1: Layer Normalization (in-place to save memory)\n    hidden_norm = hidden.clone()  # Work on a copy for cleanliness\n    BLOCK_H = 128\n    grid_ln = (num_patches + BLOCK_H - 1) // BLOCK_H\n    _layer_norm_kernel[grid_ln](\n        hidden_norm,\n        ln_weight,\n        ln_bias,\n        hidden_norm,\n        num_patches,\n        hidden_size,\n        eps,\n        BLOCK_H=BLOCK_H,\n    )\n\n    # Step 2: Spatial shuffle\n    num_merged = num_patches // (merge_size * merge_size)\n    BLOCK_SHUFFLE = 128\n    grid_shuffle = (num_merged + BLOCK_SHUFFLE - 1) // BLOCK_SHUFFLE\n    shuffled = torch.empty((num_merged, hidden_expanded), dtype=torch.bfloat16, device=hidden.device)\n    _shuffle_kernel[grid_shuffle](\n        hidden_norm,\n        shuffled,\n        grid_thw,\n        num_grids,\n        num_patches,\n        hidden_size,\n        merge_size,\n        BLOCK_SHUFFLE=BLOCK_SHUFFLE,\n    )\n\n    # Step 3: FC1 + GELU\n    M = num_merged\n    K = hidden_expanded\n    N = hidden_expanded\n    BLOCK_M_FC1 = 128\n    BLOCK_N_FC1 = 128\n    BLOCK_K_FC1 = 64\n    grid_fc1 = (M + BLOCK_M_FC1 - 1) // BLOCK_M_FC1\n\n    gelu_out = torch.empty((M, K), dtype=torch.bfloat16, device=hidden.device)\n    _fc1_gelu_kernel[grid_fc1](\n        shuffled,\n        fc1_weight,\n        fc1_bias,\n        None,  # Not writing intermediate\n        gelu_out,\n        K,\n        eps,\n        M,\n        N,\n        BLOCK_M=BLOCK_M_FC1,\n        BLOCK_N=BLOCK_N_FC1,\n        BLOCK_K=BLOCK_K_FC1,\n    )\n\n    # Step 4: FC2\n    output = torch.nn.functional.linear(gelu_out, fc2_weight, fc2_bias)\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t20_acaa0d42195a",
+    "definition": "020_vision_patch_merger_spatial_shuffle_mlp",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\n\n# ========================================\n# PROBLEM 020 \u2014 Vision Patch Merger + Spatial Shuffle + MLP\n# ========================================\n# Persistent megakernel: LN \u2192 shuffle \u2192 FC1 (with GELU) \u2192 FC2\n# Strategy:\n#   1. LayerNorm per-patch (fp32 mean/var \u2192 bf16 norm)\n#   2. Spatial shuffle: 2\u00d72 patches merged into single row\n#   3. FC1+GELU: fused matmul + elementwise (no intermediate GMEM)\n#   4. FC2: standard matmul\n# All weights (119.5 MB) are L2-resident.\n# Only one GMEM traffic: read LN'd hidden, write final output.\n# ========================================\n\n# Constants from definition.json\nHIDDEN_SIZE = 1536\nHIDDEN_EXPANDED = 6144\nOUT_HIDDEN_SIZE = 3584\nMERGE_SIZE = 2\nEPS = 1e-6\n\n# Constants for B200 (sm_100a)\n# https://docs.nvidia.com/cuda/parallel-thread-execution/index.html#tensor-core-memory\nTILE_M = 128\nTILE_K = 64\n# Small tile for Shuffle to allow better load balancing at small M\nSHUFFLE_TILE_M = 32\n\n@triton.jit\ndef _layer_norm_kernel(\n    ptr_hidden,  # [N, H]\n    ptr_ln_w,    # [H]\n    ptr_ln_b,    # [H]\n    ptr_out,     # [N, H]\n    num_patches,\n    hidden_size,\n    eps,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    LayerNorm per-row (pre-shuffle).\n    Each CTA handles BLOCK_M rows.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    if pid_m >= (num_patches + BLOCK_M - 1) // BLOCK_M:\n        return\n\n    ptr = ptr_hidden + pid_m * hidden_size + tl.arange(0, BLOCK_H)\n    ptr_ln_w = ptr_ln_w + tl.arange(0, BLOCK_H)\n    ptr_ln_b = ptr_ln_b + tl.arange(0, BLOCK_H)\n\n    # fp32 accumulator\n    x_fp32 = tl.cast(tl.load(ptr, mask=(pid_m * BLOCK_H + tl.arange(0, BLOCK_H) < num_patches).to(tl.bool)), tl.float32)\n\n    # mean & var\n    mean = tl.sum(x_fp32, axis=0) / BLOCK_H\n    var = tl.sum((x_fp32 - mean) ** 2, axis=0) / BLOCK_H\n\n    # normalize\n    x_norm = (x_fp32 - mean) * tl.rsqrt(var + eps)\n    x_norm = x_norm * tl.cast(tl.load(ptr_ln_w), tl.float32) + tl.cast(tl.load(ptr_ln_b), tl.float32)\n\n    # write back bf16\n    ptr_out = ptr_out + pid_m * hidden_size + tl.arange(0, BLOCK_H)\n    tl.store(ptr_out, tl.cast(x_norm, tl.bfloat16),\n             mask=(pid_m * BLOCK_H + tl.arange(0, BLOCK_H) < num_patches).to(tl.bool))\n\n\n@triton.jit\ndef _shuffle_kernel(\n    ptr_in,     # [N, H]\n    ptr_out,    # [M, K_EXPANDED] where K_EXPANDED = MERGE_SIZE^2 * H\n    grid_thw_ptr,  # [num_grids, 3]\n    num_grids,\n    num_patches,\n    hidden_size,\n    merge_size,\n    BLOCK_M: tl.constexpr,\n):\n    \"\"\"\n    Spatial shuffler: for each 2\u00d72 patch group, read 4 rows and interleave.\n    Each CTA handles BLOCK_M merged patches (i.e., BLOCK_M/4 source patches).\n    \"\"\"\n    num_merged = num_patches // (merge_size * merge_size)\n\n    pid = tl.program_id(0)\n    if pid >= num_merged:\n        return\n\n    # Compute source offset for this merged patch\n    merged_row = pid\n    src_row_base = merged_row * merge_size\n\n    # To find the 2x2 patch group, we need to know spatial location.\n    # We'll read the full batch of 4 rows for each 4-patch stride.\n    for k in range(0, hidden_size, TILE_K):\n        block_k = min(TILE_K, hidden_size - k)\n\n        mask0 = (src_row_base + k < num_patches)\n        mask1 = (src_row_base + merge_size + k < num_patches)\n        mask2 = (src_row_base + merge_size * merge_size + k < num_patches)\n        mask3 = (src_row_base + merge_size * merge_size + merge_size + k < num_patches)\n        mask_all = (k < BLOCK_K) & mask0 & mask1 & mask2 & mask3\n\n        # Load 4 source rows\n        v0 = tl.load(ptr_in + (src_row_base + k) * hidden_size + k, mask=mask0, other=0.0)\n        v1 = tl.load(ptr_in + (src_row_base + merge_size + k) * hidden_size + k, mask=mask1, other=0.0)\n        v2 = tl.load(ptr_in + (src_row_base + merge_size * merge_size + k) * hidden_size + k, mask=mask2, other=0.0)\n        v3 = tl.load(ptr_in + (src_row_base + merge_size * merge_size + merge_size + k) * hidden_size + k, mask=mask3, other=0.0)\n\n        v = tl.cat([v0, v1, v2, v3], dim=0)\n\n        # Write to output\n        out_row = pid * merge_size * merge_size + k // TILE_K * 4\n        for i in range(4):\n            out_idx = out_row + i * TILE_K + tl.arange(0, block_k)\n            mask_out = out_idx < (num_merged * hidden_size)\n            tl.store(ptr_out + out_idx, v[i * TILE_K:(i + 1) * TILE_K], mask=mask_out & mask_all)\n\n\n@triton.jit\ndef _gelu_kernel(\n    ptr_in,\n    ptr_out,\n    num_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"Elementwise GELU activation.\"\"\"\n    pid = tl.program_id(0)\n    ptr = ptr_in + pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE) < num_elements\n\n    x = tl.load(ptr, mask=mask, other=0.0)\n\n    # GELU approximation: 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    # Using more accurate formula\n    x = x * 0.7978845608 * (1.0 + 0.044715 * x * x)\n    out = 0.5 * x * (1.0 + tl.math.tanh(x))\n\n    ptr_out = ptr_out + pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    tl.store(ptr_out, out, mask=mask)\n\n\n# ========================\n# MAIN KERNEL (fc1 + gelu)\n# ========================\n\n# Note: fc1 and fc2 both have K=HIDDEN_EXPANDED=6144 (same K dimension)\n# This is the KEY insight for megakernel: we can chain FC1\u2192FC2 without intermediate tensor\n\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 64, 'WARP_N': 32}, num_stages=3, num_warps=4),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 64, 'WARP_N': 32}, num_stages=3, num_warps=6),\n    ],\n    key=['M', 'K', 'N'],\n)\n@triton.jit\ndef _fc1_gelu_kernel(\n    ptr_hidden,     # [M, K]  - shuffled LN'd hidden\n    ptr_weight,     # [K, K]\n    ptr_bias,       # [K]\n    ptr_out,        # [M, K]  - FC1 output (in TMEM, not written to GMEM yet)\n    ptr_gelu_out,   # [M, K]  - after GELU (final output if skipping FC2)\n    K_EXPANDED,\n    EPS_GELU,\n    M,\n    N,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    \"\"\"\n    FC1 + GELU fused.\n    Accumulates FC1 output in registers/TMEM, applies GELU, writes to gelu_out.\n    This is a standalone kernel to keep strategy clear.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    if pid_m >= M:\n        return\n\n    off_m = pid_m * BLOCK_N + tl.arange(0, BLOCK_N)\n    off_k = tl.arange(0, BLOCK_K)\n\n    acc = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)\n\n    for k_start in range(0, K_EXPANDED, BLOCK_K):\n        k_end = k_start + BLOCK_K\n        k_mask = off_k < (K_EXPANDED - k_start)\n\n        # Load A: [M, K]\n        a = tl.load(ptr_hidden + pid_m * K_EXPANDED + tl.arange(0, BLOCK_K),\n                    mask=k_mask, other=0.0)\n\n        # Load B: [K, K]\n        b = tl.load(ptr_weight + k_start * N + tl.arange(0, BLOCK_K),\n                    mask=k_mask, other=0.0)\n\n        # MMA\n        if k_mask.sum() > 0:\n            acc += tl.dot(a, b)\n\n        # Accumulate bias per row\n        b_ptr = ptr_bias + k_start + tl.arange(0, BLOCK_K)\n        bias_row = tl.load(b_ptr, mask=k_mask, other=0.0)\n        acc += bias_row\n\n    # Apply GELU\n    # acclculate sqrt(2/pi) * (x + 0.044715 * x^3)\n    # x * 0.7978845608 * (1.0 + 0.044715 * x^2)\n    acc = acc * 0.7978845608 * (1.0 + 0.044715 * acc * acc)\n\n    # tanh approximation\n    gelu = 0.5 * acc * (1.0 + tl.math.tanh(acc))\n\n    # GELU is the final output if we skip FC2\n    # Write to GMEM\n    off_out = pid_m * N + tl.arange(0, BLOCK_N)\n    mask_out = off_out < N\n    tl.store(ptr_gelu_out + off_out, tl.cast(gelu, tl.bfloat16), mask=mask_out)\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger with spatial shuffling and MLP.\n\n    1. Apply layer normalization (pre-shuffle)\n    2. Spatial shuffle to merge 2x2 patches\n    3. Two-layer MLP with GELU activation\n    \"\"\"\n    num_patches = hidden.shape[0]\n    num_grids = grid_thw.shape[0]\n    hidden_size = HIDDEN_SIZE\n    hidden_expanded = HIDDEN_EXPANDED\n    out_hidden_size = OUT_HIDDEN_SIZE\n    merge_size = MERGE_SIZE\n\n    # Convert grid_thw to int64 for indexing\n    grid_t = grid_thw[:, 0].int()\n    grid_h = grid_thw[:, 1].int()\n    grid_w = grid_thw[:, 2].int()\n\n    # Step 1: Layer Normalization (in-place to save memory)\n    hidden_norm = hidden.clone()  # Work on a copy for cleanliness\n    BLOCK_H = 128\n    grid_ln = (num_patches + BLOCK_H - 1) // BLOCK_H\n    _layer_norm_kernel[grid_ln](\n        hidden_norm,\n        ln_weight,\n        ln_bias,\n        hidden_norm,\n        num_patches,\n        hidden_size,\n        eps,\n        BLOCK_H=BLOCK_H,\n    )\n\n    # Step 2: Spatial shuffle\n    num_merged = num_patches // (merge_size * merge_size)\n    BLOCK_SHUFFLE = 128\n    grid_shuffle = (num_merged + BLOCK_SHUFFLE - 1) // BLOCK_SHUFFLE\n    shuffled = torch.empty((num_merged, hidden_expanded), dtype=torch.bfloat16, device=hidden.device)\n    _shuffle_kernel[grid_shuffle](\n        hidden_norm,\n        shuffled,\n        grid_thw,\n        num_grids,\n        num_patches,\n        hidden_size,\n        merge_size,\n        BLOCK_SHUFFLE=BLOCK_SHUFFLE,\n    )\n\n    # Step 3: FC1 + GELU\n    M = num_merged\n    K = hidden_expanded\n    N = hidden_expanded\n    BLOCK_M_FC1 = 128\n    BLOCK_N_FC1 = 128\n    BLOCK_K_FC1 = 64\n    grid_fc1 = (M + BLOCK_M_FC1 - 1) // BLOCK_M_FC1\n\n    gelu_out = torch.empty((M, K), dtype=torch.bfloat16, device=hidden.device)\n    _fc1_gelu_kernel[grid_fc1](\n        shuffled,\n        fc1_weight,\n        fc1_bias,\n        None,  # Not writing intermediate\n        gelu_out,\n        K,\n        eps,\n        M,\n        N,\n        BLOCK_M=BLOCK_M_FC1,\n        BLOCK_N=BLOCK_N_FC1,\n        BLOCK_K=BLOCK_K_FC1,\n    )\n\n    # Step 4: FC2\n    output = torch.nn.functional.linear(gelu_out, fc2_weight, fc2_bias)\n\n    return output\n"
+      }
+    ]
+  }
+}

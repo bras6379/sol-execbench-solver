@@ -6,3 +6,9 @@ Banked when each author entered the frontier; the next agent reads these.
 ## 1. from `e9827f4b` — Triton fused single-kernel: loads each fp32 frequency once, computes cos+sin+scale+bf16-cast in registers, writes each v
 If bandwidth <80% peak at large shapes (B≥4, S≥16384), escalate to CUDA: use `__sincosf` intrinsic for true SFU fusion (one instruction vs two), `uint4` 256-bit loads (Blackwell-native), `__nv_bfloat162` packed stores, and a persistent grid of 148 SMs with grid-stride loop. Trigger: achieved HBM bandwidth below 7 TB/s on the largest workload shapes — means Triton's codegen left a measurable gap.
 
+## 2. from `ff735bec` — Row-specialized Triton RoPE kernel: load each contiguous 64-float row once, compute cos/sin/scale in one launch, cast to
+If this only ties the prior Triton frontier or large-shape bandwidth stays below roughly 7 TB/s, switch to a CUDA kernel using `__sincosf`, packed `__nv_bfloat162`/vectorized stores, and a 148-SM persistent grid-stride loop over rows to cut Triton codegen and launch-shape overhead.
+
+## 3. from `00e3ba87` — Triton fused flat RoPE kernel (frontier-winning layout) with an expanded autotune superset — adds large BLOCK_SIZE 4096/
+Higher-ceiling idea NOT shipped: a **fixed-grid cuda_cpp kernel that does NOT over-spread**. The prior CUDA attempt (75ffe60e, 0.8986 raw) lost only because it *forced* grid>=148 blocks (shrinking block to 32) on the tiny shapes, adding block-scheduling overhead — the exact opposite of what these SOL~0.5us / L2-resident workloads want. A CUDA kernel that instead uses a natural `grid = cdiv(elems, block)` with a per-shape block heuristic matching Triton's autotune winners (few large blocks for tiny shapes, more blocks only for idx4/B=64), plus `__nv_bfloat162` packed 128-bit stores and accurate
+

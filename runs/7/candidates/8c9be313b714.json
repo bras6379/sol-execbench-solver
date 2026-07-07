@@ -1,0 +1,245 @@
+{
+  "cand_id": "8c9be313b714",
+  "task_id": 7,
+  "verdict": "entered",
+  "sol_score": 0.5866938278579021,
+  "sol_score_calibrated": 0.542622736648211,
+  "correct": true,
+  "vector": [
+    0.6490235444424165,
+    0.5678795278549578,
+    0.4366571626724205,
+    0.5667661963138257,
+    0.6119932073869666,
+    0.6274944567627494,
+    0.5686987638344415,
+    0.6118294422680647,
+    0.5738387828726088,
+    0.5991359373308534,
+    0.5692322785977497,
+    0.5833388876957295,
+    0.5988366946126632,
+    0.6292714377820762,
+    0.5692411138676992,
+    0.6238638114312124
+  ],
+  "strategy": "cuFFT R2C + single fused Triton epilogue (1/(2L) scale + de-interleave split into two contiguous fp32 outputs); no CUDA ",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "f34cd44ef0ed",
+  "trajectory": "runs/7/work/8c9be313b714/trajectory.jsonl",
+  "gpu_s": 10.479,
+  "job_id": "7-8c9be313b714",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 388.42,
+      "samples": 32,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.032768,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.058896,
+      "sol_score": 0.6490235444424165,
+      "sol_score_cal": 0.6059862443167489,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.14816,
+      "sol_ms": 0.005,
+      "baseline_latency_ms": 0.1931365,
+      "sol_score": 0.5678795278549578,
+      "sol_score_cal": 0.5234055433500748,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.059184,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.046032,
+      "sol_score": 0.4366571626724205,
+      "sol_score_cal": 0.39398245938500775,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.555488,
+      "sol_ms": 0.0206,
+      "baseline_latency_ms": 0.7203525,
+      "sol_score": 0.5667661963138257,
+      "sol_score_cal": 0.5221319664038175,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.075616,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.117824,
+      "sol_score": 0.6119932073869666,
+      "sol_score_cal": 0.5686390373825287,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.016208,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0269605,
+      "sol_score": 0.6274944567627494,
+      "sol_score_cal": 0.5847880194536689,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 1.379871,
+      "sol_ms": 0.1054,
+      "baseline_latency_ms": 1.785873,
+      "sol_score": 0.5686987638344415,
+      "sol_score_cal": 0.5223533055652838,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.026113,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0409285,
+      "sol_score": 0.6118294422680647,
+      "sol_score_cal": 0.5691967624384208,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.3374395,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.4451199999999999,
+      "sol_score": 0.5738387828726088,
+      "sol_score_cal": 0.5274602783186855,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.1052325,
+      "sol_ms": 0.0034,
+      "baseline_latency_ms": 0.1556,
+      "sol_score": 0.5991359373308534,
+      "sol_score_cal": 0.555420380150947,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.2843195,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.3725279999999999,
+      "sol_score": 0.5692322785977497,
+      "sol_score_cal": 0.5247354709366204,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.091392,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.1251515,
+      "sol_score": 0.5833388876957295,
+      "sol_score_cal": 0.5372770010438002,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.062976,
+      "sol_ms": 0.0018,
+      "baseline_latency_ms": 0.0931205,
+      "sol_score": 0.5988366946126632,
+      "sol_score_cal": 0.5552682888211096,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0192,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.032032,
+      "sol_score": 0.6292714377820762,
+      "sol_score_cal": 0.5861861861861862,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.2457275,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.320385,
+      "sol_score": 0.5692411138676992,
+      "sol_score_cal": 0.5238726872521368,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.020032,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.032896,
+      "sol_score": 0.6238638114312124,
+      "sol_score_cal": 0.5812601553663396,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# ---------------------------------------------------------------------------\n# Problem 007: hyena_fft_size_padding_rfft  (NVIDIA B200)\n#\n# cuFFT R2C (same library as the reference \u2192 trivially correct at the tight\n# 1e-5 tolerance) then a single fused Triton epilogue that applies the 1/(2L)\n# scale and splits the interleaved complex output into two contiguous fp32\n# tensors \u2014 one read of the complex output, two writes = minimum HBM traffic\n# for the epilogue stage.\n#\n# CUDA graphs were measured to REGRESS on this problem (static input copy\n# overhead > launch savings), so they are NOT used.  The hot path is clean\n# and exception-free per correctness-gating rules.\n# ---------------------------------------------------------------------------\n\n_BLOCK = 1024\n\n\n@triton.jit\ndef _epilogue_kernel(cplx_ptr, out_r_ptr, out_i_ptr, n_elem,\n                     INV_SCALE: tl.constexpr, BLOCK: tl.constexpr):\n    \"\"\"\n    Read interleaved [re0,im0, re1,im1, ...] from cuFFT's R2C output,\n    multiply by INV_SCALE, and write the two contiguous output arrays.\n    \"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < n_elem\n    base = offs * 2                     # each complex element = 2 contiguous f32\n    r = tl.load(cplx_ptr + base, mask=mask, other=0.0)\n    i = tl.load(cplx_ptr + base + 1, mask=mask, other=0.0)\n    tl.store(out_r_ptr + offs, r * INV_SCALE, mask=mask)\n    tl.store(out_i_ptr + offs, i * INV_SCALE, mask=mask)\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor):\n    if not x.is_cuda:\n        seqlen = x.shape[2]\n        N = 2 * seqlen\n        xf = torch.fft.rfft(x.to(torch.float32), n=N) / float(N)\n        return xf.real.contiguous(), xf.imag.contiguous()\n\n    if x.dtype != torch.float32:\n        x = x.to(torch.float32)\n\n    B, C, seqlen = x.shape\n    N = 2 * seqlen                     # FFT size for zero-padded real FFT\n    F = seqlen + 1                     # rfft output length\n\n    # cuFFT R2C \u2014 same library as the reference, bit-identical result\n    xf = torch.fft.rfft(x, n=N)\n\n    # Pre-allocate fresh output tensors (never alias \u2014 correctness gating)\n    out_r = torch.empty((B, C, F), device=x.device, dtype=torch.float32)\n    out_i = torch.empty((B, C, F), device=x.device, dtype=torch.float32)\n\n    n_elem = B * C * F\n    grid = (triton.cdiv(n_elem, _BLOCK),)\n    inv_scale = 1.0 / float(N)\n\n    _epilogue_kernel[grid](\n        torch.view_as_real(xf),       # (B,C,F,2) view, shares xf storage\n        out_r, out_i, n_elem,\n        INV_SCALE=inv_scale, BLOCK=_BLOCK,\n    )\n\n    return out_r, out_i"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t7_8c9be313b714",
+    "definition": "007_hyena_fft_size_padding_rfft",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# ---------------------------------------------------------------------------\n# Problem 007: hyena_fft_size_padding_rfft  (NVIDIA B200)\n#\n# cuFFT R2C (same library as the reference \u2192 trivially correct at the tight\n# 1e-5 tolerance) then a single fused Triton epilogue that applies the 1/(2L)\n# scale and splits the interleaved complex output into two contiguous fp32\n# tensors \u2014 one read of the complex output, two writes = minimum HBM traffic\n# for the epilogue stage.\n#\n# CUDA graphs were measured to REGRESS on this problem (static input copy\n# overhead > launch savings), so they are NOT used.  The hot path is clean\n# and exception-free per correctness-gating rules.\n# ---------------------------------------------------------------------------\n\n_BLOCK = 1024\n\n\n@triton.jit\ndef _epilogue_kernel(cplx_ptr, out_r_ptr, out_i_ptr, n_elem,\n                     INV_SCALE: tl.constexpr, BLOCK: tl.constexpr):\n    \"\"\"\n    Read interleaved [re0,im0, re1,im1, ...] from cuFFT's R2C output,\n    multiply by INV_SCALE, and write the two contiguous output arrays.\n    \"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < n_elem\n    base = offs * 2                     # each complex element = 2 contiguous f32\n    r = tl.load(cplx_ptr + base, mask=mask, other=0.0)\n    i = tl.load(cplx_ptr + base + 1, mask=mask, other=0.0)\n    tl.store(out_r_ptr + offs, r * INV_SCALE, mask=mask)\n    tl.store(out_i_ptr + offs, i * INV_SCALE, mask=mask)\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor):\n    if not x.is_cuda:\n        seqlen = x.shape[2]\n        N = 2 * seqlen\n        xf = torch.fft.rfft(x.to(torch.float32), n=N) / float(N)\n        return xf.real.contiguous(), xf.imag.contiguous()\n\n    if x.dtype != torch.float32:\n        x = x.to(torch.float32)\n\n    B, C, seqlen = x.shape\n    N = 2 * seqlen                     # FFT size for zero-padded real FFT\n    F = seqlen + 1                     # rfft output length\n\n    # cuFFT R2C \u2014 same library as the reference, bit-identical result\n    xf = torch.fft.rfft(x, n=N)\n\n    # Pre-allocate fresh output tensors (never alias \u2014 correctness gating)\n    out_r = torch.empty((B, C, F), device=x.device, dtype=torch.float32)\n    out_i = torch.empty((B, C, F), device=x.device, dtype=torch.float32)\n\n    n_elem = B * C * F\n    grid = (triton.cdiv(n_elem, _BLOCK),)\n    inv_scale = 1.0 / float(N)\n\n    _epilogue_kernel[grid](\n        torch.view_as_real(xf),       # (B,C,F,2) view, shares xf storage\n        out_r, out_i, n_elem,\n        INV_SCALE=inv_scale, BLOCK=_BLOCK,\n    )\n\n    return out_r, out_i"
+      }
+    ]
+  }
+}

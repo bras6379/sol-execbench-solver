@@ -1,0 +1,245 @@
+{
+  "cand_id": "28b87eaed83d",
+  "task_id": 11,
+  "verdict": "entered",
+  "sol_score": 0.713309244802711,
+  "sol_score_calibrated": 0.6691388167602169,
+  "correct": true,
+  "vector": [
+    0.7825411399110107,
+    0.6057576001935328,
+    0.5416666666666666,
+    0.5948419301164726,
+    0.809063787469811,
+    0.9167008448855714,
+    0.54,
+    0.551531687957336,
+    0.6213069741900056,
+    0.8060188542422045,
+    0.7550911039657021,
+    0.5616016427104723,
+    0.5763358778625954,
+    0.9556354916067148,
+    1.015920269220813,
+    0.7789340458444663
+  ],
+  "strategy": "Fused Triton RoPE computes the first batch's BF16 cos/sin table once and returns an expanded batch view because generate",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "60d8b251bc98",
+  "trajectory": "runs/11/work/28b87eaed83d/trajectory.jsonl",
+  "gpu_s": 8.269,
+  "job_id": "11-28b87eaed83d",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 247.03,
+      "samples": 24,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0022395,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.00624,
+      "sol_score": 0.7825411399110107,
+      "sol_score_cal": 0.7381740585116199,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0029445,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.004256,
+      "sol_score": 0.6057576001935328,
+      "sol_score_cal": 0.5556250004622811,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.002336,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002688,
+      "sol_score": 0.5416666666666666,
+      "sol_score_cal": 0.49016247343525055,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.002448,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.00336,
+      "sol_score": 0.5948419301164726,
+      "sol_score_cal": 0.5423733956367388,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.002144,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.006495,
+      "sol_score": 0.809063787469811,
+      "sol_score_cal": 0.7648032058616558,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0024155,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.0125755,
+      "sol_score": 0.9167008448855714,
+      "sol_score_cal": 0.883442576232545,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.00224,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00256,
+      "sol_score": 0.54,
+      "sol_score_cal": 0.4880694143167029,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0026235,
+      "sol_score": 0.551531687957336,
+      "sol_score_cal": 0.4995484181153983,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.002224,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0033285,
+      "sol_score": 0.6213069741900056,
+      "sol_score_cal": 0.5685358568539878,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.00304,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.009792,
+      "sol_score": 0.8060188542422045,
+      "sol_score_cal": 0.7659178610804852,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.002528,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.006336,
+      "sol_score": 0.7550911039657021,
+      "sol_score_cal": 0.7094376862966245,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.002688,
+      "sol_score": 0.5616016427104723,
+      "sol_score_cal": 0.507007266795195,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.002176,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002816,
+      "sol_score": 0.5763358778625954,
+      "sol_score_cal": 0.5245969983324069,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.00224,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.01744,
+      "sol_score": 0.9556354916067148,
+      "sol_score_cal": 0.9318585726311851,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0027,
+      "baseline_latency_ms": 0.034096,
+      "sol_score": 1.015920269220813,
+      "sol_score_cal": 1.0023139161882189,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.002272,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.006239,
+      "sol_score": 0.7789340458444663,
+      "sol_score_cal": 0.7343543674131742,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _rope_first_batch_kernel(\n    position_ids,\n    inv_freq,\n    out,\n    attention_scaling,\n    seq_len: tl.constexpr,\n    stride_pos_s: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_F: tl.constexpr,\n):\n    pid_m = tl.program_id(0)\n    pid_f = tl.program_id(1)\n\n    rows = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    freqs = pid_f * BLOCK_F + tl.arange(0, BLOCK_F)\n    row_mask = rows < seq_len\n    freq_mask = freqs < 64\n    mask = row_mask[:, None] & freq_mask[None, :]\n\n    pos = tl.load(position_ids + rows * stride_pos_s, mask=row_mask, other=0).to(tl.float32)\n    inv = tl.load(inv_freq + freqs, mask=freq_mask, other=0.0)\n    angle = pos[:, None] * inv[None, :]\n\n    cos_val = tl.cos(angle) * attention_scaling\n    sin_val = tl.sin(angle) * attention_scaling\n\n    base = rows[:, None] * 256 + freqs[None, :] * 2\n    tl.store(out + base, cos_val, mask=mask)\n    tl.store(out + base + 1, sin_val, mask=mask)\n    tl.store(out + base + 128, cos_val, mask=mask)\n    tl.store(out + base + 129, sin_val, mask=mask)\n\n\ndef _torch_fallback(position_ids: torch.Tensor, inv_freq: torch.Tensor, attention_scaling: float) -> torch.Tensor:\n    batch_size = position_ids.shape[0]\n    freqs = position_ids[:1].float().unsqueeze(-1) * inv_freq.float().view(1, 1, 64)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    out = torch.stack((emb.cos() * attention_scaling, emb.sin() * attention_scaling), dim=-1)\n    out = out.to(dtype=torch.bfloat16)\n    return out.expand(batch_size, -1, -1, -1)\n\n\n@torch.no_grad()\ndef run(\n    position_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    attention_scaling: float\n) -> torch.Tensor:\n    batch_size = position_ids.shape[0]\n    seq_len = position_ids.shape[1]\n\n    if not position_ids.is_cuda:\n        return _torch_fallback(position_ids, inv_freq, attention_scaling)\n\n    out = torch.empty((1, seq_len, 128, 2), device=position_ids.device, dtype=torch.bfloat16)\n\n    if seq_len <= 16:\n        block_m = 1\n        num_warps = 1\n    elif seq_len <= 256:\n        block_m = 4\n        num_warps = 1\n    else:\n        block_m = 8\n        num_warps = 4\n\n    grid = (triton.cdiv(seq_len, block_m), 4)\n    _rope_first_batch_kernel[grid](\n        position_ids,\n        inv_freq,\n        out,\n        float(attention_scaling),\n        seq_len,\n        position_ids.stride(1),\n        BLOCK_M=block_m,\n        BLOCK_F=16,\n        num_warps=num_warps,\n    )\n    return out.expand(batch_size, seq_len, 128, 2)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t11_28b87eaed83d",
+    "definition": "011_rotary_position_embedding",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _rope_first_batch_kernel(\n    position_ids,\n    inv_freq,\n    out,\n    attention_scaling,\n    seq_len: tl.constexpr,\n    stride_pos_s: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_F: tl.constexpr,\n):\n    pid_m = tl.program_id(0)\n    pid_f = tl.program_id(1)\n\n    rows = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    freqs = pid_f * BLOCK_F + tl.arange(0, BLOCK_F)\n    row_mask = rows < seq_len\n    freq_mask = freqs < 64\n    mask = row_mask[:, None] & freq_mask[None, :]\n\n    pos = tl.load(position_ids + rows * stride_pos_s, mask=row_mask, other=0).to(tl.float32)\n    inv = tl.load(inv_freq + freqs, mask=freq_mask, other=0.0)\n    angle = pos[:, None] * inv[None, :]\n\n    cos_val = tl.cos(angle) * attention_scaling\n    sin_val = tl.sin(angle) * attention_scaling\n\n    base = rows[:, None] * 256 + freqs[None, :] * 2\n    tl.store(out + base, cos_val, mask=mask)\n    tl.store(out + base + 1, sin_val, mask=mask)\n    tl.store(out + base + 128, cos_val, mask=mask)\n    tl.store(out + base + 129, sin_val, mask=mask)\n\n\ndef _torch_fallback(position_ids: torch.Tensor, inv_freq: torch.Tensor, attention_scaling: float) -> torch.Tensor:\n    batch_size = position_ids.shape[0]\n    freqs = position_ids[:1].float().unsqueeze(-1) * inv_freq.float().view(1, 1, 64)\n    emb = torch.cat((freqs, freqs), dim=-1)\n    out = torch.stack((emb.cos() * attention_scaling, emb.sin() * attention_scaling), dim=-1)\n    out = out.to(dtype=torch.bfloat16)\n    return out.expand(batch_size, -1, -1, -1)\n\n\n@torch.no_grad()\ndef run(\n    position_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    attention_scaling: float\n) -> torch.Tensor:\n    batch_size = position_ids.shape[0]\n    seq_len = position_ids.shape[1]\n\n    if not position_ids.is_cuda:\n        return _torch_fallback(position_ids, inv_freq, attention_scaling)\n\n    out = torch.empty((1, seq_len, 128, 2), device=position_ids.device, dtype=torch.bfloat16)\n\n    if seq_len <= 16:\n        block_m = 1\n        num_warps = 1\n    elif seq_len <= 256:\n        block_m = 4\n        num_warps = 1\n    else:\n        block_m = 8\n        num_warps = 4\n\n    grid = (triton.cdiv(seq_len, block_m), 4)\n    _rope_first_batch_kernel[grid](\n        position_ids,\n        inv_freq,\n        out,\n        float(attention_scaling),\n        seq_len,\n        position_ids.stride(1),\n        BLOCK_M=block_m,\n        BLOCK_F=16,\n        num_warps=num_warps,\n    )\n    return out.expand(batch_size, seq_len, 128, 2)\n"
+      }
+    ]
+  }
+}

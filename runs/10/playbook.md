@@ -11,3 +11,15 @@ Higher-ceiling idea NOT shipped: a CuTe-DSL SM100 tcgen05 single-kernel GEMM wit
 
 Trigger: if this kernel only ties cuBLAS (~0.51) at small T, OR the large-T tail (T>=2048) stays above ~1.25x SOL (raw score below ~0.70). Also worth trying if the timing gate keeps falling back to cuBLAS at T=1024 — that means split-K's atomic contention / M-tiling ov
 
+## 3. from `f5cd7a12` — Per-shape cold-L2-gated dispatch for GQA value-proj: fused single-launch bf16 Triton GEMM (direct [B,8,S,128] store) or
+HIGHER-CEILING RESERVE (not shipped this round):
+
+CuTe-DSL SM100 tcgen05 single-kernel GEMM (M=T, N=1024, K=5120) with a
+custom head-scatter epilogue that writes [B,8,S,128] straight from TMEM — no
+fp32 scratch, no separate cast. This is the ONLY path that beats cuBLAS on the
+compute-bound tail (T>=2048): tcgen05 MMA ~80%+ of peak AND single-launch for
+small T. Study/port the open CuTe-DSL GEMM kernels in NVIDIA cudnn-frontend
+(python/cudnn/grouped_gemm, rmsnorm_rht_amax) and CUTLASS ex.
+71_blackwell_gemm_with_collective_builder; SM100 EVT is refuted so hand-code the
+per-head store. It was NOT
+

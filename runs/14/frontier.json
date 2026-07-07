@@ -1,0 +1,41 @@
+{
+  "task_id": 14,
+  "family": "gemm",
+  "name": "gemm_14",
+  "epsilon": 0.02,
+  "size": 1,
+  "best_cand": "bb4eb2382023",
+  "best_score": 0.8963893904540373,
+  "best_score_cal": 0.8750125570343126,
+  "members": [
+    {
+      "cand_id": "bb4eb2382023",
+      "sol_score": 0.8963893904540373,
+      "sol_score_cal": 0.8750125570343126,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.931307354701423,
+        0.9337317397078354,
+        0.936334167976863,
+        0.9319174275506152,
+        0.9392801251956181,
+        0.9337013268710078,
+        0.9353117956423741,
+        0.9307855345078819,
+        0.5890037725303898,
+        0.937623162043353,
+        0.9328751600012846,
+        0.9328849053165229,
+        0.9372011320386454,
+        0.9307999926284946,
+        0.6710960465534824,
+        0.9383766039988063
+      ],
+      "strategy": "Chunk half_dim (64) into BLOCK_D-sized tiles to cut register pressure from O(BLOCK_M\u00d764) to O(BLOCK_M\u00d7BLOCK_D), unblocki",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/bb4eb2382023.json"
+    }
+  ]
+}

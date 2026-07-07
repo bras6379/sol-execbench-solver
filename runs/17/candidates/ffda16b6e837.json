@@ -1,0 +1,245 @@
+{
+  "cand_id": "ffda16b6e837",
+  "task_id": 17,
+  "verdict": "entered",
+  "sol_score": 0.5486179079265341,
+  "sol_score_calibrated": 0.4922448845142092,
+  "correct": true,
+  "vector": [
+    0.5690035543571517,
+    0.5820468839336761,
+    0.5740538241905109,
+    0.4860246008898194,
+    0.5814168649220195,
+    0.56941696074823,
+    0.5474938560896153,
+    0.5699142359503494,
+    0.5271516105458426,
+    0.5064235281626586,
+    0.4578088625071805,
+    0.5645588634135148,
+    0.5894452141837292,
+    0.5219419994440841,
+    0.5627538955920692,
+    0.5684317718940937
+  ],
+  "strategy": "Use bf16 cuBLAS matmuls for all six fixed GEMMs, with Triton kernels fusing the SwiGLU backward pointwise chain and fina",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "4717d81d79e5",
+  "trajectory": "runs/17/work/ffda16b6e837/trajectory.jsonl",
+  "gpu_s": 12.544,
+  "job_id": "17-ffda16b6e837",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 292.77,
+      "samples": 36,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.088864,
+      "sol_ms": 0.0326,
+      "baseline_latency_ms": 0.10688,
+      "sol_score": 0.5690035543571517,
+      "sol_score_cal": 0.5038386153635779,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.06168,
+      "sol_ms": 0.0032,
+      "baseline_latency_ms": 0.0846399999999999,
+      "sol_score": 0.5820468839336761,
+      "sol_score_cal": 0.537064294720626,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.058992,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.078496,
+      "sol_score": 0.5740538241905109,
+      "sol_score_cal": 0.5290263273105117,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.081456,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.077184,
+      "sol_score": 0.4860246008898194,
+      "sol_score_cal": 0.4413348555436943,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.161808,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.191376,
+      "sol_score": 0.5814168649220195,
+      "sol_score_cal": 0.49723182374098274,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0639205,
+      "sol_ms": 0.0142,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": 0.56941696074823,
+      "sol_score_cal": 0.5152275675271384,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.06624,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079536,
+      "sol_score": 0.5474938560896153,
+      "sol_score_cal": 0.5023282398716322,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0655685,
+      "sol_ms": 0.0168,
+      "baseline_latency_ms": 0.081424,
+      "sol_score": 0.5699142359503494,
+      "sol_score_cal": 0.513498097326022,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.070192,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.0779199999999999,
+      "sol_score": 0.5271516105458426,
+      "sol_score_cal": 0.4819835053962618,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.07728,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079216,
+      "sol_score": 0.5064235281626586,
+      "sol_score_cal": 0.461460691550086,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.09240000000000001,
+      "sol_ms": 0.0117,
+      "baseline_latency_ms": 0.0798405,
+      "sol_score": 0.4578088625071805,
+      "sol_score_cal": 0.4095068105398851,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.07808,
+      "sol_ms": 0.0259,
+      "baseline_latency_ms": 0.0935525,
+      "sol_score": 0.5645588634135148,
+      "sol_score_cal": 0.5023661947148426,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.14310450000000002,
+      "sol_ms": 0.0751,
+      "baseline_latency_ms": 0.172736,
+      "sol_score": 0.5894452141837292,
+      "sol_score_cal": 0.5063310701263812,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.093696,
+      "sol_ms": 0.0292,
+      "baseline_latency_ms": 0.0996165,
+      "sol_score": 0.5219419994440841,
+      "sol_score_cal": 0.46109825416983324,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.063392,
+      "sol_ms": 0.0057,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": 0.5627538955920692,
+      "sol_score_cal": 0.5156801433003529,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.102432,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.121248,
+      "sol_score": 0.5684317718940937,
+      "sol_score_cal": 0.4979416610255198,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:  # pragma: no cover - fallback for non-Triton environments\n    triton = None\n    tl = None\n\n\n_BLOCK_SIZE = 1024\n\n\nif triton is not None:\n\n    @triton.jit\n    def _swiglu_backward_kernel(\n        grad_intermediate,\n        up,\n        gate_silu,\n        gate,\n        gate_sigmoid,\n        grad_gate,\n        grad_up,\n        n_elements: tl.constexpr,\n        BLOCK_SIZE: tl.constexpr,\n    ):\n        offsets = tl.program_id(0) * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n        mask = offsets < n_elements\n\n        gi = tl.load(grad_intermediate + offsets, mask=mask, other=0.0).to(tl.float32)\n        up_v = tl.load(up + offsets, mask=mask, other=0.0).to(tl.float32)\n        silu_v = tl.load(gate_silu + offsets, mask=mask, other=0.0).to(tl.float32)\n        gate_v = tl.load(gate + offsets, mask=mask, other=0.0).to(tl.float32)\n        sig_v = tl.load(gate_sigmoid + offsets, mask=mask, other=0.0).to(tl.float32)\n\n        d_up = gi * silu_v\n        d_gate = gi * up_v * sig_v * (1.0 + gate_v * (1.0 - sig_v))\n\n        tl.store(grad_up + offsets, d_up, mask=mask)\n        tl.store(grad_gate + offsets, d_gate, mask=mask)\n\n\n    @triton.jit\n    def _add_bf16_kernel(\n        a,\n        b,\n        out,\n        n_elements: tl.constexpr,\n        BLOCK_SIZE: tl.constexpr,\n    ):\n        offsets = tl.program_id(0) * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n        mask = offsets < n_elements\n        av = tl.load(a + offsets, mask=mask, other=0.0).to(tl.float32)\n        bv = tl.load(b + offsets, mask=mask, other=0.0).to(tl.float32)\n        tl.store(out + offsets, av + bv, mask=mask)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n    grad_intermediate = torch.mm(grad_output, down_weight)\n\n    if triton is None:\n        gi = grad_intermediate.to(torch.float32)\n        gate_f = gate.to(torch.float32)\n        sig_f = gate_sigmoid.to(torch.float32)\n        grad_up = (gi * gate_silu.to(torch.float32)).to(torch.bfloat16)\n        grad_gate = (\n            gi\n            * up.to(torch.float32)\n            * sig_f\n            * (1.0 + gate_f * (1.0 - sig_f))\n        ).to(torch.bfloat16)\n    else:\n        grad_gate = torch.empty_like(gate)\n        grad_up = torch.empty_like(up)\n        n_mid = grad_intermediate.numel()\n        grid_mid = (triton.cdiv(n_mid, _BLOCK_SIZE),)\n        _swiglu_backward_kernel[grid_mid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            grad_gate,\n            grad_up,\n            n_mid,\n            BLOCK_SIZE=_BLOCK_SIZE,\n            num_warps=4,\n        )\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n\n    grad_x_gate = torch.mm(grad_gate, gate_weight)\n    grad_x_up = torch.mm(grad_up, up_weight)\n\n    if triton is None:\n        grad_x = grad_x_gate + grad_x_up\n    else:\n        grad_x = torch.empty_like(grad_output)\n        n_x = grad_x.numel()\n        grid_x = (triton.cdiv(n_x, _BLOCK_SIZE),)\n        _add_bf16_kernel[grid_x](\n            grad_x_gate,\n            grad_x_up,\n            grad_x,\n            n_x,\n            BLOCK_SIZE=_BLOCK_SIZE,\n            num_warps=4,\n        )\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t17_ffda16b6e837",
+    "definition": "017_moe_expert_swiglu_with_down_projection_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:  # pragma: no cover - fallback for non-Triton environments\n    triton = None\n    tl = None\n\n\n_BLOCK_SIZE = 1024\n\n\nif triton is not None:\n\n    @triton.jit\n    def _swiglu_backward_kernel(\n        grad_intermediate,\n        up,\n        gate_silu,\n        gate,\n        gate_sigmoid,\n        grad_gate,\n        grad_up,\n        n_elements: tl.constexpr,\n        BLOCK_SIZE: tl.constexpr,\n    ):\n        offsets = tl.program_id(0) * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n        mask = offsets < n_elements\n\n        gi = tl.load(grad_intermediate + offsets, mask=mask, other=0.0).to(tl.float32)\n        up_v = tl.load(up + offsets, mask=mask, other=0.0).to(tl.float32)\n        silu_v = tl.load(gate_silu + offsets, mask=mask, other=0.0).to(tl.float32)\n        gate_v = tl.load(gate + offsets, mask=mask, other=0.0).to(tl.float32)\n        sig_v = tl.load(gate_sigmoid + offsets, mask=mask, other=0.0).to(tl.float32)\n\n        d_up = gi * silu_v\n        d_gate = gi * up_v * sig_v * (1.0 + gate_v * (1.0 - sig_v))\n\n        tl.store(grad_up + offsets, d_up, mask=mask)\n        tl.store(grad_gate + offsets, d_gate, mask=mask)\n\n\n    @triton.jit\n    def _add_bf16_kernel(\n        a,\n        b,\n        out,\n        n_elements: tl.constexpr,\n        BLOCK_SIZE: tl.constexpr,\n    ):\n        offsets = tl.program_id(0) * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n        mask = offsets < n_elements\n        av = tl.load(a + offsets, mask=mask, other=0.0).to(tl.float32)\n        bv = tl.load(b + offsets, mask=mask, other=0.0).to(tl.float32)\n        tl.store(out + offsets, av + bv, mask=mask)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n    grad_intermediate = torch.mm(grad_output, down_weight)\n\n    if triton is None:\n        gi = grad_intermediate.to(torch.float32)\n        gate_f = gate.to(torch.float32)\n        sig_f = gate_sigmoid.to(torch.float32)\n        grad_up = (gi * gate_silu.to(torch.float32)).to(torch.bfloat16)\n        grad_gate = (\n            gi\n            * up.to(torch.float32)\n            * sig_f\n            * (1.0 + gate_f * (1.0 - sig_f))\n        ).to(torch.bfloat16)\n    else:\n        grad_gate = torch.empty_like(gate)\n        grad_up = torch.empty_like(up)\n        n_mid = grad_intermediate.numel()\n        grid_mid = (triton.cdiv(n_mid, _BLOCK_SIZE),)\n        _swiglu_backward_kernel[grid_mid](\n            grad_intermediate,\n            up,\n            gate_silu,\n            gate,\n            gate_sigmoid,\n            grad_gate,\n            grad_up,\n            n_mid,\n            BLOCK_SIZE=_BLOCK_SIZE,\n            num_warps=4,\n        )\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n\n    grad_x_gate = torch.mm(grad_gate, gate_weight)\n    grad_x_up = torch.mm(grad_up, up_weight)\n\n    if triton is None:\n        grad_x = grad_x_gate + grad_x_up\n    else:\n        grad_x = torch.empty_like(grad_output)\n        n_x = grad_x.numel()\n        grid_x = (triton.cdiv(n_x, _BLOCK_SIZE),)\n        _add_bf16_kernel[grid_x](\n            grad_x_gate,\n            grad_x_up,\n            grad_x,\n            n_x,\n            BLOCK_SIZE=_BLOCK_SIZE,\n            num_warps=4,\n        )\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n"
+      }
+    ]
+  }
+}

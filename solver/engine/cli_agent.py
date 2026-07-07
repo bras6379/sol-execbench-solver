@@ -88,7 +88,11 @@ SPECS: dict[str, CliSpec] = {"codex": CODEX, "claude": CLAUDE, "openrouter": OPE
 _PLAN = (
     "You are optimizing a GPU kernel for NVIDIA B200 (SOL-ExecBench).\n"
     "reference.py is the PyTorch reference you must stay numerically equivalent to;\n"
-    "definition.json is the spec; DESIGN.md and CONTEXT.md hold the plan and prior\n"
+    "definition.json is the spec; workloads.md lists the EXACT shapes you are graded\n"
+    "on — TUNE FOR THEM (tile sizes, grid/launch config, CUDA-graph-vs-not, split-K,\n"
+    "per-shape code paths); classify each shape by roofline and specialize. You are\n"
+    "not given the input tensor VALUES, so write a correct, shape-specialized kernel.\n"
+    "DESIGN.md and CONTEXT.md hold the plan and prior\n"
     "attempts. The kb/ directory is a B200 optimization knowledge base (start at\n"
     "kb/README.md; e.g. optimization-recipe.md, profiling-guide.md, b200-hardware.md,\n"
     "fusion-patterns.md) — consult the files relevant to this op before you write.\n"
@@ -116,11 +120,13 @@ _PLAN = (
     "verifying it locally. Do not print the code — only write the files."
 )
 _DESIGN = (
-    "Analyze reference.py and definition.json for NVIDIA B200. Consult the kb/\n"
-    "knowledge base (kb/README.md index; optimization-recipe.md, profiling-guide.md,\n"
-    "b200-hardware.md) for the hardware limits and the optimization ladder. Write a\n"
-    "short markdown design (op graph, per-shape roofline memory- vs compute-bound, 3\n"
-    "ranked approaches) to a file named design.md."
+    "Analyze reference.py and definition.json for NVIDIA B200. workloads.md lists the\n"
+    "EXACT shapes this kernel is graded on — compute the roofline (arithmetic intensity,\n"
+    "memory- vs compute- vs launch-bound) for THOSE specific shapes, and note where they\n"
+    "split into regimes needing different strategies. Consult the kb/ knowledge base\n"
+    "(kb/README.md index; optimization-recipe.md, profiling-guide.md, b200-hardware.md)\n"
+    "for the hardware limits and the optimization ladder. Write a short markdown design\n"
+    "(op graph, per-shape roofline, 3 ranked approaches) to a file named design.md."
 )
 
 
@@ -248,6 +254,50 @@ class CliAgent:
             src = pdir / fname
             if src.exists():
                 (wd / fname).write_text(src.read_text())
+        self._write_workloads(wd, pdir)
+
+    def _write_workloads(self, wd: Path, pdir: Path) -> None:
+        """Write the EXACT graded shapes (each workload's `axes` + tolerance) so the
+        agent can tune tile/launch/algorithm per shape — the biggest lever for a
+        fixed-shape benchmark. Deliberately EXCLUDES the input tensors: shapes enable
+        optimization, values would open the door to hardcoding outputs (kept shut; the
+        correctness gate would catch it anyway, but we don't even hand over the inputs)."""
+        wl = pdir / "workload.jsonl"
+        if not wl.exists():
+            return
+        rows = []
+        for line in wl.read_text().splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                w = json.loads(line)
+            except json.JSONDecodeError:
+                continue
+            rows.append((w.get("axes") or {}, w.get("tolerance")))
+        if not rows:
+            return
+        out = [
+            "# Workloads — the EXACT shapes you are graded on",
+            "",
+            f"This kernel is scored ONLY on these {len(rows)} shapes. Optimize for them:",
+            "choose tile sizes, grid/launch config, CUDA-graph-vs-not, split-K, and",
+            "per-shape code paths for these dims; classify each by roofline (small =",
+            "launch/latency-bound, large = memory/compute-bound) and specialize. You do",
+            "NOT get the input tensor values — write a correct, shape-specialized kernel",
+            "(correctness is re-checked against the reference on fresh inputs).",
+            "",
+            "| # | shape (axes) | tolerance |",
+            "|---|---|---|",
+        ]
+        for i, (axes, tol) in enumerate(rows):
+            ax = ", ".join(f"{k}={v}" for k, v in axes.items()) or "(scalar)"
+            if isinstance(tol, dict):
+                ts = ", ".join(f"{k}={v}" for k, v in tol.items()) or "default"
+            else:
+                ts = str(tol) if tol not in (None, "") else "default"
+            out.append(f"| {i} | {ax} | {ts} |")
+        (wd / "workloads.md").write_text("\n".join(out) + "\n")
 
     def _write_kb(self, wd: Path) -> None:
         """Drop the B200 optimization knowledge base into the workdir so the

@@ -1,0 +1,247 @@
+{
+  "cand_id": "e80f362c59a6",
+  "task_id": 13,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Single-pass fused Triton kernel with full-row tiling (BLOCK_H=2560) and atomic-add grad_weight reduction; eliminates int",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "43133c9ab34a",
+  "trajectory": "runs/13/work/e80f362c59a6/trajectory.jsonl",
+  "gpu_s": 3.782,
+  "job_id": "13-e80f362c59a6",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  013_fused_residual_rms_norm_backward\nSolution: t13_13-e80f362c59a6\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u2839 Evaluating 16 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_39m41_da/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_39m41_da/kernel.py\", line 6, in <module>\n    @triton.autotune(\n     ^^^^^^^^^^^^^^^^\n  File \n\"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/triton/runtime/autotuner\n.py\", line 435, in decorator\n    return Autotuner(fn, fn.arg_names, configs, key, reset_to_zero, \nrestore_value, pre_hook=pre_hook,\n                         ^^^^^^^^^^^^\nAttributeError: 'function' object has no attribute 'arg_names'\n[W707 07:17:29.331768491 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 1402.5,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 242.02,
+      "samples": 8,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0109,
+      "baseline_latency_ms": 0.117392,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.7006,
+      "baseline_latency_ms": 5.6911705,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.03528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0959525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0021,
+      "baseline_latency_ms": 0.031104,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.005,
+      "baseline_latency_ms": 0.061936,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.215744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.095776,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.071328,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0469,
+      "baseline_latency_ms": 0.518896,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0712,
+      "baseline_latency_ms": 0.7092805,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1475,
+      "baseline_latency_ms": 1.288753,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0113,
+      "baseline_latency_ms": 0.1217435,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1755,
+      "baseline_latency_ms": 1.497889,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0028,
+      "baseline_latency_ms": 0.037248,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0712319999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import triton\nimport torch\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        # Large batch sizes - maximize occupancy\n        triton.Config({'BLOCK_M': 128, 'BLOCK_H': 2560, 'num_warps': 8, 'num_stages': 2}, 0, 0),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_H': 2560, 'num_warps': 8, 'num_stages': 2}, 0, 0),\n        # Medium sizes\n        triton.Config({'BLOCK_M': 64, 'BLOCK_H': 2560, 'num_warps': 4, 'num_stages': 2}, 0, 0),\n        # Small shapes (fewer elements to tile)\n        triton.Config({'BLOCK_M': 32, 'BLOCK_H': 2560, 'num_warps': 4, 'num_stages': 2}, 0, 0),\n        triton.Config({'BLOCK_M': 16, 'BLOCK_H': 2560, 'num_warps': 2, 'num_stages': 2}, 0, 0),\n    ],\n    key=['batch_size', 'seq_len', 'hidden_size'],\n)\ndef fused_residual_rms_norm_backward_kernel(\n    grad_output_ptr,\n    x_ptr,\n    normalized_ptr,\n    rstd_ptr,\n    weight_ptr,\n    grad_hidden_ptr,\n    grad_residual_ptr,\n    grad_weight_ptr,\n    batch_size: tl.constexpr,\n    seq_len: tl.constexpr,\n    hidden_size: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    Single-pass fused backward kernel for fused residual RMSNorm.\n\n    Computes:\n    - grad_weight = sum(grad_output * normalized) over batch and sequence\n    - grad_hidden_states = grad_residual = rstd * (grad_output * weight -\n                                                        mean(grad_output * weight * normalized) * normalized)\n\n    Key optimizations:\n    - Full-row BLOCK_H = hidden_size to eliminate cross-tile reductions for mean\n    - Atomic-add for grad_weight (small H=2560, fp32 atomics fast)\n    - All elementwise ops in bf16, fp32 only for reductions\n    - Vectorized 128-bit loads with masks\n    \"\"\"\n    batch_seq = batch_size * seq_len\n\n    # Grid: one block per BLOCK_M elements in batch_seq dimension\n    # Grid shape: (grid_m, 1, 1)\n    grid_m = triton.cdiv(batch_seq, BLOCK_M)\n\n    # Offset helper: idx * seq_len * hidden_size\n    # Valid for any index along batch_seq dimension\n    def seq_idx(b):\n        return b * seq_len * hidden_size\n\n    for m in range(grid_m):\n        pid_m = m\n        cur_batch_seq = pid_m * BLOCK_M\n        num_valid = BLOCK_M\n        if cur_batch_seq + BLOCK_M > batch_seq:\n            num_valid = batch_seq - cur_batch_seq\n\n        # Compute batch and seq indices\n        batch_seq_idx = cur_batch_seq\n        batch_idx = batch_seq_idx // seq_len\n        seq_idx_local = batch_seq_idx % seq_len\n\n        # Load inputs for this tile\n        # Coalesced access: (batch_seq, H)\n        # Access pattern: (batch_seq * hidden_size + h)\n        grad_output_local = tl.load(\n            grad_output_ptr + seq_idx(batch_seq_idx) + tl.arange(0, BLOCK_H),\n            mask=(tl.arange(0, BLOCK_H) < num_valid),\n            other=0.0,\n        )\n\n        normalized_local = tl.load(\n            normalized_ptr + seq_idx(batch_seq_idx) + tl.arange(0, BLOCK_H),\n            mask=(tl.arange(0, BLOCK_H) < num_valid),\n            other=0.0,\n        )\n\n        # Load rstd for this element (B, S, 1) -> (B, S)\n        rstd_local = tl.load(\n            rstd_ptr + seq_idx(batch_seq_idx),\n            mask=num_valid.to(tl.float32),\n            other=0.0,\n        )\n\n        # Load weight (broadcast across batch_seq)\n        weight_local = tl.load(weight_ptr + tl.arange(0, BLOCK_H), mask=(tl.arange(0, BLOCK_H) < hidden_size), other=0.0)\n\n        # grad_weight contribution: sum(grad_output * normalized) over this tile\n        grad_weight_local = grad_output_local * normalized_local\n        grad_weight_tile = tl.sum(grad_weight_local, axis=0)\n\n        # Atomic add to global grad_weight (reduction over batch_seq)\n        tl.atomic_add(grad_weight_ptr, tl.arange(0, hidden_size), grad_weight_tile.to(tl.float32))\n\n        # grad_normalized = grad_output * weight\n        grad_normalized_local = grad_output_local * weight_local\n\n        # mean_grad_norm = mean(grad_normalized * normalized) over hidden dimension\n        # This is the key insight: we compute it per-tile, so we need the mean of the tile sums\n        prod_local = grad_normalized_local * normalized_local\n        tile_mean_prod = tl.sum(prod_local, axis=0) / BLOCK_H\n\n        # grad_x = rstd * (grad_normalized - mean_grad_norm * normalized)\n        # Broadcast rstd to hidden dimension\n        rstd_bcast = rstd_local[:, None]  # (BLOCK_M, 1)\n        grad_normalized_bcast = grad_normalized_local[:, None]  # (BLOCK_M, BLOCK_H)\n        mean_grad_norm_bcast = tile_mean_prod[:, None]  # (BLOCK_M, 1)\n        normalized_bcast = normalized_local[:, None]  # (BLOCK_M, BLOCK_H)\n\n        grad_x_fp32 = rstd_bcast * (grad_normalized_bcast - mean_grad_norm_bcast * normalized_bcast)\n\n        # Convert to bfloat16 for output\n        grad_x_bf16 = grad_x_fp32.to(tl.bfloat16)\n\n        # Write outputs\n        # grad_hidden_states: (batch_seq, H) -> (B, S, H)\n        # Offset = idx * seq_len * hidden_size\n        grad_hidden_ptr_m = grad_hidden_ptr + seq_idx(cur_batch_seq) + tl.arange(0, BLOCK_H)\n        tl.store(grad_hidden_ptr_m, grad_x_bf16, mask=(tl.arange(0, BLOCK_H) < num_valid))\n\n        # grad_residual: identical to grad_hidden_states\n        grad_residual_ptr_m = grad_residual_ptr + seq_idx(cur_batch_seq) + tl.arange(0, BLOCK_H)\n        tl.store(grad_residual_ptr_m, grad_x_bf16, mask=(tl.arange(0, BLOCK_H) < num_valid))\n\n\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple:\n    \"\"\"\n    Fused residual RMSNorm backward.\n\n    Args:\n        grad_output: [B, S, H] bf16 gradient from next layer\n        x: [B, S, H] fp32 saved hidden_states+residual (UNUSED in reference)\n        normalized: [B, S, H] fp32 normalized values from forward pass\n        rstd: [B, S, 1] fp32 reciprocal std from forward pass\n        weight: [H] fp32 RMSNorm scale parameters\n\n    Returns:\n        grad_hidden_states: [B, S, H] bf16 gradient for hidden_states\n        grad_residual: [B, S, H] bf16 gradient for residual\n        grad_weight: [H] fp32 gradient for weight\n    \"\"\"\n    # Validate shapes\n    B = grad_output.shape[0]\n    S = grad_output.shape[1]\n    H = grad_output.shape[2]\n\n    assert H == 2560, f\"Expected hidden_size=2560, got {H}\"\n    assert grad_output.dtype == torch.bfloat16\n    assert normalized.dtype == torch.float32\n    assert rstd.dtype == torch.float32\n    assert weight.dtype == torch.float32\n\n    # Initialize output tensors\n    grad_hidden_states = torch.empty((B, S, H), dtype=grad_output.dtype, device=grad_output.device)\n    grad_residual = torch.empty((B, S, H), dtype=grad_output.dtype, device=grad_output.device)\n    grad_weight = torch.empty((H,), dtype=torch.float32, device=grad_output.device)\n\n    # Launch kernel\n    fused_residual_rms_norm_backward_kernel(\n        grad_output,\n        x,\n        normalized,\n        rstd,\n        weight,\n        grad_hidden_states,\n        grad_residual,\n        grad_weight,\n        batch_size=B,\n        seq_len=S,\n        hidden_size=H,\n    )\n\n    return grad_hidden_states, grad_residual, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t13_e80f362c59a6",
+    "definition": "013_fused_residual_rms_norm_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import triton\nimport torch\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        # Large batch sizes - maximize occupancy\n        triton.Config({'BLOCK_M': 128, 'BLOCK_H': 2560, 'num_warps': 8, 'num_stages': 2}, 0, 0),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_H': 2560, 'num_warps': 8, 'num_stages': 2}, 0, 0),\n        # Medium sizes\n        triton.Config({'BLOCK_M': 64, 'BLOCK_H': 2560, 'num_warps': 4, 'num_stages': 2}, 0, 0),\n        # Small shapes (fewer elements to tile)\n        triton.Config({'BLOCK_M': 32, 'BLOCK_H': 2560, 'num_warps': 4, 'num_stages': 2}, 0, 0),\n        triton.Config({'BLOCK_M': 16, 'BLOCK_H': 2560, 'num_warps': 2, 'num_stages': 2}, 0, 0),\n    ],\n    key=['batch_size', 'seq_len', 'hidden_size'],\n)\ndef fused_residual_rms_norm_backward_kernel(\n    grad_output_ptr,\n    x_ptr,\n    normalized_ptr,\n    rstd_ptr,\n    weight_ptr,\n    grad_hidden_ptr,\n    grad_residual_ptr,\n    grad_weight_ptr,\n    batch_size: tl.constexpr,\n    seq_len: tl.constexpr,\n    hidden_size: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    Single-pass fused backward kernel for fused residual RMSNorm.\n\n    Computes:\n    - grad_weight = sum(grad_output * normalized) over batch and sequence\n    - grad_hidden_states = grad_residual = rstd * (grad_output * weight -\n                                                        mean(grad_output * weight * normalized) * normalized)\n\n    Key optimizations:\n    - Full-row BLOCK_H = hidden_size to eliminate cross-tile reductions for mean\n    - Atomic-add for grad_weight (small H=2560, fp32 atomics fast)\n    - All elementwise ops in bf16, fp32 only for reductions\n    - Vectorized 128-bit loads with masks\n    \"\"\"\n    batch_seq = batch_size * seq_len\n\n    # Grid: one block per BLOCK_M elements in batch_seq dimension\n    # Grid shape: (grid_m, 1, 1)\n    grid_m = triton.cdiv(batch_seq, BLOCK_M)\n\n    # Offset helper: idx * seq_len * hidden_size\n    # Valid for any index along batch_seq dimension\n    def seq_idx(b):\n        return b * seq_len * hidden_size\n\n    for m in range(grid_m):\n        pid_m = m\n        cur_batch_seq = pid_m * BLOCK_M\n        num_valid = BLOCK_M\n        if cur_batch_seq + BLOCK_M > batch_seq:\n            num_valid = batch_seq - cur_batch_seq\n\n        # Compute batch and seq indices\n        batch_seq_idx = cur_batch_seq\n        batch_idx = batch_seq_idx // seq_len\n        seq_idx_local = batch_seq_idx % seq_len\n\n        # Load inputs for this tile\n        # Coalesced access: (batch_seq, H)\n        # Access pattern: (batch_seq * hidden_size + h)\n        grad_output_local = tl.load(\n            grad_output_ptr + seq_idx(batch_seq_idx) + tl.arange(0, BLOCK_H),\n            mask=(tl.arange(0, BLOCK_H) < num_valid),\n            other=0.0,\n        )\n\n        normalized_local = tl.load(\n            normalized_ptr + seq_idx(batch_seq_idx) + tl.arange(0, BLOCK_H),\n            mask=(tl.arange(0, BLOCK_H) < num_valid),\n            other=0.0,\n        )\n\n        # Load rstd for this element (B, S, 1) -> (B, S)\n        rstd_local = tl.load(\n            rstd_ptr + seq_idx(batch_seq_idx),\n            mask=num_valid.to(tl.float32),\n            other=0.0,\n        )\n\n        # Load weight (broadcast across batch_seq)\n        weight_local = tl.load(weight_ptr + tl.arange(0, BLOCK_H), mask=(tl.arange(0, BLOCK_H) < hidden_size), other=0.0)\n\n        # grad_weight contribution: sum(grad_output * normalized) over this tile\n        grad_weight_local = grad_output_local * normalized_local\n        grad_weight_tile = tl.sum(grad_weight_local, axis=0)\n\n        # Atomic add to global grad_weight (reduction over batch_seq)\n        tl.atomic_add(grad_weight_ptr, tl.arange(0, hidden_size), grad_weight_tile.to(tl.float32))\n\n        # grad_normalized = grad_output * weight\n        grad_normalized_local = grad_output_local * weight_local\n\n        # mean_grad_norm = mean(grad_normalized * normalized) over hidden dimension\n        # This is the key insight: we compute it per-tile, so we need the mean of the tile sums\n        prod_local = grad_normalized_local * normalized_local\n        tile_mean_prod = tl.sum(prod_local, axis=0) / BLOCK_H\n\n        # grad_x = rstd * (grad_normalized - mean_grad_norm * normalized)\n        # Broadcast rstd to hidden dimension\n        rstd_bcast = rstd_local[:, None]  # (BLOCK_M, 1)\n        grad_normalized_bcast = grad_normalized_local[:, None]  # (BLOCK_M, BLOCK_H)\n        mean_grad_norm_bcast = tile_mean_prod[:, None]  # (BLOCK_M, 1)\n        normalized_bcast = normalized_local[:, None]  # (BLOCK_M, BLOCK_H)\n\n        grad_x_fp32 = rstd_bcast * (grad_normalized_bcast - mean_grad_norm_bcast * normalized_bcast)\n\n        # Convert to bfloat16 for output\n        grad_x_bf16 = grad_x_fp32.to(tl.bfloat16)\n\n        # Write outputs\n        # grad_hidden_states: (batch_seq, H) -> (B, S, H)\n        # Offset = idx * seq_len * hidden_size\n        grad_hidden_ptr_m = grad_hidden_ptr + seq_idx(cur_batch_seq) + tl.arange(0, BLOCK_H)\n        tl.store(grad_hidden_ptr_m, grad_x_bf16, mask=(tl.arange(0, BLOCK_H) < num_valid))\n\n        # grad_residual: identical to grad_hidden_states\n        grad_residual_ptr_m = grad_residual_ptr + seq_idx(cur_batch_seq) + tl.arange(0, BLOCK_H)\n        tl.store(grad_residual_ptr_m, grad_x_bf16, mask=(tl.arange(0, BLOCK_H) < num_valid))\n\n\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple:\n    \"\"\"\n    Fused residual RMSNorm backward.\n\n    Args:\n        grad_output: [B, S, H] bf16 gradient from next layer\n        x: [B, S, H] fp32 saved hidden_states+residual (UNUSED in reference)\n        normalized: [B, S, H] fp32 normalized values from forward pass\n        rstd: [B, S, 1] fp32 reciprocal std from forward pass\n        weight: [H] fp32 RMSNorm scale parameters\n\n    Returns:\n        grad_hidden_states: [B, S, H] bf16 gradient for hidden_states\n        grad_residual: [B, S, H] bf16 gradient for residual\n        grad_weight: [H] fp32 gradient for weight\n    \"\"\"\n    # Validate shapes\n    B = grad_output.shape[0]\n    S = grad_output.shape[1]\n    H = grad_output.shape[2]\n\n    assert H == 2560, f\"Expected hidden_size=2560, got {H}\"\n    assert grad_output.dtype == torch.bfloat16\n    assert normalized.dtype == torch.float32\n    assert rstd.dtype == torch.float32\n    assert weight.dtype == torch.float32\n\n    # Initialize output tensors\n    grad_hidden_states = torch.empty((B, S, H), dtype=grad_output.dtype, device=grad_output.device)\n    grad_residual = torch.empty((B, S, H), dtype=grad_output.dtype, device=grad_output.device)\n    grad_weight = torch.empty((H,), dtype=torch.float32, device=grad_output.device)\n\n    # Launch kernel\n    fused_residual_rms_norm_backward_kernel(\n        grad_output,\n        x,\n        normalized,\n        rstd,\n        weight,\n        grad_hidden_states,\n        grad_residual,\n        grad_weight,\n        batch_size=B,\n        seq_len=S,\n        hidden_size=H,\n    )\n\n    return grad_hidden_states, grad_residual, grad_weight\n"
+      }
+    ]
+  }
+}
