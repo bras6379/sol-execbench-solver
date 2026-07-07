@@ -51,6 +51,20 @@ TECHNIQUES: dict[str, tuple[str, ...]] = {
 # Order to surface UNTRIED rungs in — roughly "biggest lever first" for this bench.
 _LADDER = ("fusion", "cuda_graph", "split_k", "fp16", "fp8", "nvfp4",
            "streaming", "vectorized", "async_copy", "l2_persist", "slicing")
+# Rungs that only make sense on tensor-core / GEMM-bound ops — hidden for memory-bound
+# elementwise/reduction ops (RoPE, norms, softmax), where they're dead ends.
+_GEMM_ONLY_RUNGS = {"split_k", "fp8", "nvfp4"}
+_COMPUTE_FAMILIES = {"gemm", "attention", "moe", "conv", "linear", "matmul"}
+
+
+def _clip(s: str, n: int) -> str:
+    """Trim to ~n chars on a word boundary (no mid-word cut mid-sentence)."""
+    s = " ".join((s or "").split())
+    if len(s) <= n:
+        return s
+    cut = s[:n]
+    sp = cut.rfind(" ")
+    return (cut[:sp] if sp > n * 0.6 else cut).rstrip() + "…"
 
 _STOP = {"a", "the", "an", "to", "of", "for", "and", "or", "with", "via", "in",
          "on", "by", "as", "one", "full", "single", "custom", "use", "using",
@@ -163,12 +177,13 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
         fam_counts[sig] = fam_counts.get(sig, 0) + 1
         cur = fam_best.get(sig)
         if cur is None or a.score > cur["score"]:
-            fam_best[sig] = {"score": a.score, "strategy": a.strategy, "n": 0}
+            fam_best[sig] = {"score": a.score, "strategy": a.strategy, "n": 0, "cand": a.cand_id}
     for sig, rec in fam_best.items():
         rec["n"] = fam_counts[sig]
         r.ledger.append({"family": " + ".join(sorted(sig)) or "misc",
                          "best": round(rec["score"], 4), "n": rec["n"],
-                         "strategy": rec["strategy"][:90]})
+                         "cand": rec["cand"][:8],
+                         "strategy": _clip(rec["strategy"], 170)})
     r.ledger.sort(key=lambda d: -d["best"])
 
     # --- rabbit hole: does one family dominate the attempts? ---
@@ -178,11 +193,18 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
         r.dominant_share = dom_n / r.n_evals
 
     # --- technique coverage: which ladder rungs tried vs untried ---
+    # Only surface rungs that APPLY to this op's bottleneck class — suggesting fp8 /
+    # split-k / nvfp4 (tensor-core/GEMM levers) on a memory-bound elementwise op like
+    # RoPE or a norm is a red herring that sends agents down dead ends.
     tried = set()
     for a in attempts:
         tried |= _techniques(a.strategy)
     r.techniques_tried = sorted(tried)
-    r.techniques_untried = [t for t in _LADDER if t not in tried][:6]
+    compute_bound = (r.family or "").lower() in _COMPUTE_FAMILIES or "cublas" in tried
+    untried = [t for t in _LADDER if t not in tried]
+    if not compute_bound:
+        untried = [t for t in untried if t not in _GEMM_ONLY_RUNGS]
+    r.techniques_untried = untried[:6]
 
     # --- per-workload bottleneck: the shapes dragging the mean, from the best cand ---
     cand = candidates.get(best_a.cand_id) or {}
@@ -253,14 +275,17 @@ def render_card(r: ProblemReflection) -> str:
               f"specialize for them (their axes are in `workloads.md`).", ""]
 
     if r.ledger:
-        L += ["**Already tried — don't re-derive these (best score each):**"]
+        L += ["**Already tried — don't re-derive these (best score each). Read the exact",
+              "kernel in `prior/<score>_<cand>.py` before assuming what it did:**"]
         for d in r.ledger[:8]:
-            L.append(f"- `{d['best']:.3f}` ×{d['n']}  [{d['family']}]  {d['strategy']}")
+            L.append(f"- `{d['best']:.3f}` ×{d['n']}  [{d['family']}]  {d['strategy']}  "
+                     f"→ `prior/{d['best']:.3f}_{d['cand']}.py`")
         L.append("")
 
     if r.techniques_untried:
-        L += [f"**Untried rungs on the B200 ladder:** {', '.join(r.techniques_untried)} "
-              f"— at least one is likely the axis you haven't explored.", ""]
+        L += [f"**Untried rungs that fit this op:** {', '.join(r.techniques_untried)} "
+              f"— at least one is likely the axis you haven't explored (tailored to this "
+              f"op's bottleneck class, not a generic list).", ""]
     return "\n".join(L).rstrip() + "\n"
 
 
@@ -306,7 +331,7 @@ def _transfer_line(r: ProblemReflection, fam_best: dict) -> str:
 
 
 def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
-                names: dict[int, str] | None = None, dump_prior: int = 6,
+                names: dict[int, str] | None = None, dump_prior: int = 8,
                 log=lambda *_: None) -> dict[int, ProblemReflection]:
     """Regenerate every problem's `reflection.md` coach card (deterministic, no LLM).
     Also stages the top prior kernels under `<task>/prior/` for on-demand inspection.
