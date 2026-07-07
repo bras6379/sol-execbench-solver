@@ -390,6 +390,21 @@ def _cmd_poll(args) -> None:
                 failed += 1
                 print(f"  task {task:>3}  #{sid}  poll failed: {repr(exc)[:80]}")
         print(f"done: {done} completed, {queued} still queued, {failed} unreachable")
+        # cache each problem's leaderboard #1 (the target to beat) for the dashboard
+        boards = {}
+        for pdir in sorted((p for p in runs_dir.glob("*") if p.is_dir() and p.name.isdigit()),
+                           key=lambda p: int(p.name)):
+            t = int(pdir.name)
+            try:
+                b = lb.board(t)
+                if b.get("top_sol") is not None:
+                    boards[str(t)] = {"top_sol": b["top_sol"], "top_user": b["top_user"],
+                                      "n": b["n"], "sol_bound": b.get("sol_bound")}
+            except Exception:
+                continue
+        if boards:
+            (runs_dir / "leaderboard.json").write_text(json.dumps(boards, indent=2))
+            print(f"cached leaderboard #1 for {len(boards)} problem(s) -> {runs_dir}/leaderboard.json")
         return
 
     sids = args.ids

@@ -78,10 +78,22 @@ def submission_summary(runs_dir: Path, task_id: int) -> dict | None:
         return None
     scored = [e for e in subs.values() if e.get("sol_score") is not None]
     best = max(scored, key=lambda e: e["sol_score"]) if scored else list(subs.values())[-1]
+    # the EXPECTED sol of the exact kernel we submitted (from its candidate record) —
+    # lets the dashboard say "current best beats what we submitted → re-submit".
+    cand = best.get("cand_id")
+    submitted_expected = None
+    if cand:
+        cf = Path(runs_dir) / str(task_id) / "candidates" / f"{cand}.json"
+        if cf.exists():
+            try:
+                submitted_expected = json.loads(cf.read_text()).get("sol_score_calibrated")
+            except (json.JSONDecodeError, OSError):
+                pass
     return {
         "sol": best.get("sol_score"), "rank": best.get("board_rank"),
         "n": best.get("board_n"), "top_sol": best.get("board_top_sol"),
         "status": best.get("status"), "sid": best.get("submission_id") or best.get("id"),
+        "cand": cand, "submitted_expected": submitted_expected,
     }
 
 
@@ -320,8 +332,16 @@ def top_movers(per_problem: list[dict], k: int = 8) -> list[dict]:
 def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> dict[str, Any]:
     per_problem = [problem_metrics(t, evs) for t, evs in sorted(journals.items())]
     if runs_dir:                                   # attach the real leaderboard result per problem
+        board = {}                                 # cached leaderboard #1 per problem (solver poll --all)
+        bf = Path(runs_dir) / "leaderboard.json"
+        if bf.exists():
+            try:
+                board = json.loads(bf.read_text())
+            except (json.JSONDecodeError, OSError):
+                board = {}
         for p in per_problem:
             p["lb"] = submission_summary(runs_dir, p["task"])
+            p["board"] = board.get(str(p["task"]))   # {top_sol, top_user, n, sol_bound} = the #1 to beat
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,
