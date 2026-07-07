@@ -115,16 +115,23 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     best_model_score = -1.0
     first_ts = last_ts = None
     candidates: dict[str, dict] = {}   # cand id -> progression record
-    cost = {"plan": 0.0, "review": 0.0, "diagnose": 0.0}   # $ by call-type
-    cost_by_model: dict[str, float] = {}                    # $ by model, any call-type
+    cost = {"plan": 0.0, "review": 0.0, "diagnose": 0.0, "design": 0.0}   # $ by call-type
+    cost_by_model: dict[str, dict] = {}    # model -> {cost, in, out, cached} — pricing (and
+                                            # in/out/cache ratios) differ per provider, so raw
+                                            # tokens matter alongside $
     noop_cost = 0.0                                         # $ spent on iterations that changed nothing
     reflect_health = {"success": 0, "fail": 0}               # diagnose_cost outcomes
 
-    def _spend(kind: str, model: str, usd: float) -> None:
-        if not usd:
+    def _spend(kind: str, model: str, usd: float, tok_in: int = 0, tok_out: int = 0,
+               tok_cached: int = 0) -> None:
+        if not usd and not tok_in and not tok_out and not tok_cached:
             return
         cost[kind] = cost.get(kind, 0.0) + usd
-        cost_by_model[model] = cost_by_model.get(model, 0.0) + usd
+        m = cost_by_model.setdefault(model, {"cost": 0.0, "in": 0, "out": 0, "cached": 0})
+        m["cost"] += usd
+        m["in"] += tok_in
+        m["out"] += tok_out
+        m["cached"] += tok_cached
 
     for e in events:
         ts = e.get("ts")
@@ -139,13 +146,17 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
         elif ev == "design_done":
             agent["design"]["n"] += 1
             agent["design"]["dur"] += e.get("dur_s", 0.0)
+            agent["design"]["tok"] += e.get("tok_in", 0) + e.get("tok_out", 0)
+            _spend("design", e.get("model", "?"), e.get("cost_usd", 0.0),
+                   e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
         elif ev == "plan_done":
             iters += 1
             agent["plan"]["n"] += 1
             agent["plan"]["dur"] += e.get("dur_s", 0.0)
             agent["plan"]["tok"] += e.get("tok_in", 0) + e.get("tok_out", 0)
             plan_model = e.get("model", model)
-            _spend("plan", plan_model, e.get("cost_usd", 0.0))
+            _spend("plan", plan_model, e.get("cost_usd", 0.0),
+                   e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
             if e.get("no_op"):
                 noop_cost += e.get("cost_usd", 0.0)
             # Two agents can produce the SAME kernel (same content hash = same cand
@@ -158,9 +169,11 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 "sol_score": None,
             })
         elif ev == "review":
-            _spend("review", e.get("reviewer", "?"), e.get("cost_usd", 0.0))
+            _spend("review", e.get("reviewer", "?"), e.get("cost_usd", 0.0),
+                   e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
         elif ev == "diagnose_cost":
-            _spend("diagnose", e.get("model", "?"), e.get("cost_usd", 0.0))
+            _spend("diagnose", e.get("model", "?"), e.get("cost_usd", 0.0),
+                   e.get("tok_in", 0) or 0, e.get("tok_out", 0) or 0, e.get("tok_cached", 0) or 0)
             reflect_health["success" if e.get("success") else "fail"] += 1
         elif ev == "check" and not e.get("ok", True):
             outcomes["rejected"] += 1
@@ -291,15 +304,17 @@ def fleet_metrics(per_problem: list[dict], rentals: list[dict] | None = None) ->
 
     waits = [j["start"] - j["enq"] for j in jobs if "enq" in j]
 
-    cost_total = {"plan": 0.0, "review": 0.0, "diagnose": 0.0}
-    cost_by_model: dict[str, float] = {}
+    cost_total = {"plan": 0.0, "review": 0.0, "diagnose": 0.0, "design": 0.0}
+    cost_by_model: dict[str, dict] = {}   # model -> {cost, in, out, cached}, summed fleet-wide
     noop_cost = 0.0
     reflect_health = {"success": 0, "fail": 0}
     for p in per_problem:
         for k, v in (p.get("cost") or {}).items():
             cost_total[k] = cost_total.get(k, 0.0) + v
-        for m, v in (p.get("cost_by_model") or {}).items():
-            cost_by_model[m] = cost_by_model.get(m, 0.0) + v
+        for m, d in (p.get("cost_by_model") or {}).items():
+            agg = cost_by_model.setdefault(m, {"cost": 0.0, "in": 0, "out": 0, "cached": 0})
+            for k in ("cost", "in", "out", "cached"):
+                agg[k] += (d or {}).get(k, 0)
         noop_cost += p.get("noop_cost", 0.0)
         for k, v in (p.get("reflect_health") or {}).items():
             reflect_health[k] = reflect_health.get(k, 0) + v

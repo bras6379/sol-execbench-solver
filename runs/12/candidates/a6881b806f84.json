@@ -1,0 +1,258 @@
+{
+  "cand_id": "a6881b806f84",
+  "task_id": 12,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Fused sincos kernel: loads fp32 frequencies once, computes both cos and sin with scaling in a single SFU instruction, ca",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "996a46d34363",
+  "trajectory": "runs/12/work/a6881b806f84/trajectory.jsonl",
+  "gpu_s": 1.199,
+  "job_id": "12-a6881b806f84",
+  "asi": {
+    "stage": "harness",
+    "error": "Traceback (most recent call last):\n  File \"/root/SOL-ExecBench/.venv/bin/sol-execbench\", line 10, in <module>\n    sys.exit(cli())\n             ^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1485, in __call__\n    return self.main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1406, in main\n    rv = self.invoke(ctx)\n         ^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1269, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 824, in invoke\n    return callback(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 272, in cli\n    solution = _load_solution(solution_file)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 74, in _load_solution\n    return Solution(**sol_dict)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/pydantic/main.py\", line 250, in __init__\n    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for Solution\nspec\n  Value error, C++ and Python cannot be mixed, but got [<SupportedLanguages.CUDA_CPP: 'cuda_cpp'>] and [<SupportedLanguages.PYTORCH: 'pytorch'>] [type=value_error, input_value={'languages': ['cuda_cpp'...lse, 'binding': 'torch'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 254.49,
+      "samples": 1,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020064,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.02144,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.044368,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020352,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.02032,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02048,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020256,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020128,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.026176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0234069999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020289,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (why this can edge past the Triton flat frontier):\n//   * Each unique frequency's (cos,sin) is written to TWO output columns\n//     (col and col+64) \u2014 we compute the SFU work ONCE and duplicate the store,\n//     halving transcendental work vs the reference (which cos/sin's the cat'd\n//     128-wide tensor).\n//   * 2 frequencies per thread: one 8-byte float2 load, and PACKED 32-bit\n//     __nv_bfloat162 stores (two adjacent bf16 at once) to each half \u2014 wider\n//     memory transactions and better ILP than Triton's scalar bf16 stores.\n//     2 adjacent freqs are always in the same 64-wide row (64 is even), and\n//     both low- and high-half targets are 4-byte aligned (even element index),\n//     so the packed stores are always legal.\n//   * NATURAL grid = cdiv(n_pairs, 256) \u2014 does NOT over-spread onto tiny\n//     32-thread blocks (the mistake that sank the prior CUDA attempt); these\n//     L2/launch-floor-bound shapes want few large blocks.\n//   * Robust trig under the harness's default --use_fast_math: double-precision\n//     range reduction to [-pi,pi] first, THEN __sincosf on the reduced value\n//     (accurate to ~2^-21 there, far below the bf16 rounding step of 2^-8), so\n//     the result matches the reference's accurate cosf/sinf for ANY freq\n//     magnitude \u2014 well inside the 1e-5 atol / 0.05 rtol / 99%-match gate.\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                  __nv_bfloat16* __restrict__ cos_out,\n                                  __nv_bfloat16* __restrict__ sin_out,\n                                  long n_pairs, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_pairs) return;\n\n    // One 8-byte load pulls two consecutive frequencies (same row).\n    const float2 f = reinterpret_cast<const float2*>(freqs)[t];\n\n    // Accurate range reduction in double, robust to large arguments and to\n    // --use_fast_math turning __sincosf into the hardware MUFU path.\n    const double TWO_PI = 6.283185307179586476925286766559;\n    double x0 = (double)f.x;\n    double x1 = (double)f.y;\n    float r0 = (float)(x0 - TWO_PI * rint(x0 / TWO_PI));\n    float r1 = (float)(x1 - TWO_PI * rint(x1 / TWO_PI));\n\n    float s0, c0, s1, c1;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n\n    // fp32 scale, then round-to-nearest-even into bf16 (matches torch .to(bf16)).\n    __nv_bfloat162 cpair = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 spair = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n\n    // Map the pair back to output positions.  two_t is the low-half element\n    // index; the high half is +64.  Both are even -> 4-byte aligned bf162.\n    long two_t = t << 1;\n    long row   = two_t >> 6;          // / 64\n    long col   = two_t & (HALF - 1);  // % 64\n    long lo    = (row << 7) + col;    // row*128 + col\n    long hi    = lo + HALF;\n\n    __nv_bfloat162* cptr = reinterpret_cast<__nv_bfloat162*>(cos_out);\n    __nv_bfloat162* sptr = reinterpret_cast<__nv_bfloat162*>(sin_out);\n    cptr[lo >> 1] = cpair;   // cos[..., col : col+2]\n    cptr[hi >> 1] = cpair;   // cos[..., col+64 : col+66]  (duplicate)\n    sptr[lo >> 1] = spair;\n    sptr[hi >> 1] = spair;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_pairs = n_freqs / 2;  // n_freqs is a multiple of 64 -> even\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_pairs > 0) {\n        const int block = 256;\n        const int grid = (int)((n_pairs + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_pairs, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}\n"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import triton\nimport torch\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({\"BLOCK_SIZE\": 128}, num_warps=4),\n        triton.Config({\"BLOCK_SIZE\": 256}, num_warps=4),\n        triton.Config({\"BLOCK_SIZE\": 512}, num_warps=8),\n        triton.Config({\"BLOCK_SIZE\": 1024}, num_warps=8),\n        triton.Config({\"BLOCK_SIZE\": 2048}, num_warps=8),\n    ],\n    key=[\"batch_size\", \"seq_len\", \"half_head_dim\"],\n)\n@triton.jit\ndef fused_sincos_kernel(\n    freqs_ptr, cos_ptr, sin_ptr,\n    batch_size, seq_len, half_head_dim,\n    attention_scaling,\n    block_ptr_freqs: triton.PointerType(triton.float32),\n    block_ptr_cos: triton.PointerType(triton.bfloat16),\n    block_ptr_sin: triton.PointerType(triton.bfloat16),\n):\n    \"\"\"\n    Fused sincos kernel:\n    - Loads freqs[B,S,i] once in fp32\n    - Computes sincos, scales, casts to bf16\n    - Writes cos to [B,S,i] and [B,S,i+half_head_dim]\n    - Writes sin to [B,S,i] and [B,S,i+half_head_dim]\n    \"\"\"\n    # Grid dimensions\n    pid = tl.program_id(0)\n    batch_idx = pid // seq_len\n    seq_idx = pid % seq_len\n\n    # Base pointer in freqs\n    freqs_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim\n\n    # Load and unpack freqs\n    row_ptr = freqs_ptr\n\n    # Load multiple elements with masking\n    block_size = 128\n    offs = tl.arange(0, block_size)\n    mask = offs < half_head_dim\n\n    freq_vals = tl.load(block_ptr_freqs + row_ptr + offs, mask=mask)\n\n    # fused sincos (both cos and sin in one SFU instruction)\n    sin_vals, cos_vals = tl.math.sincos(freq_vals)\n\n    # scaling and bf16 cast\n    cos_vals = tl.math.bfloat16(cos_vals * attention_scaling)\n    sin_vals = tl.math.bfloat16(sin_vals * attention_scaling)\n\n    # Write to cos outputs\n    # Position 0\n    cos_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim + offs\n    tl.store(block_ptr_cos + cos_ptr + offs, cos_vals, mask=mask)\n    # Position 1 (i + half_head_dim)\n    cos_ptr += half_head_dim\n    tl.store(block_ptr_cos + cos_ptr + offs, cos_vals, mask=mask)\n\n    # Write to sin outputs\n    # Position 0\n    sin_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim + offs\n    tl.store(block_ptr_sin + sin_ptr + offs, sin_vals, mask=mask)\n    # Position 1 (i + half_head_dim)\n    sin_ptr += half_head_dim\n    tl.store(block_ptr_sin + sin_ptr + offs, sin_vals, mask=mask)\n\n\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    \"\"\"\n    Fused cos/sin embedding generation from frequencies for RoPE.\n\n    Args:\n        freqs: Frequency tensor of shape [batch_size, seq_len, head_dim // 2]\n               Result of (inv_freq @ position_ids).transpose(1, 2)\n        attention_scaling: Scaling factor for attention\n\n    Returns:\n        Tuple of (cos, sin) embeddings, each of shape [batch_size, seq_len, head_dim]\n    \"\"\"\n    batch_size, seq_len, half_head_dim = freqs.shape\n    head_dim = 2 * half_head_dim\n\n    # Allocate output tensors\n    cos = torch.empty((batch_size, seq_len, head_dim), dtype=torch.bfloat16, device=freqs.device)\n    sin = torch.empty((batch_size, seq_len, head_dim), dtype=torch.bfloat16, device=freqs.device)\n\n    # Grid-stride persistent loop across all (batch, seq) positions\n    total_elems = batch_size * seq_len\n    grid = [total_elems]\n\n    # Call the kernel\n    fused_sincos_kernel[grid](\n        freqs,\n        cos,\n        sin,\n        batch_size,\n        seq_len,\n        half_head_dim,\n        attention_scaling,\n        triton_pointer=freqs,\n        triton_pointer=cos,\n        triton_pointer=sin,\n    )\n\n    return cos, sin\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t12_a6881b806f84",
+    "definition": "012_fused_cos_sin_embedding_generation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (why this can edge past the Triton flat frontier):\n//   * Each unique frequency's (cos,sin) is written to TWO output columns\n//     (col and col+64) \u2014 we compute the SFU work ONCE and duplicate the store,\n//     halving transcendental work vs the reference (which cos/sin's the cat'd\n//     128-wide tensor).\n//   * 2 frequencies per thread: one 8-byte float2 load, and PACKED 32-bit\n//     __nv_bfloat162 stores (two adjacent bf16 at once) to each half \u2014 wider\n//     memory transactions and better ILP than Triton's scalar bf16 stores.\n//     2 adjacent freqs are always in the same 64-wide row (64 is even), and\n//     both low- and high-half targets are 4-byte aligned (even element index),\n//     so the packed stores are always legal.\n//   * NATURAL grid = cdiv(n_pairs, 256) \u2014 does NOT over-spread onto tiny\n//     32-thread blocks (the mistake that sank the prior CUDA attempt); these\n//     L2/launch-floor-bound shapes want few large blocks.\n//   * Robust trig under the harness's default --use_fast_math: double-precision\n//     range reduction to [-pi,pi] first, THEN __sincosf on the reduced value\n//     (accurate to ~2^-21 there, far below the bf16 rounding step of 2^-8), so\n//     the result matches the reference's accurate cosf/sinf for ANY freq\n//     magnitude \u2014 well inside the 1e-5 atol / 0.05 rtol / 99%-match gate.\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                  __nv_bfloat16* __restrict__ cos_out,\n                                  __nv_bfloat16* __restrict__ sin_out,\n                                  long n_pairs, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_pairs) return;\n\n    // One 8-byte load pulls two consecutive frequencies (same row).\n    const float2 f = reinterpret_cast<const float2*>(freqs)[t];\n\n    // Accurate range reduction in double, robust to large arguments and to\n    // --use_fast_math turning __sincosf into the hardware MUFU path.\n    const double TWO_PI = 6.283185307179586476925286766559;\n    double x0 = (double)f.x;\n    double x1 = (double)f.y;\n    float r0 = (float)(x0 - TWO_PI * rint(x0 / TWO_PI));\n    float r1 = (float)(x1 - TWO_PI * rint(x1 / TWO_PI));\n\n    float s0, c0, s1, c1;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n\n    // fp32 scale, then round-to-nearest-even into bf16 (matches torch .to(bf16)).\n    __nv_bfloat162 cpair = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 spair = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n\n    // Map the pair back to output positions.  two_t is the low-half element\n    // index; the high half is +64.  Both are even -> 4-byte aligned bf162.\n    long two_t = t << 1;\n    long row   = two_t >> 6;          // / 64\n    long col   = two_t & (HALF - 1);  // % 64\n    long lo    = (row << 7) + col;    // row*128 + col\n    long hi    = lo + HALF;\n\n    __nv_bfloat162* cptr = reinterpret_cast<__nv_bfloat162*>(cos_out);\n    __nv_bfloat162* sptr = reinterpret_cast<__nv_bfloat162*>(sin_out);\n    cptr[lo >> 1] = cpair;   // cos[..., col : col+2]\n    cptr[hi >> 1] = cpair;   // cos[..., col+64 : col+66]  (duplicate)\n    sptr[lo >> 1] = spair;\n    sptr[hi >> 1] = spair;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_pairs = n_freqs / 2;  // n_freqs is a multiple of 64 -> even\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_pairs > 0) {\n        const int block = 256;\n        const int grid = (int)((n_pairs + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_pairs, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}\n"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import triton\nimport torch\n\n\n@triton.autotune(\n    configs=[\n        triton.Config({\"BLOCK_SIZE\": 128}, num_warps=4),\n        triton.Config({\"BLOCK_SIZE\": 256}, num_warps=4),\n        triton.Config({\"BLOCK_SIZE\": 512}, num_warps=8),\n        triton.Config({\"BLOCK_SIZE\": 1024}, num_warps=8),\n        triton.Config({\"BLOCK_SIZE\": 2048}, num_warps=8),\n    ],\n    key=[\"batch_size\", \"seq_len\", \"half_head_dim\"],\n)\n@triton.jit\ndef fused_sincos_kernel(\n    freqs_ptr, cos_ptr, sin_ptr,\n    batch_size, seq_len, half_head_dim,\n    attention_scaling,\n    block_ptr_freqs: triton.PointerType(triton.float32),\n    block_ptr_cos: triton.PointerType(triton.bfloat16),\n    block_ptr_sin: triton.PointerType(triton.bfloat16),\n):\n    \"\"\"\n    Fused sincos kernel:\n    - Loads freqs[B,S,i] once in fp32\n    - Computes sincos, scales, casts to bf16\n    - Writes cos to [B,S,i] and [B,S,i+half_head_dim]\n    - Writes sin to [B,S,i] and [B,S,i+half_head_dim]\n    \"\"\"\n    # Grid dimensions\n    pid = tl.program_id(0)\n    batch_idx = pid // seq_len\n    seq_idx = pid % seq_len\n\n    # Base pointer in freqs\n    freqs_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim\n\n    # Load and unpack freqs\n    row_ptr = freqs_ptr\n\n    # Load multiple elements with masking\n    block_size = 128\n    offs = tl.arange(0, block_size)\n    mask = offs < half_head_dim\n\n    freq_vals = tl.load(block_ptr_freqs + row_ptr + offs, mask=mask)\n\n    # fused sincos (both cos and sin in one SFU instruction)\n    sin_vals, cos_vals = tl.math.sincos(freq_vals)\n\n    # scaling and bf16 cast\n    cos_vals = tl.math.bfloat16(cos_vals * attention_scaling)\n    sin_vals = tl.math.bfloat16(sin_vals * attention_scaling)\n\n    # Write to cos outputs\n    # Position 0\n    cos_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim + offs\n    tl.store(block_ptr_cos + cos_ptr + offs, cos_vals, mask=mask)\n    # Position 1 (i + half_head_dim)\n    cos_ptr += half_head_dim\n    tl.store(block_ptr_cos + cos_ptr + offs, cos_vals, mask=mask)\n\n    # Write to sin outputs\n    # Position 0\n    sin_ptr += batch_idx * seq_len * half_head_dim + seq_idx * half_head_dim + offs\n    tl.store(block_ptr_sin + sin_ptr + offs, sin_vals, mask=mask)\n    # Position 1 (i + half_head_dim)\n    sin_ptr += half_head_dim\n    tl.store(block_ptr_sin + sin_ptr + offs, sin_vals, mask=mask)\n\n\ndef run(freqs: torch.Tensor, attention_scaling: float):\n    \"\"\"\n    Fused cos/sin embedding generation from frequencies for RoPE.\n\n    Args:\n        freqs: Frequency tensor of shape [batch_size, seq_len, head_dim // 2]\n               Result of (inv_freq @ position_ids).transpose(1, 2)\n        attention_scaling: Scaling factor for attention\n\n    Returns:\n        Tuple of (cos, sin) embeddings, each of shape [batch_size, seq_len, head_dim]\n    \"\"\"\n    batch_size, seq_len, half_head_dim = freqs.shape\n    head_dim = 2 * half_head_dim\n\n    # Allocate output tensors\n    cos = torch.empty((batch_size, seq_len, head_dim), dtype=torch.bfloat16, device=freqs.device)\n    sin = torch.empty((batch_size, seq_len, head_dim), dtype=torch.bfloat16, device=freqs.device)\n\n    # Grid-stride persistent loop across all (batch, seq) positions\n    total_elems = batch_size * seq_len\n    grid = [total_elems]\n\n    # Call the kernel\n    fused_sincos_kernel[grid](\n        freqs,\n        cos,\n        sin,\n        batch_size,\n        seq_len,\n        half_head_dim,\n        attention_scaling,\n        triton_pointer=freqs,\n        triton_pointer=cos,\n        triton_pointer=sin,\n    )\n\n    return cos, sin\n"
+      }
+    ]
+  }
+}

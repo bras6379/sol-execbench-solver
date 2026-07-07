@@ -1,0 +1,245 @@
+{
+  "cand_id": "eb1945517af8",
+  "task_id": 38,
+  "verdict": "dominated",
+  "sol_score": 0.4889121262837233,
+  "sol_score_calibrated": 0.4277290789890914,
+  "correct": true,
+  "vector": [
+    0.26041666666666663,
+    0.5395082688800856,
+    0.5404368039788084,
+    0.5475492249685797,
+    0.5899618153840309,
+    0.6460280373831776,
+    0.530629531069716,
+    0.5923076923076923,
+    0.590158924205379,
+    0.2834075723830735,
+    0.5391055417521876,
+    0.5463684115196522,
+    0.2829457364341086,
+    0.5578733681005215,
+    0.5107295981791758,
+    0.2651668273267181
+  ],
+  "strategy": "Single fused Triton kernel: flatten [B,S,H,D] to [N,128], expanded autotune (BLOCK_M\u2208{1..64}, num_warps\u2208{1..16}), CUDA g",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "5527f42c7ae3",
+  "trajectory": "runs/38/work/eb1945517af8/trajectory.jsonl",
+  "gpu_s": 57.783,
+  "job_id": "38-eb1945517af8",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 52.0,
+      "power_w_max": 993.06,
+      "samples": 196,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.025856,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.0104,
+      "sol_score": 0.26041666666666663,
+      "sol_score_cal": 0.2259969694882568,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.097824,
+      "sol_ms": 0.0429,
+      "baseline_latency_ms": 0.1072485,
+      "sol_score": 0.5395082688800856,
+      "sol_score_cal": 0.46677019268809766,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.060704,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.066688,
+      "sol_score": 0.5404368039788084,
+      "sol_score_cal": 0.467555038388434,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.09184,
+      "sol_ms": 0.04,
+      "baseline_latency_ms": 0.102736,
+      "sol_score": 0.5475492249685797,
+      "sol_score_cal": 0.47518057104076783,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.017792,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.0225275,
+      "sol_score": 0.5899618153840309,
+      "sol_score_cal": 0.522811799873266,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.011472,
+      "sol_ms": 0.0042,
+      "baseline_latency_ms": 0.017472,
+      "sol_score": 0.6460280373831776,
+      "sol_score_cal": 0.5840603282566907,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.061888,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.0664805,
+      "sol_score": 0.530629531069716,
+      "sol_score_cal": 0.45868528934745056,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0176,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.0224,
+      "sol_score": 0.5923076923076923,
+      "sol_score_cal": 0.5248091603053435,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.017728,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.022448,
+      "sol_score": 0.590158924205379,
+      "sol_score_cal": 0.5228754630331651,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.021792,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.009344,
+      "sol_score": 0.2834075723830735,
+      "sol_score_cal": 0.2477150838532593,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.060832,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.066624,
+      "sol_score": 0.5391055417521876,
+      "sol_score_cal": 0.46632516520647077,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.033536,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.037632,
+      "sol_score": 0.5463684115196522,
+      "sol_score_cal": 0.47748469326376974,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.02192,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.009376,
+      "sol_score": 0.2829457364341086,
+      "sol_score_cal": 0.24730194066689257,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.032448,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.0374085,
+      "sol_score": 0.5578733681005215,
+      "sol_score_cal": 0.48771338034116385,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.12039949999999999,
+      "sol_ms": 0.0529,
+      "baseline_latency_ms": 0.12336,
+      "sol_score": 0.5107295981791758,
+      "sol_score_cal": 0.4380876213169606,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0256315,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.0105274999999999,
+      "sol_score": 0.2651668273267181,
+      "sol_score_cal": 0.2302925667554734,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Problem 038 \u2014 Flux multi-head RMSNorm QK fused\n# ---------------------------------------------------------------------------\n# Single Triton kernel fusing all 6 reference ops: Q and K RMSNorm + scale.\n# head_dim=128 = 4 \u00d7 warp_size, per-row reduction fits in one warp.\n# Flatten [B,S,H,D] \u2192 [N,128], one program per BLOCK_M contiguous rows.\n# Minimum HBM traffic: 16 B/elem (read Q,K + write Qn,Kn).\n#\n# Strategy per regime:\n#   Launch-bound (B\u00d7S \u2264 256): CUDA graph captures the autotuned kernel\n#     launch once per shape, replays on subsequent calls \u2014 eliminates the\n#     ~3\u20135 \u00b5s Triton launch overhead from the ~4\u20138 \u00b5s kernel time.\n#   Memory-bound (B\u00d7S \u2265 1024): autotuned kernel directly, launch overhead\n#     is < 15% of total time.\n# ---------------------------------------------------------------------------\n\n_graph_cache = {}\n\n\ndef _configs():\n    cfgs = []\n    for bm in (1, 2, 4, 8, 16, 32, 64):\n        for nw in (1, 2, 4, 8, 16):\n            cfgs.append(triton.Config({\"BLOCK_M\": bm}, num_warps=nw))\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"N\"])\n@triton.jit\ndef _rmsnorm_qk_kernel(\n    Q_ptr, K_ptr, Wq_ptr, Wk_ptr, OQ_ptr, OK_ptr,\n    N, eps,\n    H: tl.constexpr, D: tl.constexpr, BLOCK_M: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    row_ids = pid * BLOCK_M + tl.arange(0, BLOCK_M)\n    rmask = row_ids < N\n\n    d = tl.arange(0, D)\n    offs = row_ids[:, None] * D + d[None, :]       # [BLOCK_M, D]\n    dmask = rmask[:, None]\n\n    q = tl.load(Q_ptr + offs, mask=dmask, other=0.0)\n    k = tl.load(K_ptr + offs, mask=dmask, other=0.0)\n\n    q_inv = tl.rsqrt(tl.sum(q * q, axis=1) / D + eps)\n    k_inv = tl.rsqrt(tl.sum(k * k, axis=1) / D + eps)\n\n    heads = row_ids % H\n    woffs = heads[:, None] * D + d[None, :]\n    wq = tl.load(Wq_ptr + woffs, mask=dmask, other=0.0)\n    wk = tl.load(Wk_ptr + woffs, mask=dmask, other=0.0)\n\n    qn = q * q_inv[:, None] * wq\n    kn = k * k_inv[:, None] * wk\n\n    tl.store(OQ_ptr + offs, qn, mask=dmask)\n    tl.store(OK_ptr + offs, kn, mask=dmask)\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, weight_q: torch.Tensor,\n        weight_k: torch.Tensor, eps: float):\n    B, S, H, D = query.shape\n    N = B * S * H\n\n    q2 = query.reshape(N, D)\n    k2 = key.reshape(N, D)\n    wq = weight_q.reshape(H, D)\n    wk = weight_k.reshape(H, D)\n\n    grid_fn = lambda meta: (triton.cdiv(N, meta[\"BLOCK_M\"]),)\n\n    # ------------------------------------------------------------------\n    # Launch-bound shapes (B\u00d7S \u2264 256): kernel time ~4\u20138 \u00b5s, Triton\n    # launch overhead ~3\u20135 \u00b5s \u2192 CUDA graph eliminates the overhead.\n    # ------------------------------------------------------------------\n    if B * S <= 256:\n        shape_key = (B, S, H, D)\n        if shape_key not in _graph_cache:\n            # Warm up: trigger autotuning, cache the best config.\n            out_q = torch.empty_like(q2)\n            out_k = torch.empty_like(k2)\n            _rmsnorm_qk_kernel[grid_fn](\n                q2, k2, wq, wk, out_q, out_k,\n                N, float(eps), H, D,\n            )\n            torch.cuda.synchronize()\n\n            # Capture the graph using the autotuned kernel (cached config).\n            g = torch.cuda.CUDAGraph()\n            sq = q2.clone()\n            sk = k2.clone()\n            swq = wq.clone()\n            swk = wk.clone()\n            soq = torch.empty_like(q2)\n            sok = torch.empty_like(k2)\n\n            with torch.cuda.graph(g):\n                _rmsnorm_qk_kernel[grid_fn](\n                    sq, sk, swq, swk, soq, sok,\n                    N, float(eps), H, D,\n                )\n\n            _graph_cache[shape_key] = (g, sq, sk, swq, swk, soq, sok)\n\n        g, sq, sk, swq, swk, soq, sok = _graph_cache[shape_key]\n        sq.copy_(q2)\n        sk.copy_(k2)\n        swq.copy_(wq)\n        swk.copy_(wk)\n        g.replay()\n        return soq.view(B, S, H, D), sok.view(B, S, H, D)\n\n    # ------------------------------------------------------------------\n    # Memory-bound shapes (B\u00d7S \u2265 293): autotuned kernel directly.\n    # Launch overhead < 15% of total time.\n    # ------------------------------------------------------------------\n    out_q = torch.empty_like(q2)\n    out_k = torch.empty_like(k2)\n    _rmsnorm_qk_kernel[grid_fn](\n        q2, k2, wq, wk, out_q, out_k,\n        N, float(eps), H, D,\n    )\n\n    return out_q.view(B, S, H, D), out_k.view(B, S, H, D)"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t38_eb1945517af8",
+    "definition": "038_flux_multi_head_rmsnorm_qk",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Problem 038 \u2014 Flux multi-head RMSNorm QK fused\n# ---------------------------------------------------------------------------\n# Single Triton kernel fusing all 6 reference ops: Q and K RMSNorm + scale.\n# head_dim=128 = 4 \u00d7 warp_size, per-row reduction fits in one warp.\n# Flatten [B,S,H,D] \u2192 [N,128], one program per BLOCK_M contiguous rows.\n# Minimum HBM traffic: 16 B/elem (read Q,K + write Qn,Kn).\n#\n# Strategy per regime:\n#   Launch-bound (B\u00d7S \u2264 256): CUDA graph captures the autotuned kernel\n#     launch once per shape, replays on subsequent calls \u2014 eliminates the\n#     ~3\u20135 \u00b5s Triton launch overhead from the ~4\u20138 \u00b5s kernel time.\n#   Memory-bound (B\u00d7S \u2265 1024): autotuned kernel directly, launch overhead\n#     is < 15% of total time.\n# ---------------------------------------------------------------------------\n\n_graph_cache = {}\n\n\ndef _configs():\n    cfgs = []\n    for bm in (1, 2, 4, 8, 16, 32, 64):\n        for nw in (1, 2, 4, 8, 16):\n            cfgs.append(triton.Config({\"BLOCK_M\": bm}, num_warps=nw))\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"N\"])\n@triton.jit\ndef _rmsnorm_qk_kernel(\n    Q_ptr, K_ptr, Wq_ptr, Wk_ptr, OQ_ptr, OK_ptr,\n    N, eps,\n    H: tl.constexpr, D: tl.constexpr, BLOCK_M: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    row_ids = pid * BLOCK_M + tl.arange(0, BLOCK_M)\n    rmask = row_ids < N\n\n    d = tl.arange(0, D)\n    offs = row_ids[:, None] * D + d[None, :]       # [BLOCK_M, D]\n    dmask = rmask[:, None]\n\n    q = tl.load(Q_ptr + offs, mask=dmask, other=0.0)\n    k = tl.load(K_ptr + offs, mask=dmask, other=0.0)\n\n    q_inv = tl.rsqrt(tl.sum(q * q, axis=1) / D + eps)\n    k_inv = tl.rsqrt(tl.sum(k * k, axis=1) / D + eps)\n\n    heads = row_ids % H\n    woffs = heads[:, None] * D + d[None, :]\n    wq = tl.load(Wq_ptr + woffs, mask=dmask, other=0.0)\n    wk = tl.load(Wk_ptr + woffs, mask=dmask, other=0.0)\n\n    qn = q * q_inv[:, None] * wq\n    kn = k * k_inv[:, None] * wk\n\n    tl.store(OQ_ptr + offs, qn, mask=dmask)\n    tl.store(OK_ptr + offs, kn, mask=dmask)\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, weight_q: torch.Tensor,\n        weight_k: torch.Tensor, eps: float):\n    B, S, H, D = query.shape\n    N = B * S * H\n\n    q2 = query.reshape(N, D)\n    k2 = key.reshape(N, D)\n    wq = weight_q.reshape(H, D)\n    wk = weight_k.reshape(H, D)\n\n    grid_fn = lambda meta: (triton.cdiv(N, meta[\"BLOCK_M\"]),)\n\n    # ------------------------------------------------------------------\n    # Launch-bound shapes (B\u00d7S \u2264 256): kernel time ~4\u20138 \u00b5s, Triton\n    # launch overhead ~3\u20135 \u00b5s \u2192 CUDA graph eliminates the overhead.\n    # ------------------------------------------------------------------\n    if B * S <= 256:\n        shape_key = (B, S, H, D)\n        if shape_key not in _graph_cache:\n            # Warm up: trigger autotuning, cache the best config.\n            out_q = torch.empty_like(q2)\n            out_k = torch.empty_like(k2)\n            _rmsnorm_qk_kernel[grid_fn](\n                q2, k2, wq, wk, out_q, out_k,\n                N, float(eps), H, D,\n            )\n            torch.cuda.synchronize()\n\n            # Capture the graph using the autotuned kernel (cached config).\n            g = torch.cuda.CUDAGraph()\n            sq = q2.clone()\n            sk = k2.clone()\n            swq = wq.clone()\n            swk = wk.clone()\n            soq = torch.empty_like(q2)\n            sok = torch.empty_like(k2)\n\n            with torch.cuda.graph(g):\n                _rmsnorm_qk_kernel[grid_fn](\n                    sq, sk, swq, swk, soq, sok,\n                    N, float(eps), H, D,\n                )\n\n            _graph_cache[shape_key] = (g, sq, sk, swq, swk, soq, sok)\n\n        g, sq, sk, swq, swk, soq, sok = _graph_cache[shape_key]\n        sq.copy_(q2)\n        sk.copy_(k2)\n        swq.copy_(wq)\n        swk.copy_(wk)\n        g.replay()\n        return soq.view(B, S, H, D), sok.view(B, S, H, D)\n\n    # ------------------------------------------------------------------\n    # Memory-bound shapes (B\u00d7S \u2265 293): autotuned kernel directly.\n    # Launch overhead < 15% of total time.\n    # ------------------------------------------------------------------\n    out_q = torch.empty_like(q2)\n    out_k = torch.empty_like(k2)\n    _rmsnorm_qk_kernel[grid_fn](\n        q2, k2, wq, wk, out_q, out_k,\n        N, float(eps), H, D,\n    )\n\n    return out_q.view(B, S, H, D), out_k.view(B, S, H, D)"
+      }
+    ]
+  }
+}

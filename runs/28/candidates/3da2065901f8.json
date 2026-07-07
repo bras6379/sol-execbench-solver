@@ -1,0 +1,201 @@
+{
+  "cand_id": "3da2065901f8",
+  "task_id": 28,
+  "verdict": "entered",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.8934782608695653,
+    0.7954584716970268
+  ],
+  "strategy": "CUDA-graph-cached single-Triton-launch: per-shape (T,S,past) graph captures the full-mask kernel; SWA mask via one-shot ",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "38868ed21f2d",
+  "trajectory": "runs/28/work/3da2065901f8/trajectory.jsonl",
+  "gpu_s": 14.293,
+  "job_id": "28-3da2065901f8",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 45.0,
+      "power_w_max": 786.73,
+      "samples": 42,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.001184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": 0.8934782608695653,
+      "sol_score_cal": 0.8669788634350083,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.005728,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": 0.7954584716970268,
+      "sol_score_cal": 0.7635566731842566,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n# Per-shape CUDA graph cache: (T, S, past) -> (graph, full_2d, swa_2d)\n_graph_cache = {}\n\n\n@triton.jit\ndef _full_mask2d_kernel(\n    full_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"Build the full causal [T, S] bool mask: full[i,j] = (j > i + past).\n\n    True = masked (future position, cannot attend).\n    The SWA mask is all-False (reference's masked_fill on zeros is a no-op),\n    so we use a one-shot torch.zeros (hardware memset) and never re-write it.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask_m = offs_m < T\n    mask_n = offs_n < S\n    store_mask = mask_m[:, None] & mask_n[None, :]\n\n    i = offs_m[:, None]\n    j = offs_n[None, :]\n\n    full_val = j > (i + past)\n\n    out_offs = offs_m[:, None] * S + offs_n[None, :]\n    tl.store(full_ptr + out_offs, full_val.to(tl.int8), mask=store_mask)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation \u2014 CUDA-graph-cached single-launch 2D build.\n\n    Both 4D outputs are pure broadcasts over (batch, head).  We cache a\n    per-shape CUDA graph that captures the Triton kernel launch, eliminating\n    dispatch overhead on every call after the first.  The SWA mask is all-False\n    (reference no-op); we use a one-shot torch.zeros (hardware memset) so the\n    kernel only writes the unique full-causal T*S pattern.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    key = (T, S, past)\n\n    if key not in _graph_cache:\n        device = torch.device(\"cuda\")\n        full_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n        swa_2d = torch.zeros((T, S), dtype=torch.bool, device=device)\n\n        BLOCK_M = 64\n        BLOCK_N = 128\n        grid = (triton.cdiv(T, BLOCK_M), triton.cdiv(S, BLOCK_N))\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            _full_mask2d_kernel[grid](\n                full_2d, T, S, past,\n                BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N,\n            )\n\n        _graph_cache[key] = (graph, full_2d, swa_2d)\n    else:\n        graph, full_2d, swa_2d = _graph_cache[key]\n        graph.replay()\n\n    full_attention_mask = full_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_FULL_HEADS, T, S\n    )\n    sliding_window_attention_mask = swa_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_SWA_HEADS, T, S\n    )\n\n    return full_attention_mask, sliding_window_attention_mask"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_3da2065901f8",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n# Per-shape CUDA graph cache: (T, S, past) -> (graph, full_2d, swa_2d)\n_graph_cache = {}\n\n\n@triton.jit\ndef _full_mask2d_kernel(\n    full_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"Build the full causal [T, S] bool mask: full[i,j] = (j > i + past).\n\n    True = masked (future position, cannot attend).\n    The SWA mask is all-False (reference's masked_fill on zeros is a no-op),\n    so we use a one-shot torch.zeros (hardware memset) and never re-write it.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask_m = offs_m < T\n    mask_n = offs_n < S\n    store_mask = mask_m[:, None] & mask_n[None, :]\n\n    i = offs_m[:, None]\n    j = offs_n[None, :]\n\n    full_val = j > (i + past)\n\n    out_offs = offs_m[:, None] * S + offs_n[None, :]\n    tl.store(full_ptr + out_offs, full_val.to(tl.int8), mask=store_mask)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation \u2014 CUDA-graph-cached single-launch 2D build.\n\n    Both 4D outputs are pure broadcasts over (batch, head).  We cache a\n    per-shape CUDA graph that captures the Triton kernel launch, eliminating\n    dispatch overhead on every call after the first.  The SWA mask is all-False\n    (reference no-op); we use a one-shot torch.zeros (hardware memset) so the\n    kernel only writes the unique full-causal T*S pattern.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    key = (T, S, past)\n\n    if key not in _graph_cache:\n        device = torch.device(\"cuda\")\n        full_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n        swa_2d = torch.zeros((T, S), dtype=torch.bool, device=device)\n\n        BLOCK_M = 64\n        BLOCK_N = 128\n        grid = (triton.cdiv(T, BLOCK_M), triton.cdiv(S, BLOCK_N))\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            _full_mask2d_kernel[grid](\n                full_2d, T, S, past,\n                BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N,\n            )\n\n        _graph_cache[key] = (graph, full_2d, swa_2d)\n    else:\n        graph, full_2d, swa_2d = _graph_cache[key]\n        graph.replay()\n\n    full_attention_mask = full_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_FULL_HEADS, T, S\n    )\n    sliding_window_attention_mask = swa_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_SWA_HEADS, T, S\n    )\n\n    return full_attention_mask, sliding_window_attention_mask"
+      }
+    ]
+  }
+}

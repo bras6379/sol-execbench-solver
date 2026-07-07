@@ -1,0 +1,245 @@
+{
+  "cand_id": "f39f803e91d9",
+  "task_id": 14,
+  "verdict": "dominated",
+  "sol_score": 0.8979228624235659,
+  "sol_score_calibrated": 0.8780479233007062,
+  "correct": true,
+  "vector": [
+    0.9330446369087275,
+    0.9422406861431252,
+    0.9529067815024791,
+    0.9398772187374883,
+    0.9526984126984127,
+    0.943182676760808,
+    0.9441073866221751,
+    0.93974856225759,
+    0.5651561871564553,
+    0.949424405218726,
+    0.9289160149111907,
+    0.9398451061556949,
+    0.9375671190081032,
+    0.9518407191383907,
+    0.6061500948252506,
+    0.9400597907324364
+  ],
+  "strategy": "Fused Triton RoPE-emb backward; fix cold-L2 coalescing landmine: force BLOCK_D>=16 everywhere (>=32B/row = full-sector r",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "a8f3f0376b72",
+  "trajectory": "runs/14/work/f39f803e91d9/trajectory.jsonl",
+  "gpu_s": 131.585,
+  "job_id": "14-f39f803e91d9",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 602.01,
+      "samples": 452,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.00512,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05712,
+      "sol_score": 0.9330446369087275,
+      "sol_score_cal": 0.9181679909789421,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.004448,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.057248,
+      "sol_score": 0.9422406861431252,
+      "sol_score_cal": 0.9290875358764424,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.002784,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048639,
+      "sol_score": 0.9529067815024791,
+      "sol_score_cal": 0.9430528175264448,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.004704,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05744,
+      "sol_score": 0.9398772187374883,
+      "sol_score_cal": 0.9260695988806953,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.002784,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048416,
+      "sol_score": 0.9526984126984127,
+      "sol_score_cal": 0.9428034658473292,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.00496,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.063617,
+      "sol_score": 0.943182676760808,
+      "sol_score_cal": 0.9299397789610754,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.003648,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.050496,
+      "sol_score": 0.9441073866221751,
+      "sol_score_cal": 0.9318615973315928,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.004704,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057312,
+      "sol_score": 0.93974856225759,
+      "sol_score_cal": 0.9259137245806934,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.042448,
+      "sol_ms": 0.0165,
+      "baseline_latency_ms": 0.050224,
+      "sol_score": 0.5651561871564553,
+      "sol_score_cal": 0.4978658673412747,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.003136,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.049984,
+      "sol_score": 0.949424405218726,
+      "sol_score_cal": 0.9386931897509363,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.01088,
+      "sol_ms": 0.0031,
+      "baseline_latency_ms": 0.104768,
+      "sol_score": 0.9289160149111907,
+      "sol_score_cal": 0.9116963427407206,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.004704,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057408,
+      "sol_score": 0.9398451061556949,
+      "sol_score_cal": 0.9260306918291952,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.006816,
+      "sol_ms": 0.0017,
+      "baseline_latency_ms": 0.078528,
+      "sol_score": 0.9375671190081032,
+      "sol_score_cal": 0.92298037074911,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0030555,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.051008,
+      "sol_score": 0.9518407191383907,
+      "sol_score_cal": 0.9415397366100935,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.10244800000000001,
+      "sol_ms": 0.0443,
+      "baseline_latency_ms": 0.133792,
+      "sol_score": 0.6061500948252506,
+      "sol_score_cal": 0.5355431359613636,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.003808,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.050912,
+      "sol_score": 0.9400597907324364,
+      "sol_score_cal": 0.9275209278453905,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# RoPE-backward (grad_position_ids) \u2014 strictly memory-bound.\n#\n# Per output element (b, s):\n#   grad_position_ids[b,s] = sum_d  inv_freq[b,d] * (\n#         (gc[:,d]+gc[:,d+64]) * (-sin(emb[:,d])) * scale\n#       + (gs[:,d]+gs[:,d+64]) * ( cos(emb[:,d])) * scale )\n#\n# Byte floor per (b,s): read gc(256B) + gs(256B) + emb_half(256B), write 4B.\n# We read only emb[..., :64] (the second half is a duplicate the reference never\n# touches) \u2014 halving emb traffic vs the naive contiguous read.\n#\n# The whole game on the two big streaming shapes (#8 B=64/S=3011, #14 B=64/S=8192)\n# is achieved-HBM-BW% under the SCORED cold-L2 condition.  The prior 0.885\n# frontier left ~40% of BW on the table there, and the cause is a COALESCING\n# landmine that only shows up cold:\n#\n#   B200 L2 is sectored at 32 B.  A per-row bf16 load of BLOCK_D elements spans\n#   BLOCK_D*2 contiguous bytes; the next row is 256 B away (a separate sector).\n#     * BLOCK_D=8  -> 16 B/row  -> touches a 32 B sector at 50% fill -> ~50% BW.\n#     * BLOCK_D>=16 -> >=32 B/row -> full sector(s) -> ~100% BW.\n#   Triton's @autotune benchmarks WARM-L2, where the 50% penalty is invisible\n#   (L2 hit), so it can pick the low-register BLOCK_D=8 config for its higher\n#   occupancy \u2014 a cold-L2 disaster the scored run pays for.\n#\n# Two changes vs the 0.885 frontier, both attacking that:\n#   1. Every autotune config now has BLOCK_D>=16 (16/32/64 all divide 64 -> no\n#      partial-d masking) so no shape can land on the 16-byte-transaction path.\n#   2. The two large cold-streaming shapes (B*S >= 100k = only #8 and #14) are\n#      hard-dispatched to a fixed coalesced+pipelined config, bypassing the\n#      warm-biased tuner entirely.  BLOCK_D=32 -> 64 B/row (128-bit vectorised,\n#      full sectors); small BLOCK_M -> no register spills, high occupancy for\n#      DRAM-latency hiding; evict_first -> single-use lines stream through L2\n#      without write-allocate thrash; num_stages=2 -> prefetch next d-tile.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _ld(ptr, mask, EVICT: tl.constexpr):\n    # Literal-string eviction policy chosen by a compile-time constexpr branch\n    # (bulletproof across Triton versions \u2014 no computed policy strings).\n    if EVICT == 1:\n        x = tl.load(ptr, mask=mask, other=0.0, eviction_policy=\"evict_first\")\n    else:\n        x = tl.load(ptr, mask=mask, other=0.0)\n    return x\n\n\ndef _cfg(bm, bd, warps, evict=0, stages=None):\n    kw = {} if stages is None else {\"num_stages\": stages}\n    return triton.Config({\"BLOCK_M\": bm, \"BLOCK_D\": bd, \"EVICT\": evict},\n                         num_warps=warps, **kw)\n\n\n# All BLOCK_D >= 16 (16/32/64 all divide half_dim=64) -> every per-row load is\n# >= 32 B -> full-sector coalesced cold-L2.  No BLOCK_D=8 anywhere.\n_CONFIGS = [\n    # --- tiny / launch-bound (small B\u00b7S): few chunks, low overhead, many blocks\n    _cfg(16, 64, 4), _cfg(16, 32, 4),\n    _cfg(32, 64, 4), _cfg(32, 32, 4), _cfg(32, 16, 4),\n    _cfg(64, 64, 4), _cfg(64, 32, 4), _cfg(64, 16, 4),\n    # --- medium\n    _cfg(128, 16, 8), _cfg(128, 32, 8), _cfg(128, 64, 8),\n    _cfg(256, 16, 8), _cfg(256, 32, 8),\n    _cfg(256, 16, 16), _cfg(256, 32, 16),\n    # --- big / memory-bound: coalesced (BD>=16) + streaming eviction + pipelining\n    _cfg(128, 32, 8, evict=1), _cfg(128, 32, 8, evict=1, stages=2),\n    _cfg(256, 16, 8, evict=1), _cfg(256, 16, 16, evict=1),\n    _cfg(256, 32, 8, evict=1), _cfg(256, 32, 16, evict=1),\n    _cfg(256, 16, 8, evict=1, stages=3), _cfg(256, 32, 8, evict=1, stages=2),\n    _cfg(512, 16, 16), _cfg(512, 16, 16, evict=1), _cfg(512, 16, 8, evict=1),\n    _cfg(64, 32, 8, evict=1), _cfg(64, 32, 8, evict=1, stages=2),\n]\n\n\n@triton.jit\ndef _rope_bwd_kernel(\n    grad_cos_ptr,\n    grad_sin_ptr,\n    emb_ptr,\n    inv_freq_ptr,\n    out_ptr,\n    B,\n    S,\n    stride_gcos_b,\n    stride_gcos_s,\n    stride_gcos_h,\n    stride_gsin_b,\n    stride_gsin_s,\n    stride_gsin_h,\n    stride_emb_b,\n    stride_emb_s,\n    stride_emb_h,\n    stride_inv_b,\n    stride_inv_d,\n    stride_out_b,\n    stride_out_s,\n    scale: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n    HALF_DIM: tl.constexpr = 64,\n    HEAD_DIM: tl.constexpr = 128,\n):\n    pid_b = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    mask_m = offs_m < S\n\n    # Base pointers for this batch + tile rows (row-major: contiguous along head_dim)\n    base_gcos = grad_cos_ptr + pid_b * stride_gcos_b + offs_m[:, None] * stride_gcos_s\n    base_gsin = grad_sin_ptr + pid_b * stride_gsin_b + offs_m[:, None] * stride_gsin_s\n    base_emb = emb_ptr + pid_b * stride_emb_b + offs_m[:, None] * stride_emb_s\n\n    # Accumulator for the dot product over half_dim\n    acc = tl.zeros([BLOCK_M], dtype=tl.float32)\n\n    # Chunk half_dim (64) into BLOCK_D-sized tiles.  BLOCK_D \u2208 {16,32,64} always\n    # divides 64 (full d-tiles, no partial-d masking) and yields >= 32 B per-row\n    # loads -> full-sector coalesced cold-L2 reads.\n    for d_start in tl.range(0, HALF_DIM, BLOCK_D):\n        offs_d = d_start + tl.arange(0, BLOCK_D)\n        mask = mask_m[:, None]  # d is always in-range (BLOCK_D | 64)\n\n        # bf16 gradient halves (single-use \u2192 streaming eviction hint).\n        gc_first = _ld(base_gcos + offs_d[None, :] * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gc_second = _ld(base_gcos + (offs_d[None, :] + HALF_DIM) * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gs_first = _ld(base_gsin + offs_d[None, :] * stride_gsin_h, mask, EVICT).to(tl.float32)\n        gs_second = _ld(base_gsin + (offs_d[None, :] + HALF_DIM) * stride_gsin_h, mask, EVICT).to(tl.float32)\n\n        # Sum the two halves (forward concatenated freqs \u2192 both contribute)\n        gc = gc_first + gc_second\n        gs = gs_first + gs_second\n\n        # emb (fp32) \u2014 only the first half; second half is a duplicate.\n        emb_half = _ld(base_emb + offs_d[None, :] * stride_emb_h, mask, EVICT)\n\n        # inv_freq chunk for this batch (tiny, reused \u2192 keep default/L2-resident)\n        inv_chunk = tl.load(\n            inv_freq_ptr + pid_b * stride_inv_b + offs_d * stride_inv_d\n        )\n\n        # Chain rule: d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        sin_half = tl.sin(emb_half)\n        cos_half = tl.cos(emb_half)\n\n        # grad_emb = gc * (-sin) * scale + gs * cos * scale  (scale kept per-element\n        # to bit-match the reference's arithmetic order under the 1e-5 tolerance).\n        grad_emb = gc * (-sin_half) * scale + gs * cos_half * scale\n\n        # Collapse the tiny (1 \u00d7 HALF_DIM) @ (HALF_DIM \u00d7 S) bmm into a fused\n        # pointwise-multiply + reduce over the d-tile.\n        acc += tl.sum(grad_emb * inv_chunk[None, :], axis=1)\n\n    tl.store(\n        out_ptr + pid_b * stride_out_b + offs_m * stride_out_s,\n        acc,\n        mask=mask_m,\n    )\n\n\n# Autotuned wrapper (small / medium shapes: launch-bound, warm\u2248cold since data\n# fits in L2 \u2014 the tuner is trustworthy here).\n_rope_bwd_autotuned = triton.autotune(configs=_CONFIGS, key=[\"B\", \"S\"])(\n    _rope_bwd_kernel\n)\n\n# Fixed cold-L2-optimal config for the two big streaming shapes (B*S >= 100k =\n# #8 and #14 only).  Chosen by roofline, NOT by the warm-biased tuner:\n#   BLOCK_D=32  -> 64 B/row loads, 128-bit vectorised, full-sector coalesced.\n#   BLOCK_M=64  -> [64,32] tiles, no register spills, high occupancy (hides DRAM\n#                  latency with many resident warps) and plenty of blocks\n#                  (>=3k for both shapes) for load balance.\n#   EVICT=1     -> single-use cold lines stream through L2 (no write-allocate).\n#   num_stages=2 -> prefetch the next d-tile while reducing the current one.\n_BIG_BLOCK_M = 64\n_BIG_BLOCK_D = 32\n_BIG_WARPS = 8\n_BIG_STAGES = 2\n_BIG_THRESHOLD = 100_000\n\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    emb: torch.Tensor,\n    inv_freq_expanded: torch.Tensor,\n    attention_scaling: float,\n) -> torch.Tensor:\n    B, S, _ = emb.shape\n    out = torch.empty(B, S, dtype=torch.float32, device=grad_cos.device)\n\n    args = (\n        grad_cos,\n        grad_sin,\n        emb,\n        inv_freq_expanded,\n        out,\n        B,\n        S,\n        grad_cos.stride(0),\n        grad_cos.stride(1),\n        grad_cos.stride(2),\n        grad_sin.stride(0),\n        grad_sin.stride(1),\n        grad_sin.stride(2),\n        emb.stride(0),\n        emb.stride(1),\n        emb.stride(2),\n        inv_freq_expanded.stride(0),\n        inv_freq_expanded.stride(1),\n        out.stride(0),\n        out.stride(1),\n    )\n\n    if B * S >= _BIG_THRESHOLD:\n        # Big cold-streaming shapes: fixed coalesced config, bypass the tuner.\n        grid = (B, triton.cdiv(S, _BIG_BLOCK_M))\n        _rope_bwd_kernel[grid](\n            *args,\n            scale=float(attention_scaling),\n            BLOCK_M=_BIG_BLOCK_M,\n            BLOCK_D=_BIG_BLOCK_D,\n            EVICT=1,\n            num_warps=_BIG_WARPS,\n            num_stages=_BIG_STAGES,\n        )\n    else:\n        # Small / medium shapes: launch-bound, warm\u2248cold \u2014 trust the tuner.\n        grid = lambda meta: (B, triton.cdiv(S, meta[\"BLOCK_M\"]))\n        _rope_bwd_autotuned[grid](\n            *args,\n            scale=float(attention_scaling),\n        )\n\n    return out\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t14_f39f803e91d9",
+    "definition": "014_rotary_embedding_with_attention_scaling_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# RoPE-backward (grad_position_ids) \u2014 strictly memory-bound.\n#\n# Per output element (b, s):\n#   grad_position_ids[b,s] = sum_d  inv_freq[b,d] * (\n#         (gc[:,d]+gc[:,d+64]) * (-sin(emb[:,d])) * scale\n#       + (gs[:,d]+gs[:,d+64]) * ( cos(emb[:,d])) * scale )\n#\n# Byte floor per (b,s): read gc(256B) + gs(256B) + emb_half(256B), write 4B.\n# We read only emb[..., :64] (the second half is a duplicate the reference never\n# touches) \u2014 halving emb traffic vs the naive contiguous read.\n#\n# The whole game on the two big streaming shapes (#8 B=64/S=3011, #14 B=64/S=8192)\n# is achieved-HBM-BW% under the SCORED cold-L2 condition.  The prior 0.885\n# frontier left ~40% of BW on the table there, and the cause is a COALESCING\n# landmine that only shows up cold:\n#\n#   B200 L2 is sectored at 32 B.  A per-row bf16 load of BLOCK_D elements spans\n#   BLOCK_D*2 contiguous bytes; the next row is 256 B away (a separate sector).\n#     * BLOCK_D=8  -> 16 B/row  -> touches a 32 B sector at 50% fill -> ~50% BW.\n#     * BLOCK_D>=16 -> >=32 B/row -> full sector(s) -> ~100% BW.\n#   Triton's @autotune benchmarks WARM-L2, where the 50% penalty is invisible\n#   (L2 hit), so it can pick the low-register BLOCK_D=8 config for its higher\n#   occupancy \u2014 a cold-L2 disaster the scored run pays for.\n#\n# Two changes vs the 0.885 frontier, both attacking that:\n#   1. Every autotune config now has BLOCK_D>=16 (16/32/64 all divide 64 -> no\n#      partial-d masking) so no shape can land on the 16-byte-transaction path.\n#   2. The two large cold-streaming shapes (B*S >= 100k = only #8 and #14) are\n#      hard-dispatched to a fixed coalesced+pipelined config, bypassing the\n#      warm-biased tuner entirely.  BLOCK_D=32 -> 64 B/row (128-bit vectorised,\n#      full sectors); small BLOCK_M -> no register spills, high occupancy for\n#      DRAM-latency hiding; evict_first -> single-use lines stream through L2\n#      without write-allocate thrash; num_stages=2 -> prefetch next d-tile.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _ld(ptr, mask, EVICT: tl.constexpr):\n    # Literal-string eviction policy chosen by a compile-time constexpr branch\n    # (bulletproof across Triton versions \u2014 no computed policy strings).\n    if EVICT == 1:\n        x = tl.load(ptr, mask=mask, other=0.0, eviction_policy=\"evict_first\")\n    else:\n        x = tl.load(ptr, mask=mask, other=0.0)\n    return x\n\n\ndef _cfg(bm, bd, warps, evict=0, stages=None):\n    kw = {} if stages is None else {\"num_stages\": stages}\n    return triton.Config({\"BLOCK_M\": bm, \"BLOCK_D\": bd, \"EVICT\": evict},\n                         num_warps=warps, **kw)\n\n\n# All BLOCK_D >= 16 (16/32/64 all divide half_dim=64) -> every per-row load is\n# >= 32 B -> full-sector coalesced cold-L2.  No BLOCK_D=8 anywhere.\n_CONFIGS = [\n    # --- tiny / launch-bound (small B\u00b7S): few chunks, low overhead, many blocks\n    _cfg(16, 64, 4), _cfg(16, 32, 4),\n    _cfg(32, 64, 4), _cfg(32, 32, 4), _cfg(32, 16, 4),\n    _cfg(64, 64, 4), _cfg(64, 32, 4), _cfg(64, 16, 4),\n    # --- medium\n    _cfg(128, 16, 8), _cfg(128, 32, 8), _cfg(128, 64, 8),\n    _cfg(256, 16, 8), _cfg(256, 32, 8),\n    _cfg(256, 16, 16), _cfg(256, 32, 16),\n    # --- big / memory-bound: coalesced (BD>=16) + streaming eviction + pipelining\n    _cfg(128, 32, 8, evict=1), _cfg(128, 32, 8, evict=1, stages=2),\n    _cfg(256, 16, 8, evict=1), _cfg(256, 16, 16, evict=1),\n    _cfg(256, 32, 8, evict=1), _cfg(256, 32, 16, evict=1),\n    _cfg(256, 16, 8, evict=1, stages=3), _cfg(256, 32, 8, evict=1, stages=2),\n    _cfg(512, 16, 16), _cfg(512, 16, 16, evict=1), _cfg(512, 16, 8, evict=1),\n    _cfg(64, 32, 8, evict=1), _cfg(64, 32, 8, evict=1, stages=2),\n]\n\n\n@triton.jit\ndef _rope_bwd_kernel(\n    grad_cos_ptr,\n    grad_sin_ptr,\n    emb_ptr,\n    inv_freq_ptr,\n    out_ptr,\n    B,\n    S,\n    stride_gcos_b,\n    stride_gcos_s,\n    stride_gcos_h,\n    stride_gsin_b,\n    stride_gsin_s,\n    stride_gsin_h,\n    stride_emb_b,\n    stride_emb_s,\n    stride_emb_h,\n    stride_inv_b,\n    stride_inv_d,\n    stride_out_b,\n    stride_out_s,\n    scale: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n    HALF_DIM: tl.constexpr = 64,\n    HEAD_DIM: tl.constexpr = 128,\n):\n    pid_b = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    mask_m = offs_m < S\n\n    # Base pointers for this batch + tile rows (row-major: contiguous along head_dim)\n    base_gcos = grad_cos_ptr + pid_b * stride_gcos_b + offs_m[:, None] * stride_gcos_s\n    base_gsin = grad_sin_ptr + pid_b * stride_gsin_b + offs_m[:, None] * stride_gsin_s\n    base_emb = emb_ptr + pid_b * stride_emb_b + offs_m[:, None] * stride_emb_s\n\n    # Accumulator for the dot product over half_dim\n    acc = tl.zeros([BLOCK_M], dtype=tl.float32)\n\n    # Chunk half_dim (64) into BLOCK_D-sized tiles.  BLOCK_D \u2208 {16,32,64} always\n    # divides 64 (full d-tiles, no partial-d masking) and yields >= 32 B per-row\n    # loads -> full-sector coalesced cold-L2 reads.\n    for d_start in tl.range(0, HALF_DIM, BLOCK_D):\n        offs_d = d_start + tl.arange(0, BLOCK_D)\n        mask = mask_m[:, None]  # d is always in-range (BLOCK_D | 64)\n\n        # bf16 gradient halves (single-use \u2192 streaming eviction hint).\n        gc_first = _ld(base_gcos + offs_d[None, :] * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gc_second = _ld(base_gcos + (offs_d[None, :] + HALF_DIM) * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gs_first = _ld(base_gsin + offs_d[None, :] * stride_gsin_h, mask, EVICT).to(tl.float32)\n        gs_second = _ld(base_gsin + (offs_d[None, :] + HALF_DIM) * stride_gsin_h, mask, EVICT).to(tl.float32)\n\n        # Sum the two halves (forward concatenated freqs \u2192 both contribute)\n        gc = gc_first + gc_second\n        gs = gs_first + gs_second\n\n        # emb (fp32) \u2014 only the first half; second half is a duplicate.\n        emb_half = _ld(base_emb + offs_d[None, :] * stride_emb_h, mask, EVICT)\n\n        # inv_freq chunk for this batch (tiny, reused \u2192 keep default/L2-resident)\n        inv_chunk = tl.load(\n            inv_freq_ptr + pid_b * stride_inv_b + offs_d * stride_inv_d\n        )\n\n        # Chain rule: d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        sin_half = tl.sin(emb_half)\n        cos_half = tl.cos(emb_half)\n\n        # grad_emb = gc * (-sin) * scale + gs * cos * scale  (scale kept per-element\n        # to bit-match the reference's arithmetic order under the 1e-5 tolerance).\n        grad_emb = gc * (-sin_half) * scale + gs * cos_half * scale\n\n        # Collapse the tiny (1 \u00d7 HALF_DIM) @ (HALF_DIM \u00d7 S) bmm into a fused\n        # pointwise-multiply + reduce over the d-tile.\n        acc += tl.sum(grad_emb * inv_chunk[None, :], axis=1)\n\n    tl.store(\n        out_ptr + pid_b * stride_out_b + offs_m * stride_out_s,\n        acc,\n        mask=mask_m,\n    )\n\n\n# Autotuned wrapper (small / medium shapes: launch-bound, warm\u2248cold since data\n# fits in L2 \u2014 the tuner is trustworthy here).\n_rope_bwd_autotuned = triton.autotune(configs=_CONFIGS, key=[\"B\", \"S\"])(\n    _rope_bwd_kernel\n)\n\n# Fixed cold-L2-optimal config for the two big streaming shapes (B*S >= 100k =\n# #8 and #14 only).  Chosen by roofline, NOT by the warm-biased tuner:\n#   BLOCK_D=32  -> 64 B/row loads, 128-bit vectorised, full-sector coalesced.\n#   BLOCK_M=64  -> [64,32] tiles, no register spills, high occupancy (hides DRAM\n#                  latency with many resident warps) and plenty of blocks\n#                  (>=3k for both shapes) for load balance.\n#   EVICT=1     -> single-use cold lines stream through L2 (no write-allocate).\n#   num_stages=2 -> prefetch the next d-tile while reducing the current one.\n_BIG_BLOCK_M = 64\n_BIG_BLOCK_D = 32\n_BIG_WARPS = 8\n_BIG_STAGES = 2\n_BIG_THRESHOLD = 100_000\n\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    emb: torch.Tensor,\n    inv_freq_expanded: torch.Tensor,\n    attention_scaling: float,\n) -> torch.Tensor:\n    B, S, _ = emb.shape\n    out = torch.empty(B, S, dtype=torch.float32, device=grad_cos.device)\n\n    args = (\n        grad_cos,\n        grad_sin,\n        emb,\n        inv_freq_expanded,\n        out,\n        B,\n        S,\n        grad_cos.stride(0),\n        grad_cos.stride(1),\n        grad_cos.stride(2),\n        grad_sin.stride(0),\n        grad_sin.stride(1),\n        grad_sin.stride(2),\n        emb.stride(0),\n        emb.stride(1),\n        emb.stride(2),\n        inv_freq_expanded.stride(0),\n        inv_freq_expanded.stride(1),\n        out.stride(0),\n        out.stride(1),\n    )\n\n    if B * S >= _BIG_THRESHOLD:\n        # Big cold-streaming shapes: fixed coalesced config, bypass the tuner.\n        grid = (B, triton.cdiv(S, _BIG_BLOCK_M))\n        _rope_bwd_kernel[grid](\n            *args,\n            scale=float(attention_scaling),\n            BLOCK_M=_BIG_BLOCK_M,\n            BLOCK_D=_BIG_BLOCK_D,\n            EVICT=1,\n            num_warps=_BIG_WARPS,\n            num_stages=_BIG_STAGES,\n        )\n    else:\n        # Small / medium shapes: launch-bound, warm\u2248cold \u2014 trust the tuner.\n        grid = lambda meta: (B, triton.cdiv(S, meta[\"BLOCK_M\"]))\n        _rope_bwd_autotuned[grid](\n            *args,\n            scale=float(attention_scaling),\n        )\n\n    return out\n"
+      }
+    ]
+  }
+}

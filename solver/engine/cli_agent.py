@@ -159,22 +159,40 @@ _REVIEW = (
     "problem's history (what's already been tried and failed) if useful. The kb/\n"
     "directory is the same B200 knowledge base the writer had (kb/README.md index) —\n"
     "check it for KNOWN correctness pitfalls specific to this op's technique (e.g. a\n"
-    "documented Triton masking gotcha, a CUDA-graph static-buffer trap) before you\n"
-    "flag something as a guess.\n"
+    "documented Triton masking gotcha, a CUDA-graph static-buffer trap, or the grader\n"
+    "comparing against a bf16-ROUNDED reference rather than fp32 — a plain fp32 port can\n"
+    "fail tolerance purely from rounding-order mismatch) before you flag something as a\n"
+    "guess.\n"
+    "REQUIRED STEP — do not skip: pick the single trickiest graded shape in workloads.md\n"
+    "(smallest, most irregular, or highest-risk for the launch config used) and manually\n"
+    "trace it by hand — write out the actual grid/block dims, loop bounds, and mask\n"
+    "conditions the kernel would compute for THAT shape's real numbers. Most real bugs\n"
+    "only show up on one specific shape, not in the general logic, and 'the logic looks\n"
+    "right' without doing this trace is not a verified SHIP.\n"
     "Read the kernel file(s) line by line against reference.py and workloads.md. Look\n"
     "specifically for: (1) mixed C++/Python source files (instant reject); (2) the\n"
     "entry function's name/params not matching reference.py's `run` exactly; (3)\n"
     "grid/block launch config or bounds checks that don't cover every graded shape in\n"
-    "workloads.md (the #1 real failure mode — trace through the actual numbers); (4)\n"
-    "reduction order / masking / accumulation dtype that would silently drift from the\n"
-    "reference's numerics; (5) output shape/dtype mismatches; (6) threading, timer\n"
-    "monkey-patching, or try/except around the entry body (reward-hack rejects).\n"
-    "You have NO GPU either — this is a careful READ, not an execution test.\n"
+    "workloads.md — this is the #1 real failure mode, confirmed by your hand trace above;\n"
+    "(4) reduction order / masking / accumulation dtype that would silently drift from\n"
+    "the reference's numerics (fp16/bf16 accumulation without an fp32 accumulator,\n"
+    "non-deterministic atomic-add ordering across thread blocks, a rounding step done in\n"
+    "a different order/dtype than the reference); (5) output shape/dtype mismatches; (6)\n"
+    "threading, timer monkey-patching, or try/except around the entry body (reward-hack\n"
+    "rejects).\n"
+    "You have NO GPU either — this is a careful READ, not an execution test. Because of\n"
+    "that, treat 'I traced it and it holds' and 'I couldn't fully verify this' as\n"
+    "DIFFERENT outcomes: if the hand trace surfaces ANY step you can't confidently follow\n"
+    "through to the reference's exact numeric result — not just a definite bug — that is\n"
+    "grounds for REVISE with a specific question, not a ship on faith. Reserve SHIP for\n"
+    "when you actually completed the trace and it checked out; do not revise on pure\n"
+    "style with no numeric stake.\n"
     "Write your verdict to review.md in EXACTLY this format: the first line is either\n"
-    "'VERDICT: SHIP' or 'VERDICT: REVISE', and if REVISE, followed by a markdown bullet\n"
-    "list of the SPECIFIC issues found (name the exact line/shape/variable — 'looks\n"
-    "risky' is not actionable). Ship if you find no CONCRETE bug — do not revise purely\n"
-    "on style or a hunch. Write nothing else; only the review.md file."
+    "'VERDICT: SHIP' or 'VERDICT: REVISE'; the second line is your one-sentence hand-trace\n"
+    "result (the shape you chose and what it confirmed or couldn't confirm); if REVISE,\n"
+    "followed by a markdown bullet list of the SPECIFIC issues found (name the exact\n"
+    "line/shape/variable — 'looks risky' is not actionable). Write nothing else; only the\n"
+    "review.md file."
 )
 
 
@@ -204,7 +222,10 @@ def _parse_tokens(schema: str, raw: str) -> dict:
                       "cached": u.get("cached_input_tokens")}
         elif schema == "claude" and e.get("type") == "result":
             u = e.get("usage") or {}
+            cache_read = u.get("cache_read_input_tokens") or 0
+            cache_creation = u.get("cache_creation_input_tokens") or 0
             tokens = {"in": u.get("input_tokens"), "out": u.get("output_tokens"),
+                      "cached": (cache_read + cache_creation) or None,
                       "cost_usd": e.get("total_cost_usd")}
     return {k: v for k, v in tokens.items() if v is not None}
 
@@ -238,13 +259,14 @@ class CliAgent:
                              f"(add it to .env) to reach {self.spec.base_url}")
         return {"ANTHROPIC_BASE_URL": self.spec.base_url, "ANTHROPIC_AUTH_TOKEN": key}
 
-    async def design(self, task_id: int) -> str:
+    async def design(self, task_id: int) -> tuple[str, dict]:
         wd = self._workdir(task_id, "design")
         self._write_problem(wd, task_id)
         self._write_kb(wd)
-        await self._run(wd, _DESIGN)
+        res = await self._run(wd, _DESIGN)
         f = wd / F_DESIGN
-        return f.read_text().strip() if f.exists() else "(no design produced)"
+        text = f.read_text().strip() if f.exists() else "(no design produced)"
+        return text, (res.tokens or {})
 
     async def plan(self, parent, ctx) -> Candidate:
         self._seq += 1
@@ -260,12 +282,15 @@ class CliAgent:
         hf = wd / F_HANDOFF
         handoff = (hf.read_text().strip()[:600] if hf.exists() else "") or None
         cand_id = solution_hash(solution)[:12]
-        wd = self._rekey_workdir(wd, ctx.task_id, cand_id)   # kernel + trajectory + inputs, keyed by cand
+        # kernel + trajectory + inputs, keyed by cand — traj_path is THIS call's own
+        # trajectory even on a hash collision (a no-op/duplicate), so every attempt
+        # stays debuggable instead of being silently deleted (see _rekey_workdir).
+        wd, traj_path = self._rekey_workdir(wd, ctx.task_id, cand_id)
         return Candidate(cand_id=cand_id, solution=solution,
                          parent=getattr(parent, "cand_id", None),
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
-                         trajectory=str(wd / "trajectory.jsonl"))
+                         trajectory=str(traj_path))
 
     async def review(self, cand: Candidate, ctx) -> ReviewVerdict:
         """Pre-GPU code review: an INDEPENDENT (agent,model) — never the one that
@@ -282,6 +307,7 @@ class CliAgent:
         f = wd / F_REVIEW
         verdict = _parse_review(f.read_text() if f.exists() else "", reviewer=f"{self.spec.name}:{self.model}")
         verdict.cost_usd = (res.tokens or {}).get("cost_usd") or 0.0
+        verdict.tokens = res.tokens or {}
         return verdict
 
     # ---- helpers ----
@@ -290,17 +316,32 @@ class CliAgent:
         wd.mkdir(parents=True, exist_ok=True)
         return wd
 
-    def _rekey_workdir(self, wd: Path, task_id, cand_id: str) -> Path:
+    def _rekey_workdir(self, wd: Path, task_id, cand_id: str) -> tuple[Path, Path]:
         """Rename the plan workdir to be keyed by cand_id, so the kernel and its
-        trajectory persist together under runs/<task>/work/<cand_id>/."""
+        trajectory persist together under runs/<task>/work/<cand_id>/. Returns
+        (canonical_dir, this_call's_trajectory_path).
+
+        On a hash collision (this content already has a workdir — ALWAYS true for
+        a no-op, since the parent's own directory already exists by definition)
+        the fresh run used to be discarded via rmtree, silently destroying the one
+        piece of evidence that could explain why the model produced nothing new —
+        and misattributing the surviving candidate's trajectory link to whichever
+        earlier call happened to create `dest`. Now the fresh trajectory is kept
+        as a numbered sibling file instead of being deleted."""
         dest = self.runs_dir / str(task_id) / "work" / cand_id
         if dest.resolve() == wd.resolve():
-            return wd
-        if dest.exists():                              # duplicate hash: discard the redundant workdir
+            return wd, wd / "trajectory.jsonl"
+        if dest.exists():                              # duplicate hash: keep the trajectory, drop the rest
+            n = sum(1 for _ in dest.glob("trajectory.dup-*.jsonl")) + 1
+            dup_path = dest / f"trajectory.dup-{n}.jsonl"
+            src_traj = wd / "trajectory.jsonl"
+            copied = src_traj.is_file()
+            if copied:
+                shutil.copyfile(src_traj, dup_path)
             shutil.rmtree(wd, ignore_errors=True)
-            return dest
+            return dest, (dup_path if copied else dest / "trajectory.jsonl")
         wd.rename(dest)
-        return dest
+        return dest, dest / "trajectory.jsonl"
 
     def _seed_workdir(self, wd: Path, parent, ctx) -> None:
         (wd / "DESIGN.md").write_text(getattr(ctx, "design", "") or "")
@@ -495,12 +536,14 @@ def _context_md(parent, ctx) -> str:
 def _parse_review(text: str, *, reviewer: str) -> ReviewVerdict:
     """Parse review.md's fixed format. Fails OPEN (verdict=ship) on anything
     malformed/missing — a reviewer that doesn't follow the format must never
-    permanently block a candidate from ever reaching the GPU."""
+    permanently block a candidate from ever reaching the GPU. Line 2 is always
+    the required hand-trace summary (not an issue bullet), whether the verdict
+    is ship or revise; only line 3+ are the SPECIFIC-issue bullets."""
     lines = [ln.strip() for ln in text.splitlines() if ln.strip()]
     if not lines or not lines[0].upper().startswith("VERDICT:"):
         return ReviewVerdict(verdict="ship", reviewer=reviewer)
     verdict = "revise" if "REVISE" in lines[0].upper() else "ship"
-    issues = [ln.lstrip("-* ").strip() for ln in lines[1:] if ln.lstrip("-* ").strip()]
+    issues = [ln.lstrip("-* ").strip() for ln in lines[2:] if ln.lstrip("-* ").strip()]
     return ReviewVerdict(verdict=verdict, issues=issues, reviewer=reviewer)
 
 

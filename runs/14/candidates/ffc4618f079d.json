@@ -1,0 +1,248 @@
+{
+  "cand_id": "ffc4618f079d",
+  "task_id": 14,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "CUDA kernel with 2D grid (tiles_per_batch, B), shared-memory inv_freq (256B loaded once per CTA), CHUNK_D=16 inner-loop ",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "a8f3f0376b72",
+  "trajectory": "runs/14/work/ffc4618f079d/trajectory.jsonl",
+  "gpu_s": 14.048,
+  "job_id": "14-ffc4618f079d",
+  "asi": {
+    "stage": "harness",
+    "error": "/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_h4ar3ncq/kernel.cu -o kernel.cuda.o \nFAILED:  kernel.cuda.o \n/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile \n--dependency-output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_h4ar3ncq \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_h4ar3ncq/kernel.cu -o kernel.cuda.o \n/tmp/sol_execbench_h4ar3ncq/kernel.cu(143): error: namespace \"at::cuda\" has no \nmember \"getCurrentCUDAStream\"\n      cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n                                      ^\n\n/tmp/sol_execbench_h4ar3ncq/kernel.cu(168): error: identifier \n\"C10_CUDA_KERNEL_LAUNCH_CHECK\" is undefined\n      C10_CUDA_KERNEL_LAUNCH_CHECK();\n      ^\n\n2 errors detected in the compilation of \"/tmp/sol_execbench_h4ar3ncq/kernel.cu\".\nninja: build stopped: subcommand failed.\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 780.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 204.39,
+      "samples": 43,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05712,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.057248,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048639,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.063617,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.050496,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057312,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0165,
+      "baseline_latency_ms": 0.050224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.049984,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0031,
+      "baseline_latency_ms": 0.104768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057408,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0017,
+      "baseline_latency_ms": 0.078528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.051008,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0443,
+      "baseline_latency_ms": 0.133792,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.050912,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// RoPE embedding backward with attention scaling \u2014 CUDA kernel.\n//\n// Computes: grad_position_ids[b,s] = sum_d inv_freq[b,d] * (\n//     (gc[b,s,d] + gc[b,s,d+64]) * (-sin(emb[b,s,d])) * scale +\n//     (gs[b,s,d] + gs[b,s,d+64]) * ( cos(emb[b,s,d])) * scale )\n//\n// head_dim=128 const, half_dim=64 const.\n// Memory-bound at large shapes, launch-bound at small shapes.\n//\n// Levers vs the Triton frontier:\n//   1. Shared-memory inv_freq (256 bytes) \u2014 loaded once per CTA, not re-read\n//      from global memory in every d-tile iteration.\n//   2. Explicit vectorised loads: the compiler merges adjacent bf16/fp32\n//      accesses into ushort4/float4 transactions automatically.\n//   3. Shape-specialised BLOCK_M heuristics: 64/128/256 for tiny/medium/large.\n//   4. __sinf/__cosf fast-math SFU intrinsics match the reference's\n//      torch.sin/cos \u2192 CUDA path.\n\n#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HEAD_DIM 128\n#define HALF_DIM 64\n#define CHUNK_D 16   // process 16 half_dim elements per inner-loop iteration\n\n// ---------------------------------------------------------------------------\n// Kernel \u2014 2D grid: (tiles_per_batch, B) so each CTA knows its batch directly.\n// ---------------------------------------------------------------------------\n__global__ void rope_bwd_kernel(\n    const __nv_bfloat16* __restrict__ grad_cos,   // (B, S, 128)\n    const __nv_bfloat16* __restrict__ grad_sin,   // (B, S, 128)\n    const float* __restrict__ emb,                // (B, S, 128) \u2014 read only [..., :64]\n    const float* __restrict__ inv_freq,           // (B, 64)\n    float* __restrict__ out,                      // (B, S)\n    long S,\n    float scale)\n{\n    __shared__ float s_inv_freq[HALF_DIM];\n\n    int tid = threadIdx.x;\n    long b = blockIdx.y;                     // batch index\n    long tile_idx = blockIdx.x;              // tile within this batch\n    long s = tile_idx * blockDim.x + tid;    // seq position\n\n    // Cooperative load of inv_freq for this batch into shared memory.\n    if (tid < HALF_DIM) {\n        s_inv_freq[tid] = inv_freq[b * HALF_DIM + tid];\n    }\n    __syncthreads();\n\n    if (s >= S) return;\n\n    // Row pointer within the batch\n    long row_off = s * HEAD_DIM;\n    const __nv_bfloat16* gc_row = grad_cos + b * S * HEAD_DIM + row_off;\n    const __nv_bfloat16* gs_row = grad_sin + b * S * HEAD_DIM + row_off;\n    const float* emb_row = emb + b * S * HEAD_DIM + row_off;\n\n    float acc = 0.0f;\n\n    // Iterate over half_dim in chunks of CHUNK_D to keep register pressure\n    // proportional to CHUNK_D (not 64).  CHUNK_D=16 \u2192 4 iterations.\n    #pragma unroll\n    for (int d = 0; d < HALF_DIM; d += CHUNK_D) {\n        // ---- bf16 loads: gc first half, gc second half, gs first half, gs second half ----\n        float gc_f[CHUNK_D], gc_s[CHUNK_D];\n        float gs_f[CHUNK_D], gs_s[CHUNK_D];\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            gc_f[i] = __bfloat162float(gc_row[d + i]);\n            gc_s[i] = __bfloat162float(gc_row[d + i + HALF_DIM]);\n            gs_f[i] = __bfloat162float(gs_row[d + i]);\n            gs_s[i] = __bfloat162float(gs_row[d + i + HALF_DIM]);\n        }\n\n        // ---- fp32 load: emb half (only the first 64 dims; second half is a duplicate) ----\n        float emb_half[CHUNK_D];\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            emb_half[i] = emb_row[d + i];\n        }\n\n        // ---- chain rule + dot product ----\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            float gc = gc_f[i] + gc_s[i];\n            float gs = gs_f[i] + gs_s[i];\n            float sin_val = __sinf(emb_half[i]);\n            float cos_val = __cosf(emb_half[i]);\n            // grad_emb = gc * (-sin) * scale + gs * cos * scale\n            float grad_emb = gc * (-sin_val) * scale + gs * cos_val * scale;\n            // dot product with inv_freq (from shared memory)\n            acc += grad_emb * s_inv_freq[d + i];\n        }\n    }\n\n    out[b * S + s] = acc;\n}\n\n// ---------------------------------------------------------------------------\n// Host entry point \u2014 matches the reference parameter names and order.\n// ---------------------------------------------------------------------------\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    double attention_scaling)\n{\n    // Ensure contiguous inputs\n    grad_cos = grad_cos.contiguous();\n    grad_sin = grad_sin.contiguous();\n    emb = emb.contiguous();\n    inv_freq_expanded = inv_freq_expanded.contiguous();\n\n    TORCH_CHECK(grad_cos.is_cuda(), \"grad_cos must be CUDA\");\n    TORCH_CHECK(grad_cos.scalar_type() == torch::kBFloat16, \"grad_cos must be bf16\");\n    TORCH_CHECK(grad_sin.scalar_type() == torch::kBFloat16, \"grad_sin must be bf16\");\n    TORCH_CHECK(emb.scalar_type() == torch::kFloat32, \"emb must be float32\");\n    TORCH_CHECK(inv_freq_expanded.scalar_type() == torch::kFloat32,\n                \"inv_freq_expanded must be float32\");\n\n    const auto B = grad_cos.size(0);\n    const auto S = grad_cos.size(1);\n\n    auto out = torch::empty({B, S}, emb.options());  // fp32 output\n\n    if (B == 0 || S == 0) return out;\n\n    const float scale = static_cast<float>(attention_scaling);\n    const long total_rows = B * S;\n\n    const __nv_bfloat16* gc_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_cos.data_ptr());\n    const __nv_bfloat16* gs_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_sin.data_ptr());\n    const float* emb_ptr = emb.data_ptr<float>();\n    const float* inv_ptr = inv_freq_expanded.data_ptr<float>();\n    float* out_ptr = out.data_ptr<float>();\n\n    cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n\n    // ---- Shape-specialised launch heuristics ----\n    // The 16 scored workloads span B*S from 128 to 524288.\n    // Tiny (\u22642K):  launch-bound, use small BLOCK_M to light up many blocks.\n    // Medium (\u226433K): moderate, BLOCK_M=128 is a good default.\n    // Large (>33K):  memory-bandwidth-bound, use larger BLOCK_M for better\n    //                amortisation and fewer launch quanta.\n    int block_m;\n    if (total_rows <= 2048) {\n        block_m = 64;          // tiny / launch-bound\n    } else if (total_rows <= 32768) {\n        block_m = 128;         // medium\n    } else {\n        block_m = 256;         // large / memory-bound\n    }\n\n    // 2D grid: (tiles along S, batches along B)\n    long tiles_per_batch = (S + block_m - 1) / block_m;\n    dim3 grid(static_cast<unsigned>(tiles_per_batch),\n              static_cast<unsigned>(B));\n\n    rope_bwd_kernel<<<grid, block_m, 0, stream>>>(\n        gc_ptr, gs_ptr, emb_ptr, inv_ptr, out_ptr,\n        S, scale);\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n\n    return out;\n}\n\n// ---------------------------------------------------------------------------\n// Insurance overload: the harness may pass attention_scaling as a 0-d tensor.\n// ---------------------------------------------------------------------------\ntorch::Tensor run_tensor_scale(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    torch::Tensor attention_scaling)\n{\n    return run(grad_cos, grad_sin, emb, inv_freq_expanded,\n               attention_scaling.item<double>());\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run,\n          \"RoPE embedding backward with attention scaling (scalar scale)\");\n    m.def(\"run\", &run_tensor_scale,\n          \"RoPE embedding backward with attention scaling (tensor scale)\");\n}"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t14_ffc4618f079d",
+    "definition": "014_rotary_embedding_with_attention_scaling_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// RoPE embedding backward with attention scaling \u2014 CUDA kernel.\n//\n// Computes: grad_position_ids[b,s] = sum_d inv_freq[b,d] * (\n//     (gc[b,s,d] + gc[b,s,d+64]) * (-sin(emb[b,s,d])) * scale +\n//     (gs[b,s,d] + gs[b,s,d+64]) * ( cos(emb[b,s,d])) * scale )\n//\n// head_dim=128 const, half_dim=64 const.\n// Memory-bound at large shapes, launch-bound at small shapes.\n//\n// Levers vs the Triton frontier:\n//   1. Shared-memory inv_freq (256 bytes) \u2014 loaded once per CTA, not re-read\n//      from global memory in every d-tile iteration.\n//   2. Explicit vectorised loads: the compiler merges adjacent bf16/fp32\n//      accesses into ushort4/float4 transactions automatically.\n//   3. Shape-specialised BLOCK_M heuristics: 64/128/256 for tiny/medium/large.\n//   4. __sinf/__cosf fast-math SFU intrinsics match the reference's\n//      torch.sin/cos \u2192 CUDA path.\n\n#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HEAD_DIM 128\n#define HALF_DIM 64\n#define CHUNK_D 16   // process 16 half_dim elements per inner-loop iteration\n\n// ---------------------------------------------------------------------------\n// Kernel \u2014 2D grid: (tiles_per_batch, B) so each CTA knows its batch directly.\n// ---------------------------------------------------------------------------\n__global__ void rope_bwd_kernel(\n    const __nv_bfloat16* __restrict__ grad_cos,   // (B, S, 128)\n    const __nv_bfloat16* __restrict__ grad_sin,   // (B, S, 128)\n    const float* __restrict__ emb,                // (B, S, 128) \u2014 read only [..., :64]\n    const float* __restrict__ inv_freq,           // (B, 64)\n    float* __restrict__ out,                      // (B, S)\n    long S,\n    float scale)\n{\n    __shared__ float s_inv_freq[HALF_DIM];\n\n    int tid = threadIdx.x;\n    long b = blockIdx.y;                     // batch index\n    long tile_idx = blockIdx.x;              // tile within this batch\n    long s = tile_idx * blockDim.x + tid;    // seq position\n\n    // Cooperative load of inv_freq for this batch into shared memory.\n    if (tid < HALF_DIM) {\n        s_inv_freq[tid] = inv_freq[b * HALF_DIM + tid];\n    }\n    __syncthreads();\n\n    if (s >= S) return;\n\n    // Row pointer within the batch\n    long row_off = s * HEAD_DIM;\n    const __nv_bfloat16* gc_row = grad_cos + b * S * HEAD_DIM + row_off;\n    const __nv_bfloat16* gs_row = grad_sin + b * S * HEAD_DIM + row_off;\n    const float* emb_row = emb + b * S * HEAD_DIM + row_off;\n\n    float acc = 0.0f;\n\n    // Iterate over half_dim in chunks of CHUNK_D to keep register pressure\n    // proportional to CHUNK_D (not 64).  CHUNK_D=16 \u2192 4 iterations.\n    #pragma unroll\n    for (int d = 0; d < HALF_DIM; d += CHUNK_D) {\n        // ---- bf16 loads: gc first half, gc second half, gs first half, gs second half ----\n        float gc_f[CHUNK_D], gc_s[CHUNK_D];\n        float gs_f[CHUNK_D], gs_s[CHUNK_D];\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            gc_f[i] = __bfloat162float(gc_row[d + i]);\n            gc_s[i] = __bfloat162float(gc_row[d + i + HALF_DIM]);\n            gs_f[i] = __bfloat162float(gs_row[d + i]);\n            gs_s[i] = __bfloat162float(gs_row[d + i + HALF_DIM]);\n        }\n\n        // ---- fp32 load: emb half (only the first 64 dims; second half is a duplicate) ----\n        float emb_half[CHUNK_D];\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            emb_half[i] = emb_row[d + i];\n        }\n\n        // ---- chain rule + dot product ----\n        #pragma unroll\n        for (int i = 0; i < CHUNK_D; i++) {\n            float gc = gc_f[i] + gc_s[i];\n            float gs = gs_f[i] + gs_s[i];\n            float sin_val = __sinf(emb_half[i]);\n            float cos_val = __cosf(emb_half[i]);\n            // grad_emb = gc * (-sin) * scale + gs * cos * scale\n            float grad_emb = gc * (-sin_val) * scale + gs * cos_val * scale;\n            // dot product with inv_freq (from shared memory)\n            acc += grad_emb * s_inv_freq[d + i];\n        }\n    }\n\n    out[b * S + s] = acc;\n}\n\n// ---------------------------------------------------------------------------\n// Host entry point \u2014 matches the reference parameter names and order.\n// ---------------------------------------------------------------------------\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    double attention_scaling)\n{\n    // Ensure contiguous inputs\n    grad_cos = grad_cos.contiguous();\n    grad_sin = grad_sin.contiguous();\n    emb = emb.contiguous();\n    inv_freq_expanded = inv_freq_expanded.contiguous();\n\n    TORCH_CHECK(grad_cos.is_cuda(), \"grad_cos must be CUDA\");\n    TORCH_CHECK(grad_cos.scalar_type() == torch::kBFloat16, \"grad_cos must be bf16\");\n    TORCH_CHECK(grad_sin.scalar_type() == torch::kBFloat16, \"grad_sin must be bf16\");\n    TORCH_CHECK(emb.scalar_type() == torch::kFloat32, \"emb must be float32\");\n    TORCH_CHECK(inv_freq_expanded.scalar_type() == torch::kFloat32,\n                \"inv_freq_expanded must be float32\");\n\n    const auto B = grad_cos.size(0);\n    const auto S = grad_cos.size(1);\n\n    auto out = torch::empty({B, S}, emb.options());  // fp32 output\n\n    if (B == 0 || S == 0) return out;\n\n    const float scale = static_cast<float>(attention_scaling);\n    const long total_rows = B * S;\n\n    const __nv_bfloat16* gc_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_cos.data_ptr());\n    const __nv_bfloat16* gs_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_sin.data_ptr());\n    const float* emb_ptr = emb.data_ptr<float>();\n    const float* inv_ptr = inv_freq_expanded.data_ptr<float>();\n    float* out_ptr = out.data_ptr<float>();\n\n    cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n\n    // ---- Shape-specialised launch heuristics ----\n    // The 16 scored workloads span B*S from 128 to 524288.\n    // Tiny (\u22642K):  launch-bound, use small BLOCK_M to light up many blocks.\n    // Medium (\u226433K): moderate, BLOCK_M=128 is a good default.\n    // Large (>33K):  memory-bandwidth-bound, use larger BLOCK_M for better\n    //                amortisation and fewer launch quanta.\n    int block_m;\n    if (total_rows <= 2048) {\n        block_m = 64;          // tiny / launch-bound\n    } else if (total_rows <= 32768) {\n        block_m = 128;         // medium\n    } else {\n        block_m = 256;         // large / memory-bound\n    }\n\n    // 2D grid: (tiles along S, batches along B)\n    long tiles_per_batch = (S + block_m - 1) / block_m;\n    dim3 grid(static_cast<unsigned>(tiles_per_batch),\n              static_cast<unsigned>(B));\n\n    rope_bwd_kernel<<<grid, block_m, 0, stream>>>(\n        gc_ptr, gs_ptr, emb_ptr, inv_ptr, out_ptr,\n        S, scale);\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n\n    return out;\n}\n\n// ---------------------------------------------------------------------------\n// Insurance overload: the harness may pass attention_scaling as a 0-d tensor.\n// ---------------------------------------------------------------------------\ntorch::Tensor run_tensor_scale(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    torch::Tensor attention_scaling)\n{\n    return run(grad_cos, grad_sin, emb, inv_freq_expanded,\n               attention_scaling.item<double>());\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run,\n          \"RoPE embedding backward with attention scaling (scalar scale)\");\n    m.def(\"run\", &run_tensor_scale,\n          \"RoPE embedding backward with attention scaling (tensor scale)\");\n}"
+      }
+    ]
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "cand_id": "94a5c05ad6c3",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": 0.6209507544592724,
+  "sol_score_calibrated": 0.5466898717749664,
+  "correct": true,
+  "vector": [
+    0.860694055372434,
+    0.7818040435458787,
+    0.8996162176890855,
+    0.7831306516994075,
+    0.8368120271900011,
+    0.8365784815576712,
+    0.8994846914874374,
+    0.14368253335504744,
+    0.14439515256437999,
+    0.10107608307177307,
+    0.18562107904642408,
+    0.9003756003353077,
+    0.7809487717661692,
+    0.16039291831786215,
+    0.7807114685939656,
+    0.8398882957555132
+  ],
+  "strategy": "Split-K Triton dgrad (SPLIT_K=8, fp32 partials, 2-stage reduce) for M\u22641024 fills SM occupancy; cuBLAS wgrad co-issued on",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "e0b86351e99b",
+  "trajectory": "runs/4/work/94a5c05ad6c3/trajectory.jsonl",
+  "gpu_s": 15.022,
+  "job_id": "4-94a5c05ad6c3",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 287.69,
+      "samples": 42,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.092064,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.860694055372434,
+      "sol_score_cal": 0.7454622605377476,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.030624,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7818040435458787,
+      "sol_score_cal": 0.7023578657933417,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.087168,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.8996162176890855,
+      "sol_score_cal": 0.780255493989173,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.030528,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7831306516994075,
+      "sol_score_cal": 0.7035960017033103,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0502075,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8368120271900011,
+      "sol_score_cal": 0.7400606672672188,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.050255999999999995,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8365784815576712,
+      "sol_score_cal": 0.7399968129278095,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0871355,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.8994846914874374,
+      "sol_score_cal": 0.7797338986385335,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.18604749999999998,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.14368253335504744,
+      "sol_score_cal": 0.12261228128599773,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.12952000000000002,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.14439515256437999,
+      "sol_score_cal": 0.1237934888984745,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.26393500000000003,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.10107608307177307,
+      "sol_score_cal": 0.08584308812725837,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.139712,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.18562107904642408,
+      "sol_score_cal": 0.1591220815069896,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.08705550000000001,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.9003756003353077,
+      "sol_score_cal": 0.780756498871154,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.030671499999999997,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.7809487717661692,
+      "sol_score_cal": 0.7015011368440017,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.1372,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.16039291831786215,
+      "sol_score_cal": 0.13759552025997326,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.030687,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7807114685939656,
+      "sol_score_cal": 0.7012727234333883,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0499675,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8398882957555132,
+      "sol_score_cal": 0.7430781283150909,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# Problem 004: attention output projection backward.\n#\n# Two independent bf16 GEMMs sharing the same inputs:\n#   dgrad: grad_reshaped = grad_output_2d @ weight         (M x 2048, K=2048)\n#   wgrad: grad_weight   = grad_output_2d^T @ reshaped_2d  (2048 x 2048, K=M)\n#\n# For large M (>1024) both GEMMs are compute-bound at the cuBLAS bf16 TC ceiling\n# (~0.797 raw).  For small M (<=1024) the dgrad underfills the 148 SMs because\n# it produces only ceil(M/128)*16 output tiles \u2014 at M=256 that's only 32 tiles.\n#\n# The fix: replace the small-M dgrad cuBLAS call with a Triton split-K kernel\n# (SPLIT_K=8 over K=2048).  Each split produces the same number of output tiles\n# but runs independently, so the grid expands 8\u00d7 \u2192 256 tiles at M=256, filling\n# the SMs.  A second-stage reduction kernel sums the fp32 partials into bf16.\n# The wgrad stays on a side stream (cuBLAS) so the B200 co-schedules both.\n#\n# Numerics: operands are bf16, accumulation is fp32 (same as reference), and\n# split-K reordering stays within the bf16-rounding tolerance already passing.\n\n\n_STREAM = {}\n_SMALL_M = 1024\n_SPLIT_K = 8\n\n\ndef _side_stream(device):\n    s = _STREAM.get(device.index)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM[device.index] = s\n    return s\n\n\n@triton.jit\ndef _dgrad_splitk_compute(\n    A_ptr, B_ptr, C_ptr,\n    M, N, K,\n    stride_am, stride_ak,\n    stride_bk, stride_bn,\n    stride_cs, stride_cm, stride_cn,\n    BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr, BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Stage 1: compute partial sums over a K-slice of the dgrad GEMM.\n\n    A = grad_output_2d  (M x K)  bf16, row-major\n    B = weight          (K x N)  bf16, row-major\n    C = partials        (SPLIT_K x M x N)  fp32\n\n    Each block computes one (BLOCK_M x BLOCK_N) tile of ONE split's partial sum.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_s = tl.program_id(2)\n\n    # K range for this split.  K (2048) is always divisible by SPLIT_K (8).\n    k_per_split = K // SPLIT_K\n    k_start = pid_s * k_per_split\n\n    # Row/column indices for this block's output tile.\n    rm = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rn = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k_off in range(0, k_per_split, BLOCK_K):\n        rk = k_start + k_off + tl.arange(0, BLOCK_K)\n\n        # A[m, k]: contiguous along k (stride_ak=1)\n        a = tl.load(\n            A_ptr + rm[:, None] * stride_am + rk[None, :] * stride_ak,\n            mask=(rm[:, None] < M) & (rk[None, :] < K),\n            other=0.0,\n        )\n        # B[k, n]: contiguous along n (stride_bn=1), strided along k\n        b = tl.load(\n            B_ptr + rk[:, None] * stride_bk + rn[None, :] * stride_bn,\n            mask=(rk[:, None] < K) & (rn[None, :] < N),\n            other=0.0,\n        )\n        acc += tl.dot(a, b)\n\n    # Store partial sum: C[pid_s, m, n]\n    offs_c = (\n        pid_s * stride_cs\n        + rm[:, None] * stride_cm\n        + rn[None, :] * stride_cn\n    )\n    tl.store(C_ptr + offs_c, acc, mask=(rm[:, None] < M) & (rn[None, :] < N))\n\n\n@triton.jit\ndef _dgrad_splitk_reduce(\n    C_ptr, D_ptr,\n    M, N, SPLIT_K,\n    stride_cs, stride_cm, stride_cn,\n    stride_dm, stride_dn,\n    BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n):\n    \"\"\"Stage 2: sum the SPLIT_K partials into the bf16 output.\n\n    C = partials  (SPLIT_K x M x N)  fp32\n    D = output    (M x N)            bf16\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    rm = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rn = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    out_mask = (rm[:, None] < M) & (rn[None, :] < N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n    for s in range(SPLIT_K):\n        offs = (\n            s * stride_cs\n            + rm[:, None] * stride_cm\n            + rn[None, :] * stride_cn\n        )\n        acc += tl.load(C_ptr + offs, mask=out_mask, other=0.0)\n\n    offs_d = rm[:, None] * stride_dm + rn[None, :] * stride_dn\n    # tl.store converts fp32 accumulator to bf16 automatically (D_ptr is bf16).\n    tl.store(D_ptr + offs_d, acc, mask=out_mask)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M:\n        # --- Small-M path: split-K Triton dgrad + cuBLAS wgrad on side stream ---\n        device = grad_output.device\n        cur = torch.cuda.current_stream()\n        s = _side_stream(device)\n\n        # wgrad on the side stream (cuBLAS, fills the SMs).\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n        # Allocate fp32 partials and bf16 output for the split-K dgrad.\n        partial = torch.empty(\n            _SPLIT_K, M, hidden_size,\n            dtype=torch.float32, device=device,\n        )\n        dgrad_out = torch.empty(\n            M, hidden_size,\n            dtype=torch.bfloat16, device=device,\n        )\n\n        # Stage 1: split-K compute \u2014 grid (ceil(M/64), ceil(2048/128), 8)\n        BLOCK_M = 64\n        BLOCK_N = 128\n        BLOCK_K = 64\n        grid_compute = (\n            triton.cdiv(M, BLOCK_M),\n            triton.cdiv(hidden_size, BLOCK_N),\n            _SPLIT_K,\n        )\n        _dgrad_splitk_compute[grid_compute](\n            go2d, weight, partial,\n            M, hidden_size, hidden_size,\n            go2d.stride(0), go2d.stride(1),\n            weight.stride(0), weight.stride(1),\n            partial.stride(0), partial.stride(1), partial.stride(2),\n            BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N, BLOCK_K=BLOCK_K,\n            SPLIT_K=_SPLIT_K,\n            num_warps=4, num_stages=3,\n        )\n\n        # Stage 2: reduce partials \u2192 bf16 output.\n        BLOCK_M_R = 128\n        BLOCK_N_R = 128\n        grid_reduce = (\n            triton.cdiv(M, BLOCK_M_R),\n            triton.cdiv(hidden_size, BLOCK_N_R),\n        )\n        _dgrad_splitk_reduce[grid_reduce](\n            partial, dgrad_out,\n            M, hidden_size, _SPLIT_K,\n            partial.stride(0), partial.stride(1), partial.stride(2),\n            dgrad_out.stride(0), dgrad_out.stride(1),\n            BLOCK_M=BLOCK_M_R, BLOCK_N=BLOCK_N_R,\n            num_warps=8, num_stages=1,\n        )\n\n        # Rejoin: current stream waits for side-stream wgrad.\n        cur.wait_stream(s)\n        grad_weight.record_stream(cur)\n\n        # Zero-copy transpose: dgrad_out is (M, 2048) \u2192 (B, 32, S, 64).\n        grad_attn_output = dgrad_out.reshape(\n            batch_size, seq_len, 32, 64\n        ).transpose(1, 2)\n    else:\n        # --- Large-M path: cuBLAS for both GEMMs (frontier, unchanged) ---\n        grad_weight = go2d.transpose(0, 1).mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n        grad_attn_output = grad_reshaped_2d.reshape(\n            batch_size, seq_len, 32, 64\n        ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_94a5c05ad6c3",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# Problem 004: attention output projection backward.\n#\n# Two independent bf16 GEMMs sharing the same inputs:\n#   dgrad: grad_reshaped = grad_output_2d @ weight         (M x 2048, K=2048)\n#   wgrad: grad_weight   = grad_output_2d^T @ reshaped_2d  (2048 x 2048, K=M)\n#\n# For large M (>1024) both GEMMs are compute-bound at the cuBLAS bf16 TC ceiling\n# (~0.797 raw).  For small M (<=1024) the dgrad underfills the 148 SMs because\n# it produces only ceil(M/128)*16 output tiles \u2014 at M=256 that's only 32 tiles.\n#\n# The fix: replace the small-M dgrad cuBLAS call with a Triton split-K kernel\n# (SPLIT_K=8 over K=2048).  Each split produces the same number of output tiles\n# but runs independently, so the grid expands 8\u00d7 \u2192 256 tiles at M=256, filling\n# the SMs.  A second-stage reduction kernel sums the fp32 partials into bf16.\n# The wgrad stays on a side stream (cuBLAS) so the B200 co-schedules both.\n#\n# Numerics: operands are bf16, accumulation is fp32 (same as reference), and\n# split-K reordering stays within the bf16-rounding tolerance already passing.\n\n\n_STREAM = {}\n_SMALL_M = 1024\n_SPLIT_K = 8\n\n\ndef _side_stream(device):\n    s = _STREAM.get(device.index)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM[device.index] = s\n    return s\n\n\n@triton.jit\ndef _dgrad_splitk_compute(\n    A_ptr, B_ptr, C_ptr,\n    M, N, K,\n    stride_am, stride_ak,\n    stride_bk, stride_bn,\n    stride_cs, stride_cm, stride_cn,\n    BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr, BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Stage 1: compute partial sums over a K-slice of the dgrad GEMM.\n\n    A = grad_output_2d  (M x K)  bf16, row-major\n    B = weight          (K x N)  bf16, row-major\n    C = partials        (SPLIT_K x M x N)  fp32\n\n    Each block computes one (BLOCK_M x BLOCK_N) tile of ONE split's partial sum.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_s = tl.program_id(2)\n\n    # K range for this split.  K (2048) is always divisible by SPLIT_K (8).\n    k_per_split = K // SPLIT_K\n    k_start = pid_s * k_per_split\n\n    # Row/column indices for this block's output tile.\n    rm = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rn = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k_off in range(0, k_per_split, BLOCK_K):\n        rk = k_start + k_off + tl.arange(0, BLOCK_K)\n\n        # A[m, k]: contiguous along k (stride_ak=1)\n        a = tl.load(\n            A_ptr + rm[:, None] * stride_am + rk[None, :] * stride_ak,\n            mask=(rm[:, None] < M) & (rk[None, :] < K),\n            other=0.0,\n        )\n        # B[k, n]: contiguous along n (stride_bn=1), strided along k\n        b = tl.load(\n            B_ptr + rk[:, None] * stride_bk + rn[None, :] * stride_bn,\n            mask=(rk[:, None] < K) & (rn[None, :] < N),\n            other=0.0,\n        )\n        acc += tl.dot(a, b)\n\n    # Store partial sum: C[pid_s, m, n]\n    offs_c = (\n        pid_s * stride_cs\n        + rm[:, None] * stride_cm\n        + rn[None, :] * stride_cn\n    )\n    tl.store(C_ptr + offs_c, acc, mask=(rm[:, None] < M) & (rn[None, :] < N))\n\n\n@triton.jit\ndef _dgrad_splitk_reduce(\n    C_ptr, D_ptr,\n    M, N, SPLIT_K,\n    stride_cs, stride_cm, stride_cn,\n    stride_dm, stride_dn,\n    BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n):\n    \"\"\"Stage 2: sum the SPLIT_K partials into the bf16 output.\n\n    C = partials  (SPLIT_K x M x N)  fp32\n    D = output    (M x N)            bf16\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    rm = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rn = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    out_mask = (rm[:, None] < M) & (rn[None, :] < N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n    for s in range(SPLIT_K):\n        offs = (\n            s * stride_cs\n            + rm[:, None] * stride_cm\n            + rn[None, :] * stride_cn\n        )\n        acc += tl.load(C_ptr + offs, mask=out_mask, other=0.0)\n\n    offs_d = rm[:, None] * stride_dm + rn[None, :] * stride_dn\n    # tl.store converts fp32 accumulator to bf16 automatically (D_ptr is bf16).\n    tl.store(D_ptr + offs_d, acc, mask=out_mask)\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M:\n        # --- Small-M path: split-K Triton dgrad + cuBLAS wgrad on side stream ---\n        device = grad_output.device\n        cur = torch.cuda.current_stream()\n        s = _side_stream(device)\n\n        # wgrad on the side stream (cuBLAS, fills the SMs).\n        s.wait_stream(cur)\n        with torch.cuda.stream(s):\n            grad_weight = go2d.transpose(0, 1).mm(rs2d)\n\n        # Allocate fp32 partials and bf16 output for the split-K dgrad.\n        partial = torch.empty(\n            _SPLIT_K, M, hidden_size,\n            dtype=torch.float32, device=device,\n        )\n        dgrad_out = torch.empty(\n            M, hidden_size,\n            dtype=torch.bfloat16, device=device,\n        )\n\n        # Stage 1: split-K compute \u2014 grid (ceil(M/64), ceil(2048/128), 8)\n        BLOCK_M = 64\n        BLOCK_N = 128\n        BLOCK_K = 64\n        grid_compute = (\n            triton.cdiv(M, BLOCK_M),\n            triton.cdiv(hidden_size, BLOCK_N),\n            _SPLIT_K,\n        )\n        _dgrad_splitk_compute[grid_compute](\n            go2d, weight, partial,\n            M, hidden_size, hidden_size,\n            go2d.stride(0), go2d.stride(1),\n            weight.stride(0), weight.stride(1),\n            partial.stride(0), partial.stride(1), partial.stride(2),\n            BLOCK_M=BLOCK_M, BLOCK_N=BLOCK_N, BLOCK_K=BLOCK_K,\n            SPLIT_K=_SPLIT_K,\n            num_warps=4, num_stages=3,\n        )\n\n        # Stage 2: reduce partials \u2192 bf16 output.\n        BLOCK_M_R = 128\n        BLOCK_N_R = 128\n        grid_reduce = (\n            triton.cdiv(M, BLOCK_M_R),\n            triton.cdiv(hidden_size, BLOCK_N_R),\n        )\n        _dgrad_splitk_reduce[grid_reduce](\n            partial, dgrad_out,\n            M, hidden_size, _SPLIT_K,\n            partial.stride(0), partial.stride(1), partial.stride(2),\n            dgrad_out.stride(0), dgrad_out.stride(1),\n            BLOCK_M=BLOCK_M_R, BLOCK_N=BLOCK_N_R,\n            num_warps=8, num_stages=1,\n        )\n\n        # Rejoin: current stream waits for side-stream wgrad.\n        cur.wait_stream(s)\n        grad_weight.record_stream(cur)\n\n        # Zero-copy transpose: dgrad_out is (M, 2048) \u2192 (B, 32, S, 64).\n        grad_attn_output = dgrad_out.reshape(\n            batch_size, seq_len, 32, 64\n        ).transpose(1, 2)\n    else:\n        # --- Large-M path: cuBLAS for both GEMMs (frontier, unchanged) ---\n        grad_weight = go2d.transpose(0, 1).mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n        grad_attn_output = grad_reshaped_2d.reshape(\n            batch_size, seq_len, 32, 64\n        ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight"
+      }
+    ]
+  }
+}

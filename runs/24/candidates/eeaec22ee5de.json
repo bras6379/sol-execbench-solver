@@ -1,0 +1,248 @@
+{
+  "cand_id": "eeaec22ee5de",
+  "task_id": 24,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Hand-rolled CUDA/C++ extension that algebraically collapses scatter+matmul into a single per-patch weighted reduction; o",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "21e2e2ef46c1",
+  "trajectory": "runs/24/work/eeaec22ee5de/trajectory.jsonl",
+  "gpu_s": 20.797,
+  "job_id": "24-eeaec22ee5de",
+  "asi": {
+    "stage": "harness",
+    "error": "/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile \n--dependency-output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_lrlezk4i \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_lrlezk4i/kernel.cu -o kernel.cuda.o \nFAILED:  kernel.cuda.o \n/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile \n--dependency-output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_lrlezk4i \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_lrlezk4i/kernel.cu -o kernel.cuda.o \n/tmp/sol_execbench_lrlezk4i/kernel.cu(162): error: identifier \n\"C10_CUDA_KERNEL_LAUNCH_CHECK\" is undefined\n      C10_CUDA_KERNEL_LAUNCH_CHECK();\n      ^\n\n1 error detected in the compilation of \"/tmp/sol_execbench_lrlezk4i/kernel.cu\".\nninja: build stopped: subcommand failed.\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 34.0,
+      "power_w_max": 236.7,
+      "samples": 61,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0739519999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0568,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.058272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.063744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0629599999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.055633,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.066032,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.063584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.06752,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0625285,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.060944,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.062976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.060992,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.062816,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0629754999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.061312,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cstdint>\n\n// Algebraic collapse of vision-RoPE position-embedding backward.\n// Reference steps:\n//   grad_emb = -grad_cos * sin(emb) + grad_sin * cos(emb)        [P, 72]\n//   grad_rpe = grad_emb[:, :36] + grad_emb[:, 36:]               [P, 36]\n//   grad_idx = grad_rpe.reshape(P, 2, 18)                        [P, 2, 18]\n//   grad_freqs[pos[:,0], :] += grad_idx[:,0,:]\n//   grad_freqs[pos[:,1], :] += grad_idx[:,1,:]\n//   out = arange(G) @ grad_freqs                                 [18]\n// Since arange(G)[g] = g, the whole scatter+matmul becomes a single\n// per-patch weighted reduction with no intermediate buffer and no .item() sync:\n//   out[j] = sum_p h_p * (ge[p,j] + ge[p,36+j])\n//                   + w_p * (ge[p,18+j] + ge[p,54+j])\n// where ge[p,c] = -grad_cos[p,c] * sin(emb[p,c]) + grad_sin[p,c] * cos(emb[p,c])\n//       h_p      = pos_ids[p,0],  w_p = pos_ids[p,1]\n\nconstexpr int BLOCK = 256;\nconstexpr int WARPS = BLOCK / 32;\nconstexpr int DIM_Q = 18;\n\n__global__ void vrope_bwd_kernel(\n    const float* __restrict__ grad_cos,\n    const float* __restrict__ grad_sin,\n    const int64_t* __restrict__ pos_ids,\n    const float* __restrict__ emb,\n    float* __restrict__ output,\n    int P,\n    int64_t gc_s0, int64_t gc_s1,\n    int64_t gs_s0, int64_t gs_s1,\n    int64_t emb_s0, int64_t emb_s1,\n    int64_t pos_s0, int64_t pos_s1)\n{\n    // Per-thread partial sums for the 18 output elements.\n    float sum[DIM_Q];\n    #pragma unroll\n    for (int j = 0; j < DIM_Q; ++j) {\n        sum[j] = 0.0f;\n    }\n\n    const int tid = blockIdx.x * blockDim.x + threadIdx.x;\n    const int grid_size = blockDim.x * gridDim.x;\n\n    // Grid-stride loop over patches.\n    for (int p = tid; p < P; p += grid_size) {\n        const float h = static_cast<float>(pos_ids[p * pos_s0 + 0 * pos_s1]);\n        const float w = static_cast<float>(pos_ids[p * pos_s0 + 1 * pos_s1]);\n\n        #pragma unroll\n        for (int j = 0; j < DIM_Q; ++j) {\n            const int c0  = j;\n            const int c18 = j + 18;\n            const int c36 = j + 36;\n            const int c54 = j + 54;\n\n            float gc, gs, e;\n\n            e  = emb[p * emb_s0 + c0 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c0 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c0 * gs_s1];\n            const float ge0 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c18 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c18 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c18 * gs_s1];\n            const float ge18 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c36 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c36 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c36 * gs_s1];\n            const float ge36 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c54 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c54 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c54 * gs_s1];\n            const float ge54 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            sum[j] += h * (ge0 + ge36) + w * (ge18 + ge54);\n        }\n    }\n\n    // Block-level reduction of sum[DIM_Q].\n    __shared__ float sdata[DIM_Q * WARPS];\n\n    #pragma unroll\n    for (int j = 0; j < DIM_Q; ++j) {\n        float val = sum[j];\n        // Warp shuffle tree reduce.\n        for (int offset = 16; offset > 0; offset >>= 1) {\n            val += __shfl_down_sync(0xFFFFFFFF, val, offset);\n        }\n        const int lane = threadIdx.x & 31;\n        const int warp = threadIdx.x >> 5;\n        if (lane == 0) {\n            sdata[j * WARPS + warp] = val;\n        }\n    }\n    __syncthreads();\n\n    // One thread per output element writes/atomically-adds the final value.\n    if (threadIdx.x < DIM_Q) {\n        const int j = threadIdx.x;\n        float val = 0.0f;\n        #pragma unroll\n        for (int w = 0; w < WARPS; ++w) {\n            val += sdata[j * WARPS + w];\n        }\n        if (gridDim.x == 1) {\n            output[j] = val;\n        } else {\n            atomicAdd(output + j, val);\n        }\n    }\n}\n\n// numel -> ceil(numel / block)\nstatic inline int ceil_div(int a, int b) {\n    return (a + b - 1) / b;\n}\n\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor pos_ids,\n    torch::Tensor inv_freq,\n    torch::Tensor emb)\n{\n    // inv_freq is only present to preserve the reference signature and\n    // provide the output dimension (head_dim_quarter == 18).\n    (void)inv_freq;\n\n    const int P = grad_cos.size(0);\n    const auto options = grad_cos.options().dtype(torch::kFloat32);\n\n    // Small shapes (P <= 2048, i.e. all but the three loosest-tolerance large\n    // shapes) use one block and a direct store: no atomics, no memset.\n    // Large shapes use ceil(P/BLOCK) blocks and atomicAdd into a zeroed buffer.\n    torch::Tensor output;\n    int grid;\n    if (P <= 2048) {\n        output = torch::empty({DIM_Q}, options);\n        grid = 1;\n    } else {\n        output = torch::zeros({DIM_Q}, options);\n        grid = ceil_div(P, BLOCK);\n    }\n\n    vrope_bwd_kernel<<<grid, BLOCK>>>(\n        grad_cos.data_ptr<float>(),\n        grad_sin.data_ptr<float>(),\n        pos_ids.data_ptr<int64_t>(),\n        emb.data_ptr<float>(),\n        output.data_ptr<float>(),\n        P,\n        grad_cos.stride(0), grad_cos.stride(1),\n        grad_sin.stride(0), grad_sin.stride(1),\n        emb.stride(0), emb.stride(1),\n        pos_ids.stride(0), pos_ids.stride(1));\n\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n    return output;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"Vision rotary position embedding generation backward\");\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t24_eeaec22ee5de",
+    "definition": "024_vision_rotary_position_embedding_generation_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cstdint>\n\n// Algebraic collapse of vision-RoPE position-embedding backward.\n// Reference steps:\n//   grad_emb = -grad_cos * sin(emb) + grad_sin * cos(emb)        [P, 72]\n//   grad_rpe = grad_emb[:, :36] + grad_emb[:, 36:]               [P, 36]\n//   grad_idx = grad_rpe.reshape(P, 2, 18)                        [P, 2, 18]\n//   grad_freqs[pos[:,0], :] += grad_idx[:,0,:]\n//   grad_freqs[pos[:,1], :] += grad_idx[:,1,:]\n//   out = arange(G) @ grad_freqs                                 [18]\n// Since arange(G)[g] = g, the whole scatter+matmul becomes a single\n// per-patch weighted reduction with no intermediate buffer and no .item() sync:\n//   out[j] = sum_p h_p * (ge[p,j] + ge[p,36+j])\n//                   + w_p * (ge[p,18+j] + ge[p,54+j])\n// where ge[p,c] = -grad_cos[p,c] * sin(emb[p,c]) + grad_sin[p,c] * cos(emb[p,c])\n//       h_p      = pos_ids[p,0],  w_p = pos_ids[p,1]\n\nconstexpr int BLOCK = 256;\nconstexpr int WARPS = BLOCK / 32;\nconstexpr int DIM_Q = 18;\n\n__global__ void vrope_bwd_kernel(\n    const float* __restrict__ grad_cos,\n    const float* __restrict__ grad_sin,\n    const int64_t* __restrict__ pos_ids,\n    const float* __restrict__ emb,\n    float* __restrict__ output,\n    int P,\n    int64_t gc_s0, int64_t gc_s1,\n    int64_t gs_s0, int64_t gs_s1,\n    int64_t emb_s0, int64_t emb_s1,\n    int64_t pos_s0, int64_t pos_s1)\n{\n    // Per-thread partial sums for the 18 output elements.\n    float sum[DIM_Q];\n    #pragma unroll\n    for (int j = 0; j < DIM_Q; ++j) {\n        sum[j] = 0.0f;\n    }\n\n    const int tid = blockIdx.x * blockDim.x + threadIdx.x;\n    const int grid_size = blockDim.x * gridDim.x;\n\n    // Grid-stride loop over patches.\n    for (int p = tid; p < P; p += grid_size) {\n        const float h = static_cast<float>(pos_ids[p * pos_s0 + 0 * pos_s1]);\n        const float w = static_cast<float>(pos_ids[p * pos_s0 + 1 * pos_s1]);\n\n        #pragma unroll\n        for (int j = 0; j < DIM_Q; ++j) {\n            const int c0  = j;\n            const int c18 = j + 18;\n            const int c36 = j + 36;\n            const int c54 = j + 54;\n\n            float gc, gs, e;\n\n            e  = emb[p * emb_s0 + c0 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c0 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c0 * gs_s1];\n            const float ge0 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c18 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c18 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c18 * gs_s1];\n            const float ge18 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c36 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c36 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c36 * gs_s1];\n            const float ge36 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            e  = emb[p * emb_s0 + c54 * emb_s1];\n            gc = grad_cos[p * gc_s0 + c54 * gc_s1];\n            gs = grad_sin[p * gs_s0 + c54 * gs_s1];\n            const float ge54 = fmaf(gs, cosf(e), -gc * sinf(e));\n\n            sum[j] += h * (ge0 + ge36) + w * (ge18 + ge54);\n        }\n    }\n\n    // Block-level reduction of sum[DIM_Q].\n    __shared__ float sdata[DIM_Q * WARPS];\n\n    #pragma unroll\n    for (int j = 0; j < DIM_Q; ++j) {\n        float val = sum[j];\n        // Warp shuffle tree reduce.\n        for (int offset = 16; offset > 0; offset >>= 1) {\n            val += __shfl_down_sync(0xFFFFFFFF, val, offset);\n        }\n        const int lane = threadIdx.x & 31;\n        const int warp = threadIdx.x >> 5;\n        if (lane == 0) {\n            sdata[j * WARPS + warp] = val;\n        }\n    }\n    __syncthreads();\n\n    // One thread per output element writes/atomically-adds the final value.\n    if (threadIdx.x < DIM_Q) {\n        const int j = threadIdx.x;\n        float val = 0.0f;\n        #pragma unroll\n        for (int w = 0; w < WARPS; ++w) {\n            val += sdata[j * WARPS + w];\n        }\n        if (gridDim.x == 1) {\n            output[j] = val;\n        } else {\n            atomicAdd(output + j, val);\n        }\n    }\n}\n\n// numel -> ceil(numel / block)\nstatic inline int ceil_div(int a, int b) {\n    return (a + b - 1) / b;\n}\n\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor pos_ids,\n    torch::Tensor inv_freq,\n    torch::Tensor emb)\n{\n    // inv_freq is only present to preserve the reference signature and\n    // provide the output dimension (head_dim_quarter == 18).\n    (void)inv_freq;\n\n    const int P = grad_cos.size(0);\n    const auto options = grad_cos.options().dtype(torch::kFloat32);\n\n    // Small shapes (P <= 2048, i.e. all but the three loosest-tolerance large\n    // shapes) use one block and a direct store: no atomics, no memset.\n    // Large shapes use ceil(P/BLOCK) blocks and atomicAdd into a zeroed buffer.\n    torch::Tensor output;\n    int grid;\n    if (P <= 2048) {\n        output = torch::empty({DIM_Q}, options);\n        grid = 1;\n    } else {\n        output = torch::zeros({DIM_Q}, options);\n        grid = ceil_div(P, BLOCK);\n    }\n\n    vrope_bwd_kernel<<<grid, BLOCK>>>(\n        grad_cos.data_ptr<float>(),\n        grad_sin.data_ptr<float>(),\n        pos_ids.data_ptr<int64_t>(),\n        emb.data_ptr<float>(),\n        output.data_ptr<float>(),\n        P,\n        grad_cos.stride(0), grad_cos.stride(1),\n        grad_sin.stride(0), grad_sin.stride(1),\n        emb.stride(0), emb.stride(1),\n        pos_ids.stride(0), pos_ids.stride(1));\n\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n    return output;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"Vision rotary position embedding generation backward\");\n}\n"
+      }
+    ]
+  }
+}

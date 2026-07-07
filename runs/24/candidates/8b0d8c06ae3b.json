@@ -1,0 +1,247 @@
+{
+  "cand_id": "8b0d8c06ae3b",
+  "task_id": 24,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Single fused Triton kernel computing per-patch weighted reduction to eliminate 10+ PyTorch kernel launches.",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "b58757aea48b",
+  "trajectory": "runs/24/work/8b0d8c06ae3b/trajectory.jsonl",
+  "gpu_s": 7.178,
+  "job_id": "24-8b0d8c06ae3b",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  024_vision_rotary_position_embedding_generation_backward\nSolution: t24_24-8b0d8c06ae3b\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u2838 Evaluating 16 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_chf4a6lz/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_chf4a6lz/kernel.py\", line 21, in <module>\n    P: tl.constexpr,\n       ^^\nNameError: name 'tl' is not defined\n[W707 19:32:58.708299378 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 847.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 34.0,
+      "power_w_max": 204.04,
+      "samples": 18,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0739519999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0568,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.058272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.063744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0629599999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.055633,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.066032,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.063584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.06752,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0625285,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.060944,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.062976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.060992,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.062816,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0629754999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.061312,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nTriton kernel for problem 024: vision rotary position embedding generation backward\n\nCore insight: algebraic collapse of the full 10+ PyTorch op chain into one fused kernel.\nThe scatter + matmul becomes a per-patch weighted reduction: out[j] += pos_id *\n(grad_cos[pos, :36] + grad_sin[pos, :36])_j + pos_id * (grad_cos[pos, 36:] + grad_sin[pos, 36:])_j\n\nAll 16 workloads are launch-overhead bound (tiny data volumes), but this single kernel\neliminates 10+ kernel launches per call.\n\"\"\"\nimport triton\nimport torch\n\n@triton.jit\ndef _vRoPE_bwd_kernel(\n    grad_cos_ptr,   # [P, 72] float32\n    grad_sin_ptr,   # [P, 72] float32\n    pos_ids_ptr,    # [P, 2] int64\n    emb_ptr,        # [P, 72] float32\n    out_ptr,        # [18] float32\n    P: tl.constexpr,\n    head_dim: tl.constexpr,\n    head_dim_half: tl.constexpr,\n    head_dim_quarter: tl.constexpr,\n):\n    \"\"\"\n    Compute grad_inv_freq via per-patch weighted reduction.\n\n    out[j] = sum_{p} pos_id[p] * (h_p[j] + w_p[j])\n    where:\n      h_p[j] = (-grad_cos[p, j] * emb.sin()[p, j] + grad_sin[p, j] * emb.cos()[p, j])\n      w_p[j] = (-grad_cos[p, head_dim_half+j] * emb.sin()[p, head_dim_half+j]\n               + grad_sin[p, head_dim_half+j] * emb.cos()[p, head_dim_half+j])\n\n    This is equivalent to the original 5-step chain with the scatter+matmul fused.\n    \"\"\"\n    pid = tl.program_id(0)\n    patch_start = pid * 128  # 128 elements per thread group for better load balance\n    patch_end = min(patch_start + 128, P)\n\n    # Initialize output accumulator to zero\n    acc = tl.zeros([head_dim_quarter], dtype=tl.float32)\n\n    # Process patches in this thread group\n    for p in range(patch_start, patch_end):\n        # Load grad_cos and grad_sin for this patch\n        grad_cos_row = tl.load(\n            grad_cos_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n        grad_sin_row = tl.load(\n            grad_sin_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n\n        # Load emb for sin/cos\n        emb_row = tl.load(\n            emb_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n\n        # Compute sin/cos of emb (could fuse these with mul/add)\n        emb_sin = tl.math.sin(emb_row)\n        emb_cos = tl.math.cos(emb_row)\n\n        # Compute h_p and w_p\n        # h_p: first half (0-35)\n        h_p = -grad_cos_row[:head_dim_half] * emb_sin[:head_dim_half] + grad_sin_row[:head_dim_half] * emb_cos[:head_dim_half]\n\n        # w_p: second half (36-71)\n        w_p = -grad_cos_row[head_dim_half:] * emb_sin[head_dim_half:] + grad_sin_row[head_dim_half:] * emb_cos[head_dim_half:]\n\n        # Get position IDs for this patch\n        pos_h = tl.load(pos_ids_ptr + p * 2, mask=(p < P), other=0).to(tl.int32)\n        pos_w = tl.load(pos_ids_ptr + p * 2 + 1, mask=(p < P), other=0).to(tl.int32)\n\n        # Weighted reduction: add pos_id * (h_p + w_p)\n        acc += pos_h * (h_p + w_p)\n        acc += pos_w * (h_p + w_p)\n\n    # Atomic add to final output\n    tl.store(out_ptr, acc, mask=(pid == 0))\n\n\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    pos_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    emb: torch.Tensor\n) -> torch.Tensor:\n    \"\"\"\n    Backward pass for vision rotary position embedding generation.\n\n    Fused Triton kernel implementing:\n    out[j] = sum_p pos_id[p] * (grad_emb[p, j] + grad_emb[p, 36+j])\n    where grad_emb[p, k] = -grad_cos[p, k] * emb.sin()[p, k] + grad_sin[p, k] * emb.cos()[p, k]\n\n    All 10+ PyTorch ops fused into one kernel launch.\n    \"\"\"\n    P = grad_cos.shape[0]\n    head_dim = grad_cos.shape[1]  # 72\n    head_dim_half = head_dim // 2  # 36\n    head_dim_quarter = inv_freq.shape[0]  # 18\n    max_grid_size = int(pos_ids.max().item()) + 1\n\n    # Output tensor\n    grad_inv_freq = torch.empty(\n        head_dim_quarter,\n        dtype=torch.float32,\n        device=grad_cos.device,\n        requires_grad=False\n    )\n\n    # Grid: one thread per patch (max 12288 patches in worst case)\n    grid = (P,)\n\n    # Launch the kernel\n    _vRoPE_bwd_kernel[grid](\n        grad_cos=grad_cos,\n        grad_sin=grad_sin,\n        pos_ids=pos_ids,\n        emb=emb,\n        out=grad_inv_freq,\n        P=P,\n        head_dim=head_dim,\n        head_dim_half=head_dim_half,\n        head_dim_quarter=head_dim_quarter,\n    )\n\n    return grad_inv_freq\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t24_8b0d8c06ae3b",
+    "definition": "024_vision_rotary_position_embedding_generation_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nTriton kernel for problem 024: vision rotary position embedding generation backward\n\nCore insight: algebraic collapse of the full 10+ PyTorch op chain into one fused kernel.\nThe scatter + matmul becomes a per-patch weighted reduction: out[j] += pos_id *\n(grad_cos[pos, :36] + grad_sin[pos, :36])_j + pos_id * (grad_cos[pos, 36:] + grad_sin[pos, 36:])_j\n\nAll 16 workloads are launch-overhead bound (tiny data volumes), but this single kernel\neliminates 10+ kernel launches per call.\n\"\"\"\nimport triton\nimport torch\n\n@triton.jit\ndef _vRoPE_bwd_kernel(\n    grad_cos_ptr,   # [P, 72] float32\n    grad_sin_ptr,   # [P, 72] float32\n    pos_ids_ptr,    # [P, 2] int64\n    emb_ptr,        # [P, 72] float32\n    out_ptr,        # [18] float32\n    P: tl.constexpr,\n    head_dim: tl.constexpr,\n    head_dim_half: tl.constexpr,\n    head_dim_quarter: tl.constexpr,\n):\n    \"\"\"\n    Compute grad_inv_freq via per-patch weighted reduction.\n\n    out[j] = sum_{p} pos_id[p] * (h_p[j] + w_p[j])\n    where:\n      h_p[j] = (-grad_cos[p, j] * emb.sin()[p, j] + grad_sin[p, j] * emb.cos()[p, j])\n      w_p[j] = (-grad_cos[p, head_dim_half+j] * emb.sin()[p, head_dim_half+j]\n               + grad_sin[p, head_dim_half+j] * emb.cos()[p, head_dim_half+j])\n\n    This is equivalent to the original 5-step chain with the scatter+matmul fused.\n    \"\"\"\n    pid = tl.program_id(0)\n    patch_start = pid * 128  # 128 elements per thread group for better load balance\n    patch_end = min(patch_start + 128, P)\n\n    # Initialize output accumulator to zero\n    acc = tl.zeros([head_dim_quarter], dtype=tl.float32)\n\n    # Process patches in this thread group\n    for p in range(patch_start, patch_end):\n        # Load grad_cos and grad_sin for this patch\n        grad_cos_row = tl.load(\n            grad_cos_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n        grad_sin_row = tl.load(\n            grad_sin_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n\n        # Load emb for sin/cos\n        emb_row = tl.load(\n            emb_ptr + p * head_dim + tl.arange(0, head_dim),\n            other=0.0\n        )\n\n        # Compute sin/cos of emb (could fuse these with mul/add)\n        emb_sin = tl.math.sin(emb_row)\n        emb_cos = tl.math.cos(emb_row)\n\n        # Compute h_p and w_p\n        # h_p: first half (0-35)\n        h_p = -grad_cos_row[:head_dim_half] * emb_sin[:head_dim_half] + grad_sin_row[:head_dim_half] * emb_cos[:head_dim_half]\n\n        # w_p: second half (36-71)\n        w_p = -grad_cos_row[head_dim_half:] * emb_sin[head_dim_half:] + grad_sin_row[head_dim_half:] * emb_cos[head_dim_half:]\n\n        # Get position IDs for this patch\n        pos_h = tl.load(pos_ids_ptr + p * 2, mask=(p < P), other=0).to(tl.int32)\n        pos_w = tl.load(pos_ids_ptr + p * 2 + 1, mask=(p < P), other=0).to(tl.int32)\n\n        # Weighted reduction: add pos_id * (h_p + w_p)\n        acc += pos_h * (h_p + w_p)\n        acc += pos_w * (h_p + w_p)\n\n    # Atomic add to final output\n    tl.store(out_ptr, acc, mask=(pid == 0))\n\n\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    pos_ids: torch.Tensor,\n    inv_freq: torch.Tensor,\n    emb: torch.Tensor\n) -> torch.Tensor:\n    \"\"\"\n    Backward pass for vision rotary position embedding generation.\n\n    Fused Triton kernel implementing:\n    out[j] = sum_p pos_id[p] * (grad_emb[p, j] + grad_emb[p, 36+j])\n    where grad_emb[p, k] = -grad_cos[p, k] * emb.sin()[p, k] + grad_sin[p, k] * emb.cos()[p, k]\n\n    All 10+ PyTorch ops fused into one kernel launch.\n    \"\"\"\n    P = grad_cos.shape[0]\n    head_dim = grad_cos.shape[1]  # 72\n    head_dim_half = head_dim // 2  # 36\n    head_dim_quarter = inv_freq.shape[0]  # 18\n    max_grid_size = int(pos_ids.max().item()) + 1\n\n    # Output tensor\n    grad_inv_freq = torch.empty(\n        head_dim_quarter,\n        dtype=torch.float32,\n        device=grad_cos.device,\n        requires_grad=False\n    )\n\n    # Grid: one thread per patch (max 12288 patches in worst case)\n    grid = (P,)\n\n    # Launch the kernel\n    _vRoPE_bwd_kernel[grid](\n        grad_cos=grad_cos,\n        grad_sin=grad_sin,\n        pos_ids=pos_ids,\n        emb=emb,\n        out=grad_inv_freq,\n        P=P,\n        head_dim=head_dim,\n        head_dim_half=head_dim_half,\n        head_dim_quarter=head_dim_quarter,\n    )\n\n    return grad_inv_freq\n"
+      }
+    ]
+  }
+}

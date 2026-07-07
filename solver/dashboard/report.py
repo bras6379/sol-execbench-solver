@@ -481,7 +481,6 @@ const SL = i => 'var(--s'+(i%8+1)+')';
 const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fs = s => s==null?'–':(s<90?s.toFixed(1)+'s':(s<5400?(s/60).toFixed(1)+'m':(s/3600).toFixed(1)+'h'));
 const pct=(a,p)=>{if(!a.length)return null;const v=[...a].sort((x,y)=>x-y);return v[Math.min(v.length-1,Math.max(0,Math.round(p*(v.length-1))))]};
-const bigN=n=>{n=n||0;const a=Math.abs(n);return a>=1e9?(n/1e9).toFixed(1)+'B':a>=1e6?(n/1e6).toFixed(1)+'M':a>=1e3?(n/1e3).toFixed(1)+'K':String(n);};
 const idx = {}; RECS.forEach((r,i)=>idx[r.t]=i);   // stable color slot by task order
 
 function matches(r){
@@ -558,9 +557,6 @@ function render(){
   document.getElementById('tiles').innerHTML=[
     tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
-    tile('problems', (r=>r.run+' running · '+r.wait+' waiting · '+r.done+' done')(
-      sub.reduce((a,r)=>{const s=r.s;a.run+=(s==='running');a.wait+=(s==='waiting'||s==='pending');a.done+=(s!=='running'&&s!=='waiting'&&s!=='pending');return a;},{run:0,wait:0,done:0}))),
-    tile('agent calls / tokens'+(scoped?' (sel)':''), sub.reduce((a,r)=>a+r.an,0)+' / '+bigN(sub.reduce((a,r)=>a+r.ak,0))),
   ].join('');
   // convergence — top movers in the selection
   const mv=sub.filter(r=>r.c.length).sort((a,b)=>(b.li-a.li)||(b.e-a.e)).slice(0,8);
@@ -640,20 +636,41 @@ def _family_table(families: list[dict]) -> str:
             f"<tbody>{''.join(rows)}</tbody></table>")
 
 
-def _live_banner(live: dict | None) -> str:
+def _live_banner(live: dict | None, problems: list[dict] | None = None) -> str:
     """A live activity strip: what the fleet is doing right now — how many agents
-    hold a slot, and whether the Coach is reflecting."""
+    hold a slot, whether the Coach is reflecting, and the running/waiting/done
+    split across all problems (the whole-fleet count — the tiles below cover the
+    filtered selection instead, so this isn't a duplicate)."""
+    def _counts() -> str | None:
+        if not problems:
+            return None
+        run = wait = done = 0
+        for p in problems:
+            s = p.get("live_state") or p["terminated"] or "running"
+            if s == "running":
+                run += 1
+            elif s in ("waiting", "pending"):
+                wait += 1
+            else:
+                done += 1
+        return f'{run} running · {wait} waiting · {done} done'
+
     if not live:
-        return ('<div class="livebar idle">◦ no live fleet status '
-                '(no run writing runs/_active.json)</div>')
+        counts = _counts()
+        base = '<div class="livebar idle">◦ no live fleet status (no run writing runs/_active.json)'
+        return (base + (f' &nbsp;·&nbsp; {counts}</div>' if counts else '</div>'))
     if not live.get("fresh"):
-        return ('<div class="livebar stale">⚠ fleet status stale — the run may have '
-                'stopped (no heartbeat in &gt;3 min)</div>')
+        counts = _counts()
+        base = '<div class="livebar stale">⚠ fleet status stale — the run may have stopped (no heartbeat in &gt;3 min)'
+        return (base + (f' &nbsp;·&nbsp; {counts}</div>' if counts else '</div>'))
     cap = live.get("cap") or 0
     n = live.get("n_active", 0)
     phase = live.get("phase") or "?"
     parts = [f'<b>▶ {_esc(phase)}</b>',
              (f'{n}/{cap} agents working' if cap else f'{n} agents working')]
+    counts = _counts()
+    if counts:
+        parts.append(counts)
     refl = live.get("reflect")
     if refl and refl.get("total"):
         parts.append(f'<span class="reflecting">🧠 reflecting {refl.get("done",0)}/'
@@ -675,12 +692,39 @@ def _cost_panel(fleet: dict, problems: list[dict], top_n: int = 8) -> str:
     noop_cost = fleet.get("noop_cost", 0.0)
     rh = fleet.get("reflect_health") or {"success": 0, "fail": 0}
     rh_total = rh["success"] + rh["fail"]
+    agent_calls = fleet.get("agent_calls", 0)
+    agent_tokens = fleet.get("agent_tokens", 0)
+
+    def _rows_with_expand(items: list, row_fn) -> str:
+        """Render row_fn(item) for every item; rows beyond top_n start hidden behind
+        a 'show N more' / 'show less' TOGGLE (plain HTML/CSS + a one-line inline
+        handler — no framework, matches this file's static-safe style)."""
+        rows = [row_fn(it) for it in items]
+        if len(rows) <= top_n:
+            return "".join(rows)
+        head, rest = rows[:top_n], rows[top_n:]
+        n = len(rest)
+        toggle = (f'<tr class="more-toggle"><td colspan="9">'
+                  f'<button class="link" data-more="{n}" onclick="'
+                  f"const t=this.closest('table'),open=this.dataset.state==='open';"
+                  f"t.querySelectorAll('.more-row').forEach(r=>r.hidden=open);"
+                  f"this.textContent=open?'show '+this.dataset.more+' more':'show less';"
+                  f"this.dataset.state=open?'closed':'open'"
+                  f'">show {n} more</button></td></tr>')
+        return "".join(head) + toggle + "".join(f'<tr class="more-row" hidden>{r[4:]}' for r in rest)
+
+    def _fmt_tok(n: int) -> str:
+        n = n or 0
+        return f"{n/1e6:.2f}M" if n >= 1e6 else (f"{n/1e3:.1f}k" if n >= 1e3 else str(n))
 
     kind_row = " · ".join(f"{k} <b>${v:,.2f}</b>" for k, v in by_kind.items() if v)
-    model_rows = "".join(
-        f'<tr><td>{_esc(m)}</td><td data-v="{v}"><b>${v:,.2f}</b></td>'
-        f'<td data-v="{(v/total*100) if total else 0}">{(v/total*100) if total else 0:.0f}%</td></tr>'
-        for m, v in sorted(by_model.items(), key=lambda kv: -kv[1])[:top_n])
+    model_rows = _rows_with_expand(
+        sorted(by_model.items(), key=lambda kv: -kv[1].get("cost", 0)),
+        lambda mv: (f'<tr><td>{_esc(mv[0])}</td><td data-v="{mv[1].get("cost", 0)}"><b>${mv[1].get("cost", 0):,.2f}</b></td>'
+                   f'<td data-v="{(mv[1].get("cost", 0)/total*100) if total else 0}">{(mv[1].get("cost", 0)/total*100) if total else 0:.0f}%</td>'
+                   f'<td data-v="{mv[1].get("in", 0)}">{_fmt_tok(mv[1].get("in", 0))}</td>'
+                   f'<td data-v="{mv[1].get("out", 0)}">{_fmt_tok(mv[1].get("out", 0))}</td>'
+                   f'<td data-v="{mv[1].get("cached", 0)}">{_fmt_tok(mv[1].get("cached", 0))}</td></tr>'))
 
     noop_pct = (noop_cost / by_kind.get("plan", 1) * 100) if by_kind.get("plan") else 0
     noop_cls = "warn" if noop_pct >= 15 else ""
@@ -689,26 +733,39 @@ def _cost_panel(fleet: dict, problems: list[dict], top_n: int = 8) -> str:
     def _ptotal(p: dict) -> float:
         return sum((p.get("cost") or {}).values())
 
-    expensive = sorted(problems, key=lambda p: -_ptotal(p))[:top_n]
-    expensive_rows = "".join(
-        f'<tr><td><a href="p/{p["task"]}.html">#{p["task"]}</a></td>'
-        f'<td data-v="{_ptotal(p)}"><b>${_ptotal(p):,.2f}</b></td>'
-        f'<td data-v="{p.get("noop_cost") or 0}">${p.get("noop_cost", 0):,.2f}</td>'
-        f'<td>{p["evals"]}</td></tr>'
-        for p in expensive if _ptotal(p))
+    def _ptok(p: dict, key: str) -> int:
+        return sum((m or {}).get(key, 0) for m in (p.get("cost_by_model") or {}).values())
+
+    expensive = [p for p in sorted(problems, key=lambda p: -_ptotal(p)) if _ptotal(p)]
+    expensive_rows = _rows_with_expand(
+        expensive,
+        lambda p: (f'<tr><td><a href="p/{p["task"]}.html">#{p["task"]}</a></td>'
+                   f'<td data-v="{_ptotal(p)}"><b>${_ptotal(p):,.2f}</b></td>'
+                   f'<td data-v="{p.get("noop_cost") or 0}">${p.get("noop_cost", 0):,.2f}</td>'
+                   f'<td data-v="{_ptok(p, "in")}">{_fmt_tok(_ptok(p, "in"))}</td>'
+                   f'<td data-v="{_ptok(p, "out")}">{_fmt_tok(_ptok(p, "out"))}</td>'
+                   f'<td data-v="{_ptok(p, "cached")}">{_fmt_tok(_ptok(p, "cached"))}</td>'
+                   f'<td>{p["evals"]}</td></tr>'))
+
+    # a raw-HTML tile (the by-kind $ breakdown has <b> markup) — _tile() escapes its
+    # sub-line, which would show literal "<b>" tags, so this one is built by hand.
+    total_tile = (f'<div class="tile"><div class="tile-v">${total:,.2f}</div>'
+                 f'<div class="tile-l">total spend</div>'
+                 f'<div class="tile-s">{kind_row or "no cost data yet"}</div></div>')
 
     return f"""
 <div class="panel"><h2>Cost & efficiency <span class="fcount">(real $ from the CLI's own billing, where reported)</span></h2>
 <div class="tiles" style="margin-bottom:14px">
-{_tile("total spend", f"${total:,.2f}", kind_row or "no cost data yet")}
+{total_tile}
 {_tile("no-op waste", f"${noop_cost:,.2f}", f"{noop_pct:.0f}% of plan spend — paid calls that changed nothing", cls=noop_cls)}
 {_tile("reflection health", f"{rh['success']}/{rh_total}" if rh_total else "–", "diagnose calls succeeding" if rh_total else "no reflection attempts yet", cls=reflect_cls)}
+{_tile("agent calls / tokens", f"{agent_calls} / {_fmt_tok(agent_tokens)}", "design + plan turns, fleet-wide")}
 </div>
 <div class="cols">
-<div><h3 class="coach-h">spend by model</h3><table class="sortable"><thead><tr><th>model</th><th>$</th><th>%</th></tr></thead>
-<tbody>{model_rows or '<tr><td colspan=3 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
-<div><h3 class="coach-h">most expensive problems</h3><table class="sortable"><thead><tr><th>problem</th><th>$ spent</th><th>$ no-op</th><th>evals</th></tr></thead>
-<tbody>{expensive_rows or '<tr><td colspan=4 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
+<div><h3 class="coach-h">spend by model</h3><table class="sortable"><thead><tr><th>model</th><th>$</th><th>%</th><th>in tok</th><th>out tok</th><th>cached tok</th></tr></thead>
+<tbody>{model_rows or '<tr><td colspan=6 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
+<div><h3 class="coach-h">most expensive problems</h3><table class="sortable"><thead><tr><th>problem</th><th>$ spent</th><th>$ no-op</th><th>in tok</th><th>out tok</th><th>cached tok</th><th>evals</th></tr></thead>
+<tbody>{expensive_rows or '<tr><td colspan=7 class="muted">no cost data yet</td></tr>'}</tbody></table></div>
 </div>
 </div>"""
 
@@ -791,8 +848,6 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
         "o": [p["outcomes"][k] for k in OUTCOME_KEYS],
-        "an": sum(p["agent"][k]["n"] for k in p["agent"]),
-        "ak": sum(p["agent"][k]["tok"] for k in p["agent"]),
         "cost": round(sum((p.get("cost") or {}).values()), 4),
         "noop_cost": round(p.get("noop_cost", 0.0), 4),
     } for p in problems]
@@ -820,7 +875,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
         '<span id="fcount" class="fcount"></span></div>')
 
     body = f"""
-{_live_banner(data.get("live"))}
+{_live_banner(data.get("live"), problems)}
 {filterbar}
 <h2 class="section-h">System diagnostics</h2>
 <div id="tiles" class="tiles"></div>

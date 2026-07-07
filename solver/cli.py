@@ -191,6 +191,7 @@ def _cmd_solve(args) -> None:
             max_gpu_evals=(big if tl else args.max_evals), time_limit_s=tl,
             verify_runs=args.verify_runs, agent_fail_limit=args.agent_fail_limit,
             review_enabled=args.review, review_max_rounds=args.review_max_rounds,
+            ceiling_consensus=args.ceiling_consensus,
         )
         agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
@@ -590,6 +591,10 @@ def main(argv: list[str] | None = None) -> None:
                          help="safety valve on the review/repair cycle: after this many 'revise' rounds on "
                               "one candidate, ship it as-is rather than looping forever (never worse than "
                               "--no-review)")
+    p_solve.add_argument("--ceiling-consensus", type=int, default=2,
+                         help="N consecutive no-op iterations (agent left the kernel byte-identical to its "
+                              "parent) before a problem auto-terminates as at-ceiling, rather than keep "
+                              "paying for turns that produce nothing; reopens on resume. 0 disables")
     p_solve.add_argument("--shuffle", action="store_true",
                          help="randomize problem launch order (seeded) so a --max-concurrency window "
                               "is a RANDOM sample of the id range, not always the lowest ids — fairer "

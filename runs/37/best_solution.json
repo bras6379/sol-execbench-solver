@@ -1,0 +1,25 @@
+{
+  "name": "t37_3b53c2e1301f",
+  "definition": "037_flux_feedforward_gelu_approximate",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\nimport torch.nn.functional as F\nimport math\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n):\n    \"\"\"\n    FLUX FeedForward with GELU approximate activation.\n    \n    Architecture:\n    - Linear: hidden_dim (3072) -> mlp_hidden_dim (12288)\n    - GELU activation with tanh approximation\n    - Linear: mlp_hidden_dim (12288) -> hidden_dim (3072)\n    \n    GELU(x) \u2248 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    \"\"\"\n    # Step 1: First linear projection [batch, seq, 3072] -> [batch, seq, 12288]\n    x = F.linear(hidden_states, fc1_weight, fc1_bias)\n    \n    # Step 2: GELU activation with tanh approximation\n    # GELU(x) \u2248 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    x = F.gelu(x, approximate=\"tanh\")\n    \n    # Step 3: Second linear projection [batch, seq, 12288] -> [batch, seq, 3072]\n    output = F.linear(x, fc2_weight, fc2_bias)\n    \n    return output\n"
+    }
+  ]
+}

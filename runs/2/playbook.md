@@ -12,3 +12,14 @@ Higher-ceiling reserve: fuse the entire block (conv1+GN1+SiLU1+conv2+GN2+SiLU2+a
 ## 3. from `8c84d614` — Split the small-shape CUDA-graph path by batch: B==1 uses a pure-NCHW reduce-overhead graph to avoid the NCHW->NHWC tran
 Higher-ceiling reserve not shipped: fuse the whole block (conv1→GN1→SiLU1→conv2→GN2→SiLU2→add) into a single cuDNN frontend operation graph so the backend can elide all intermediate HBM round-trips between the two convs and the normalizations, not just the tail fusion torch.compile provides. Trigger: if any B>=2 large workload still scores raw < ~0.65 after this dispatch tuning, the remaining gap is likely inter-op memory traffic and the cuDNN graph API is the next move; wrap it with a torch.compile fallback in case cudnn-frontend is unavailable.
 
+## 4. from `18fc2385` — Exhaustive cuDNN algorithm search (benchmark_limit=0) + max-autotune for large NHWC shapes to autotune Inductor's fused
+Fuse the whole block (conv1→GN1→SiLU→conv2→GN2→SiLU→add) into a single cuDNN frontend operation graph via the cudnn-frontend Python API. On SM100 the backend can JIT-compile the full chain into one fused kernel, eliminating all intermediate HBM round-trips. Even though GroupNorm is a reduction barrier, the graph API can manage the entire execution as a single node with fused pointwise segments and cooperative buffer reuse. Trigger: if this revision leaves any B>=2 large workload raw-score < ~0.65, the remaining gap is inter-op memory traffic — deploy the cuDNN frontend graph with a torch.compi
+
+## 5. from `42623ceb` — Reorder dispatch checks so b==1 is evaluated before p<=32768 for small product, eliminating redundant condition evaluati
+Fuse the entire residual block (conv1→GN1→SiLU→conv2→GN2→SiLU→add) into a single cuDNN frontend operation graph via cudnn-frontend Python API, eliminating all intermediate HBM round-trips between the two convs and normalizations. Trigger: if this revision leaves any B>=2 large workload raw-score < ~0.65 (meaning cuDNN implicit-GEMM alone is utilization-limited and the GN+SiLU+add memory traffic is the binding constraint), the cuDNN graph API is the next move.
+
+## 6. from `aa162b65` — Keep the 0.556 frontier for small shapes and B==1 large, and add a new large-B>=2 path using custom Triton kernels that
+This round ships a real attempt at the untried Triton-fused-NHWC-tail lever for large B>=2 workloads: two single-CTA-per-(sample,group) Triton kernels collapse GN+SiLU (first tail) and GN+SiLU+residual-add+layout-to-NCHW (second tail), with fallback to the proven 0.556 torch.compile paths if Triton fails.
+
+Higher-ceiling idea NOT shipped: fuse the whole residual block end-to-end with the cuDNN frontend operation graph (or a persistent single-kernel Triton/Welford reduction that keeps conv1 output resident in L2 between stats and apply). Trigger to try it: if this revision still lands at or bel
+

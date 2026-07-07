@@ -4,35 +4,35 @@
   "name": "reduction_18",
   "epsilon": 0.02,
   "size": 1,
-  "best_cand": "d3f34260597c",
-  "best_score": 0.8810751072813081,
-  "best_score_cal": 0.84793944713169,
+  "best_cand": "b2a6470d77ba",
+  "best_score": 0.8972319226722276,
+  "best_score_cal": 0.8653910473699644,
   "members": [
     {
-      "cand_id": "d3f34260597c",
-      "sol_score": 0.8810751072813081,
-      "sol_score_cal": 0.84793944713169,
+      "cand_id": "b2a6470d77ba",
+      "sol_score": 0.8972319226722276,
+      "sol_score_cal": 0.8653910473699644,
       "all_passed": true,
       "shapes_won": 13,
       "vector": [
-        0.9828782158222846,
-        0.8600509664247501,
-        0.9819625442306033,
-        0.8634502175582288,
-        0.8791078170885192,
-        0.8661937377690803,
-        0.8462730826256908,
-        0.8539901038212452,
-        0.8452800584033866,
-        0.8351903435468895,
-        0.8969951480162142,
-        0.9052073838880598,
-        0.8373967754620526
+        0.9821882951653943,
+        0.8720986460348163,
+        0.9824712891805543,
+        0.8728331177231565,
+        0.8852978453738909,
+        0.8704523107177975,
+        0.8789801114737459,
+        0.898723428891226,
+        0.8868717239329381,
+        0.8674059787849565,
+        0.899432653595375,
+        0.9103179439657126,
+        0.8569416498993964
       ],
-      "strategy": "One-launch Triton fusion of per-head RMSNorm, RoPE, and KV-cache scatter-write with per-(batch,seq) cos/sin computed onc",
-      "agent": "openrouter",
-      "model": "moonshotai/kimi-k2.7-code",
-      "candidate": "candidates/d3f34260597c.json"
+      "strategy": "Reload the 0.848 one-launch Triton fusion (RMSNorm+RoPE+KV-cache scatter) and apply the untried vectorization lever: las",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/b2a6470d77ba.json"
     }
   ]
 }

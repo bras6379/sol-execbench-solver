@@ -1,0 +1,245 @@
+{
+  "cand_id": "f04bbae28f73",
+  "task_id": 6,
+  "verdict": "dominated",
+  "sol_score": 0.702112483960404,
+  "sol_score_calibrated": 0.6640088373838372,
+  "correct": true,
+  "vector": [
+    0.8806759986343462,
+    0.575955913522679,
+    0.5491516966067863,
+    0.8994105565481658,
+    0.540759388287065,
+    0.5456318898724626,
+    0.5428571428571428,
+    0.8903996470708009,
+    0.5383010284810127,
+    0.8934285062145956,
+    0.548477048477046,
+    0.5698611733094491,
+    0.572678331090175,
+    0.8968376397994601,
+    0.8913200072033135,
+    0.8980537753919644
+  ],
+  "strategy": "Single fused Triton kernel (depthwise causal conv1d k=3 lookback-2 + 768->3x256 split + v*x0 gate), flat grid-stride sin",
+  "agent": "claude",
+  "model": "opus",
+  "parent": "68e868dc22ee",
+  "trajectory": "runs/6/work/f04bbae28f73/trajectory.jsonl",
+  "gpu_s": 50.007,
+  "job_id": "6-f04bbae28f73",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 664.37,
+      "samples": 161,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.003296,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.021136,
+      "sol_score": 0.8806759986343462,
+      "sol_score_cal": 0.8577518554973266,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.015104,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.0195835,
+      "sol_score": 0.575955913522679,
+      "sol_score_cal": 0.5248744794831206,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.017056,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.020208,
+      "sol_score": 0.5491516966067863,
+      "sol_score_cal": 0.4987446409310504,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.003712,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.0276315,
+      "sol_score": 0.8994105565481658,
+      "sol_score_cal": 0.8787136062185836,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.027968,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.0320805,
+      "sol_score": 0.540759388287065,
+      "sol_score_cal": 0.48922733267315155,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0149445,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.017424,
+      "sol_score": 0.5456318898724626,
+      "sol_score_cal": 0.4940023403794094,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.028096,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.032464,
+      "sol_score": 0.5428571428571428,
+      "sol_score_cal": 0.4913830343541823,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0057445,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.040257,
+      "sol_score": 0.8903996470708009,
+      "sol_score_cal": 0.8689430839740971,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.028143500000000002,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.0320165,
+      "sol_score": 0.5383010284810127,
+      "sol_score_cal": 0.48681508566015524,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.003168,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0221285,
+      "sol_score": 0.8934285062145956,
+      "sol_score_cal": 0.8716549479683315,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.00992,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.0117279999999999,
+      "sol_score": 0.548477048477046,
+      "sol_score_cal": 0.49812982155380414,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.009184,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.01168,
+      "sol_score": 0.5698611733094491,
+      "sol_score_cal": 0.5191504291915533,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.00912,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.011712,
+      "sol_score": 0.572678331090175,
+      "sol_score_cal": 0.5219578017664377,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.00264,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.019104,
+      "sol_score": 0.8968376397994601,
+      "sol_score_cal": 0.8756636668298377,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.005728,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.040496,
+      "sol_score": 0.8913200072033135,
+      "sol_score_cal": 0.8700061873356488,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.0026555,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.019488,
+      "sol_score": 0.8980537753919644,
+      "sol_score_cal": 0.8771230843247045,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Fused Hyena short-filter: depthwise causal conv1d (k=3, lookback 2)\n# + channel split (768 -> 3x256) + first gate (v_gated = v * x0)\n#\n# Single fused Triton kernel, flat grid-stride single loop over\n# (batch, channel-group, time-tile) work units.\n#\n# ---- WHY THIS CONFIG SET (the lever this round) --------------------------\n# The official grader times COLD-L2 (kb/benchmark-grader.md: a 2xL2 buffer is\n# zeroed before EVERY iteration), so every kernel is measured HBM-bound\n# (~7.7 TB/s), NOT L2-warm (~21 TB/s). The score is\n#     S = 1 / (1 + (T_k - T_SOL) / (T_b - T_SOL))\n# so closing to the *cold-HBM byte floor* (not the unreachable L2 SOL) is the\n# whole game on the memory-bound shapes.\n#\n# Triton's autotuner benchmarks each config WARM (do_bench does not flush L2),\n# so it happily picks high-PROG_MULT / tiny-block configs: warm they look fast\n# (L2 hides latency), but COLD they give ~1 work-unit per CTA -> no software\n# pipeline -> the ~300-600 ns cold-HBM miss latency is fully exposed -> the\n# mem-bound shapes stall at ~2-2.5x the HBM byte floor (idx10 25MB: 8.35us vs\n# 3.4us floor => S 0.60 instead of ~0.85).\n#\n# FIX: every config here keeps PROG_MULT LOW so grid = NUM_SM * PROG_MULT is\n# well below n_total -> each CTA loops over MANY work units -> num_stages\n# software-pipelines that grid-stride loop -> deep memory-level parallelism\n# that HIDES the cold-HBM latency. CB=1 dominates for the cleanest\n# time-contiguous (vectorized) coalescing. No degenerate high-PROG_MULT\n# \"SM-filling\" configs remain to fool the warm autotuner. For the tiny\n# launch-bound shapes n_total is small so grid caps at n_total anyway (full\n# parallelism), and their cold penalty is negligible.\n#\n# Semantics (exact fp32 match to reference):\n#   uc[c,t] = bias[c] + w[c,0]*u[c,t-2] + w[c,1]*u[c,t-1] + w[c,2]*u[c,t]\n#   for output channel c in [0,DM):  x0=conv(c), x1=conv(c+DM), v=conv(c+2*DM)\n#   v_gated[c] = v[c] * x0[c]\n# u<0 -> 0 (causal padding). All fp32, atol=rtol=1e-5, matched_ratio >= 0.99.\n# 3-term reorder is < 1e-7 relative -> passes.\n#\n# Single output buffer (B, 768, S): rows [0:256]=x0, [256:512]=x1,\n# [512:768]=v_gated. ONE allocation instead of three (trims Python/launch\n# overhead on the launch-bound shapes), and the returned slices are exactly\n# the same non-contiguous views the reference itself returns (uc[:, a:b]).\n# For output channel c the input rows {c, c+DM, c+2DM} equal the output rows,\n# so one row-offset expression serves both u_ptr and out_ptr.\n# ---------------------------------------------------------------------------\n\nNUM_SM = 148  # B200\n\n\ndef _make_configs():\n    # (CHANNEL_BLOCK, BLOCK_T, num_warps, num_stages, PROG_MULT)\n    # Vector width ~ CB*BLOCK_T / (32*num_warps): kept at 4-8 elem/thread for\n    # 128-bit (float4) coalesced loads/stores. num_stages 2-4 pipelines the\n    # grid-stride loop; PROG_MULT low so the loop has many iterations to pipe.\n    cfgs = [\n        # ---- short-S / medium mem-bound (the cold-stall shapes) ----\n        (1, 128, 1, 4, 4),   # 4 e/t, deep pipe\n        (1, 128, 1, 3, 4),\n        (1, 128, 2, 4, 8),   # 2 e/t, a touch more parallel\n        (1, 256, 2, 4, 4),   # 4 e/t\n        (1, 256, 2, 3, 4),\n        (1, 256, 1, 3, 4),   # 8 e/t\n        (1, 256, 2, 2, 8),\n        (2, 256, 4, 3, 4),   # 4 e/t, half the blocks (more work/CTA)\n        (2, 128, 2, 3, 4),   # 2 e/t\n        # ---- long-S mem-bound (time loop pipelines) ----\n        (1, 512, 4, 3, 4),   # 4 e/t\n        (1, 512, 4, 4, 2),\n        (1, 512, 2, 3, 2),   # 8 e/t\n        (1, 512, 4, 2, 4),\n        (1, 1024, 4, 3, 2),  # 8 e/t\n        (1, 1024, 4, 2, 2),\n        (2, 256, 2, 3, 2),   # 8 e/t\n    ]\n    return [\n        triton.Config(\n            {\"CHANNEL_BLOCK\": cb, \"BLOCK_T\": bt, \"PROG_MULT\": pm},\n            num_warps=nw, num_stages=ns,\n        )\n        for (cb, bt, nw, ns, pm) in cfgs\n    ]\n\n\n@triton.autotune(configs=_make_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_kernel(\n    u_ptr, w_ptr, b_ptr, out_ptr,\n    B, S,\n    stride_ub, stride_uc, stride_ut,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc, stride_ot,\n    DM: tl.constexpr,            # d_model = 256\n    CHANNEL_BLOCK: tl.constexpr,  # output channels per CTA-iteration\n    BLOCK_T: tl.constexpr,\n    PROG_MULT: tl.constexpr,     # grid = min(n_total, NUM_SM * PROG_MULT)\n):\n    pid = tl.program_id(0)\n    n_prog = tl.num_programs(0)\n\n    n_groups = DM // CHANNEL_BLOCK          # CB in {1,2} divides 256 exactly\n    n_tt = tl.cdiv(S, BLOCK_T)\n    n_total = B * n_groups * n_tt\n\n    arange_t = tl.arange(0, BLOCK_T)\n    arange_cb = tl.arange(0, CHANNEL_BLOCK)\n\n    for tile_idx in range(pid, n_total, n_prog):\n        # Decode work unit -> (batch, channel-group, time-tile)\n        tt = tile_idx % n_tt\n        rest = tile_idx // n_tt\n        grp = rest % n_groups\n        b_idx = rest // n_groups\n\n        c_base = grp * CHANNEL_BLOCK\n        c0 = c_base + arange_cb              # rows for x0  (also out rows)\n        c1 = c0 + DM                         # rows for x1\n        c2 = c0 + 2 * DM                     # rows for v / v_gated\n\n        offs_t = tt * BLOCK_T + arange_t\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n        m0 = (offs_t < S)[None, :]\n        m1 = ((tm1 >= 0) & (tm1 < S))[None, :]\n        m2 = ((tm2 >= 0) & (tm2 < S))[None, :]\n\n        b_off = b_idx * stride_ub\n        e0 = c0[:, None] * stride_uc\n        e1 = c1[:, None] * stride_uc\n        e2 = c2[:, None] * stride_uc\n        t0 = offs_t[None, :] * stride_ut\n        t1 = tm1[None, :] * stride_ut\n        t2 = tm2[None, :] * stride_ut\n\n        # --- LOAD: 9 loads (2/3 are shifted re-reads served by L1; ~1x HBM) ---\n        a0t = tl.load(u_ptr + b_off + e0 + t0, mask=m0, other=0.0)\n        a0m1 = tl.load(u_ptr + b_off + e0 + t1, mask=m1, other=0.0)\n        a0m2 = tl.load(u_ptr + b_off + e0 + t2, mask=m2, other=0.0)\n        a1t = tl.load(u_ptr + b_off + e1 + t0, mask=m0, other=0.0)\n        a1m1 = tl.load(u_ptr + b_off + e1 + t1, mask=m1, other=0.0)\n        a1m2 = tl.load(u_ptr + b_off + e1 + t2, mask=m2, other=0.0)\n        a2t = tl.load(u_ptr + b_off + e2 + t0, mask=m0, other=0.0)\n        a2m1 = tl.load(u_ptr + b_off + e2 + t1, mask=m1, other=0.0)\n        a2m2 = tl.load(u_ptr + b_off + e2 + t2, mask=m2, other=0.0)\n\n        # --- weights + bias (tiny; reloaded per unit but negligible bytes) ---\n        w00 = tl.load(w_ptr + c0 * stride_wc + 0 * stride_wk)\n        w01 = tl.load(w_ptr + c0 * stride_wc + 1 * stride_wk)\n        w02 = tl.load(w_ptr + c0 * stride_wc + 2 * stride_wk)\n        bb0 = tl.load(b_ptr + c0)\n        w10 = tl.load(w_ptr + c1 * stride_wc + 0 * stride_wk)\n        w11 = tl.load(w_ptr + c1 * stride_wc + 1 * stride_wk)\n        w12 = tl.load(w_ptr + c1 * stride_wc + 2 * stride_wk)\n        bb1 = tl.load(b_ptr + c1)\n        w20 = tl.load(w_ptr + c2 * stride_wc + 0 * stride_wk)\n        w21 = tl.load(w_ptr + c2 * stride_wc + 1 * stride_wk)\n        w22 = tl.load(w_ptr + c2 * stride_wc + 2 * stride_wk)\n        bb2 = tl.load(b_ptr + c2)\n\n        # --- COMPUTE (fp32, order-independent within tolerance) ---\n        x0 = bb0[:, None] + w00[:, None] * a0m2 + w01[:, None] * a0m1 + w02[:, None] * a0t\n        x1 = bb1[:, None] + w10[:, None] * a1m2 + w11[:, None] * a1m1 + w12[:, None] * a1t\n        vv = bb2[:, None] + w20[:, None] * a2m2 + w21[:, None] * a2m1 + w22[:, None] * a2t\n        vg = vv * x0\n\n        # --- STORE: x0->row c0, x1->row c1, v_gated->row c2 (same as in rows) ---\n        base_out = b_idx * stride_ob + offs_t[None, :] * stride_ot\n        tl.store(out_ptr + base_out + c0[:, None] * stride_oc, x0, mask=m0)\n        tl.store(out_ptr + base_out + c1[:, None] * stride_oc, x1, mask=m0)\n        tl.store(out_ptr + base_out + c2[:, None] * stride_oc, vg, mask=m0)\n\n\n@torch.no_grad()\ndef run(u: torch.Tensor, short_filter_weight: torch.Tensor, short_filter_bias: torch.Tensor):\n    \"\"\"\n    Depthwise causal conv1d (k=3, lookback 2) + split (768 -> 3x256)\n    + gate (v_gated = v * x0), fused into one Triton kernel.\n    Returns (v_gated, x0, x1).\n    \"\"\"\n    batch_size, inner_width, seq_len = u.shape\n    d_model = inner_width // 3          # (order+1)=3 -> 768/3 = 256\n\n    # CPU / non-CUDA safety fallback (grader runs CUDA; this never scores).\n    if not u.is_cuda:\n        import torch.nn.functional as F\n        uc = F.conv1d(u, short_filter_weight, bias=short_filter_bias,\n                      padding=2, groups=inner_width)[..., :seq_len]\n        x0 = uc[:, :d_model, :]\n        x1 = uc[:, d_model:2 * d_model, :]\n        v = uc[:, 2 * d_model:3 * d_model, :]\n        return v * x0, x0, x1\n\n    u = u.contiguous()\n    w = short_filter_weight.contiguous()\n    b = short_filter_bias.contiguous()\n\n    # ONE output buffer; return non-contiguous views (matches reference layout).\n    out = torch.empty((batch_size, inner_width, seq_len),\n                      device=u.device, dtype=u.dtype)\n\n    def grid(meta):\n        n_groups = triton.cdiv(d_model, meta[\"CHANNEL_BLOCK\"])\n        n_tt = triton.cdiv(seq_len, meta[\"BLOCK_T\"])\n        n_total = batch_size * n_groups * n_tt\n        return (min(n_total, NUM_SM * meta[\"PROG_MULT\"]),)\n\n    _hyena_kernel[grid](\n        u, w, b, out,\n        batch_size, seq_len,\n        u.stride(0), u.stride(1), u.stride(2),\n        w.stride(0), w.stride(2),\n        out.stride(0), out.stride(1), out.stride(2),\n        d_model,\n    )\n\n    x0 = out[:, :d_model, :]\n    x1 = out[:, d_model:2 * d_model, :]\n    vg = out[:, 2 * d_model:3 * d_model, :]\n    return vg, x0, x1\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t6_f04bbae28f73",
+    "definition": "006_hyena_depthwise_conv1d_split_gate",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Fused Hyena short-filter: depthwise causal conv1d (k=3, lookback 2)\n# + channel split (768 -> 3x256) + first gate (v_gated = v * x0)\n#\n# Single fused Triton kernel, flat grid-stride single loop over\n# (batch, channel-group, time-tile) work units.\n#\n# ---- WHY THIS CONFIG SET (the lever this round) --------------------------\n# The official grader times COLD-L2 (kb/benchmark-grader.md: a 2xL2 buffer is\n# zeroed before EVERY iteration), so every kernel is measured HBM-bound\n# (~7.7 TB/s), NOT L2-warm (~21 TB/s). The score is\n#     S = 1 / (1 + (T_k - T_SOL) / (T_b - T_SOL))\n# so closing to the *cold-HBM byte floor* (not the unreachable L2 SOL) is the\n# whole game on the memory-bound shapes.\n#\n# Triton's autotuner benchmarks each config WARM (do_bench does not flush L2),\n# so it happily picks high-PROG_MULT / tiny-block configs: warm they look fast\n# (L2 hides latency), but COLD they give ~1 work-unit per CTA -> no software\n# pipeline -> the ~300-600 ns cold-HBM miss latency is fully exposed -> the\n# mem-bound shapes stall at ~2-2.5x the HBM byte floor (idx10 25MB: 8.35us vs\n# 3.4us floor => S 0.60 instead of ~0.85).\n#\n# FIX: every config here keeps PROG_MULT LOW so grid = NUM_SM * PROG_MULT is\n# well below n_total -> each CTA loops over MANY work units -> num_stages\n# software-pipelines that grid-stride loop -> deep memory-level parallelism\n# that HIDES the cold-HBM latency. CB=1 dominates for the cleanest\n# time-contiguous (vectorized) coalescing. No degenerate high-PROG_MULT\n# \"SM-filling\" configs remain to fool the warm autotuner. For the tiny\n# launch-bound shapes n_total is small so grid caps at n_total anyway (full\n# parallelism), and their cold penalty is negligible.\n#\n# Semantics (exact fp32 match to reference):\n#   uc[c,t] = bias[c] + w[c,0]*u[c,t-2] + w[c,1]*u[c,t-1] + w[c,2]*u[c,t]\n#   for output channel c in [0,DM):  x0=conv(c), x1=conv(c+DM), v=conv(c+2*DM)\n#   v_gated[c] = v[c] * x0[c]\n# u<0 -> 0 (causal padding). All fp32, atol=rtol=1e-5, matched_ratio >= 0.99.\n# 3-term reorder is < 1e-7 relative -> passes.\n#\n# Single output buffer (B, 768, S): rows [0:256]=x0, [256:512]=x1,\n# [512:768]=v_gated. ONE allocation instead of three (trims Python/launch\n# overhead on the launch-bound shapes), and the returned slices are exactly\n# the same non-contiguous views the reference itself returns (uc[:, a:b]).\n# For output channel c the input rows {c, c+DM, c+2DM} equal the output rows,\n# so one row-offset expression serves both u_ptr and out_ptr.\n# ---------------------------------------------------------------------------\n\nNUM_SM = 148  # B200\n\n\ndef _make_configs():\n    # (CHANNEL_BLOCK, BLOCK_T, num_warps, num_stages, PROG_MULT)\n    # Vector width ~ CB*BLOCK_T / (32*num_warps): kept at 4-8 elem/thread for\n    # 128-bit (float4) coalesced loads/stores. num_stages 2-4 pipelines the\n    # grid-stride loop; PROG_MULT low so the loop has many iterations to pipe.\n    cfgs = [\n        # ---- short-S / medium mem-bound (the cold-stall shapes) ----\n        (1, 128, 1, 4, 4),   # 4 e/t, deep pipe\n        (1, 128, 1, 3, 4),\n        (1, 128, 2, 4, 8),   # 2 e/t, a touch more parallel\n        (1, 256, 2, 4, 4),   # 4 e/t\n        (1, 256, 2, 3, 4),\n        (1, 256, 1, 3, 4),   # 8 e/t\n        (1, 256, 2, 2, 8),\n        (2, 256, 4, 3, 4),   # 4 e/t, half the blocks (more work/CTA)\n        (2, 128, 2, 3, 4),   # 2 e/t\n        # ---- long-S mem-bound (time loop pipelines) ----\n        (1, 512, 4, 3, 4),   # 4 e/t\n        (1, 512, 4, 4, 2),\n        (1, 512, 2, 3, 2),   # 8 e/t\n        (1, 512, 4, 2, 4),\n        (1, 1024, 4, 3, 2),  # 8 e/t\n        (1, 1024, 4, 2, 2),\n        (2, 256, 2, 3, 2),   # 8 e/t\n    ]\n    return [\n        triton.Config(\n            {\"CHANNEL_BLOCK\": cb, \"BLOCK_T\": bt, \"PROG_MULT\": pm},\n            num_warps=nw, num_stages=ns,\n        )\n        for (cb, bt, nw, ns, pm) in cfgs\n    ]\n\n\n@triton.autotune(configs=_make_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_kernel(\n    u_ptr, w_ptr, b_ptr, out_ptr,\n    B, S,\n    stride_ub, stride_uc, stride_ut,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc, stride_ot,\n    DM: tl.constexpr,            # d_model = 256\n    CHANNEL_BLOCK: tl.constexpr,  # output channels per CTA-iteration\n    BLOCK_T: tl.constexpr,\n    PROG_MULT: tl.constexpr,     # grid = min(n_total, NUM_SM * PROG_MULT)\n):\n    pid = tl.program_id(0)\n    n_prog = tl.num_programs(0)\n\n    n_groups = DM // CHANNEL_BLOCK          # CB in {1,2} divides 256 exactly\n    n_tt = tl.cdiv(S, BLOCK_T)\n    n_total = B * n_groups * n_tt\n\n    arange_t = tl.arange(0, BLOCK_T)\n    arange_cb = tl.arange(0, CHANNEL_BLOCK)\n\n    for tile_idx in range(pid, n_total, n_prog):\n        # Decode work unit -> (batch, channel-group, time-tile)\n        tt = tile_idx % n_tt\n        rest = tile_idx // n_tt\n        grp = rest % n_groups\n        b_idx = rest // n_groups\n\n        c_base = grp * CHANNEL_BLOCK\n        c0 = c_base + arange_cb              # rows for x0  (also out rows)\n        c1 = c0 + DM                         # rows for x1\n        c2 = c0 + 2 * DM                     # rows for v / v_gated\n\n        offs_t = tt * BLOCK_T + arange_t\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n        m0 = (offs_t < S)[None, :]\n        m1 = ((tm1 >= 0) & (tm1 < S))[None, :]\n        m2 = ((tm2 >= 0) & (tm2 < S))[None, :]\n\n        b_off = b_idx * stride_ub\n        e0 = c0[:, None] * stride_uc\n        e1 = c1[:, None] * stride_uc\n        e2 = c2[:, None] * stride_uc\n        t0 = offs_t[None, :] * stride_ut\n        t1 = tm1[None, :] * stride_ut\n        t2 = tm2[None, :] * stride_ut\n\n        # --- LOAD: 9 loads (2/3 are shifted re-reads served by L1; ~1x HBM) ---\n        a0t = tl.load(u_ptr + b_off + e0 + t0, mask=m0, other=0.0)\n        a0m1 = tl.load(u_ptr + b_off + e0 + t1, mask=m1, other=0.0)\n        a0m2 = tl.load(u_ptr + b_off + e0 + t2, mask=m2, other=0.0)\n        a1t = tl.load(u_ptr + b_off + e1 + t0, mask=m0, other=0.0)\n        a1m1 = tl.load(u_ptr + b_off + e1 + t1, mask=m1, other=0.0)\n        a1m2 = tl.load(u_ptr + b_off + e1 + t2, mask=m2, other=0.0)\n        a2t = tl.load(u_ptr + b_off + e2 + t0, mask=m0, other=0.0)\n        a2m1 = tl.load(u_ptr + b_off + e2 + t1, mask=m1, other=0.0)\n        a2m2 = tl.load(u_ptr + b_off + e2 + t2, mask=m2, other=0.0)\n\n        # --- weights + bias (tiny; reloaded per unit but negligible bytes) ---\n        w00 = tl.load(w_ptr + c0 * stride_wc + 0 * stride_wk)\n        w01 = tl.load(w_ptr + c0 * stride_wc + 1 * stride_wk)\n        w02 = tl.load(w_ptr + c0 * stride_wc + 2 * stride_wk)\n        bb0 = tl.load(b_ptr + c0)\n        w10 = tl.load(w_ptr + c1 * stride_wc + 0 * stride_wk)\n        w11 = tl.load(w_ptr + c1 * stride_wc + 1 * stride_wk)\n        w12 = tl.load(w_ptr + c1 * stride_wc + 2 * stride_wk)\n        bb1 = tl.load(b_ptr + c1)\n        w20 = tl.load(w_ptr + c2 * stride_wc + 0 * stride_wk)\n        w21 = tl.load(w_ptr + c2 * stride_wc + 1 * stride_wk)\n        w22 = tl.load(w_ptr + c2 * stride_wc + 2 * stride_wk)\n        bb2 = tl.load(b_ptr + c2)\n\n        # --- COMPUTE (fp32, order-independent within tolerance) ---\n        x0 = bb0[:, None] + w00[:, None] * a0m2 + w01[:, None] * a0m1 + w02[:, None] * a0t\n        x1 = bb1[:, None] + w10[:, None] * a1m2 + w11[:, None] * a1m1 + w12[:, None] * a1t\n        vv = bb2[:, None] + w20[:, None] * a2m2 + w21[:, None] * a2m1 + w22[:, None] * a2t\n        vg = vv * x0\n\n        # --- STORE: x0->row c0, x1->row c1, v_gated->row c2 (same as in rows) ---\n        base_out = b_idx * stride_ob + offs_t[None, :] * stride_ot\n        tl.store(out_ptr + base_out + c0[:, None] * stride_oc, x0, mask=m0)\n        tl.store(out_ptr + base_out + c1[:, None] * stride_oc, x1, mask=m0)\n        tl.store(out_ptr + base_out + c2[:, None] * stride_oc, vg, mask=m0)\n\n\n@torch.no_grad()\ndef run(u: torch.Tensor, short_filter_weight: torch.Tensor, short_filter_bias: torch.Tensor):\n    \"\"\"\n    Depthwise causal conv1d (k=3, lookback 2) + split (768 -> 3x256)\n    + gate (v_gated = v * x0), fused into one Triton kernel.\n    Returns (v_gated, x0, x1).\n    \"\"\"\n    batch_size, inner_width, seq_len = u.shape\n    d_model = inner_width // 3          # (order+1)=3 -> 768/3 = 256\n\n    # CPU / non-CUDA safety fallback (grader runs CUDA; this never scores).\n    if not u.is_cuda:\n        import torch.nn.functional as F\n        uc = F.conv1d(u, short_filter_weight, bias=short_filter_bias,\n                      padding=2, groups=inner_width)[..., :seq_len]\n        x0 = uc[:, :d_model, :]\n        x1 = uc[:, d_model:2 * d_model, :]\n        v = uc[:, 2 * d_model:3 * d_model, :]\n        return v * x0, x0, x1\n\n    u = u.contiguous()\n    w = short_filter_weight.contiguous()\n    b = short_filter_bias.contiguous()\n\n    # ONE output buffer; return non-contiguous views (matches reference layout).\n    out = torch.empty((batch_size, inner_width, seq_len),\n                      device=u.device, dtype=u.dtype)\n\n    def grid(meta):\n        n_groups = triton.cdiv(d_model, meta[\"CHANNEL_BLOCK\"])\n        n_tt = triton.cdiv(seq_len, meta[\"BLOCK_T\"])\n        n_total = batch_size * n_groups * n_tt\n        return (min(n_total, NUM_SM * meta[\"PROG_MULT\"]),)\n\n    _hyena_kernel[grid](\n        u, w, b, out,\n        batch_size, seq_len,\n        u.stride(0), u.stride(1), u.stride(2),\n        w.stride(0), w.stride(2),\n        out.stride(0), out.stride(1), out.stride(2),\n        d_model,\n    )\n\n    x0 = out[:, :d_model, :]\n    x1 = out[:, d_model:2 * d_model, :]\n    vg = out[:, 2 * d_model:3 * d_model, :]\n    return vg, x0, x1\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "cand_id": "04c086c411a4",
+  "task_id": 30,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.4703698069988626,
+    0.0,
+    0.4685848921890619,
+    0.0,
+    0.4653725078698846,
+    0.40116945654666375,
+    0.4722452502841711,
+    0.4470679036653174,
+    0.4718996415770609,
+    0.4709044001719937,
+    0.4711259791663216,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Shape-dispatched: split-K Triton GEMM+fused residual (SPLIT_K=3-4) to fill 148 SMs for underfilled M<=586, fused Triton ",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "152b0e6515c8",
+  "trajectory": "runs/30/work/04c086c411a4/trajectory.jsonl",
+  "gpu_s": 6.626,
+  "job_id": "30-04c086c411a4",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 41.0,
+      "power_w_max": 332.71,
+      "samples": 18,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.089296,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.0859844999999999,
+      "sol_score": 0.4703698069988626,
+      "sol_score_cal": 0.3608191663758726,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0041,
+      "baseline_latency_ms": 0.012,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.089472,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085952,
+      "sol_score": 0.4685848921890619,
+      "sol_score_cal": 0.35949982252332396,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0118,
+      "baseline_latency_ms": 0.021984,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.046304,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044192,
+      "sol_score": 0.4653725078698846,
+      "sol_score_cal": 0.3611769400535862,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.050991999999999996,
+      "sol_ms": 0.0301,
+      "baseline_latency_ms": 0.044096,
+      "sol_score": 0.40116945654666375,
+      "sol_score_cal": 0.31397723642602565,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0889755,
+      "sol_ms": 0.0581,
+      "baseline_latency_ms": 0.085728,
+      "sol_score": 0.4722452502841711,
+      "sol_score_cal": 0.366376119406152,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.047552,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.0441915,
+      "sol_score": 0.4470679036653174,
+      "sol_score_cal": 0.34801529634085526,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.089168,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": 0.4718996415770609,
+      "sol_score_cal": 0.36199209479210886,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.089232,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085984,
+      "sol_score": 0.4709044001719937,
+      "sol_score_cal": 0.36119240215209325,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0459675,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044224,
+      "sol_score": 0.4711259791663216,
+      "sol_score_cal": 0.36541762978215336,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0078,
+      "baseline_latency_ms": 0.01584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.02592,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.014,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.025952,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.009888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _fused_gemm_residual_kernel(\n    A_ptr,\n    W_ptr,\n    R_ptr,\n    C_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wn,\n    stride_wk,\n    stride_rm,\n    stride_rn,\n    stride_cm,\n    stride_cn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    \"\"\"Fused GEMM + residual: C = (A @ W^T) + R, all in bf16.\n\n    Reference rounding order: fp32 accum -> bf16 -> + residual (bf16) -> bf16.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(0, K, BLOCK_K):\n        offs_k = k + tl.arange(0, BLOCK_K)\n        k_mask = offs_k < K\n\n        a = tl.load(\n            A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak,\n            mask=(offs_m[:, None] < M) & k_mask[None, :],\n            other=0.0,\n        )\n        w = tl.load(\n            W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk,\n            mask=(offs_n[:, None] < N) & k_mask[None, :],\n            other=0.0,\n        )\n        acc += tl.dot(a, w)\n\n    # Epilogue: match reference rounding order\n    # Reference: projected = matmul(A, W^T)  # fp32 accum -> bf16\n    #            output = projected + residual  # bf16 + bf16\n    r = tl.load(\n        R_ptr + offs_m[:, None] * stride_rm + offs_n[None, :] * stride_rn,\n        mask=(offs_m[:, None] < M) & (offs_n[None, :] < N),\n        other=0.0,\n    )\n    c = acc.to(tl.bfloat16) + r  # bf16(acc) + bf16(r) -> fp32 result\n    c = c.to(tl.bfloat16)  # truncate to bf16 output\n\n    tl.store(\n        C_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn,\n        c,\n        mask=(offs_m[:, None] < M) & (offs_n[None, :] < N),\n    )\n\n\n@triton.jit\ndef _splitk_gemm_kernel(\n    A_ptr,\n    W_ptr,\n    partials_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wn,\n    stride_wk,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Split-K GEMM: each CTA computes a partial sum along a K slice.\n\n    Stores fp32 partials into partials[M, N, SPLIT_K].\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    k_per_split = tl.cdiv(K, SPLIT_K)\n    k_start = pid_k * k_per_split\n    k_end = tl.minimum(k_start + k_per_split, K)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    offs_m_mask = offs_m < M\n    offs_n_mask = offs_n < N\n\n    for k in range(k_start.to(tl.int32), k_end.to(tl.int32), BLOCK_K):\n        offs_k = k + tl.arange(0, BLOCK_K)\n        k_mask = (offs_k < K) & (offs_k < k_end)\n\n        a = tl.load(\n            A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak,\n            mask=offs_m_mask[:, None] & k_mask[None, :],\n            other=0.0,\n        )\n        w = tl.load(\n            W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk,\n            mask=offs_n_mask[:, None] & k_mask[None, :],\n            other=0.0,\n        )\n        acc += tl.dot(a, w)\n\n    # Store partial result: partials[offs_m, offs_n, pid_k] = acc\n    # Layout: (M, N, SPLIT_K) fp32; stride_m = N*SPLIT_K, stride_n = SPLIT_K\n    tl.store(\n        partials_ptr\n        + offs_m[:, None] * N * SPLIT_K\n        + offs_n[None, :] * SPLIT_K\n        + pid_k,\n        acc,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n    )\n\n\n@triton.jit\ndef _splitk_reduce_kernel(\n    partials_ptr,\n    R_ptr,\n    C_ptr,\n    M,\n    N,\n    stride_rm,\n    stride_rn,\n    stride_cm,\n    stride_cn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Reduce split-K partials, add residual, write output.\n\n    Reference rounding: sum partials in fp32, convert to bf16, add residual, store bf16.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    offs_m_mask = offs_m < M\n    offs_n_mask = offs_n < N\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(SPLIT_K):\n        p = tl.load(\n            partials_ptr\n            + offs_m[:, None] * N * SPLIT_K\n            + offs_n[None, :] * SPLIT_K\n            + k,\n            mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n            other=0.0,\n        )\n        acc += p\n\n    # Match reference rounding: fp32 -> bf16 -> + residual -> bf16\n    r = tl.load(\n        R_ptr + offs_m[:, None] * stride_rm + offs_n[None, :] * stride_rn,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n        other=0.0,\n    )\n    c = acc.to(tl.bfloat16) + r\n    c = c.to(tl.bfloat16)\n\n    tl.store(\n        C_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn,\n        c,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n    )\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection + residual add.\n\n    Shape-dispatched:\n      - M <= 586:   Split-K Triton GEMM + fused residual (fills SMs on underfilled small M)\n      - 586 < M <= 2048: Fused Triton GEMM + residual (SMs naturally filled)\n      - M > 2048:   cuBLASLt addmm beta=1.0 (proven Stream-K wave-quantization handling)\n\n    Reference rounding: fp32 accum -> bf16 -> + residual (bf16) -> bf16 output.\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n    N = H\n    K = H\n\n    attn_2d = attn_output.view(M, K)\n    residual_2d = residual.view(M, N)\n\n    if M <= 586:\n        # ---- Split-K Triton for underfilled small M ----\n        if M <= 256:\n            BM, BN, BK, SPLIT_K = 64, 128, 128, 4\n            num_warps_gemm = 4\n            num_stages_gemm = 2\n        elif M <= 512:\n            BM, BN, BK, SPLIT_K = 128, 128, 128, 4\n            num_warps_gemm = 8\n            num_stages_gemm = 3\n        else:\n            # M=586: 5 M-tiles * 20 N-tiles * 3 = 300 CTAs (2.0 waves)\n            BM, BN, BK, SPLIT_K = 128, 128, 128, 3\n            num_warps_gemm = 8\n            num_stages_gemm = 3\n\n        M_tiles = triton.cdiv(M, BM)\n        N_tiles = triton.cdiv(N, BN)\n\n        # Allocate partials buffer: (M, N, SPLIT_K) fp32\n        partials = torch.empty(\n            (M, N, SPLIT_K), dtype=torch.float32, device=attn_output.device\n        )\n\n        # Launch split-K GEMM\n        grid = (M_tiles, N_tiles, SPLIT_K)\n        _splitk_gemm_kernel[grid](\n            attn_2d,\n            o_proj_weight,\n            partials,\n            M,\n            N,\n            K,\n            attn_2d.stride(0),\n            attn_2d.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            BM=BM,\n            BN=BN,\n            BK=BK,\n            SPLIT_K=SPLIT_K,\n            num_warps=num_warps_gemm,\n            num_stages=num_stages_gemm,\n        )\n\n        # Launch reduction + residual add\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=attn_output.device)\n        grid_reduce = (M_tiles, N_tiles)\n        _splitk_reduce_kernel[grid_reduce](\n            partials,\n            residual_2d,\n            out_2d,\n            M,\n            N,\n            residual_2d.stride(0),\n            residual_2d.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BM=BM,\n            BN=BN,\n            SPLIT_K=SPLIT_K,\n            num_warps=4,\n            num_stages=1,\n        )\n\n        return out_2d.view(B, S, H)\n\n    elif M <= 2048:\n        # ---- Fused Triton GEMM (no split-K) for medium M ----\n        # Grid: ceil(M/128) * 20 N-tiles; SMs naturally filled for M >= 1024\n        BM, BN, BK = 128, 128, 128\n        M_tiles = triton.cdiv(M, BM)\n        N_tiles = triton.cdiv(N, BN)\n\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=attn_output.device)\n        grid = (M_tiles, N_tiles)\n        _fused_gemm_residual_kernel[grid](\n            attn_2d,\n            o_proj_weight,\n            residual_2d,\n            out_2d,\n            M,\n            N,\n            K,\n            attn_2d.stride(0),\n            attn_2d.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            residual_2d.stride(0),\n            residual_2d.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BM=BM,\n            BN=BN,\n            BK=BK,\n            num_warps=8,\n            num_stages=4,\n        )\n\n        return out_2d.view(B, S, H)\n\n    else:\n        # ---- cuBLASLt addmm for large M ----\n        # Proven at 0.342: cuBLASLt fuses the add into the GEMM epilogue\n        # and uses Stream-K internally to eliminate wave-quantization tails.\n        out_2d = torch.addmm(\n            residual_2d,\n            attn_2d,\n            o_proj_weight.t(),\n            beta=1.0,\n            alpha=1.0,\n        )\n        return out_2d.view(B, S, H)"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t30_04c086c411a4",
+    "definition": "030_attention_output_projection_with_residual",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _fused_gemm_residual_kernel(\n    A_ptr,\n    W_ptr,\n    R_ptr,\n    C_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wn,\n    stride_wk,\n    stride_rm,\n    stride_rn,\n    stride_cm,\n    stride_cn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    \"\"\"Fused GEMM + residual: C = (A @ W^T) + R, all in bf16.\n\n    Reference rounding order: fp32 accum -> bf16 -> + residual (bf16) -> bf16.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(0, K, BLOCK_K):\n        offs_k = k + tl.arange(0, BLOCK_K)\n        k_mask = offs_k < K\n\n        a = tl.load(\n            A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak,\n            mask=(offs_m[:, None] < M) & k_mask[None, :],\n            other=0.0,\n        )\n        w = tl.load(\n            W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk,\n            mask=(offs_n[:, None] < N) & k_mask[None, :],\n            other=0.0,\n        )\n        acc += tl.dot(a, w)\n\n    # Epilogue: match reference rounding order\n    # Reference: projected = matmul(A, W^T)  # fp32 accum -> bf16\n    #            output = projected + residual  # bf16 + bf16\n    r = tl.load(\n        R_ptr + offs_m[:, None] * stride_rm + offs_n[None, :] * stride_rn,\n        mask=(offs_m[:, None] < M) & (offs_n[None, :] < N),\n        other=0.0,\n    )\n    c = acc.to(tl.bfloat16) + r  # bf16(acc) + bf16(r) -> fp32 result\n    c = c.to(tl.bfloat16)  # truncate to bf16 output\n\n    tl.store(\n        C_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn,\n        c,\n        mask=(offs_m[:, None] < M) & (offs_n[None, :] < N),\n    )\n\n\n@triton.jit\ndef _splitk_gemm_kernel(\n    A_ptr,\n    W_ptr,\n    partials_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wn,\n    stride_wk,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Split-K GEMM: each CTA computes a partial sum along a K slice.\n\n    Stores fp32 partials into partials[M, N, SPLIT_K].\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    k_per_split = tl.cdiv(K, SPLIT_K)\n    k_start = pid_k * k_per_split\n    k_end = tl.minimum(k_start + k_per_split, K)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    offs_m_mask = offs_m < M\n    offs_n_mask = offs_n < N\n\n    for k in range(k_start.to(tl.int32), k_end.to(tl.int32), BLOCK_K):\n        offs_k = k + tl.arange(0, BLOCK_K)\n        k_mask = (offs_k < K) & (offs_k < k_end)\n\n        a = tl.load(\n            A_ptr + offs_m[:, None] * stride_am + offs_k[None, :] * stride_ak,\n            mask=offs_m_mask[:, None] & k_mask[None, :],\n            other=0.0,\n        )\n        w = tl.load(\n            W_ptr + offs_n[:, None] * stride_wn + offs_k[None, :] * stride_wk,\n            mask=offs_n_mask[:, None] & k_mask[None, :],\n            other=0.0,\n        )\n        acc += tl.dot(a, w)\n\n    # Store partial result: partials[offs_m, offs_n, pid_k] = acc\n    # Layout: (M, N, SPLIT_K) fp32; stride_m = N*SPLIT_K, stride_n = SPLIT_K\n    tl.store(\n        partials_ptr\n        + offs_m[:, None] * N * SPLIT_K\n        + offs_n[None, :] * SPLIT_K\n        + pid_k,\n        acc,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n    )\n\n\n@triton.jit\ndef _splitk_reduce_kernel(\n    partials_ptr,\n    R_ptr,\n    C_ptr,\n    M,\n    N,\n    stride_rm,\n    stride_rn,\n    stride_cm,\n    stride_cn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Reduce split-K partials, add residual, write output.\n\n    Reference rounding: sum partials in fp32, convert to bf16, add residual, store bf16.\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    offs_m_mask = offs_m < M\n    offs_n_mask = offs_n < N\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(SPLIT_K):\n        p = tl.load(\n            partials_ptr\n            + offs_m[:, None] * N * SPLIT_K\n            + offs_n[None, :] * SPLIT_K\n            + k,\n            mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n            other=0.0,\n        )\n        acc += p\n\n    # Match reference rounding: fp32 -> bf16 -> + residual -> bf16\n    r = tl.load(\n        R_ptr + offs_m[:, None] * stride_rm + offs_n[None, :] * stride_rn,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n        other=0.0,\n    )\n    c = acc.to(tl.bfloat16) + r\n    c = c.to(tl.bfloat16)\n\n    tl.store(\n        C_ptr + offs_m[:, None] * stride_cm + offs_n[None, :] * stride_cn,\n        c,\n        mask=offs_m_mask[:, None] & offs_n_mask[None, :],\n    )\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection + residual add.\n\n    Shape-dispatched:\n      - M <= 586:   Split-K Triton GEMM + fused residual (fills SMs on underfilled small M)\n      - 586 < M <= 2048: Fused Triton GEMM + residual (SMs naturally filled)\n      - M > 2048:   cuBLASLt addmm beta=1.0 (proven Stream-K wave-quantization handling)\n\n    Reference rounding: fp32 accum -> bf16 -> + residual (bf16) -> bf16 output.\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n    N = H\n    K = H\n\n    attn_2d = attn_output.view(M, K)\n    residual_2d = residual.view(M, N)\n\n    if M <= 586:\n        # ---- Split-K Triton for underfilled small M ----\n        if M <= 256:\n            BM, BN, BK, SPLIT_K = 64, 128, 128, 4\n            num_warps_gemm = 4\n            num_stages_gemm = 2\n        elif M <= 512:\n            BM, BN, BK, SPLIT_K = 128, 128, 128, 4\n            num_warps_gemm = 8\n            num_stages_gemm = 3\n        else:\n            # M=586: 5 M-tiles * 20 N-tiles * 3 = 300 CTAs (2.0 waves)\n            BM, BN, BK, SPLIT_K = 128, 128, 128, 3\n            num_warps_gemm = 8\n            num_stages_gemm = 3\n\n        M_tiles = triton.cdiv(M, BM)\n        N_tiles = triton.cdiv(N, BN)\n\n        # Allocate partials buffer: (M, N, SPLIT_K) fp32\n        partials = torch.empty(\n            (M, N, SPLIT_K), dtype=torch.float32, device=attn_output.device\n        )\n\n        # Launch split-K GEMM\n        grid = (M_tiles, N_tiles, SPLIT_K)\n        _splitk_gemm_kernel[grid](\n            attn_2d,\n            o_proj_weight,\n            partials,\n            M,\n            N,\n            K,\n            attn_2d.stride(0),\n            attn_2d.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            BM=BM,\n            BN=BN,\n            BK=BK,\n            SPLIT_K=SPLIT_K,\n            num_warps=num_warps_gemm,\n            num_stages=num_stages_gemm,\n        )\n\n        # Launch reduction + residual add\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=attn_output.device)\n        grid_reduce = (M_tiles, N_tiles)\n        _splitk_reduce_kernel[grid_reduce](\n            partials,\n            residual_2d,\n            out_2d,\n            M,\n            N,\n            residual_2d.stride(0),\n            residual_2d.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BM=BM,\n            BN=BN,\n            SPLIT_K=SPLIT_K,\n            num_warps=4,\n            num_stages=1,\n        )\n\n        return out_2d.view(B, S, H)\n\n    elif M <= 2048:\n        # ---- Fused Triton GEMM (no split-K) for medium M ----\n        # Grid: ceil(M/128) * 20 N-tiles; SMs naturally filled for M >= 1024\n        BM, BN, BK = 128, 128, 128\n        M_tiles = triton.cdiv(M, BM)\n        N_tiles = triton.cdiv(N, BN)\n\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=attn_output.device)\n        grid = (M_tiles, N_tiles)\n        _fused_gemm_residual_kernel[grid](\n            attn_2d,\n            o_proj_weight,\n            residual_2d,\n            out_2d,\n            M,\n            N,\n            K,\n            attn_2d.stride(0),\n            attn_2d.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            residual_2d.stride(0),\n            residual_2d.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BM=BM,\n            BN=BN,\n            BK=BK,\n            num_warps=8,\n            num_stages=4,\n        )\n\n        return out_2d.view(B, S, H)\n\n    else:\n        # ---- cuBLASLt addmm for large M ----\n        # Proven at 0.342: cuBLASLt fuses the add into the GEMM epilogue\n        # and uses Stream-K internally to eliminate wave-quantization tails.\n        out_2d = torch.addmm(\n            residual_2d,\n            attn_2d,\n            o_proj_weight.t(),\n            beta=1.0,\n            alpha=1.0,\n        )\n        return out_2d.view(B, S, H)"
+      }
+    ]
+  }
+}

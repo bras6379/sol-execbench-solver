@@ -1,0 +1,201 @@
+{
+  "cand_id": "1720a8cca2f5",
+  "task_id": 28,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Single Triton kernel per mask writing directly to contiguous 4D bool buffers, eliminating CUDA-graph static buffers and ",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "9bb7ebd3eea0",
+  "trajectory": "runs/28/work/1720a8cca2f5/trajectory.jsonl",
+  "gpu_s": 15.345,
+  "job_id": "28-1720a8cca2f5",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 28.0,
+      "power_w_max": 310.95,
+      "samples": 45,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# Constants\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n_SLIDING_WINDOW = 128\n\n\n@triton.jit\ndef _full_mask_kernel(\n    out_ptr,\n    B,\n    H,\n    T,\n    S,\n    past_kv_len,\n    BLOCK_H: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    BLOCK_S: tl.constexpr,\n):\n    \"\"\"Generate full-causal attention mask in 4D output.\n\n    Output shape: [B, H, T, S]\n    Output[i, h, t, s] = (t < s - past_kv_len)  # True = masked (cannot attend)\n\n    Uses head-independent computation, so h index is unused in the kernel itself.\n    \"\"\"\n    pid_h = tl.program_id(0)  # [0, B*H)\n    pid_t = tl.program_id(1)   # [0, cdiv(T, BLOCK_T))\n    pid_s = tl.program_id(2)   # [0, cdiv(S, BLOCK_S))\n\n    b = pid_h // H\n    # h = pid_h % H  # Not used - mask is head-independent\n\n    # Thread indices for T and S dimensions\n    t_offs = pid_t * BLOCK_T + tl.arange(0, BLOCK_T)\n    s_offs = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n\n    # Mask for valid indices\n    t_mask = t_offs < T\n    s_mask = s_offs < S\n\n    # Compute causal condition: True = masked (cannot attend)\n    # Reference: (target_indices >= source_indices - past_kv_len)\n    # Equivalent to: target_indices < source_indices - past_kv_len\n    causal_val = t_offs[:, None] < (s_offs[None, :] - past_kv_len)\n\n    # Base offset for this (b, h) head\n    base = pid_h * T * S\n    t_tile_offset = t_offs[:, None] * S\n    s_tile_offset = s_offs[None, :]\n\n    out_offs = base + t_tile_offset + s_tile_offset\n\n    # Store as uint8 (0/1), which maps directly to bool in the output tensor\n    tl.store(out_ptr + out_offs, causal_val.to(tl.uint8), mask=t_mask[:, None] & s_mask[None, :])\n\n\n@triton.jit\ndef _swa_mask_kernel(\n    out_ptr,\n    B,\n    H,\n    T,\n    S,\n    past_kv_len,\n    BLOCK_H: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    BLOCK_S: tl.constexpr,\n):\n    \"\"\"Generate sliding window attention mask in 4D output.\n\n    Output shape: [B, H, T, S]\n    Output[i, h, t, s] = False (all-unmasked) for valid sliding window positions\n\n    The reference creates zeros and then sets positions to False via masked_fill,\n    which is mathematically equivalent to all False. The sliding window condition\n    (source_indices - past_kv_len >= target_indices - sliding_window) & causal_cond\n    always evaluates to False for the reference's behavior, so we directly write zeros.\n    \"\"\"\n    pid_h = tl.program_id(0)  # [0, B*H)\n    pid_t = tl.program_id(1)   # [0, cdiv(T, BLOCK_T))\n    pid_s = tl.program_id(2)   # [0, cdiv(S, BLOCK_S))\n\n    b = pid_h // H\n    # h = pid_h % H  # Not used - mask is head-independent\n\n    # Thread indices for T and S dimensions\n    t_offs = pid_t * BLOCK_T + tl.arange(0, BLOCK_T)\n    s_offs = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n\n    # Mask for valid indices\n    t_mask = t_offs < T\n    s_mask = s_offs < S\n\n    # Store zeros directly (all-False output)\n    # Reference: zeros([T, S]).masked_fill(valid_positions, False) where\n    # valid_positions = causal_cond & window_cond\n    # For the reference's actual output (which is all False), we can skip the computation\n    # entirely and just write zeros.\n    base = pid_h * T * S\n    t_tile_offset = t_offs[:, None] * S\n    s_tile_offset = s_offs[None, :]\n\n    out_offs = base + t_tile_offset + s_tile_offset\n\n    tl.store(out_ptr + out_offs, tl.zeros([BLOCK_T, BLOCK_S], dtype=tl.uint8), mask=t_mask[:, None] & s_mask[None, :])\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation \u2014 single Triton kernel for both masks.\n\n    This implementation:\n    1. Eliminates the CUDA-graph static buffer issue by writing to fresh contiguous\n       output tensors instead of reusing cached buffers.\n    2. Fixes the bit-packing bug by storing uint8 (0/1) which maps directly to bool.\n    3. Creates true 4D contiguous outputs, eliminating the per-shape expand() copies.\n    4. Uses head-independent computation (mask pattern doesn't depend on head index).\n\n    The full mask follows the reference pattern:\n    - full[i, j] = (i < j - past_kv_len)  # True = masked (cannot attend)\n\n    The SWA mask follows the reference's provable all-False behavior:\n    - The reference's zeros().masked_fill() is a no-op since zeros are already False.\n    - We directly write zeros to the output for maximum speed.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n    device = torch.device(\"cuda\")\n\n    # Precompute output shapes and allocate contiguous buffers\n    full_shape = (B, _NUM_FULL_HEADS, T, S)\n    swa_shape = (B, _NUM_SWA_HEADS, T, S)\n\n    full_out = torch.empty(full_shape, dtype=torch.bool, device=device)\n    swa_out = torch.empty(swa_shape, dtype=torch.bool, device=device)\n\n    # Choose tile sizes based on output size for optimal occupancy\n    # Small outputs: smaller tiles to keep grid size reasonable\n    # Large outputs: larger tiles to reduce launch overhead\n    if T * S < 1000:  # Regime A (launch-bound): small 2D patterns\n        BLOCK_H = 8\n        BLOCK_T = 64\n        BLOCK_S = 64\n    elif T * S < 10000:  # Regime B: medium\n        BLOCK_H = 32\n        BLOCK_T = 64\n        BLOCK_S = 128\n    else:  # Regime C: large\n        BLOCK_H = 64\n        BLOCK_T = 128\n        BLOCK_S = 256\n\n    # Compute grid sizes\n    grid_h = triton.cdiv(B * _NUM_FULL_HEADS, BLOCK_H)\n    grid_t = triton.cdiv(T, BLOCK_T)\n    grid_s = triton.cdiv(S, BLOCK_S)\n\n    # Launch kernel for full mask\n    _full_mask_kernel[grid_h, grid_t, grid_s](\n        out_ptr=full_out,\n        B=B,\n        H=_NUM_FULL_HEADS,\n        T=T,\n        S=S,\n        past_kv_len=past,\n        BLOCK_H=BLOCK_H,\n        BLOCK_T=BLOCK_T,\n        BLOCK_S=BLOCK_S,\n    )\n\n    # Launch kernel for SWA mask (all-False)\n    _swa_mask_kernel[grid_h, grid_t, grid_s](\n        out_ptr=swa_out,\n        B=B,\n        H=_NUM_SWA_HEADS,\n        T=T,\n        S=S,\n        past_kv_len=past,\n        BLOCK_H=BLOCK_H,\n        BLOCK_T=BLOCK_T,\n        BLOCK_S=BLOCK_S,\n    )\n\n    return full_out, swa_out\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_1720a8cca2f5",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n# Constants\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n_SLIDING_WINDOW = 128\n\n\n@triton.jit\ndef _full_mask_kernel(\n    out_ptr,\n    B,\n    H,\n    T,\n    S,\n    past_kv_len,\n    BLOCK_H: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    BLOCK_S: tl.constexpr,\n):\n    \"\"\"Generate full-causal attention mask in 4D output.\n\n    Output shape: [B, H, T, S]\n    Output[i, h, t, s] = (t < s - past_kv_len)  # True = masked (cannot attend)\n\n    Uses head-independent computation, so h index is unused in the kernel itself.\n    \"\"\"\n    pid_h = tl.program_id(0)  # [0, B*H)\n    pid_t = tl.program_id(1)   # [0, cdiv(T, BLOCK_T))\n    pid_s = tl.program_id(2)   # [0, cdiv(S, BLOCK_S))\n\n    b = pid_h // H\n    # h = pid_h % H  # Not used - mask is head-independent\n\n    # Thread indices for T and S dimensions\n    t_offs = pid_t * BLOCK_T + tl.arange(0, BLOCK_T)\n    s_offs = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n\n    # Mask for valid indices\n    t_mask = t_offs < T\n    s_mask = s_offs < S\n\n    # Compute causal condition: True = masked (cannot attend)\n    # Reference: (target_indices >= source_indices - past_kv_len)\n    # Equivalent to: target_indices < source_indices - past_kv_len\n    causal_val = t_offs[:, None] < (s_offs[None, :] - past_kv_len)\n\n    # Base offset for this (b, h) head\n    base = pid_h * T * S\n    t_tile_offset = t_offs[:, None] * S\n    s_tile_offset = s_offs[None, :]\n\n    out_offs = base + t_tile_offset + s_tile_offset\n\n    # Store as uint8 (0/1), which maps directly to bool in the output tensor\n    tl.store(out_ptr + out_offs, causal_val.to(tl.uint8), mask=t_mask[:, None] & s_mask[None, :])\n\n\n@triton.jit\ndef _swa_mask_kernel(\n    out_ptr,\n    B,\n    H,\n    T,\n    S,\n    past_kv_len,\n    BLOCK_H: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    BLOCK_S: tl.constexpr,\n):\n    \"\"\"Generate sliding window attention mask in 4D output.\n\n    Output shape: [B, H, T, S]\n    Output[i, h, t, s] = False (all-unmasked) for valid sliding window positions\n\n    The reference creates zeros and then sets positions to False via masked_fill,\n    which is mathematically equivalent to all False. The sliding window condition\n    (source_indices - past_kv_len >= target_indices - sliding_window) & causal_cond\n    always evaluates to False for the reference's behavior, so we directly write zeros.\n    \"\"\"\n    pid_h = tl.program_id(0)  # [0, B*H)\n    pid_t = tl.program_id(1)   # [0, cdiv(T, BLOCK_T))\n    pid_s = tl.program_id(2)   # [0, cdiv(S, BLOCK_S))\n\n    b = pid_h // H\n    # h = pid_h % H  # Not used - mask is head-independent\n\n    # Thread indices for T and S dimensions\n    t_offs = pid_t * BLOCK_T + tl.arange(0, BLOCK_T)\n    s_offs = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n\n    # Mask for valid indices\n    t_mask = t_offs < T\n    s_mask = s_offs < S\n\n    # Store zeros directly (all-False output)\n    # Reference: zeros([T, S]).masked_fill(valid_positions, False) where\n    # valid_positions = causal_cond & window_cond\n    # For the reference's actual output (which is all False), we can skip the computation\n    # entirely and just write zeros.\n    base = pid_h * T * S\n    t_tile_offset = t_offs[:, None] * S\n    s_tile_offset = s_offs[None, :]\n\n    out_offs = base + t_tile_offset + s_tile_offset\n\n    tl.store(out_ptr + out_offs, tl.zeros([BLOCK_T, BLOCK_S], dtype=tl.uint8), mask=t_mask[:, None] & s_mask[None, :])\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation \u2014 single Triton kernel for both masks.\n\n    This implementation:\n    1. Eliminates the CUDA-graph static buffer issue by writing to fresh contiguous\n       output tensors instead of reusing cached buffers.\n    2. Fixes the bit-packing bug by storing uint8 (0/1) which maps directly to bool.\n    3. Creates true 4D contiguous outputs, eliminating the per-shape expand() copies.\n    4. Uses head-independent computation (mask pattern doesn't depend on head index).\n\n    The full mask follows the reference pattern:\n    - full[i, j] = (i < j - past_kv_len)  # True = masked (cannot attend)\n\n    The SWA mask follows the reference's provable all-False behavior:\n    - The reference's zeros().masked_fill() is a no-op since zeros are already False.\n    - We directly write zeros to the output for maximum speed.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n    device = torch.device(\"cuda\")\n\n    # Precompute output shapes and allocate contiguous buffers\n    full_shape = (B, _NUM_FULL_HEADS, T, S)\n    swa_shape = (B, _NUM_SWA_HEADS, T, S)\n\n    full_out = torch.empty(full_shape, dtype=torch.bool, device=device)\n    swa_out = torch.empty(swa_shape, dtype=torch.bool, device=device)\n\n    # Choose tile sizes based on output size for optimal occupancy\n    # Small outputs: smaller tiles to keep grid size reasonable\n    # Large outputs: larger tiles to reduce launch overhead\n    if T * S < 1000:  # Regime A (launch-bound): small 2D patterns\n        BLOCK_H = 8\n        BLOCK_T = 64\n        BLOCK_S = 64\n    elif T * S < 10000:  # Regime B: medium\n        BLOCK_H = 32\n        BLOCK_T = 64\n        BLOCK_S = 128\n    else:  # Regime C: large\n        BLOCK_H = 64\n        BLOCK_T = 128\n        BLOCK_S = 256\n\n    # Compute grid sizes\n    grid_h = triton.cdiv(B * _NUM_FULL_HEADS, BLOCK_H)\n    grid_t = triton.cdiv(T, BLOCK_T)\n    grid_s = triton.cdiv(S, BLOCK_S)\n\n    # Launch kernel for full mask\n    _full_mask_kernel[grid_h, grid_t, grid_s](\n        out_ptr=full_out,\n        B=B,\n        H=_NUM_FULL_HEADS,\n        T=T,\n        S=S,\n        past_kv_len=past,\n        BLOCK_H=BLOCK_H,\n        BLOCK_T=BLOCK_T,\n        BLOCK_S=BLOCK_S,\n    )\n\n    # Launch kernel for SWA mask (all-False)\n    _swa_mask_kernel[grid_h, grid_t, grid_s](\n        out_ptr=swa_out,\n        B=B,\n        H=_NUM_SWA_HEADS,\n        T=T,\n        S=S,\n        past_kv_len=past,\n        BLOCK_H=BLOCK_H,\n        BLOCK_T=BLOCK_T,\n        BLOCK_S=BLOCK_S,\n    )\n\n    return full_out, swa_out\n"
+      }
+    ]
+  }
+}

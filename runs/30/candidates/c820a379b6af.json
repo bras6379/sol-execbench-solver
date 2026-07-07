@@ -1,0 +1,245 @@
+{
+  "cand_id": "c820a379b6af",
+  "task_id": 30,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.18177323038302018,
+    0.0,
+    0.2082566478390557,
+    0.23289425539699962,
+    0.19009858551221606,
+    0.18264148973652966,
+    0.21361580392005255,
+    0.1855607421645158,
+    0.20775818878285665,
+    0.20717024706100265,
+    0.18751318287281168,
+    0.0,
+    0.2366654892264217,
+    0.0,
+    0.23762376237623759,
+    0.0
+  ],
+  "strategy": "Split-K Triton GEMM (SPLIT_K=4 for M\u2264512, SPLIT_K=2 for M\u22641024) with fused residual add in the fp32 reduction kernel to ",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "7e9d1f46430c",
+  "trajectory": "runs/30/work/c820a379b6af/trajectory.jsonl",
+  "gpu_s": 30.15,
+  "job_id": "30-c820a379b6af",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 310.19,
+      "samples": 99,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.178016,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.0859844999999999,
+      "sol_score": 0.18177323038302018,
+      "sol_score_cal": 0.14731520291548922,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0041,
+      "baseline_latency_ms": 0.012,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.15950399999999998,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085952,
+      "sol_score": 0.2082566478390557,
+      "sol_score_cal": 0.16789271238696726,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.045344,
+      "sol_ms": 0.0118,
+      "baseline_latency_ms": 0.021984,
+      "sol_score": 0.23289425539699962,
+      "sol_score_cal": 0.19456144962799485,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.090464,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044192,
+      "sol_score": 0.19009858551221606,
+      "sol_score_cal": 0.15452261744241552,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.092735,
+      "sol_ms": 0.0301,
+      "baseline_latency_ms": 0.044096,
+      "sol_score": 0.18264148973652966,
+      "sol_score_cal": 0.1484976496183316,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.159807,
+      "sol_ms": 0.0581,
+      "baseline_latency_ms": 0.085728,
+      "sol_score": 0.21361580392005255,
+      "sol_score_cal": 0.1730011829178176,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0922875,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.0441915,
+      "sol_score": 0.1855607421645158,
+      "sol_score_cal": 0.1509515243136301,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.16011150000000002,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": 0.20775818878285665,
+      "sol_score_cal": 0.1675440001040946,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.16028750000000003,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085984,
+      "sol_score": 0.20717024706100265,
+      "sol_score_cal": 0.1670669763206842,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.09163199999999999,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044224,
+      "sol_score": 0.18751318287281168,
+      "sol_score_cal": 0.15250989427238715,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0078,
+      "baseline_latency_ms": 0.01584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.049776,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.02592,
+      "sol_score": 0.2366654892264217,
+      "sol_score_cal": 0.1957867852686516,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.014,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.049696000000000004,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.025952,
+      "sol_score": 0.23762376237623759,
+      "sol_score_cal": 0.19659814987098245,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.009888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@torch.compile(mode=\"reduce-overhead\")\ndef _ref_compiled(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"Reference matmul+add under torch.compile with CUDA graphs.\"\"\"\n    return torch.matmul(attn_output, o_proj_weight.t()) + residual\n\n\n@triton.jit\ndef _splitk_gemm(\n    a_ptr,\n    w_ptr,\n    partials_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wk,\n    stride_wn,\n    stride_ps,\n    stride_pm,\n    stride_pn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Split-K GEMM: each CTA computes a partial sum for one K-chunk in fp32.\"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_sk = tl.program_id(2)\n\n    k_per_split = tl.cdiv(K, SPLIT_K)\n    k_start = pid_sk * k_per_split\n    k_end = tl.minimum(k_start + k_per_split, K)\n\n    m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(k_start, k_end, BLOCK_K):\n        k_offs = k + tl.arange(0, BLOCK_K)\n\n        a_ptrs = a_ptr + m_offs[:, None] * stride_am + k_offs[None, :] * stride_ak\n        a_mask = (m_offs[:, None] < M) & (k_offs[None, :] < K)\n        a = tl.load(a_ptrs, mask=a_mask, other=0.0)\n\n        w_ptrs = w_ptr + k_offs[:, None] * stride_wk + n_offs[None, :] * stride_wn\n        w_mask = (k_offs[:, None] < K) & (n_offs[None, :] < N)\n        w = tl.load(w_ptrs, mask=w_mask, other=0.0)\n\n        acc += tl.dot(a, w)\n\n    p_ptrs = (\n        partials_ptr\n        + m_offs[:, None] * stride_ps\n        + pid_sk * stride_pm\n        + n_offs[None, :] * stride_pn\n    )\n    p_mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n    tl.store(p_ptrs, acc, mask=p_mask)\n\n\n@triton.jit\ndef _reduce_residual(\n    partials_ptr,\n    residual_ptr,\n    out_ptr,\n    M,\n    N,\n    stride_ps,\n    stride_pm,\n    stride_pn,\n    stride_rm,\n    stride_rn,\n    stride_om,\n    stride_on,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Reduce split-K partial sums, add residual, store bf16 output.\"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for sk in range(SPLIT_K):\n        p_ptrs = (\n            partials_ptr\n            + m_offs[:, None] * stride_ps\n            + sk * stride_pm\n            + n_offs[None, :] * stride_pn\n        )\n        p = tl.load(p_ptrs, mask=mask, other=0.0)\n        acc += p\n\n    r_ptrs = residual_ptr + m_offs[:, None] * stride_rm + n_offs[None, :] * stride_rn\n    r = tl.load(r_ptrs, mask=mask, other=0.0)\n    acc += r\n\n    out = acc.to(tl.bfloat16)\n    o_ptrs = out_ptr + m_offs[:, None] * stride_om + n_offs[None, :] * stride_on\n    tl.store(o_ptrs, out, mask=mask)\n\n\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n\n    Computes: output = (attn_output @ o_proj_weight.T) + residual\n\n    Strategy:\n    - M <= 1024: Triton split-K GEMM (fills 148 SMs) + fused residual reduction\n    - M > 1024: torch.compile on the reference (cuBLAS is already efficient)\n    - bf16 throughout, matching reference rounding\n    \"\"\"\n    batch, seq_len, hidden_size = attn_output.shape\n    M = batch * seq_len\n    N = K = hidden_size\n\n    if M <= 1024:\n        A = attn_output.reshape(M, K)\n        R = residual.reshape(M, N)\n\n        if M <= 512:\n            BLOCK_M = 128\n            BLOCK_N = 128\n            BLOCK_K = 128\n            SPLIT_K = 4\n            num_warps = 4\n            num_stages = 2\n        else:\n            BLOCK_M = 128\n            BLOCK_N = 128\n            BLOCK_K = 128\n            SPLIT_K = 2\n            num_warps = 8\n            num_stages = 3\n\n        m_blocks = (M + BLOCK_M - 1) // BLOCK_M\n        n_blocks = (N + BLOCK_N - 1) // BLOCK_N\n\n        partials = torch.empty(\n            (M, SPLIT_K, N), dtype=torch.float32, device=A.device\n        )\n\n        _splitk_gemm[(m_blocks, n_blocks, SPLIT_K)](\n            A,\n            o_proj_weight,\n            partials,\n            M,\n            N,\n            K,\n            A.stride(0),\n            A.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            partials.stride(0),\n            partials.stride(1),\n            partials.stride(2),\n            BLOCK_M=BLOCK_M,\n            BLOCK_N=BLOCK_N,\n            BLOCK_K=BLOCK_K,\n            SPLIT_K=SPLIT_K,\n            num_warps=num_warps,\n            num_stages=num_stages,\n        )\n\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=A.device)\n\n        _reduce_residual[(m_blocks, n_blocks)](\n            partials,\n            R,\n            out_2d,\n            M,\n            N,\n            partials.stride(0),\n            partials.stride(1),\n            partials.stride(2),\n            R.stride(0),\n            R.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BLOCK_M=BLOCK_M,\n            BLOCK_N=BLOCK_N,\n            SPLIT_K=SPLIT_K,\n            num_warps=4,\n            num_stages=2,\n        )\n\n        return out_2d.reshape(batch, seq_len, hidden_size)\n    else:\n        return _ref_compiled(attn_output, residual, o_proj_weight)"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t30_c820a379b6af",
+    "definition": "030_attention_output_projection_with_residual",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@torch.compile(mode=\"reduce-overhead\")\ndef _ref_compiled(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"Reference matmul+add under torch.compile with CUDA graphs.\"\"\"\n    return torch.matmul(attn_output, o_proj_weight.t()) + residual\n\n\n@triton.jit\ndef _splitk_gemm(\n    a_ptr,\n    w_ptr,\n    partials_ptr,\n    M,\n    N,\n    K,\n    stride_am,\n    stride_ak,\n    stride_wk,\n    stride_wn,\n    stride_ps,\n    stride_pm,\n    stride_pn,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Split-K GEMM: each CTA computes a partial sum for one K-chunk in fp32.\"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_sk = tl.program_id(2)\n\n    k_per_split = tl.cdiv(K, SPLIT_K)\n    k_start = pid_sk * k_per_split\n    k_end = tl.minimum(k_start + k_per_split, K)\n\n    m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for k in range(k_start, k_end, BLOCK_K):\n        k_offs = k + tl.arange(0, BLOCK_K)\n\n        a_ptrs = a_ptr + m_offs[:, None] * stride_am + k_offs[None, :] * stride_ak\n        a_mask = (m_offs[:, None] < M) & (k_offs[None, :] < K)\n        a = tl.load(a_ptrs, mask=a_mask, other=0.0)\n\n        w_ptrs = w_ptr + k_offs[:, None] * stride_wk + n_offs[None, :] * stride_wn\n        w_mask = (k_offs[:, None] < K) & (n_offs[None, :] < N)\n        w = tl.load(w_ptrs, mask=w_mask, other=0.0)\n\n        acc += tl.dot(a, w)\n\n    p_ptrs = (\n        partials_ptr\n        + m_offs[:, None] * stride_ps\n        + pid_sk * stride_pm\n        + n_offs[None, :] * stride_pn\n    )\n    p_mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n    tl.store(p_ptrs, acc, mask=p_mask)\n\n\n@triton.jit\ndef _reduce_residual(\n    partials_ptr,\n    residual_ptr,\n    out_ptr,\n    M,\n    N,\n    stride_ps,\n    stride_pm,\n    stride_pn,\n    stride_rm,\n    stride_rn,\n    stride_om,\n    stride_on,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    SPLIT_K: tl.constexpr,\n):\n    \"\"\"Reduce split-K partial sums, add residual, store bf16 output.\"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n\n    acc = tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.float32)\n\n    for sk in range(SPLIT_K):\n        p_ptrs = (\n            partials_ptr\n            + m_offs[:, None] * stride_ps\n            + sk * stride_pm\n            + n_offs[None, :] * stride_pn\n        )\n        p = tl.load(p_ptrs, mask=mask, other=0.0)\n        acc += p\n\n    r_ptrs = residual_ptr + m_offs[:, None] * stride_rm + n_offs[None, :] * stride_rn\n    r = tl.load(r_ptrs, mask=mask, other=0.0)\n    acc += r\n\n    out = acc.to(tl.bfloat16)\n    o_ptrs = out_ptr + m_offs[:, None] * stride_om + n_offs[None, :] * stride_on\n    tl.store(o_ptrs, out, mask=mask)\n\n\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n\n    Computes: output = (attn_output @ o_proj_weight.T) + residual\n\n    Strategy:\n    - M <= 1024: Triton split-K GEMM (fills 148 SMs) + fused residual reduction\n    - M > 1024: torch.compile on the reference (cuBLAS is already efficient)\n    - bf16 throughout, matching reference rounding\n    \"\"\"\n    batch, seq_len, hidden_size = attn_output.shape\n    M = batch * seq_len\n    N = K = hidden_size\n\n    if M <= 1024:\n        A = attn_output.reshape(M, K)\n        R = residual.reshape(M, N)\n\n        if M <= 512:\n            BLOCK_M = 128\n            BLOCK_N = 128\n            BLOCK_K = 128\n            SPLIT_K = 4\n            num_warps = 4\n            num_stages = 2\n        else:\n            BLOCK_M = 128\n            BLOCK_N = 128\n            BLOCK_K = 128\n            SPLIT_K = 2\n            num_warps = 8\n            num_stages = 3\n\n        m_blocks = (M + BLOCK_M - 1) // BLOCK_M\n        n_blocks = (N + BLOCK_N - 1) // BLOCK_N\n\n        partials = torch.empty(\n            (M, SPLIT_K, N), dtype=torch.float32, device=A.device\n        )\n\n        _splitk_gemm[(m_blocks, n_blocks, SPLIT_K)](\n            A,\n            o_proj_weight,\n            partials,\n            M,\n            N,\n            K,\n            A.stride(0),\n            A.stride(1),\n            o_proj_weight.stride(0),\n            o_proj_weight.stride(1),\n            partials.stride(0),\n            partials.stride(1),\n            partials.stride(2),\n            BLOCK_M=BLOCK_M,\n            BLOCK_N=BLOCK_N,\n            BLOCK_K=BLOCK_K,\n            SPLIT_K=SPLIT_K,\n            num_warps=num_warps,\n            num_stages=num_stages,\n        )\n\n        out_2d = torch.empty((M, N), dtype=torch.bfloat16, device=A.device)\n\n        _reduce_residual[(m_blocks, n_blocks)](\n            partials,\n            R,\n            out_2d,\n            M,\n            N,\n            partials.stride(0),\n            partials.stride(1),\n            partials.stride(2),\n            R.stride(0),\n            R.stride(1),\n            out_2d.stride(0),\n            out_2d.stride(1),\n            BLOCK_M=BLOCK_M,\n            BLOCK_N=BLOCK_N,\n            SPLIT_K=SPLIT_K,\n            num_warps=4,\n            num_stages=2,\n        )\n\n        return out_2d.reshape(batch, seq_len, hidden_size)\n    else:\n        return _ref_compiled(attn_output, residual, o_proj_weight)"
+      }
+    ]
+  }
+}

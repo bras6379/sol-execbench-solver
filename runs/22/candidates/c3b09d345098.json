@@ -1,0 +1,245 @@
+{
+  "cand_id": "c3b09d345098",
+  "task_id": 22,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.3131702965304579,
+    0.5049208474514519,
+    0.5368387803234501,
+    0.5234085404135319,
+    0.27732990923491707,
+    0.5711908761694802,
+    0.525992041831207,
+    0.56435634909634,
+    0.3113061274042214,
+    0.543951050175782,
+    0.5202977755256812,
+    0.24851442402040946,
+    0.2889807984814661,
+    0.2651830099793473,
+    0.21133941696685624
+  ],
+  "strategy": "Large-S: fp16 cuBLAS for GEMM-A/C/D, Triton matmul+GELU-derivative epilogue for GEMM-B (no grad_gelu_output HBM round-tr",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "396a2b8a2bf5",
+  "trajectory": "runs/22/work/c3b09d345098/trajectory.jsonl",
+  "gpu_s": 50.507,
+  "job_id": "22-c3b09d345098",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 322.23,
+      "samples": 155,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0419,
+      "baseline_latency_ms": 0.273217,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.181375,
+      "sol_ms": 0.0043,
+      "baseline_latency_ms": 0.08504,
+      "sol_score": 0.3131702965304579,
+      "sol_score_cal": 0.2762455040394148,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.1182075,
+      "sol_ms": 0.0095,
+      "baseline_latency_ms": 0.1203685,
+      "sol_score": 0.5049208474514519,
+      "sol_score_cal": 0.45806724366897955,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.19415949999999998,
+      "sol_ms": 0.0292,
+      "baseline_latency_ms": 0.2204005,
+      "sol_score": 0.5368387803234501,
+      "sol_score_cal": 0.4864529999537846,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.13100699999999998,
+      "sol_ms": 0.016,
+      "baseline_latency_ms": 0.1423045,
+      "sol_score": 0.5234085404135319,
+      "sol_score_cal": 0.47446715724246813,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.25076699999999996,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0993765,
+      "sol_score": 0.27732990923491707,
+      "sol_score_cal": 0.24323818285662896,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.350654,
+      "sol_ms": 0.0834,
+      "baseline_latency_ms": 0.439393,
+      "sol_score": 0.5711908761694802,
+      "sol_score_cal": 0.5160281644433194,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.142015,
+      "sol_ms": 0.0161,
+      "baseline_latency_ms": 0.155824,
+      "sol_score": 0.525992041831207,
+      "sol_score_cal": 0.4774899755435214,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.2148315,
+      "sol_ms": 0.0404,
+      "baseline_latency_ms": 0.266368,
+      "sol_score": 0.56435634909634,
+      "sol_score_cal": 0.5121465211198509,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.203247,
+      "sol_ms": 0.0047,
+      "baseline_latency_ms": 0.094448,
+      "sol_score": 0.3113061274042214,
+      "sol_score_cal": 0.274532654712234,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.144288,
+      "sol_ms": 0.0206,
+      "baseline_latency_ms": 0.1681285,
+      "sol_score": 0.543951050175782,
+      "sol_score_cal": 0.4940156625285193,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.165055,
+      "sol_ms": 0.024,
+      "baseline_latency_ms": 0.176992,
+      "sol_score": 0.5202977755256812,
+      "sol_score_cal": 0.47015518544520113,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.29279900000000003,
+      "sol_ms": 0.0056,
+      "baseline_latency_ms": 0.100576,
+      "sol_score": 0.24851442402040946,
+      "sol_score_cal": 0.2169358672150394,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.203503,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.0854405,
+      "sol_score": 0.2889807984814661,
+      "sol_score_cal": 0.25388881039098543,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.29431850000000004,
+      "sol_ms": 0.0063,
+      "baseline_latency_ms": 0.110241,
+      "sol_score": 0.2651830099793473,
+      "sol_score_cal": 0.2320733154391807,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.430606,
+      "sol_ms": 0.0108,
+      "baseline_latency_ms": 0.1232965,
+      "sol_score": 0.21133941696685624,
+      "sol_score_cal": 0.1831839580442601,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "# score target: 0.55+  strategy: Fuse GELU-backward into GEMM-B epilogue\n# Parent: cand2809 (0.515+ claim) used fp16/TF32 split + torch.compile reduce-overhead\n# Change: Replace large-S GEMM-B (cuBLAS) + standalone Triton GELU with one\n#         Triton matmul+epilogue kernel.  This eliminates the grad_gelu_output\n#         HBM round-trip (~29-58 MB) on the large-S critical path.\n#         Small-S path is unchanged (TF32 cuBLAS + torch.compile graph replay).\n\nimport torch\nimport triton\nimport triton.language as tl\nfrom functools import lru_cache\n\n\n# ---------------------------------------------------------------------------\n# Vision MLP GELU backward  (Qwen3-VL-8B).  hidden=1280, intermediate=3584.\n#\n# Op graph:\n#   grad_fc2_bias   = grad_output.sum(0)\n#   grad_fc2_weight = grad_output^T @ gelu_output          (1280,S)x(S,3584)\n#   grad_gelu       = grad_output   @ fc2_weight           (S,1280)x(1280,3584)\n#   grad_fc1_output = grad_gelu * gelu'(fc1_output)        [EPILOGUE FUSED NOW]\n#   grad_fc1_bias   = grad_fc1_output.sum(0)\n#   grad_fc1_weight = grad_fc1_output^T @ hidden_state     (3584,S)x(S,1280)\n#   grad_hidden     = grad_fc1_output @ fc1_weight         (S,3584)x(3584,1280)\n#\n# Precision: reference is true fp32, but atol bands are 0.021-0.13 with 0.99\n# matched_ratio.  10-bit mantissa (fp16/TF32) is well inside tolerance, so we use\n# tensor cores for all GEMMs.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _gelu_bwd_kernel(gg_ptr, x_ptr, out_ptr, n_elements, BLOCK: tl.constexpr):\n    \"\"\"Elementwise GELU backward: used only by the small-S TF32 path.\"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < n_elements\n\n    gg = tl.load(gg_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    x = tl.load(x_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n\n    c0 = 0.7978845608028654   # sqrt(2/pi)\n    c1 = 0.044715\n    x2 = x * x\n    x3 = x2 * x\n    inner = c0 * (x + c1 * x3)\n    # stable tanh via sigmoid (no libdevice dependency)\n    t = 2.0 * tl.sigmoid(2.0 * inner) - 1.0\n    sech2 = 1.0 - t * t\n    d_inner = c0 * (1.0 + 3.0 * c1 * x2)\n    gelu_grad = 0.5 * (1.0 + t) + 0.5 * x * sech2 * d_inner\n\n    res = gg * gelu_grad\n    tl.store(out_ptr + offs, res, mask=mask)\n\n\n# Autotuned configs for the fused GEMM-B + GELU backward kernel.\n# Tuned for M=S (64-4096), N=I=3584, K=H=1280 on B200.\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_S': 64,  'BLOCK_I': 128, 'BLOCK_H': 32}, num_stages=4, num_warps=4),\n        triton.Config({'BLOCK_S': 128, 'BLOCK_I': 256, 'BLOCK_H': 32}, num_stages=3, num_warps=8),\n        triton.Config({'BLOCK_S': 128, 'BLOCK_I': 128, 'BLOCK_H': 64}, num_stages=3, num_warps=8),\n        triton.Config({'BLOCK_S': 256, 'BLOCK_I': 128, 'BLOCK_H': 32}, num_stages=3, num_warps=8),\n    ],\n    key=['S', 'I', 'H'],\n)\n@triton.jit\ndef _fused_gemm_gelu_bwd_kernel(\n    grad_output_ptr, stride_go_s, stride_go_h,\n    fc2_weight_ptr,  stride_w_h,  stride_w_i,\n    fc1_output_ptr,  stride_x_s,  stride_x_i,\n    out_ptr,         stride_o_s,  stride_o_i,\n    S, I, H,\n    BLOCK_S: tl.constexpr, BLOCK_I: tl.constexpr, BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    Fused GEMM-B + GELU backward epilogue.\n\n    Computes grad_fc1_output = (grad_output @ fc2_weight) * gelu'(fc1_output)\n    where grad_output is (S,H), fc2_weight is (H,I), fc1_output is (S,I), and\n    grad_fc1_output is (S,I).\n\n    The intermediate grad_gelu_output is never written to HBM.\n    \"\"\"\n    pid_s = tl.program_id(0)\n    pid_i = tl.program_id(1)\n\n    offs_s = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n    offs_i = pid_i * BLOCK_I + tl.arange(0, BLOCK_I)\n\n    # GEMM: grad_output @ fc2_weight\n    acc = tl.zeros((BLOCK_S, BLOCK_I), dtype=tl.float32)\n    for h0 in range(0, H, BLOCK_H):\n        offs_h = h0 + tl.arange(0, BLOCK_H)\n\n        grad_output_tile = tl.load(\n            grad_output_ptr + offs_s[:, None] * stride_go_s + offs_h[None, :] * stride_go_h,\n            mask=(offs_s[:, None] < S) & (offs_h[None, :] < H),\n            other=0.0,\n        )\n        fc2_weight_tile = tl.load(\n            fc2_weight_ptr + offs_h[:, None] * stride_w_h + offs_i[None, :] * stride_w_i,\n            mask=(offs_h[:, None] < H) & (offs_i[None, :] < I),\n            other=0.0,\n        )\n        acc += tl.dot(grad_output_tile, fc2_weight_tile)\n\n    # Epilogue: multiply by gelu'(fc1_output)\n    x = tl.load(\n        fc1_output_ptr + offs_s[:, None] * stride_x_s + offs_i[None, :] * stride_x_i,\n        mask=(offs_s[:, None] < S) & (offs_i[None, :] < I),\n        other=0.0,\n    ).to(tl.float32)\n\n    c0 = 0.7978845608028654\n    c1 = 0.044715\n    x2 = x * x\n    x3 = x2 * x\n    inner = c0 * (x + c1 * x3)\n    t = 2.0 * tl.sigmoid(2.0 * inner) - 1.0\n    sech2 = 1.0 - t * t\n    d_inner = c0 * (1.0 + 3.0 * c1 * x2)\n    gelu_grad = 0.5 * (1.0 + t) + 0.5 * x * sech2 * d_inner\n\n    res = acc * gelu_grad\n\n    tl.store(\n        out_ptr + offs_s[:, None] * stride_o_s + offs_i[None, :] * stride_o_i,\n        res,\n        mask=(offs_s[:, None] < S) & (offs_i[None, :] < I),\n    )\n\n\n# fp16 beats TF32 once the GEMM time exceeds the per-call fp16 cast overhead.\n_FP16_THRESHOLD = 384\n\n\n@lru_cache(maxsize=None)\ndef _make_compile_fn():\n    \"\"\"Cache compiled graphs for the small-S TF32 path.\"\"\"\n    return torch.compile(lambda *args: _small_path_impl(*args), mode='reduce-overhead', dynamic=False)\n\n\n@lru_cache(maxsize=None)\ndef _make_large_path_fn():\n    \"\"\"Cache compiled graphs for the large-S fp16 path.\"\"\"\n    return torch.compile(lambda *args: _large_path_impl(*args), mode='reduce-overhead', dynamic=False)\n\n\ndef _fused_gemm_gelu_bwd(\n    grad_output, fc2_weight, fc1_output, out_dtype\n):\n    \"\"\"Driver for the fused GEMM-B + GELU backward kernel.\"\"\"\n    S, I = fc1_output.shape  # (seq_len, 3584)\n    H = grad_output.shape[1]  # 1280\n\n    grad_fc1_output = torch.empty((S, I), dtype=out_dtype, device=fc1_output.device)\n\n    # Grid adapts to the autotuned BLOCK_S/BLOCK_I config.\n    grid = lambda meta: (triton.cdiv(S, meta['BLOCK_S']), triton.cdiv(I, meta['BLOCK_I']))\n    _fused_gemm_gelu_bwd_kernel[grid](\n        grad_output, grad_output.stride(0), grad_output.stride(1),\n        fc2_weight,  fc2_weight.stride(0),  fc2_weight.stride(1),\n        fc1_output,  fc1_output.stride(0),  fc1_output.stride(1),\n        grad_fc1_output, grad_fc1_output.stride(0), grad_fc1_output.stride(1),\n        S, I, H,\n    )\n    return grad_fc1_output\n\n\ndef _small_path_impl(\n    grad_output,\n    hidden_state,\n    fc1_weight,\n    fc1_bias,\n    fc2_weight,\n    fc2_bias,\n    fc1_output,\n    gelu_output,\n):\n    \"\"\"TF32 path (small S) - single torch.compile graph call.\"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n    torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n    S, I = fc1_output.shape\n    assert S < _FP16_THRESHOLD\n\n    # --- fc2 backward -------------------------------------------------------\n    grad_fc2_bias = grad_output.sum(dim=0)\n    grad_fc2_weight = grad_output.t().mm(gelu_output)\n    grad_gelu_output = grad_output.mm(fc2_weight)\n\n    # --- fused GELU backward elementwise ------------------------------------\n    x = fc1_output.contiguous()\n    gg = grad_gelu_output.contiguous()\n    grad_fc1_output = torch.empty((S, I), dtype=torch.float32, device=x.device)\n    n = grad_fc1_output.numel()\n    grid = (triton.cdiv(n, 2048),)\n    _gelu_bwd_kernel[grid](gg, x, grad_fc1_output, n, BLOCK=2048, num_warps=8)\n\n    # --- fc1 backward -------------------------------------------------------\n    grad_fc1_bias = grad_fc1_output.sum(dim=0, dtype=torch.float32)\n    grad_fc1_weight = grad_fc1_output.t().mm(hidden_state)\n    grad_hidden_state = grad_fc1_output.mm(fc1_weight)\n\n    return grad_hidden_state, grad_fc1_weight, grad_fc1_bias, grad_fc2_weight, grad_fc2_bias\n\n\ndef _large_path_impl(\n    grad_output,\n    hidden_state,\n    fc1_weight,\n    fc1_bias,\n    fc2_weight,\n    fc2_bias,\n    fc1_output,\n    gelu_output,\n):\n    \"\"\"fp16 path (large S) - fused GEMM-B/GELU epilogue + cuBLAS for A/C/D.\"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n    torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n    S, I = fc1_output.shape\n    assert S >= _FP16_THRESHOLD\n\n    # --- fc2 backward -------------------------------------------------------\n    grad_fc2_bias = grad_output.sum(dim=0)\n\n    go16 = grad_output.half()\n    grad_fc2_weight = go16.t().mm(gelu_output.half()).float()\n\n    # --- fused GEMM-B + GELU backward epilogue ----------------------------\n    # grad_fc1_output = (go16 @ fc2_weight.half()) * gelu'(fc1_output.half())\n    x16 = fc1_output.half()\n    w2_16 = fc2_weight.half()\n    grad_fc1_output = _fused_gemm_gelu_bwd(go16, w2_16, x16, torch.float16)\n\n    # --- fc1 backward -------------------------------------------------------\n    grad_fc1_bias = grad_fc1_output.sum(dim=0, dtype=torch.float32)\n\n    h16 = hidden_state.half()\n    w1_16 = fc1_weight.half()\n    grad_fc1_weight = grad_fc1_output.t().mm(h16).float()\n    grad_hidden_state = grad_fc1_output.mm(w1_16).float()\n\n    return grad_hidden_state, grad_fc1_weight, grad_fc1_bias, grad_fc2_weight, grad_fc2_bias\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_state: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    fc1_output: torch.Tensor,\n    gelu_output: torch.Tensor,\n):\n    \"\"\"\n    Vision MLP GELU backward.\n\n    - S >= 384: fp16 cuBLAS for GEMM-A/C/D; Triton matmul+GELU epilogue for\n      GEMM-B, eliminating the grad_gelu_output HBM round-trip.\n    - S <  384: TF32 cuBLAS + torch.compile reduce-overhead graph replay\n      (launch-bound regime; keep the proven small-S path).\n    \"\"\"\n    S, _ = fc1_output.shape\n    if S >= _FP16_THRESHOLD:\n        fn = _make_large_path_fn()\n    else:\n        fn = _make_compile_fn()\n    return fn(\n        grad_output, hidden_state, fc1_weight, fc1_bias,\n        fc2_weight, fc2_bias, fc1_output, gelu_output\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t22_c3b09d345098",
+    "definition": "022_vision_mlp_gelu_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "# score target: 0.55+  strategy: Fuse GELU-backward into GEMM-B epilogue\n# Parent: cand2809 (0.515+ claim) used fp16/TF32 split + torch.compile reduce-overhead\n# Change: Replace large-S GEMM-B (cuBLAS) + standalone Triton GELU with one\n#         Triton matmul+epilogue kernel.  This eliminates the grad_gelu_output\n#         HBM round-trip (~29-58 MB) on the large-S critical path.\n#         Small-S path is unchanged (TF32 cuBLAS + torch.compile graph replay).\n\nimport torch\nimport triton\nimport triton.language as tl\nfrom functools import lru_cache\n\n\n# ---------------------------------------------------------------------------\n# Vision MLP GELU backward  (Qwen3-VL-8B).  hidden=1280, intermediate=3584.\n#\n# Op graph:\n#   grad_fc2_bias   = grad_output.sum(0)\n#   grad_fc2_weight = grad_output^T @ gelu_output          (1280,S)x(S,3584)\n#   grad_gelu       = grad_output   @ fc2_weight           (S,1280)x(1280,3584)\n#   grad_fc1_output = grad_gelu * gelu'(fc1_output)        [EPILOGUE FUSED NOW]\n#   grad_fc1_bias   = grad_fc1_output.sum(0)\n#   grad_fc1_weight = grad_fc1_output^T @ hidden_state     (3584,S)x(S,1280)\n#   grad_hidden     = grad_fc1_output @ fc1_weight         (S,3584)x(3584,1280)\n#\n# Precision: reference is true fp32, but atol bands are 0.021-0.13 with 0.99\n# matched_ratio.  10-bit mantissa (fp16/TF32) is well inside tolerance, so we use\n# tensor cores for all GEMMs.\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _gelu_bwd_kernel(gg_ptr, x_ptr, out_ptr, n_elements, BLOCK: tl.constexpr):\n    \"\"\"Elementwise GELU backward: used only by the small-S TF32 path.\"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < n_elements\n\n    gg = tl.load(gg_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n    x = tl.load(x_ptr + offs, mask=mask, other=0.0).to(tl.float32)\n\n    c0 = 0.7978845608028654   # sqrt(2/pi)\n    c1 = 0.044715\n    x2 = x * x\n    x3 = x2 * x\n    inner = c0 * (x + c1 * x3)\n    # stable tanh via sigmoid (no libdevice dependency)\n    t = 2.0 * tl.sigmoid(2.0 * inner) - 1.0\n    sech2 = 1.0 - t * t\n    d_inner = c0 * (1.0 + 3.0 * c1 * x2)\n    gelu_grad = 0.5 * (1.0 + t) + 0.5 * x * sech2 * d_inner\n\n    res = gg * gelu_grad\n    tl.store(out_ptr + offs, res, mask=mask)\n\n\n# Autotuned configs for the fused GEMM-B + GELU backward kernel.\n# Tuned for M=S (64-4096), N=I=3584, K=H=1280 on B200.\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_S': 64,  'BLOCK_I': 128, 'BLOCK_H': 32}, num_stages=4, num_warps=4),\n        triton.Config({'BLOCK_S': 128, 'BLOCK_I': 256, 'BLOCK_H': 32}, num_stages=3, num_warps=8),\n        triton.Config({'BLOCK_S': 128, 'BLOCK_I': 128, 'BLOCK_H': 64}, num_stages=3, num_warps=8),\n        triton.Config({'BLOCK_S': 256, 'BLOCK_I': 128, 'BLOCK_H': 32}, num_stages=3, num_warps=8),\n    ],\n    key=['S', 'I', 'H'],\n)\n@triton.jit\ndef _fused_gemm_gelu_bwd_kernel(\n    grad_output_ptr, stride_go_s, stride_go_h,\n    fc2_weight_ptr,  stride_w_h,  stride_w_i,\n    fc1_output_ptr,  stride_x_s,  stride_x_i,\n    out_ptr,         stride_o_s,  stride_o_i,\n    S, I, H,\n    BLOCK_S: tl.constexpr, BLOCK_I: tl.constexpr, BLOCK_H: tl.constexpr,\n):\n    \"\"\"\n    Fused GEMM-B + GELU backward epilogue.\n\n    Computes grad_fc1_output = (grad_output @ fc2_weight) * gelu'(fc1_output)\n    where grad_output is (S,H), fc2_weight is (H,I), fc1_output is (S,I), and\n    grad_fc1_output is (S,I).\n\n    The intermediate grad_gelu_output is never written to HBM.\n    \"\"\"\n    pid_s = tl.program_id(0)\n    pid_i = tl.program_id(1)\n\n    offs_s = pid_s * BLOCK_S + tl.arange(0, BLOCK_S)\n    offs_i = pid_i * BLOCK_I + tl.arange(0, BLOCK_I)\n\n    # GEMM: grad_output @ fc2_weight\n    acc = tl.zeros((BLOCK_S, BLOCK_I), dtype=tl.float32)\n    for h0 in range(0, H, BLOCK_H):\n        offs_h = h0 + tl.arange(0, BLOCK_H)\n\n        grad_output_tile = tl.load(\n            grad_output_ptr + offs_s[:, None] * stride_go_s + offs_h[None, :] * stride_go_h,\n            mask=(offs_s[:, None] < S) & (offs_h[None, :] < H),\n            other=0.0,\n        )\n        fc2_weight_tile = tl.load(\n            fc2_weight_ptr + offs_h[:, None] * stride_w_h + offs_i[None, :] * stride_w_i,\n            mask=(offs_h[:, None] < H) & (offs_i[None, :] < I),\n            other=0.0,\n        )\n        acc += tl.dot(grad_output_tile, fc2_weight_tile)\n\n    # Epilogue: multiply by gelu'(fc1_output)\n    x = tl.load(\n        fc1_output_ptr + offs_s[:, None] * stride_x_s + offs_i[None, :] * stride_x_i,\n        mask=(offs_s[:, None] < S) & (offs_i[None, :] < I),\n        other=0.0,\n    ).to(tl.float32)\n\n    c0 = 0.7978845608028654\n    c1 = 0.044715\n    x2 = x * x\n    x3 = x2 * x\n    inner = c0 * (x + c1 * x3)\n    t = 2.0 * tl.sigmoid(2.0 * inner) - 1.0\n    sech2 = 1.0 - t * t\n    d_inner = c0 * (1.0 + 3.0 * c1 * x2)\n    gelu_grad = 0.5 * (1.0 + t) + 0.5 * x * sech2 * d_inner\n\n    res = acc * gelu_grad\n\n    tl.store(\n        out_ptr + offs_s[:, None] * stride_o_s + offs_i[None, :] * stride_o_i,\n        res,\n        mask=(offs_s[:, None] < S) & (offs_i[None, :] < I),\n    )\n\n\n# fp16 beats TF32 once the GEMM time exceeds the per-call fp16 cast overhead.\n_FP16_THRESHOLD = 384\n\n\n@lru_cache(maxsize=None)\ndef _make_compile_fn():\n    \"\"\"Cache compiled graphs for the small-S TF32 path.\"\"\"\n    return torch.compile(lambda *args: _small_path_impl(*args), mode='reduce-overhead', dynamic=False)\n\n\n@lru_cache(maxsize=None)\ndef _make_large_path_fn():\n    \"\"\"Cache compiled graphs for the large-S fp16 path.\"\"\"\n    return torch.compile(lambda *args: _large_path_impl(*args), mode='reduce-overhead', dynamic=False)\n\n\ndef _fused_gemm_gelu_bwd(\n    grad_output, fc2_weight, fc1_output, out_dtype\n):\n    \"\"\"Driver for the fused GEMM-B + GELU backward kernel.\"\"\"\n    S, I = fc1_output.shape  # (seq_len, 3584)\n    H = grad_output.shape[1]  # 1280\n\n    grad_fc1_output = torch.empty((S, I), dtype=out_dtype, device=fc1_output.device)\n\n    # Grid adapts to the autotuned BLOCK_S/BLOCK_I config.\n    grid = lambda meta: (triton.cdiv(S, meta['BLOCK_S']), triton.cdiv(I, meta['BLOCK_I']))\n    _fused_gemm_gelu_bwd_kernel[grid](\n        grad_output, grad_output.stride(0), grad_output.stride(1),\n        fc2_weight,  fc2_weight.stride(0),  fc2_weight.stride(1),\n        fc1_output,  fc1_output.stride(0),  fc1_output.stride(1),\n        grad_fc1_output, grad_fc1_output.stride(0), grad_fc1_output.stride(1),\n        S, I, H,\n    )\n    return grad_fc1_output\n\n\ndef _small_path_impl(\n    grad_output,\n    hidden_state,\n    fc1_weight,\n    fc1_bias,\n    fc2_weight,\n    fc2_bias,\n    fc1_output,\n    gelu_output,\n):\n    \"\"\"TF32 path (small S) - single torch.compile graph call.\"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n    torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n    S, I = fc1_output.shape\n    assert S < _FP16_THRESHOLD\n\n    # --- fc2 backward -------------------------------------------------------\n    grad_fc2_bias = grad_output.sum(dim=0)\n    grad_fc2_weight = grad_output.t().mm(gelu_output)\n    grad_gelu_output = grad_output.mm(fc2_weight)\n\n    # --- fused GELU backward elementwise ------------------------------------\n    x = fc1_output.contiguous()\n    gg = grad_gelu_output.contiguous()\n    grad_fc1_output = torch.empty((S, I), dtype=torch.float32, device=x.device)\n    n = grad_fc1_output.numel()\n    grid = (triton.cdiv(n, 2048),)\n    _gelu_bwd_kernel[grid](gg, x, grad_fc1_output, n, BLOCK=2048, num_warps=8)\n\n    # --- fc1 backward -------------------------------------------------------\n    grad_fc1_bias = grad_fc1_output.sum(dim=0, dtype=torch.float32)\n    grad_fc1_weight = grad_fc1_output.t().mm(hidden_state)\n    grad_hidden_state = grad_fc1_output.mm(fc1_weight)\n\n    return grad_hidden_state, grad_fc1_weight, grad_fc1_bias, grad_fc2_weight, grad_fc2_bias\n\n\ndef _large_path_impl(\n    grad_output,\n    hidden_state,\n    fc1_weight,\n    fc1_bias,\n    fc2_weight,\n    fc2_bias,\n    fc1_output,\n    gelu_output,\n):\n    \"\"\"fp16 path (large S) - fused GEMM-B/GELU epilogue + cuBLAS for A/C/D.\"\"\"\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n    torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n    S, I = fc1_output.shape\n    assert S >= _FP16_THRESHOLD\n\n    # --- fc2 backward -------------------------------------------------------\n    grad_fc2_bias = grad_output.sum(dim=0)\n\n    go16 = grad_output.half()\n    grad_fc2_weight = go16.t().mm(gelu_output.half()).float()\n\n    # --- fused GEMM-B + GELU backward epilogue ----------------------------\n    # grad_fc1_output = (go16 @ fc2_weight.half()) * gelu'(fc1_output.half())\n    x16 = fc1_output.half()\n    w2_16 = fc2_weight.half()\n    grad_fc1_output = _fused_gemm_gelu_bwd(go16, w2_16, x16, torch.float16)\n\n    # --- fc1 backward -------------------------------------------------------\n    grad_fc1_bias = grad_fc1_output.sum(dim=0, dtype=torch.float32)\n\n    h16 = hidden_state.half()\n    w1_16 = fc1_weight.half()\n    grad_fc1_weight = grad_fc1_output.t().mm(h16).float()\n    grad_hidden_state = grad_fc1_output.mm(w1_16).float()\n\n    return grad_hidden_state, grad_fc1_weight, grad_fc1_bias, grad_fc2_weight, grad_fc2_bias\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    hidden_state: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    fc1_output: torch.Tensor,\n    gelu_output: torch.Tensor,\n):\n    \"\"\"\n    Vision MLP GELU backward.\n\n    - S >= 384: fp16 cuBLAS for GEMM-A/C/D; Triton matmul+GELU epilogue for\n      GEMM-B, eliminating the grad_gelu_output HBM round-trip.\n    - S <  384: TF32 cuBLAS + torch.compile reduce-overhead graph replay\n      (launch-bound regime; keep the proven small-S path).\n    \"\"\"\n    S, _ = fc1_output.shape\n    if S >= _FP16_THRESHOLD:\n        fn = _make_large_path_fn()\n    else:\n        fn = _make_compile_fn()\n    return fn(\n        grad_output, hidden_state, fc1_weight, fc1_bias,\n        fc2_weight, fc2_bias, fc1_output, gelu_output\n    )\n"
+      }
+    ]
+  }
+}

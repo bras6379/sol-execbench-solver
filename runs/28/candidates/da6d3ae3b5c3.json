@@ -1,0 +1,201 @@
+{
+  "cand_id": "da6d3ae3b5c3",
+  "task_id": 28,
+  "verdict": "entered",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.7711538461538461,
+    0.7859848484848485,
+    0.03311286872820862,
+    0.7758284600389864,
+    0.0,
+    0.011163650787762219,
+    0.4905437352245862,
+    0.09490886235072281,
+    0.0,
+    0.008367705356182316,
+    0.19864968960986001,
+    0.0
+  ],
+  "strategy": "Single fused Triton kernel materializing both 4D bool masks in one launch \u2014 computes full causal mask `j > i + past` fro",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "fa59a45fbe1d",
+  "trajectory": "runs/28/work/da6d3ae3b5c3/trajectory.jsonl",
+  "gpu_s": 15.884,
+  "job_id": "28-da6d3ae3b5c3",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 42.0,
+      "power_w_max": 654.67,
+      "samples": 48,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.002304,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": 0.7711538461538461,
+      "sol_score_cal": 0.7326074247296113,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.7859848484848485,
+      "sol_score_cal": 0.7488001154776083,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.31390300000000004,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": 0.03311286872820862,
+      "sol_score_cal": 0.027968297577163678,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.00224,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": 0.7758284600389864,
+      "sol_score_cal": 0.7375833951074869,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.693422,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": 0.011163650787762219,
+      "sol_score_cal": 0.009397112535395012,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.007296,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.4905437352245862,
+      "sol_score_cal": 0.4449734088179791,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.06448,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": 0.09490886235072281,
+      "sol_score_cal": 0.08090840895982816,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 1.83009,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": 0.008367705356182316,
+      "sol_score_cal": 0.007040848183361298,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0269275,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": 0.19864968960986001,
+      "sol_score_cal": 0.17205775290115247,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef hybrid_mask_kernel(\n    full_ptr,\n    swa_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"\n    Compute both full causal and SWA masks for one (batch, head) slice.\n    Grid: (B * 64, cdiv(T, BLOCK_M))\n\n    full_mask[i, j] = (j > i + past)  \u2014 True = masked (cannot attend)\n    swa_mask[i, j]  = False           \u2014 all-False (reference quirk:\n                      torch.zeros.masked_fill(valid, False) is a no-op)\n    \"\"\"\n    pid_m = tl.program_id(1)\n    slice_offset = tl.program_id(0) * T * S\n\n    i_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    valid_i = i_offs < T\n\n    for n_start in range(0, S, BLOCK_N):\n        j_offs = n_start + tl.arange(0, BLOCK_N)\n        valid_j = j_offs < S\n\n        i = i_offs[:, None]\n        j = j_offs[None, :]\n        valid_2d = valid_i[:, None] & valid_j[None, :]\n\n        # Full causal mask: True (masked) when source position j\n        # is beyond what target position i can attend to\n        full_val = (j > (i + past)).to(tl.int8)\n        swa_val = full_val * 0  # all zeros, same shape/dtype as full_val\n\n        out_offs = slice_offset + i_offs[:, None] * S + j_offs[None, :]\n\n        tl.store(full_ptr + out_offs, full_val, mask=valid_2d)\n        tl.store(swa_ptr + out_offs, swa_val, mask=valid_2d)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation.\n\n    Materializes both 4D masks in a single fused Triton kernel.\n    The full causal mask is computed from thread indices: full[i,j] = (j > i + past).\n    The SWA mask is all-False (matching the reference's no-op masked_fill on zeros).\n\n    Compared to the reference (~11 kernel launches + 2D intermediates):\n    - 1 kernel launch instead of ~11\n    - No intermediate 2D tensors\n    - Both outputs written in one pass\n    \"\"\"\n    num_attention_heads = 64\n    swa_num_attention_heads = 64\n\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    device = torch.device(\"cuda\")\n\n    # Allocate 4D output tensors (bool = 1 byte/element)\n    full_attention_mask = torch.empty(\n        B, num_attention_heads, T, S, dtype=torch.bool, device=device\n    )\n    sliding_window_attention_mask = torch.empty(\n        B, swa_num_attention_heads, T, S, dtype=torch.bool, device=device\n    )\n\n    # Tile sizes: BLOCK_M=64 rows, BLOCK_N=256 columns per inner iteration.\n    # Each block writes 64*256 = 16 KB per iteration; the S-dimension loop\n    # iterates cdiv(S, 256) times. Grid of B*64*cdiv(T,64) blocks fills\n    # all 148 SMs for all but the tiniest shapes.\n    BLOCK_M = 64\n    BLOCK_N = 256\n\n    grid = (B * num_attention_heads, triton.cdiv(T, BLOCK_M))\n\n    hybrid_mask_kernel[grid](\n        full_attention_mask,\n        sliding_window_attention_mask,\n        T,\n        S,\n        past,\n        BLOCK_M=BLOCK_M,\n        BLOCK_N=BLOCK_N,\n    )\n\n    return full_attention_mask, sliding_window_attention_mask"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_da6d3ae3b5c3",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef hybrid_mask_kernel(\n    full_ptr,\n    swa_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"\n    Compute both full causal and SWA masks for one (batch, head) slice.\n    Grid: (B * 64, cdiv(T, BLOCK_M))\n\n    full_mask[i, j] = (j > i + past)  \u2014 True = masked (cannot attend)\n    swa_mask[i, j]  = False           \u2014 all-False (reference quirk:\n                      torch.zeros.masked_fill(valid, False) is a no-op)\n    \"\"\"\n    pid_m = tl.program_id(1)\n    slice_offset = tl.program_id(0) * T * S\n\n    i_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    valid_i = i_offs < T\n\n    for n_start in range(0, S, BLOCK_N):\n        j_offs = n_start + tl.arange(0, BLOCK_N)\n        valid_j = j_offs < S\n\n        i = i_offs[:, None]\n        j = j_offs[None, :]\n        valid_2d = valid_i[:, None] & valid_j[None, :]\n\n        # Full causal mask: True (masked) when source position j\n        # is beyond what target position i can attend to\n        full_val = (j > (i + past)).to(tl.int8)\n        swa_val = full_val * 0  # all zeros, same shape/dtype as full_val\n\n        out_offs = slice_offset + i_offs[:, None] * S + j_offs[None, :]\n\n        tl.store(full_ptr + out_offs, full_val, mask=valid_2d)\n        tl.store(swa_ptr + out_offs, swa_val, mask=valid_2d)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation.\n\n    Materializes both 4D masks in a single fused Triton kernel.\n    The full causal mask is computed from thread indices: full[i,j] = (j > i + past).\n    The SWA mask is all-False (matching the reference's no-op masked_fill on zeros).\n\n    Compared to the reference (~11 kernel launches + 2D intermediates):\n    - 1 kernel launch instead of ~11\n    - No intermediate 2D tensors\n    - Both outputs written in one pass\n    \"\"\"\n    num_attention_heads = 64\n    swa_num_attention_heads = 64\n\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    device = torch.device(\"cuda\")\n\n    # Allocate 4D output tensors (bool = 1 byte/element)\n    full_attention_mask = torch.empty(\n        B, num_attention_heads, T, S, dtype=torch.bool, device=device\n    )\n    sliding_window_attention_mask = torch.empty(\n        B, swa_num_attention_heads, T, S, dtype=torch.bool, device=device\n    )\n\n    # Tile sizes: BLOCK_M=64 rows, BLOCK_N=256 columns per inner iteration.\n    # Each block writes 64*256 = 16 KB per iteration; the S-dimension loop\n    # iterates cdiv(S, 256) times. Grid of B*64*cdiv(T,64) blocks fills\n    # all 148 SMs for all but the tiniest shapes.\n    BLOCK_M = 64\n    BLOCK_N = 256\n\n    grid = (B * num_attention_heads, triton.cdiv(T, BLOCK_M))\n\n    hybrid_mask_kernel[grid](\n        full_attention_mask,\n        sliding_window_attention_mask,\n        T,\n        S,\n        past,\n        BLOCK_M=BLOCK_M,\n        BLOCK_N=BLOCK_N,\n    )\n\n    return full_attention_mask, sliding_window_attention_mask"
+      }
+    ]
+  }
+}

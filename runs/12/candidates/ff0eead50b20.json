@@ -1,0 +1,248 @@
+{
+  "cand_id": "ff0eead50b20",
+  "task_id": 12,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "4-freq/thread CUDA: float4 128-bit load + uint64_t packed stores (4 bf16 each), double-precision range reduction kept, p",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "996a46d34363",
+  "trajectory": "runs/12/work/ff0eead50b20/trajectory.jsonl",
+  "gpu_s": 14.177,
+  "job_id": "12-ff0eead50b20",
+  "asi": {
+    "stage": "harness",
+    "error": "output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_p9a5bjc6 \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_p9a5bjc6/kernel.cu -o kernel.cuda.o \nFAILED:  kernel.cuda.o \n/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile \n--dependency-output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_p9a5bjc6 \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_p9a5bjc6/kernel.cu -o kernel.cuda.o \n/tmp/sol_execbench_p9a5bjc6/kernel.cu(107): error: namespace \"at::cuda\" has no \nmember \"getCurrentCUDAStream\"\n          cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n                                          ^\n\n1 error detected in the compilation of \"/tmp/sol_execbench_p9a5bjc6/kernel.cu\".\nninja: build stopped: subcommand failed.\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 36.0,
+      "power_w_max": 253.52,
+      "samples": 42,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020064,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.02144,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.044368,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020352,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.02032,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02048,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020256,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020128,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.026176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0234069999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020289,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (4 freqs/thread, advancing the 2-freq float2 frontier):\n//   * Each unique frequency's (cos,sin) is written to TWO output columns\n//     (col and col+64) \u2014 we compute the SFU work ONCE and duplicate the store.\n//   * 4 frequencies per thread: one 16-byte float4 load (128-bit), and PACKED\n//     64-bit stores (uint64_t = 4 bf16 at once) to each half \u2014 wider memory\n//     transactions, half the load/store instructions of the 2-freq approach.\n//     4 adjacent freqs are always in the same 64-wide row (64 is a multiple of\n//     4), and low/high-half targets are 8-byte aligned (col is a multiple of 4),\n//     so the uint64_t packed stores are always legal.\n//   * Double-precision range reduction to [-pi,pi] before __sincosf \u2014 required\n//     for correctness under --use_fast_math where __sincosf uses the hardware\n//     MUFU path with limited range-reduction precision.\n//   * Per-shape block sizing: 512 threads for tiny shapes (fewer blocks =\n//     less scheduling overhead), 256 for larger shapes (enough blocks to fill\n//     SMs).  Natural grid = cdiv(n_quads, block) \u2014 no over-spreading.\n\n#include <torch/extension.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n__device__ inline uint32_t bf162_as_u32(__nv_bfloat162 x) {\n    union { __nv_bfloat162 bf; uint32_t u32; } u;\n    u.bf = x;\n    return u.u32;\n}\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                   __nv_bfloat16* __restrict__ cos_out,\n                                   __nv_bfloat16* __restrict__ sin_out,\n                                   long n_quads, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_quads) return;\n\n    // 4 frequencies per thread: one 16-byte (128-bit) coalesced load.\n    float4 f = reinterpret_cast<const float4*>(freqs)[t];\n\n    // Double-precision range reduction to [-pi,pi] \u2014 robust under --use_fast_math\n    // where __sincosf becomes the hardware MUFU path with limited reduction.\n    const double TWO_PI = 6.283185307179586476925286766559;\n    double x0 = (double)f.x, x1 = (double)f.y, x2 = (double)f.z, x3 = (double)f.w;\n    float r0 = (float)(x0 - TWO_PI * rint(x0 / TWO_PI));\n    float r1 = (float)(x1 - TWO_PI * rint(x1 / TWO_PI));\n    float r2 = (float)(x2 - TWO_PI * rint(x2 / TWO_PI));\n    float r3 = (float)(x3 - TWO_PI * rint(x3 / TWO_PI));\n\n    float s0, c0, s1, c1, s2, c2, s3, c3;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n    __sincosf(r2, &s2, &c2);\n    __sincosf(r3, &s3, &c3);\n\n    // Scale and pack into bfloat162 pairs (round-to-nearest-even, matches torch .to(bf16)).\n    __nv_bfloat162 c01 = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 c23 = __floats2bfloat162_rn(c2 * scale, c3 * scale);\n    __nv_bfloat162 s01 = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n    __nv_bfloat162 s23 = __floats2bfloat162_rn(s2 * scale, s3 * scale);\n\n    // Pack 4 bf16 values into uint64_t for a single 64-bit store per half.\n    uint64_t c_packed = ((uint64_t)bf162_as_u32(c23) << 32) | bf162_as_u32(c01);\n    uint64_t s_packed = ((uint64_t)bf162_as_u32(s23) << 32) | bf162_as_u32(s01);\n\n    // Map quad index to output positions.  four_t = frequency index; each row\n    // has 64 freqs (128 bf16 outputs).  lo_idx indexes into uint64_t* view\n    // (4 bf16 per element).  hi_idx = lo_idx + 64/4 = lo_idx + 16.\n    long four_t = t << 2;         // t * 4\n    long row    = four_t >> 6;    // / 64\n    long col    = four_t & 63;    // % 64\n    long lo_idx = (row << 5) + (col >> 2);  // row*32 + col/4\n    long hi_idx = lo_idx + 16;    // + 64/4\n\n    uint64_t* cos_u64 = reinterpret_cast<uint64_t*>(cos_out);\n    uint64_t* sin_u64 = reinterpret_cast<uint64_t*>(sin_out);\n    cos_u64[lo_idx] = c_packed;\n    cos_u64[hi_idx] = c_packed;\n    sin_u64[lo_idx] = s_packed;\n    sin_u64[hi_idx] = s_packed;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_quads = n_freqs / 4;  // n_freqs is always a multiple of 64 \u2192 multiple of 4\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_quads > 0) {\n        // Per-shape block sizing: larger blocks for tiny shapes reduce\n        // scheduling overhead; smaller blocks for large shapes fill 148 SMs.\n        int block = (n_quads <= 32768) ? 512 : 256;\n        int grid = (int)((n_quads + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_quads, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t12_ff0eead50b20",
+    "definition": "012_fused_cos_sin_embedding_generation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (4 freqs/thread, advancing the 2-freq float2 frontier):\n//   * Each unique frequency's (cos,sin) is written to TWO output columns\n//     (col and col+64) \u2014 we compute the SFU work ONCE and duplicate the store.\n//   * 4 frequencies per thread: one 16-byte float4 load (128-bit), and PACKED\n//     64-bit stores (uint64_t = 4 bf16 at once) to each half \u2014 wider memory\n//     transactions, half the load/store instructions of the 2-freq approach.\n//     4 adjacent freqs are always in the same 64-wide row (64 is a multiple of\n//     4), and low/high-half targets are 8-byte aligned (col is a multiple of 4),\n//     so the uint64_t packed stores are always legal.\n//   * Double-precision range reduction to [-pi,pi] before __sincosf \u2014 required\n//     for correctness under --use_fast_math where __sincosf uses the hardware\n//     MUFU path with limited range-reduction precision.\n//   * Per-shape block sizing: 512 threads for tiny shapes (fewer blocks =\n//     less scheduling overhead), 256 for larger shapes (enough blocks to fill\n//     SMs).  Natural grid = cdiv(n_quads, block) \u2014 no over-spreading.\n\n#include <torch/extension.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n__device__ inline uint32_t bf162_as_u32(__nv_bfloat162 x) {\n    union { __nv_bfloat162 bf; uint32_t u32; } u;\n    u.bf = x;\n    return u.u32;\n}\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                   __nv_bfloat16* __restrict__ cos_out,\n                                   __nv_bfloat16* __restrict__ sin_out,\n                                   long n_quads, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_quads) return;\n\n    // 4 frequencies per thread: one 16-byte (128-bit) coalesced load.\n    float4 f = reinterpret_cast<const float4*>(freqs)[t];\n\n    // Double-precision range reduction to [-pi,pi] \u2014 robust under --use_fast_math\n    // where __sincosf becomes the hardware MUFU path with limited reduction.\n    const double TWO_PI = 6.283185307179586476925286766559;\n    double x0 = (double)f.x, x1 = (double)f.y, x2 = (double)f.z, x3 = (double)f.w;\n    float r0 = (float)(x0 - TWO_PI * rint(x0 / TWO_PI));\n    float r1 = (float)(x1 - TWO_PI * rint(x1 / TWO_PI));\n    float r2 = (float)(x2 - TWO_PI * rint(x2 / TWO_PI));\n    float r3 = (float)(x3 - TWO_PI * rint(x3 / TWO_PI));\n\n    float s0, c0, s1, c1, s2, c2, s3, c3;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n    __sincosf(r2, &s2, &c2);\n    __sincosf(r3, &s3, &c3);\n\n    // Scale and pack into bfloat162 pairs (round-to-nearest-even, matches torch .to(bf16)).\n    __nv_bfloat162 c01 = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 c23 = __floats2bfloat162_rn(c2 * scale, c3 * scale);\n    __nv_bfloat162 s01 = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n    __nv_bfloat162 s23 = __floats2bfloat162_rn(s2 * scale, s3 * scale);\n\n    // Pack 4 bf16 values into uint64_t for a single 64-bit store per half.\n    uint64_t c_packed = ((uint64_t)bf162_as_u32(c23) << 32) | bf162_as_u32(c01);\n    uint64_t s_packed = ((uint64_t)bf162_as_u32(s23) << 32) | bf162_as_u32(s01);\n\n    // Map quad index to output positions.  four_t = frequency index; each row\n    // has 64 freqs (128 bf16 outputs).  lo_idx indexes into uint64_t* view\n    // (4 bf16 per element).  hi_idx = lo_idx + 64/4 = lo_idx + 16.\n    long four_t = t << 2;         // t * 4\n    long row    = four_t >> 6;    // / 64\n    long col    = four_t & 63;    // % 64\n    long lo_idx = (row << 5) + (col >> 2);  // row*32 + col/4\n    long hi_idx = lo_idx + 16;    // + 64/4\n\n    uint64_t* cos_u64 = reinterpret_cast<uint64_t*>(cos_out);\n    uint64_t* sin_u64 = reinterpret_cast<uint64_t*>(sin_out);\n    cos_u64[lo_idx] = c_packed;\n    cos_u64[hi_idx] = c_packed;\n    sin_u64[lo_idx] = s_packed;\n    sin_u64[hi_idx] = s_packed;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_quads = n_freqs / 4;  // n_freqs is always a multiple of 64 \u2192 multiple of 4\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_quads > 0) {\n        // Per-shape block sizing: larger blocks for tiny shapes reduce\n        // scheduling overhead; smaller blocks for large shapes fill 148 SMs.\n        int block = (n_quads <= 32768) ? 512 : 256;\n        int grid = (int)((n_quads + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_quads, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}"
+      }
+    ]
+  }
+}

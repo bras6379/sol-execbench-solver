@@ -23,3 +23,13 @@ If this only matches the frontier (~0.70 raw) or is still bandwidth/launch-bound
 ## 4. from `e1087095` — Grid-stride fused Triton RoPE-backward: 2D grid (seq chunks × dim pairs), each program claims multiple BLOCK_S chunks vi
 If this plateaus below ~0.80 raw (still ~15% below the HBM ceiling), switch to a CUDA C++ persistent kernel: one CTA per SM (148 CTAs), each atomically claims a BLOCK_S chunk of seq positions, uses explicit float4/uint4 128-bit vectorized loads/stores, __sincosf for fused trig, and interleaves q-path/k-path/emb-path ILP to hide instruction latency. The Triton grid-stride still pays Python-loop overhead and suboptimal address arithmetic — hand-written CUDA can squeeze the last 5–10% bandwidth efficiency from this pure streaming pattern.
 
+## 5. from `40229eba` — Fused Triton RoPE-backward at the 5R/3W HBM floor; adds num_stages + tunable GRID_MULT (deep multi-buffered grid-stride
+Higher-ceiling idea NOT shipped: load each head-row fully contiguously as one
+[BLOCK_S,16,128] block per tensor (256-bit LDG.E.128 on Blackwell) and slice
+d0=[...,:64]/d1=[...,64:] in registers, instead of the two strided 64-wide
+loads — this halves the load-instruction count and gives fully-coalesced wide
+transactions. TRIGGER: if this num_stages round plateaus at/below ~0.755 raw on
+the large HBM-bound shapes (seq_len >= 2521), the limiter is load throughput,
+so switch to the single-contiguous-load + register-slice layout. (NOTE: the
+CUDA C++ / cpp_extension.load_inline reserve is a DEAD END
+

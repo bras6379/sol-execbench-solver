@@ -1,0 +1,245 @@
+{
+  "cand_id": "3aee361373b0",
+  "task_id": 13,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.566797225237129,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.6606516992329657,
+    0.6409004620329449,
+    0.6115803677457247,
+    0.0,
+    0.608290277946442,
+    0.0,
+    0.0
+  ],
+  "strategy": "Per-shape CUDA graphs over the proven Triton multi-tier backward kernels for n_rows<=16K to collapse launch/allocation o",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "3b40d0a8e488",
+  "trajectory": "runs/13/work/3aee361373b0/trajectory.jsonl",
+  "gpu_s": 15.598,
+  "job_id": "13-3aee361373b0",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 49.0,
+      "power_w_max": 921.96,
+      "samples": 45,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0109,
+      "baseline_latency_ms": 0.117392,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 4.514889999999999,
+      "sol_ms": 0.7006,
+      "baseline_latency_ms": 5.6911705,
+      "sol_score": 0.566797225237129,
+      "sol_score_cal": 0.5164784036941433,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.03528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0959525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0021,
+      "baseline_latency_ms": 0.031104,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.005,
+      "baseline_latency_ms": 0.061936,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.215744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.095776,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.071328,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.289344,
+      "sol_ms": 0.0469,
+      "baseline_latency_ms": 0.518896,
+      "sol_score": 0.6606516992329657,
+      "sol_score_cal": 0.6134475922081931,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.42871950000000003,
+      "sol_ms": 0.0712,
+      "baseline_latency_ms": 0.7092805,
+      "sol_score": 0.6409004620329449,
+      "sol_score_cal": 0.5924298108334044,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.8723190000000001,
+      "sol_ms": 0.1475,
+      "baseline_latency_ms": 1.288753,
+      "sol_score": 0.6115803677457247,
+      "sol_score_cal": 0.5616920548593307,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0113,
+      "baseline_latency_ms": 0.1217435,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.027055,
+      "sol_ms": 0.1755,
+      "baseline_latency_ms": 1.497889,
+      "sol_score": 0.608290277946442,
+      "sol_score_cal": 0.558185673794786,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0028,
+      "baseline_latency_ms": 0.037248,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0712319999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nHIDDEN_SIZE = 2560\nROW_BLOCK_H = 4096\nGW_BLOCK_H = 32\nGW_BLOCK_N = 128\nSMALL_N_LIMIT = 8\nGRAPH_ROW_LIMIT = 16384\n\n_graph_cache = {}\n\n\n@triton.jit\ndef _small_rows_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    grad_weight,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    rows = tl.arange(0, BLOCK_N)\n    cols = tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    w = tl.load(weight + cols, mask=cols < H, other=0.0).to(tl.float32)\n    rs = tl.load(rstd + rows, mask=rows < n_rows, other=0.0).to(tl.float32)\n\n    grad_norm = go * w[None, :]\n    mean = tl.sum(grad_norm * norm, axis=1) * (1.0 / H)\n    out = (grad_norm - mean[:, None] * norm) * rs[:, None]\n    tl.store(grad_x + offsets, out, mask=mask)\n\n    gw = tl.sum(go * norm, axis=0)\n    tl.store(grad_weight + cols, gw, mask=cols < H)\n\n\n@triton.jit\ndef _row_dx_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    H: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    row = tl.program_id(0)\n    cols = tl.arange(0, BLOCK_H)\n    mask = cols < H\n    offsets = row * H + cols\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    w = tl.load(weight + cols, mask=mask, other=0.0).to(tl.float32)\n    rs = tl.load(rstd + row).to(tl.float32)\n\n    grad_norm = go * w\n    mean = tl.sum(grad_norm * norm, axis=0) * (1.0 / H)\n    out = (grad_norm - mean * norm) * rs\n    tl.store(grad_x + offsets, out, mask=mask)\n\n\n@triton.jit\ndef _grad_weight_direct_kernel(\n    grad_output,\n    normalized,\n    grad_weight,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    rows = tl.arange(0, BLOCK_N)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    sums = tl.sum(go * norm, axis=0)\n    tl.store(grad_weight + cols, sums, mask=cols < H)\n\n\n@triton.jit\ndef _grad_weight_partial_kernel(\n    grad_output,\n    normalized,\n    partial,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_n = tl.program_id(0)\n    pid_h = tl.program_id(1)\n    rows = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    sums = tl.sum(go * norm, axis=0)\n    tl.store(partial + pid_n * H + cols, sums, mask=cols < H)\n\n\n@triton.jit\ndef _grad_weight_reduce_kernel(\n    partial,\n    grad_weight,\n    H: tl.constexpr,\n    NUM_BLOCKS: tl.constexpr,\n    BLOCK_R: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    acc = tl.zeros((BLOCK_H,), tl.float32)\n\n    for start in range(0, NUM_BLOCKS, BLOCK_R):\n        block_ids = start + tl.arange(0, BLOCK_R)\n        mask = (block_ids[:, None] < NUM_BLOCKS) & (cols[None, :] < H)\n        vals = tl.load(\n            partial + block_ids[:, None] * H + cols[None, :],\n            mask=mask,\n            other=0.0,\n        )\n        acc += tl.sum(vals, axis=0)\n\n    tl.store(grad_weight + cols, acc, mask=cols < H)\n\n\ndef _dispatch_kernels(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    grad_weight,\n    partial,\n    n_rows,\n):\n    if n_rows <= SMALL_N_LIMIT:\n        block_n = triton.next_power_of_2(n_rows)\n        _small_rows_kernel[(1,)](\n            grad_output,\n            normalized,\n            rstd,\n            weight,\n            grad_x,\n            grad_weight,\n            n_rows,\n            HIDDEN_SIZE,\n            BLOCK_N=block_n,\n            BLOCK_H=ROW_BLOCK_H,\n            num_warps=8,\n        )\n        return\n\n    _row_dx_kernel[(n_rows,)](\n        grad_output,\n        normalized,\n        rstd,\n        weight,\n        grad_x,\n        HIDDEN_SIZE,\n        BLOCK_H=ROW_BLOCK_H,\n        num_warps=8,\n    )\n\n    if n_rows <= GW_BLOCK_N:\n        block_n = triton.next_power_of_2(n_rows)\n        _grad_weight_direct_kernel[(triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H),)](\n            grad_output,\n            normalized,\n            grad_weight,\n            n_rows,\n            HIDDEN_SIZE,\n            BLOCK_N=block_n,\n            BLOCK_H=GW_BLOCK_H,\n            num_warps=4,\n        )\n        return\n\n    num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n    grid = (num_row_blocks, triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H))\n    _grad_weight_partial_kernel[grid](\n        grad_output,\n        normalized,\n        partial,\n        n_rows,\n        HIDDEN_SIZE,\n        BLOCK_N=GW_BLOCK_N,\n        BLOCK_H=GW_BLOCK_H,\n        num_warps=4,\n    )\n\n    reduce_block = min(1024, triton.next_power_of_2(num_row_blocks))\n    _grad_weight_reduce_kernel[(triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H),)](\n        partial,\n        grad_weight,\n        HIDDEN_SIZE,\n        NUM_BLOCKS=num_row_blocks,\n        BLOCK_R=reduce_block,\n        BLOCK_H=GW_BLOCK_H,\n        num_warps=8,\n    )\n\n\ndef _direct_launch(grad_output, normalized, rstd, weight, n_rows):\n    grad_x = torch.empty_like(grad_output)\n    grad_weight = torch.empty_like(weight)\n    partial = None\n    if n_rows > GW_BLOCK_N:\n        num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n        partial = torch.empty(\n            (num_row_blocks, HIDDEN_SIZE),\n            device=grad_output.device,\n            dtype=torch.float32,\n        )\n    _dispatch_kernels(\n        grad_output, normalized, rstd, weight,\n        grad_x, grad_weight, partial, n_rows,\n    )\n    return grad_x, grad_weight\n\n\ndef _eager_fallback(grad_output, normalized, rstd, weight):\n    go = grad_output.to(torch.float32)\n    grad_weight = (go * normalized).sum(dim=(0, 1))\n    grad_normalized = go * weight\n    mean_grad_norm = (grad_normalized * normalized).mean(dim=-1, keepdim=True)\n    grad_x = rstd * (grad_normalized - mean_grad_norm * normalized)\n    grad_x_bf16 = grad_x.to(torch.bfloat16)\n    return grad_x_bf16, grad_x_bf16.clone(), grad_weight\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n):\n    n_rows = grad_output.numel() // HIDDEN_SIZE\n\n    if n_rows == 0:\n        grad_x = torch.empty_like(grad_output)\n        return grad_x, grad_x.clone(), torch.zeros_like(weight)\n\n    if not grad_output.is_cuda:\n        return _eager_fallback(grad_output, normalized, rstd, weight)\n\n    use_graph = n_rows <= GRAPH_ROW_LIMIT\n\n    if not use_graph:\n        grad_x, grad_weight = _direct_launch(\n            grad_output, normalized, rstd, weight, n_rows\n        )\n        return grad_x, grad_x.clone(), grad_weight\n\n    cache_key = (grad_output.shape, grad_output.dtype, grad_output.device.index)\n    cached = _graph_cache.get(cache_key)\n\n    if cached is None:\n        device = grad_output.device\n        grad_x_buf = torch.empty_like(grad_output)\n        grad_weight_buf = torch.empty_like(weight)\n        partial = None\n        if n_rows > GW_BLOCK_N:\n            num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n            partial = torch.empty(\n                (num_row_blocks, HIDDEN_SIZE),\n                device=device,\n                dtype=torch.float32,\n            )\n\n        capture_stream = torch.cuda.Stream()\n        capture_stream.wait_stream(torch.cuda.current_stream())\n        try:\n            with torch.cuda.stream(capture_stream):\n                for _ in range(3):\n                    _dispatch_kernels(\n                        grad_output, normalized, rstd, weight,\n                        grad_x_buf, grad_weight_buf, partial, n_rows,\n                    )\n                graph = torch.cuda.CUDAGraph()\n                with torch.cuda.graph(graph):\n                    _dispatch_kernels(\n                        grad_output, normalized, rstd, weight,\n                        grad_x_buf, grad_weight_buf, partial, n_rows,\n                    )\n            torch.cuda.current_stream().wait_stream(capture_stream)\n        except Exception:\n            torch.cuda.current_stream().wait_stream(capture_stream)\n            grad_x, grad_weight = _direct_launch(\n                grad_output, normalized, rstd, weight, n_rows\n            )\n            return grad_x, grad_x.clone(), grad_weight\n\n        _graph_cache[cache_key] = (graph, grad_x_buf, grad_weight_buf)\n        cached = _graph_cache[cache_key]\n\n    graph, grad_x_buf, grad_weight_buf = cached\n    graph.replay()\n    return grad_x_buf.clone(), grad_x_buf.clone(), grad_weight_buf.clone()\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t13_3aee361373b0",
+    "definition": "013_fused_residual_rms_norm_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nHIDDEN_SIZE = 2560\nROW_BLOCK_H = 4096\nGW_BLOCK_H = 32\nGW_BLOCK_N = 128\nSMALL_N_LIMIT = 8\nGRAPH_ROW_LIMIT = 16384\n\n_graph_cache = {}\n\n\n@triton.jit\ndef _small_rows_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    grad_weight,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    rows = tl.arange(0, BLOCK_N)\n    cols = tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    w = tl.load(weight + cols, mask=cols < H, other=0.0).to(tl.float32)\n    rs = tl.load(rstd + rows, mask=rows < n_rows, other=0.0).to(tl.float32)\n\n    grad_norm = go * w[None, :]\n    mean = tl.sum(grad_norm * norm, axis=1) * (1.0 / H)\n    out = (grad_norm - mean[:, None] * norm) * rs[:, None]\n    tl.store(grad_x + offsets, out, mask=mask)\n\n    gw = tl.sum(go * norm, axis=0)\n    tl.store(grad_weight + cols, gw, mask=cols < H)\n\n\n@triton.jit\ndef _row_dx_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    H: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    row = tl.program_id(0)\n    cols = tl.arange(0, BLOCK_H)\n    mask = cols < H\n    offsets = row * H + cols\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    w = tl.load(weight + cols, mask=mask, other=0.0).to(tl.float32)\n    rs = tl.load(rstd + row).to(tl.float32)\n\n    grad_norm = go * w\n    mean = tl.sum(grad_norm * norm, axis=0) * (1.0 / H)\n    out = (grad_norm - mean * norm) * rs\n    tl.store(grad_x + offsets, out, mask=mask)\n\n\n@triton.jit\ndef _grad_weight_direct_kernel(\n    grad_output,\n    normalized,\n    grad_weight,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    rows = tl.arange(0, BLOCK_N)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    sums = tl.sum(go * norm, axis=0)\n    tl.store(grad_weight + cols, sums, mask=cols < H)\n\n\n@triton.jit\ndef _grad_weight_partial_kernel(\n    grad_output,\n    normalized,\n    partial,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_n = tl.program_id(0)\n    pid_h = tl.program_id(1)\n    rows = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    mask = (rows[:, None] < n_rows) & (cols[None, :] < H)\n    offsets = rows[:, None] * H + cols[None, :]\n\n    go = tl.load(grad_output + offsets, mask=mask, other=0.0).to(tl.float32)\n    norm = tl.load(normalized + offsets, mask=mask, other=0.0).to(tl.float32)\n    sums = tl.sum(go * norm, axis=0)\n    tl.store(partial + pid_n * H + cols, sums, mask=cols < H)\n\n\n@triton.jit\ndef _grad_weight_reduce_kernel(\n    partial,\n    grad_weight,\n    H: tl.constexpr,\n    NUM_BLOCKS: tl.constexpr,\n    BLOCK_R: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    acc = tl.zeros((BLOCK_H,), tl.float32)\n\n    for start in range(0, NUM_BLOCKS, BLOCK_R):\n        block_ids = start + tl.arange(0, BLOCK_R)\n        mask = (block_ids[:, None] < NUM_BLOCKS) & (cols[None, :] < H)\n        vals = tl.load(\n            partial + block_ids[:, None] * H + cols[None, :],\n            mask=mask,\n            other=0.0,\n        )\n        acc += tl.sum(vals, axis=0)\n\n    tl.store(grad_weight + cols, acc, mask=cols < H)\n\n\ndef _dispatch_kernels(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    grad_weight,\n    partial,\n    n_rows,\n):\n    if n_rows <= SMALL_N_LIMIT:\n        block_n = triton.next_power_of_2(n_rows)\n        _small_rows_kernel[(1,)](\n            grad_output,\n            normalized,\n            rstd,\n            weight,\n            grad_x,\n            grad_weight,\n            n_rows,\n            HIDDEN_SIZE,\n            BLOCK_N=block_n,\n            BLOCK_H=ROW_BLOCK_H,\n            num_warps=8,\n        )\n        return\n\n    _row_dx_kernel[(n_rows,)](\n        grad_output,\n        normalized,\n        rstd,\n        weight,\n        grad_x,\n        HIDDEN_SIZE,\n        BLOCK_H=ROW_BLOCK_H,\n        num_warps=8,\n    )\n\n    if n_rows <= GW_BLOCK_N:\n        block_n = triton.next_power_of_2(n_rows)\n        _grad_weight_direct_kernel[(triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H),)](\n            grad_output,\n            normalized,\n            grad_weight,\n            n_rows,\n            HIDDEN_SIZE,\n            BLOCK_N=block_n,\n            BLOCK_H=GW_BLOCK_H,\n            num_warps=4,\n        )\n        return\n\n    num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n    grid = (num_row_blocks, triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H))\n    _grad_weight_partial_kernel[grid](\n        grad_output,\n        normalized,\n        partial,\n        n_rows,\n        HIDDEN_SIZE,\n        BLOCK_N=GW_BLOCK_N,\n        BLOCK_H=GW_BLOCK_H,\n        num_warps=4,\n    )\n\n    reduce_block = min(1024, triton.next_power_of_2(num_row_blocks))\n    _grad_weight_reduce_kernel[(triton.cdiv(HIDDEN_SIZE, GW_BLOCK_H),)](\n        partial,\n        grad_weight,\n        HIDDEN_SIZE,\n        NUM_BLOCKS=num_row_blocks,\n        BLOCK_R=reduce_block,\n        BLOCK_H=GW_BLOCK_H,\n        num_warps=8,\n    )\n\n\ndef _direct_launch(grad_output, normalized, rstd, weight, n_rows):\n    grad_x = torch.empty_like(grad_output)\n    grad_weight = torch.empty_like(weight)\n    partial = None\n    if n_rows > GW_BLOCK_N:\n        num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n        partial = torch.empty(\n            (num_row_blocks, HIDDEN_SIZE),\n            device=grad_output.device,\n            dtype=torch.float32,\n        )\n    _dispatch_kernels(\n        grad_output, normalized, rstd, weight,\n        grad_x, grad_weight, partial, n_rows,\n    )\n    return grad_x, grad_weight\n\n\ndef _eager_fallback(grad_output, normalized, rstd, weight):\n    go = grad_output.to(torch.float32)\n    grad_weight = (go * normalized).sum(dim=(0, 1))\n    grad_normalized = go * weight\n    mean_grad_norm = (grad_normalized * normalized).mean(dim=-1, keepdim=True)\n    grad_x = rstd * (grad_normalized - mean_grad_norm * normalized)\n    grad_x_bf16 = grad_x.to(torch.bfloat16)\n    return grad_x_bf16, grad_x_bf16.clone(), grad_weight\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n):\n    n_rows = grad_output.numel() // HIDDEN_SIZE\n\n    if n_rows == 0:\n        grad_x = torch.empty_like(grad_output)\n        return grad_x, grad_x.clone(), torch.zeros_like(weight)\n\n    if not grad_output.is_cuda:\n        return _eager_fallback(grad_output, normalized, rstd, weight)\n\n    use_graph = n_rows <= GRAPH_ROW_LIMIT\n\n    if not use_graph:\n        grad_x, grad_weight = _direct_launch(\n            grad_output, normalized, rstd, weight, n_rows\n        )\n        return grad_x, grad_x.clone(), grad_weight\n\n    cache_key = (grad_output.shape, grad_output.dtype, grad_output.device.index)\n    cached = _graph_cache.get(cache_key)\n\n    if cached is None:\n        device = grad_output.device\n        grad_x_buf = torch.empty_like(grad_output)\n        grad_weight_buf = torch.empty_like(weight)\n        partial = None\n        if n_rows > GW_BLOCK_N:\n            num_row_blocks = triton.cdiv(n_rows, GW_BLOCK_N)\n            partial = torch.empty(\n                (num_row_blocks, HIDDEN_SIZE),\n                device=device,\n                dtype=torch.float32,\n            )\n\n        capture_stream = torch.cuda.Stream()\n        capture_stream.wait_stream(torch.cuda.current_stream())\n        try:\n            with torch.cuda.stream(capture_stream):\n                for _ in range(3):\n                    _dispatch_kernels(\n                        grad_output, normalized, rstd, weight,\n                        grad_x_buf, grad_weight_buf, partial, n_rows,\n                    )\n                graph = torch.cuda.CUDAGraph()\n                with torch.cuda.graph(graph):\n                    _dispatch_kernels(\n                        grad_output, normalized, rstd, weight,\n                        grad_x_buf, grad_weight_buf, partial, n_rows,\n                    )\n            torch.cuda.current_stream().wait_stream(capture_stream)\n        except Exception:\n            torch.cuda.current_stream().wait_stream(capture_stream)\n            grad_x, grad_weight = _direct_launch(\n                grad_output, normalized, rstd, weight, n_rows\n            )\n            return grad_x, grad_x.clone(), grad_weight\n\n        _graph_cache[cache_key] = (graph, grad_x_buf, grad_weight_buf)\n        cached = _graph_cache[cache_key]\n\n    graph, grad_x_buf, grad_weight_buf = cached\n    graph.replay()\n    return grad_x_buf.clone(), grad_x_buf.clone(), grad_weight_buf.clone()\n"
+      }
+    ]
+  }
+}

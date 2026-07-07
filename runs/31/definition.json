@@ -1,0 +1,71 @@
+{
+    "name": "031_repeat_kv_attention_matmul",
+    "hf_id": "allenai/Olmo-3-7B-Think",
+    "description": "Fused Grouped Query Attention (GQA) key-value repetition and attention score computation. This operation repeats key tensors from num_key_value_heads to num_attention_heads (4x expansion), then computes scaled attention scores via Q@K^T. The fusion avoids materializing the expanded key tensor, saving 75% of intermediate memory bandwidth.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of query/attention heads"
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of key-value heads (GQA compression)"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension per attention head"
+        },
+        "num_key_value_groups": {
+            "type": "const",
+            "value": 1,
+            "description": "Repetition factor for KV heads"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "query": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query tensor with all attention heads"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key tensor with compressed KV heads"
+        }
+    },
+    "outputs": {
+        "attn_weights": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Scaled attention scores (Q @ K^T * scaling)"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused GQA key-value repetition and attention score computation.\n    \n    Args:\n        query: [batch_size, num_attention_heads, seq_len, head_dim]\n        key: [batch_size, num_key_value_heads, seq_len, head_dim]\n    \n    Returns:\n        attn_weights: [batch_size, num_attention_heads, seq_len, seq_len]\n    \"\"\"\n    # Constants\n    head_dim = 128\n    num_key_value_groups = 1\n    scaling = head_dim ** -0.5\n    \n    batch_size, num_key_value_heads, slen, _ = key.shape\n    \n    # Repeat KV heads to match query heads\n    # [batch, num_kv_heads, seq_len, head_dim] -> [batch, num_attention_heads, seq_len, head_dim]\n    key_expanded = key[:, :, None, :, :].expand(\n        batch_size, num_key_value_heads, num_key_value_groups, slen, head_dim\n    )\n    key_states = key_expanded.reshape(batch_size, num_key_value_heads * num_key_value_groups, slen, head_dim)\n    \n    # Compute attention scores: Q @ K^T with scaling\n    # [batch, num_heads, seq_len, head_dim] @ [batch, num_heads, head_dim, seq_len]\n    # -> [batch, num_heads, seq_len, seq_len]\n    attn_weights = torch.matmul(query.to(torch.float32), key_states.transpose(2, 3).to(torch.float32)) * scaling\n    \n    return attn_weights.to(torch.bfloat16)\n"
+}

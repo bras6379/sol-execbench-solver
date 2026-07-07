@@ -1,0 +1,101 @@
+{
+    "name": "039_adaptive_instance_normalization_2d_backward",
+    "hf_id": "chuxiaojie/NAFNet",
+    "description": "Backward pass for Adaptive Instance Normalization 2D. Computes gradients with respect to input, weight (gamma), and bias (beta). The normalization is performed per-channel across spatial dimensions: y = gamma * (x - mean) / sqrt(var + eps) + beta.",
+    "axes": {
+        "N": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "C": {
+            "type": "const",
+            "value": 32,
+            "description": "Number of channels"
+        },
+        "H": {
+            "type": "var",
+            "description": "Height"
+        },
+        "W": {
+            "type": "var",
+            "description": "Width"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_output": {
+            "shape": [
+                "N",
+                "C",
+                "H",
+                "W"
+            ],
+            "dtype": "float32",
+            "description": "Gradient of loss w.r.t. output"
+        },
+        "x": {
+            "shape": [
+                "N",
+                "C",
+                "H",
+                "W"
+            ],
+            "dtype": "float32",
+            "description": "Original input tensor from forward pass"
+        },
+        "weight": {
+            "shape": [
+                "C"
+            ],
+            "dtype": "float32",
+            "description": "Scale parameter (gamma)"
+        },
+        "mean": {
+            "shape": [
+                "N",
+                "C",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Mean computed in forward pass"
+        },
+        "std": {
+            "shape": [
+                "N",
+                "C",
+                "1",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Standard deviation computed in forward pass"
+        }
+    },
+    "outputs": {
+        "grad_input": {
+            "shape": [
+                "N",
+                "C",
+                "H",
+                "W"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. input"
+        },
+        "grad_weight": {
+            "shape": [
+                "C"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. weight (gamma)"
+        },
+        "grad_bias": {
+            "shape": [
+                "C"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. bias (beta)"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    weight: torch.Tensor,\n    mean: torch.Tensor,\n    std: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for Adaptive Instance Normalization 2D.\n    \n    Computes gradients with respect to input, weight (gamma), and bias (beta).\n    \n    Args:\n        grad_output: Gradient of loss w.r.t. output, shape (N, C, H, W)\n        x: Original input tensor from forward pass, shape (N, C, H, W)\n        weight: Scale parameter (gamma), shape (C,)\n        mean: Mean computed in forward pass, shape (N, C, 1, 1)\n        std: Standard deviation computed in forward pass, shape (N, C, 1, 1)\n        \n    Returns:\n        grad_input: Gradient w.r.t. input, shape (N, C, H, W)\n        grad_weight: Gradient w.r.t. weight (gamma), shape (C,)\n        grad_bias: Gradient w.r.t. bias (beta), shape (C,)\n    \"\"\"\n    N, C, H, W = x.shape\n    spatial_size = H * W\n    \n    # Compute centered and normalized input\n    x_centered = x - mean  # Shape: (N, C, H, W)\n    x_normalized = x_centered / std  # Shape: (N, C, H, W)\n    \n    # Gradient w.r.t. bias (beta)\n    # d(loss)/d(beta) = sum(d(loss)/d(output)) over N, H, W\n    grad_bias = grad_output.sum(dim=(0, 2, 3))  # Shape: (C,)\n    \n    # Gradient w.r.t. weight (gamma)\n    # d(loss)/d(gamma) = sum(d(loss)/d(output) * x_normalized) over N, H, W\n    grad_weight = (grad_output * x_normalized).sum(dim=(0, 2, 3))  # Shape: (C,)\n    \n    # Gradient w.r.t. input\n    # Scale grad_output by weight\n    weight_reshaped = weight.view(1, C, 1, 1)\n    grad_output_scaled = grad_output * weight_reshaped\n    \n    # Gradient w.r.t. variance\n    # d(loss)/d(var) = sum(d(loss)/d(x_norm) * (x - mean) * -0.5 * (var + eps)^(-3/2))\n    grad_var = (grad_output_scaled * x_centered).sum(dim=(2, 3), keepdim=True) * (-0.5) * torch.pow(std, -3)\n    \n    # Gradient w.r.t. mean\n    # d(loss)/d(mean) = sum(d(loss)/d(x_norm) * -1/std) + d(loss)/d(var) * sum(-2 * (x - mean)) / (H*W)\n    grad_mean = (grad_output_scaled / (-std)).sum(dim=(2, 3), keepdim=True)\n    grad_mean = grad_mean + grad_var * (-2.0 * x_centered).sum(dim=(2, 3), keepdim=True) / spatial_size\n    \n    # Gradient w.r.t. input\n    # d(loss)/d(x) = d(loss)/d(x_norm) * 1/std + d(loss)/d(var) * 2*(x-mean)/(H*W) + d(loss)/d(mean) * 1/(H*W)\n    grad_input = grad_output_scaled / std\n    grad_input = grad_input + grad_var * 2.0 * x_centered / spatial_size\n    grad_input = grad_input + grad_mean / spatial_size\n    \n    return grad_input, grad_weight, grad_bias\n"
+}

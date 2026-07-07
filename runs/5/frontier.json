@@ -3,7 +3,7 @@
   "family": "attention",
   "name": "attention_5",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 2,
   "best_cand": "a049e30647c6",
   "best_score": 0.8349812171808811,
   "best_score_cal": 0.7719332813823829,
@@ -13,7 +13,7 @@
       "sol_score": 0.8349812171808811,
       "sol_score_cal": 0.7719332813823829,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 15,
       "vector": [
         0.8820274402430249,
         0.8618361123667176,
@@ -36,6 +36,35 @@
       "agent": "openrouter",
       "model": "deepseek/deepseek-v4-pro",
       "candidate": "candidates/a049e30647c6.json"
+    },
+    {
+      "cand_id": "e987d5d9b4ac",
+      "sol_score": 0.8264916696008994,
+      "sol_score_cal": 0.7633485905459516,
+      "all_passed": true,
+      "shapes_won": 1,
+      "vector": [
+        0.8751341584023439,
+        0.8503478518760004,
+        0.8843218416964193,
+        0.8462217691868855,
+        0.8160873642064881,
+        0.7199972403325399,
+        0.9075462458474691,
+        0.8425478773081295,
+        0.8236137140337338,
+        0.7207311605449216,
+        0.8665638156649416,
+        0.8666930799363526,
+        0.7549035904255319,
+        0.8316766936960501,
+        0.812564293448836,
+        0.8049160170077462
+      ],
+      "strategy": "cuBLAS in_proj/out_proj GEMMs + int32-indexed fused Triton middle (gate\u2192causal-conv K=4\u2192gate, pre-laid-out for GEMM2) + ",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/e987d5d9b4ac.json"
     }
   ]
 }

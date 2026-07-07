@@ -1,0 +1,248 @@
+{
+  "cand_id": "2794e17d3585",
+  "task_id": 16,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "CUDA-graph per-rope_theta with output cloning: cache graph on first sight, replay for repeats to eliminate per-call laun",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "c2e2b87830d9",
+  "trajectory": "runs/16/work/2794e17d3585/trajectory.jsonl",
+  "gpu_s": 14.761,
+  "job_id": "16-2794e17d3585",
+  "asi": {
+    "stage": "harness",
+    "error": "ch::cuda\" has no\nmember \"getCurrentCUDAStream\"\n          auto* stream = torch::cuda::getCurrentCUDAStream(device);\n                                      ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(28): error: cannot deduce \"auto\" type\n          auto* stream = torch::cuda::getCurrentCUDAStream(device);\n          ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(36): error: namespace \"torch::cuda\" has no\nmember \"CUDAGraph\"\n          torch::cuda::CUDAGraph* graph = new torch::cuda::CUDAGraph();\n                       ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(36): error: identifier \"graph\" is \nundefined\n          torch::cuda::CUDAGraph* graph = new torch::cuda::CUDAGraph();\n                                  ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(36): error: expected a type specifier\n          torch::cuda::CUDAGraph* graph = new torch::cuda::CUDAGraph();\n                                              ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(38): error: name followed by \"::\" must be \na class or namespace name\n              torch::cuda::graph::ScopedGraphCapture capture(\n                           ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(38): error: expected a \";\"\n              torch::cuda::graph::ScopedGraphCapture capture(\n                                                     ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(54): error: namespace \"torch::cuda\" has no\nmember \"CUDAGraph\"\n          torch::cuda::CUDAGraph* graph = it->second;\n                       ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(54): error: identifier \"graph\" is \nundefined\n          torch::cuda::CUDAGraph* graph = it->second;\n                                  ^\n\n/tmp/sol_execbench_d7y235so/kernel.cu(62): error: namespace \"torch::cuda\" has no\nmember \"getCurrentCUDAStream\"\n          graph->replay_with_stream(*torch::cuda::getCurrentCUDAStream());\n                                                  ^\n\n46 errors detected in the compilation of \n\"/tmp/sol_execbench_d7y235so/kernel.cu\".\nninja: build stopped: subcommand failed.\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 254.13,
+      "samples": 41,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002303,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021925,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021285,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0022234999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002048,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020959999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020794999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <vector>\n#include <unordered_map>\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void rope_inv_freq_kernel(float* __restrict__ out, float rope_theta)\n{\n    const int i = threadIdx.x;\n    if (i < N) {\n        const float exponent = static_cast<float>(i) / static_cast<float>(N);\n        out[i] = 1.0f / powf(rope_theta, exponent);\n    }\n}\n\ntorch::Tensor run(float rope_theta)\n{\n    // Graph cache: map rope_theta -> captured CUDA graph\n    // Built during warmup (first 10 calls), reused for repeats\n    static std::unordered_map<float, torch::cuda::CUDAGraph*> graph_cache;\n    static bool cache_initialized = false;\n\n    // On first calls, capture CUDA graphs for each distinct theta encountered\n    if (!cache_initialized) {\n        auto device = torch::cuda::current_device();\n        auto* stream = torch::cuda::getCurrentCUDAStream(device);\n\n        // Create a fresh output buffer for capture\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n\n        // Record this execution as a CUDA graph\n        torch::cuda::CUDAGraph* graph = new torch::cuda::CUDAGraph();\n        {\n            torch::cuda::graph::ScopedGraphCapture capture(\n                graph,\n                torch::cuda::GraphCaptureMode::Static);\n            rope_inv_freq_kernel<<<1, N, 0, *stream>>>(\n                out.data_ptr<float>(),\n                rope_theta);\n        }\n\n        // Store the graph in the cache\n        graph_cache[rope_theta] = graph;\n    }\n\n    // Check if we have a cached graph for this theta\n    auto it = graph_cache.find(rope_theta);\n    if (it != graph_cache.end()) {\n        // Replay from cached graph\n        torch::cuda::CUDAGraph* graph = it->second;\n\n        // Execute the graph, reusing the same static buffer\n        // (out is reused, but this is allowed within CUDA graph)\n        // Clone output to ensure correct semantics\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n        graph->replay_with_stream(*torch::cuda::getCurrentCUDAStream());\n        return out.clone();\n    } else {\n        // Fallback: direct kernel execution (shouldn't reach here)\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n        rope_inv_freq_kernel<<<1, N>>>(out.data_ptr<float>(), rope_theta);\n        return out;\n    }\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32) with CUDA graph caching\");\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t16_2794e17d3585",
+    "definition": "016_rope_inverse_frequency_computation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <vector>\n#include <unordered_map>\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void rope_inv_freq_kernel(float* __restrict__ out, float rope_theta)\n{\n    const int i = threadIdx.x;\n    if (i < N) {\n        const float exponent = static_cast<float>(i) / static_cast<float>(N);\n        out[i] = 1.0f / powf(rope_theta, exponent);\n    }\n}\n\ntorch::Tensor run(float rope_theta)\n{\n    // Graph cache: map rope_theta -> captured CUDA graph\n    // Built during warmup (first 10 calls), reused for repeats\n    static std::unordered_map<float, torch::cuda::CUDAGraph*> graph_cache;\n    static bool cache_initialized = false;\n\n    // On first calls, capture CUDA graphs for each distinct theta encountered\n    if (!cache_initialized) {\n        auto device = torch::cuda::current_device();\n        auto* stream = torch::cuda::getCurrentCUDAStream(device);\n\n        // Create a fresh output buffer for capture\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n\n        // Record this execution as a CUDA graph\n        torch::cuda::CUDAGraph* graph = new torch::cuda::CUDAGraph();\n        {\n            torch::cuda::graph::ScopedGraphCapture capture(\n                graph,\n                torch::cuda::GraphCaptureMode::Static);\n            rope_inv_freq_kernel<<<1, N, 0, *stream>>>(\n                out.data_ptr<float>(),\n                rope_theta);\n        }\n\n        // Store the graph in the cache\n        graph_cache[rope_theta] = graph;\n    }\n\n    // Check if we have a cached graph for this theta\n    auto it = graph_cache.find(rope_theta);\n    if (it != graph_cache.end()) {\n        // Replay from cached graph\n        torch::cuda::CUDAGraph* graph = it->second;\n\n        // Execute the graph, reusing the same static buffer\n        // (out is reused, but this is allowed within CUDA graph)\n        // Clone output to ensure correct semantics\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n        graph->replay_with_stream(*torch::cuda::getCurrentCUDAStream());\n        return out.clone();\n    } else {\n        // Fallback: direct kernel execution (shouldn't reach here)\n        auto out = torch::empty({N}, torch::TensorOptions()\n            .dtype(torch::kFloat32)\n            .device(torch::kCUDA));\n        rope_inv_freq_kernel<<<1, N>>>(out.data_ptr<float>(), rope_theta);\n        return out;\n    }\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32) with CUDA graph caching\");\n}\n"
+      }
+    ]
+  }
+}

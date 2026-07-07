@@ -1,0 +1,25 @@
+{
+  "name": "t34_659f93b5085a",
+  "definition": "034_flux_multi_axis_rope_frequency_computation",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import triton\nimport triton.language as tl\nimport torch\n\n\n@triton.jit\ndef _rope_freq_kernel(\n    ids_ptr,\n    freq_bands_ptr,\n    cos_out_ptr,\n    sin_out_ptr,\n    seq_len,\n    stride_ids_0,\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    Fused multi-axis RoPE frequency computation.\n\n    Each program handles BLOCK_SIZE rows. For each row, we load the 3 position\n    coordinates (time, height, width), compute cos/sin for all 64 half-frequency\n    bands across 3 axes, and write each value to two adjacent columns (fusing\n    repeat_interleave). The 3 axes are concatenated by writing to the correct\n    column offsets: [0, 16), [16, 72), [72, 128).\n    \"\"\"\n    pid = tl.program_id(0)\n    row_offs = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = row_offs < seq_len\n\n    # Load position IDs: ids is [seq_len, 3]\n    pos_t = tl.load(ids_ptr + row_offs * stride_ids_0 + 0, mask=mask, other=0.0)\n    pos_h = tl.load(ids_ptr + row_offs * stride_ids_0 + 1, mask=mask, other=0.0)\n    pos_w = tl.load(ids_ptr + row_offs * stride_ids_0 + 2, mask=mask, other=0.0)\n\n    # Axis 0: dim=16, half=8, freq_bands[0:8], output columns [0, 16)\n    for i in tl.static_range(8):\n        fb = tl.load(freq_bands_ptr + i)\n        angle = pos_t * fb\n        c = tl.cos(angle)\n        s = tl.sin(angle)\n        off = row_offs * 128 + 2 * i\n        tl.store(cos_out_ptr + off, c, mask=mask)\n        tl.store(cos_out_ptr + off + 1, c, mask=mask)\n        tl.store(sin_out_ptr + off, s, mask=mask)\n        tl.store(sin_out_ptr + off + 1, s, mask=mask)\n\n    # Axis 1: dim=56, half=28, freq_bands[8:36], output columns [16, 72)\n    for i in tl.static_range(28):\n        fb = tl.load(freq_bands_ptr + 8 + i)\n        angle = pos_h * fb\n        c = tl.cos(angle)\n        s = tl.sin(angle)\n        off = row_offs * 128 + 16 + 2 * i\n        tl.store(cos_out_ptr + off, c, mask=mask)\n        tl.store(cos_out_ptr + off + 1, c, mask=mask)\n        tl.store(sin_out_ptr + off, s, mask=mask)\n        tl.store(sin_out_ptr + off + 1, s, mask=mask)\n\n    # Axis 2: dim=56, half=28, freq_bands[8:36] (same as axis 1), output columns [72, 128)\n    for i in tl.static_range(28):\n        fb = tl.load(freq_bands_ptr + 8 + i)\n        angle = pos_w * fb\n        c = tl.cos(angle)\n        s = tl.sin(angle)\n        off = row_offs * 128 + 72 + 2 * i\n        tl.store(cos_out_ptr + off, c, mask=mask)\n        tl.store(cos_out_ptr + off + 1, c, mask=mask)\n        tl.store(sin_out_ptr + off, s, mask=mask)\n        tl.store(sin_out_ptr + off + 1, s, mask=mask)\n\n\n@torch.no_grad()\ndef run(ids: torch.Tensor, theta: float):\n    \"\"\"\n    Multi-axis RoPE frequency computation for FLUX.\n\n    Args:\n        ids: Position IDs of shape [seq_len, 3] containing [time, height, width] positions\n        theta: Base frequency for RoPE computation\n\n    Returns:\n        Tuple of (freqs_cos, freqs_sin) each of shape [seq_len, 128] fp32\n    \"\"\"\n    seq_len = ids.shape[0]\n    device = ids.device\n\n    # Precompute freq_bands: axis 0 (half_dim=8) + axis 1/2 (half_dim=28, shared)\n    # Axis 1 and 2 have identical freq_bands since both have dim=56, half=28\n    freq_exp_0 = torch.arange(8, dtype=torch.float32, device=device)\n    freq_bands_0 = 1.0 / (theta ** (freq_exp_0 / 8))\n\n    freq_exp_1 = torch.arange(28, dtype=torch.float32, device=device)\n    freq_bands_1 = 1.0 / (theta ** (freq_exp_1 / 28))\n\n    # Packed: [8 axis0, 28 axis1/2] = 36 values\n    freq_bands = torch.cat([freq_bands_0, freq_bands_1])\n\n    # Allocate outputs\n    freqs_cos = torch.empty(seq_len, 128, dtype=torch.float32, device=device)\n    freqs_sin = torch.empty(seq_len, 128, dtype=torch.float32, device=device)\n\n    BLOCK_SIZE = 64\n    grid = (triton.cdiv(seq_len, BLOCK_SIZE),)\n\n    _rope_freq_kernel[grid](\n        ids,\n        freq_bands,\n        freqs_cos,\n        freqs_sin,\n        seq_len,\n        ids.stride(0),\n        BLOCK_SIZE=BLOCK_SIZE,\n        num_warps=4,\n    )\n\n    return freqs_cos, freqs_sin"
+    }
+  ]
+}

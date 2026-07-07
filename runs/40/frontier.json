@@ -1,0 +1,70 @@
+{
+  "task_id": 40,
+  "family": "rmsnorm",
+  "name": "rmsnorm_40",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "6a82558c0c3f",
+  "best_score": 0.650742771971865,
+  "best_score_cal": 0.6105076297127986,
+  "members": [
+    {
+      "cand_id": "6a82558c0c3f",
+      "sol_score": 0.650742771971865,
+      "sol_score_cal": 0.6105076297127986,
+      "all_passed": true,
+      "shapes_won": 10,
+      "vector": [
+        0.6179517793868433,
+        0.6689207213866035,
+        0.7598598403737589,
+        0.6159891791841675,
+        0.5802447552447552,
+        0.6712839556102971,
+        0.7379306912144211,
+        0.7372897334223923,
+        0.7123137136835767,
+        0.6215677590788309,
+        0.592418297066652,
+        0.5981187365421665,
+        0.6263013402377705,
+        0.5642170329670325,
+        0.5916063281959199,
+        0.7158704879546524
+      ],
+      "strategy": "Single CUDA graph capture of fp16 channels_last convs (no NCHW fallback) for all 16 workloads.",
+      "agent": "openrouter",
+      "model": "z-ai/glm-4.7-flash",
+      "candidate": "candidates/6a82558c0c3f.json"
+    },
+    {
+      "cand_id": "d8d5b0389bf4",
+      "sol_score": 0.5234549937515219,
+      "sol_score_cal": null,
+      "all_passed": false,
+      "shapes_won": 6,
+      "vector": [
+        0.6234149741308236,
+        0.6775682420116406,
+        0.7491025669514345,
+        0.607095401600335,
+        0.5691015089163238,
+        0.6475395300724103,
+        0.7421159732838889,
+        0.7438476817383535,
+        0.7337430875777012,
+        0.55938969328974,
+        0.6037078981586343,
+        0.5910420062606766,
+        0.5276113360323886,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "strategy": "FP16 cuDNN tensor-core convs with per-regime torch.compile dispatch: reduce-overhead CUDA graphs for launch-bound small ",
+      "agent": "openrouter",
+      "model": "moonshotai/kimi-k2.7-code",
+      "candidate": "candidates/d8d5b0389bf4.json"
+    }
+  ]
+}

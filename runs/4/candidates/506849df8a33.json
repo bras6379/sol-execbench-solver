@@ -1,0 +1,245 @@
+{
+  "cand_id": "506849df8a33",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": 0.6602476803985662,
+  "sol_score_calibrated": 0.5805111127312289,
+  "correct": true,
+  "vector": [
+    0.8990851941769978,
+    0.7827779507941451,
+    0.9002856244916068,
+    0.44593394886363635,
+    0.8362619151966691,
+    0.8376834008540458,
+    0.899488863533057,
+    0.33504126235603515,
+    0.37901164441919905,
+    0.47817461978220654,
+    0.5058901978217382,
+    0.899305202194488,
+    0.5531969080609302,
+    0.43396129076636025,
+    0.7841086481423666,
+    0.5937562149235777
+  ],
+  "strategy": "Two bf16 cuBLAS GEMMs (fp32 accumulate) plus a zero-copy (B,H,S,D) view of dgrad, with a side-stream wgrad co-issue gate",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "e0b86351e99b",
+  "trajectory": "runs/4/work/506849df8a33/trajectory.jsonl",
+  "gpu_s": 12.6,
+  "job_id": "4-506849df8a33",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 290.05,
+      "samples": 34,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.087232,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.8990851941769978,
+      "sol_score_cal": 0.7797806106943079,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.03056,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.7827779507941451,
+      "sol_score_cal": 0.7032933210218528,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0870875,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.9002856244916068,
+      "sol_score_cal": 0.7808547419689429,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.069328,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.44593394886363635,
+      "sol_score_cal": 0.38906196022784484,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0502555,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8362619151966691,
+      "sol_score_cal": 0.7395486767352741,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.050159499999999996,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8376834008540458,
+      "sol_score_cal": 0.7410256675687266,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.087135,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.899488863533057,
+      "sol_score_cal": 0.779737629433238,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.06856000000000001,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": 0.33504126235603515,
+      "sol_score_cal": 0.2919330241084763,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.037984000000000004,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": 0.37901164441919905,
+      "sol_score_cal": 0.3359717627628988,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0410715,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": 0.47817461978220654,
+      "sol_score_cal": 0.4229254808530498,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.038799,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": 0.5058901978217382,
+      "sol_score_cal": 0.4492641151578657,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.087184,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.899305202194488,
+      "sol_score_cal": 0.7797987324269523,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.051856,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.5531969080609302,
+      "sol_score_cal": 0.4871253536960771,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.038016,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": 0.43396129076636025,
+      "sol_score_cal": 0.3860141883981134,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.030464,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.7841086481423666,
+      "sol_score_cal": 0.7045355087018481,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.080175,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.5937562149235777,
+      "sol_score_cal": 0.5173070299441941,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# SOL-ExecBench 004: attention output-projection backward.\n# Two bf16 GEMMs sharing the same (already-materialized) inputs:\n#   dgrad: grad_reshaped = grad_output_2d @ weight         (M x 2048, K=2048)\n#   wgrad: grad_weight   = grad_output_2d^T @ reshaped_2d  (2048 x 2048, K=M)\n#\n# The reference up-casts to fp32 and calls fp32 GEMMs; because all operands are\n# already bf16, bf16-in / fp32-accumulate / bf16-out reproduces the fp32\n# reference within allowed tolerance. The cast + transpose+reshape tail is just\n# a zero-copy (B,H,S,D) view of the dgrad output.\n#\n# Small-M headroom: for M <= SMALL_M the dgrad GEMM (M x 2048, K=2048) only\n# lights ~ceil(M/128)*8 output tiles and underfills the 148 SMs. The wgrad\n# GEMM (2048 x 2048 output) has 128 tiles and fills the machine. We therefore\n# co-issue wgrad on a single side CUDA stream while dgrad runs on the caller's\n# stream. For larger M both GEMMs saturate the device on their own, so we keep\n# the sequential, single-stream path to avoid stream contention.\n\n# Ensure bf16/fp16 matrix multiplies use fp32 reduction, matching the reference.\ntorch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\ntorch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n_NUM_HEADS = 32\n_HEAD_DIM = 64\n_HIDDEN = 2048\n_SMALL_M = 1024\n_STREAM_CACHE = {}\n\n\ndef _side_stream(device):\n    idx = device.index\n    s = _STREAM_CACHE.get(idx)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM_CACHE[idx] = s\n    return s\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M:\n        cur = torch.cuda.current_stream()\n        side = _side_stream(grad_output.device)\n\n        # The side stream must see the view-ops already queued on the caller's stream.\n        side.wait_stream(cur)\n\n        # Put the output-heavy wgrad on the side stream to fill idle SMs.\n        with torch.cuda.stream(side):\n            grad_weight = go2d.t().mm(rs2d)\n\n        # Keep the underfilled dgrad on the caller's stream; both run concurrently.\n        grad_reshaped_2d = go2d.mm(weight)\n\n        # Rejoin before returning; make sure the caller's stream can safely\n        # read grad_weight without the caching allocator recycling its storage.\n        cur.wait_stream(side)\n        grad_weight.record_stream(cur)\n    else:\n        grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    # Zero-copy reshape + transpose back to (B, H, S, D).\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_506849df8a33",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# SOL-ExecBench 004: attention output-projection backward.\n# Two bf16 GEMMs sharing the same (already-materialized) inputs:\n#   dgrad: grad_reshaped = grad_output_2d @ weight         (M x 2048, K=2048)\n#   wgrad: grad_weight   = grad_output_2d^T @ reshaped_2d  (2048 x 2048, K=M)\n#\n# The reference up-casts to fp32 and calls fp32 GEMMs; because all operands are\n# already bf16, bf16-in / fp32-accumulate / bf16-out reproduces the fp32\n# reference within allowed tolerance. The cast + transpose+reshape tail is just\n# a zero-copy (B,H,S,D) view of the dgrad output.\n#\n# Small-M headroom: for M <= SMALL_M the dgrad GEMM (M x 2048, K=2048) only\n# lights ~ceil(M/128)*8 output tiles and underfills the 148 SMs. The wgrad\n# GEMM (2048 x 2048 output) has 128 tiles and fills the machine. We therefore\n# co-issue wgrad on a single side CUDA stream while dgrad runs on the caller's\n# stream. For larger M both GEMMs saturate the device on their own, so we keep\n# the sequential, single-stream path to avoid stream contention.\n\n# Ensure bf16/fp16 matrix multiplies use fp32 reduction, matching the reference.\ntorch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\ntorch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n_NUM_HEADS = 32\n_HEAD_DIM = 64\n_HIDDEN = 2048\n_SMALL_M = 1024\n_STREAM_CACHE = {}\n\n\ndef _side_stream(device):\n    idx = device.index\n    s = _STREAM_CACHE.get(idx)\n    if s is None:\n        s = torch.cuda.Stream(device=device)\n        _STREAM_CACHE[idx] = s\n    return s\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n):\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    go2d = grad_output.reshape(M, hidden_size)\n    rs2d = reshaped.reshape(M, hidden_size)\n\n    if grad_output.is_cuda and M <= _SMALL_M:\n        cur = torch.cuda.current_stream()\n        side = _side_stream(grad_output.device)\n\n        # The side stream must see the view-ops already queued on the caller's stream.\n        side.wait_stream(cur)\n\n        # Put the output-heavy wgrad on the side stream to fill idle SMs.\n        with torch.cuda.stream(side):\n            grad_weight = go2d.t().mm(rs2d)\n\n        # Keep the underfilled dgrad on the caller's stream; both run concurrently.\n        grad_reshaped_2d = go2d.mm(weight)\n\n        # Rejoin before returning; make sure the caller's stream can safely\n        # read grad_weight without the caching allocator recycling its storage.\n        cur.wait_stream(side)\n        grad_weight.record_stream(cur)\n    else:\n        grad_weight = go2d.t().mm(rs2d)\n        grad_reshaped_2d = go2d.mm(weight)\n\n    # Zero-copy reshape + transpose back to (B, H, S, D).\n    grad_attn_output = grad_reshaped_2d.reshape(\n        batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}

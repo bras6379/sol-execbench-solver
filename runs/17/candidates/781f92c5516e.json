@@ -1,0 +1,245 @@
+{
+  "cand_id": "781f92c5516e",
+  "task_id": 17,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.3045585480329553,
+    0.3059176727128964,
+    0.0,
+    0.0,
+    0.3020316471909669,
+    0.0,
+    0.3018870961575991,
+    0.3069837228152108,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Fuse GEMM2 (grad_intermediate) + SwiGLU backward + GEMM5+6 (grad_x) into one Triton kernel (BM=128/64, BN=128, BK=128, 8",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "ffda16b6e837",
+  "trajectory": "runs/17/work/781f92c5516e/trajectory.jsonl",
+  "gpu_s": 9.874,
+  "job_id": "17-781f92c5516e",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 256.96,
+      "samples": 30,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0326,
+      "baseline_latency_ms": 0.10688,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0032,
+      "baseline_latency_ms": 0.0846399999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.175519,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.078496,
+      "sol_score": 0.3045585480329553,
+      "sol_score_cal": 0.268486399929309,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.1714395,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.077184,
+      "sol_score": 0.3059176727128964,
+      "sol_score_cal": 0.2697342333116513,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.191376,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0142,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.17999900000000002,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079536,
+      "sol_score": 0.3020316471909669,
+      "sol_score_cal": 0.2661574680741102,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0168,
+      "baseline_latency_ms": 0.081424,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.1763835,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.0779199999999999,
+      "sol_score": 0.3018870961575991,
+      "sol_score_cal": 0.2660129315545214,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.1751835,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.079216,
+      "sol_score": 0.3069837228152108,
+      "sol_score_cal": 0.27073512927898646,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0117,
+      "baseline_latency_ms": 0.0798405,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0259,
+      "baseline_latency_ms": 0.0935525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0751,
+      "baseline_latency_ms": 0.172736,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0292,
+      "baseline_latency_ms": 0.0996165,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0057,
+      "baseline_latency_ms": 0.079952,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.121248,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:\n    triton = None\n    tl = None\n\n\nif triton is not None:\n\n    @triton.jit\n    def _fused_bwd_kernel(\n        grad_output_ptr,\n        down_weight_ptr,\n        up_ptr,\n        gate_silu_ptr,\n        gate_ptr,\n        gate_sigmoid_ptr,\n        gate_weight_ptr,\n        up_weight_ptr,\n        grad_x_ptr,\n        grad_gate_ptr,\n        grad_up_ptr,\n        N,\n        BM: tl.constexpr,\n        BN: tl.constexpr,\n        BK: tl.constexpr,\n    ):\n        \"\"\"Fused: GEMM2 (grad_intermediate) + SwiGLU bwd + GEMM5+6 (grad_x).\n\n        Tiles over N (token dim).  Within each block, iterates over the\n        intermediate-dim (768) tiles to compute grad_gate / grad_up, then\n        iterates over the output-dim (2048) tiles to compute grad_x.\n        grad_gate and grad_up are stored to global memory (L2-cached) and\n        re-loaded in the second GEMM pass.\n        \"\"\"\n        pid = tl.program_id(0)\n        row_start = pid * BM\n\n        # Pre-compute row offsets (only the M-dim varies per tile)\n        offs_m = row_start + tl.arange(0, BM)[:, None]\n        row_mask = offs_m < N\n\n        # ---- Stage 1: grad_intermediate [BM,768] + SwiGLU bwd ----\n        # Iterate over output tiles of the intermediate dimension (768)\n        for bn_start in range(0, 768, BN):\n            offs_n = bn_start + tl.arange(0, BN)[None, :]\n\n            # Matmul: grad_intermediate[BM,BN] = grad_output[BM,2048] @ down_weight[2048,BN]\n            acc = tl.zeros([BM, BN], dtype=tl.float32)\n            for k in range(0, 2048, BK):\n                offs_k = k + tl.arange(0, BK)[None, :]\n                a = tl.load(\n                    grad_output_ptr + offs_m * 2048 + offs_k,\n                    mask=row_mask,\n                    other=0.0,\n                )\n                offs_k2 = k + tl.arange(0, BK)[:, None]\n                b = tl.load(down_weight_ptr + offs_k2 * 768 + offs_n)\n                acc += tl.dot(a, b)\n\n            # SwiGLU backward (elementwise in fp32)\n            up_tile = tl.load(\n                up_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            silu_tile = tl.load(\n                gate_silu_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            gate_tile = tl.load(\n                gate_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            sig_tile = tl.load(\n                gate_sigmoid_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n\n            # d(gate*sigmoid(gate))/d(gate) = sigmoid(gate) * (1 + gate*(1-sigmoid(gate)))\n            grad_gate_tile = (\n                acc * up_tile * sig_tile * (1.0 + gate_tile * (1.0 - sig_tile))\n            )\n            grad_up_tile = acc * silu_tile\n\n            tl.store(\n                grad_gate_ptr + offs_m * 768 + offs_n,\n                grad_gate_tile.to(tl.bfloat16),\n                mask=row_mask,\n            )\n            tl.store(\n                grad_up_ptr + offs_m * 768 + offs_n,\n                grad_up_tile.to(tl.bfloat16),\n                mask=row_mask,\n            )\n\n        # ---- Stage 2: grad_x [BM,2048] = grad_gate@gate_weight + grad_up@up_weight ----\n        for bn_start in range(0, 2048, BN):\n            offs_n = bn_start + tl.arange(0, BN)[None, :]\n\n            acc = tl.zeros([BM, BN], dtype=tl.float32)\n            for k in range(0, 768, BK):\n                offs_k = k + tl.arange(0, BK)[None, :]\n                # Reload grad_gate / grad_up from global (L2-hot)\n                gg = tl.load(\n                    grad_gate_ptr + offs_m * 768 + offs_k, mask=row_mask, other=0.0\n                )\n                gu = tl.load(\n                    grad_up_ptr + offs_m * 768 + offs_k, mask=row_mask, other=0.0\n                )\n                offs_k2 = k + tl.arange(0, BK)[:, None]\n                gw = tl.load(gate_weight_ptr + offs_k2 * 2048 + offs_n)\n                uw = tl.load(up_weight_ptr + offs_k2 * 2048 + offs_n)\n\n                acc += tl.dot(gg, gw) + tl.dot(gu, uw)\n\n            tl.store(\n                grad_x_ptr + offs_m * 2048 + offs_n,\n                acc.to(tl.bfloat16),\n                mask=row_mask,\n            )\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    N = grad_output.shape[0]\n\n    # GEMM 1: grad_down_weight = grad_output.T @ intermediate  (always torch.mm)\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n\n    if N <= 32:\n        # ---- Tiny N: pure PyTorch (no Triton launch overhead) ----\n        grad_intermediate = torch.mm(grad_output, down_weight)\n\n        gi = grad_intermediate.to(torch.float32)\n        up_f = up.to(torch.float32)\n        gate_silu_f = gate_silu.to(torch.float32)\n        gate_f = gate.to(torch.float32)\n        sig_f = gate_sigmoid.to(torch.float32)\n\n        grad_up = (gi * gate_silu_f).to(torch.bfloat16)\n        grad_gate = (\n            gi * up_f * sig_f * (1.0 + gate_f * (1.0 - sig_f))\n        ).to(torch.bfloat16)\n\n        grad_gate_weight = torch.mm(grad_gate.t(), x)\n        grad_up_weight = torch.mm(grad_up.t(), x)\n\n        grad_x = (\n            torch.mm(grad_gate, gate_weight).to(torch.float32)\n            + torch.mm(grad_up, up_weight).to(torch.float32)\n        ).to(torch.bfloat16)\n\n        return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n\n    # ---- Large N: fused Triton for GEMM2 + SwiGLU bwd + GEMM5+6 ----\n    grad_gate = torch.empty(N, 768, dtype=torch.bfloat16, device=grad_output.device)\n    grad_up = torch.empty(N, 768, dtype=torch.bfloat16, device=grad_output.device)\n    grad_x = torch.empty(N, 2048, dtype=torch.bfloat16, device=grad_output.device)\n\n    # Per-shape tile sizing: use smaller BM when N is small to fill SMs\n    if N <= 256:\n        BM = 64\n    else:\n        BM = 128\n\n    grid = (triton.cdiv(N, BM),)\n    _fused_bwd_kernel[grid](\n        grad_output,\n        down_weight,\n        up,\n        gate_silu,\n        gate,\n        gate_sigmoid,\n        gate_weight,\n        up_weight,\n        grad_x,\n        grad_gate,\n        grad_up,\n        N,\n        BM=BM,\n        BN=128,\n        BK=128,\n        num_warps=8,\n        num_stages=3,\n    )\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t17_781f92c5516e",
+    "definition": "017_moe_expert_swiglu_with_down_projection_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\nexcept Exception:\n    triton = None\n    tl = None\n\n\nif triton is not None:\n\n    @triton.jit\n    def _fused_bwd_kernel(\n        grad_output_ptr,\n        down_weight_ptr,\n        up_ptr,\n        gate_silu_ptr,\n        gate_ptr,\n        gate_sigmoid_ptr,\n        gate_weight_ptr,\n        up_weight_ptr,\n        grad_x_ptr,\n        grad_gate_ptr,\n        grad_up_ptr,\n        N,\n        BM: tl.constexpr,\n        BN: tl.constexpr,\n        BK: tl.constexpr,\n    ):\n        \"\"\"Fused: GEMM2 (grad_intermediate) + SwiGLU bwd + GEMM5+6 (grad_x).\n\n        Tiles over N (token dim).  Within each block, iterates over the\n        intermediate-dim (768) tiles to compute grad_gate / grad_up, then\n        iterates over the output-dim (2048) tiles to compute grad_x.\n        grad_gate and grad_up are stored to global memory (L2-cached) and\n        re-loaded in the second GEMM pass.\n        \"\"\"\n        pid = tl.program_id(0)\n        row_start = pid * BM\n\n        # Pre-compute row offsets (only the M-dim varies per tile)\n        offs_m = row_start + tl.arange(0, BM)[:, None]\n        row_mask = offs_m < N\n\n        # ---- Stage 1: grad_intermediate [BM,768] + SwiGLU bwd ----\n        # Iterate over output tiles of the intermediate dimension (768)\n        for bn_start in range(0, 768, BN):\n            offs_n = bn_start + tl.arange(0, BN)[None, :]\n\n            # Matmul: grad_intermediate[BM,BN] = grad_output[BM,2048] @ down_weight[2048,BN]\n            acc = tl.zeros([BM, BN], dtype=tl.float32)\n            for k in range(0, 2048, BK):\n                offs_k = k + tl.arange(0, BK)[None, :]\n                a = tl.load(\n                    grad_output_ptr + offs_m * 2048 + offs_k,\n                    mask=row_mask,\n                    other=0.0,\n                )\n                offs_k2 = k + tl.arange(0, BK)[:, None]\n                b = tl.load(down_weight_ptr + offs_k2 * 768 + offs_n)\n                acc += tl.dot(a, b)\n\n            # SwiGLU backward (elementwise in fp32)\n            up_tile = tl.load(\n                up_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            silu_tile = tl.load(\n                gate_silu_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            gate_tile = tl.load(\n                gate_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n            sig_tile = tl.load(\n                gate_sigmoid_ptr + offs_m * 768 + offs_n, mask=row_mask, other=0.0\n            ).to(tl.float32)\n\n            # d(gate*sigmoid(gate))/d(gate) = sigmoid(gate) * (1 + gate*(1-sigmoid(gate)))\n            grad_gate_tile = (\n                acc * up_tile * sig_tile * (1.0 + gate_tile * (1.0 - sig_tile))\n            )\n            grad_up_tile = acc * silu_tile\n\n            tl.store(\n                grad_gate_ptr + offs_m * 768 + offs_n,\n                grad_gate_tile.to(tl.bfloat16),\n                mask=row_mask,\n            )\n            tl.store(\n                grad_up_ptr + offs_m * 768 + offs_n,\n                grad_up_tile.to(tl.bfloat16),\n                mask=row_mask,\n            )\n\n        # ---- Stage 2: grad_x [BM,2048] = grad_gate@gate_weight + grad_up@up_weight ----\n        for bn_start in range(0, 2048, BN):\n            offs_n = bn_start + tl.arange(0, BN)[None, :]\n\n            acc = tl.zeros([BM, BN], dtype=tl.float32)\n            for k in range(0, 768, BK):\n                offs_k = k + tl.arange(0, BK)[None, :]\n                # Reload grad_gate / grad_up from global (L2-hot)\n                gg = tl.load(\n                    grad_gate_ptr + offs_m * 768 + offs_k, mask=row_mask, other=0.0\n                )\n                gu = tl.load(\n                    grad_up_ptr + offs_m * 768 + offs_k, mask=row_mask, other=0.0\n                )\n                offs_k2 = k + tl.arange(0, BK)[:, None]\n                gw = tl.load(gate_weight_ptr + offs_k2 * 2048 + offs_n)\n                uw = tl.load(up_weight_ptr + offs_k2 * 2048 + offs_n)\n\n                acc += tl.dot(gg, gw) + tl.dot(gu, uw)\n\n            tl.store(\n                grad_x_ptr + offs_m * 2048 + offs_n,\n                acc.to(tl.bfloat16),\n                mask=row_mask,\n            )\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    gate_weight: torch.Tensor,\n    up_weight: torch.Tensor,\n    down_weight: torch.Tensor,\n    gate: torch.Tensor,\n    gate_sigmoid: torch.Tensor,\n    gate_silu: torch.Tensor,\n    up: torch.Tensor,\n    intermediate: torch.Tensor,\n):\n    N = grad_output.shape[0]\n\n    # GEMM 1: grad_down_weight = grad_output.T @ intermediate  (always torch.mm)\n    grad_down_weight = torch.mm(grad_output.t(), intermediate)\n\n    if N <= 32:\n        # ---- Tiny N: pure PyTorch (no Triton launch overhead) ----\n        grad_intermediate = torch.mm(grad_output, down_weight)\n\n        gi = grad_intermediate.to(torch.float32)\n        up_f = up.to(torch.float32)\n        gate_silu_f = gate_silu.to(torch.float32)\n        gate_f = gate.to(torch.float32)\n        sig_f = gate_sigmoid.to(torch.float32)\n\n        grad_up = (gi * gate_silu_f).to(torch.bfloat16)\n        grad_gate = (\n            gi * up_f * sig_f * (1.0 + gate_f * (1.0 - sig_f))\n        ).to(torch.bfloat16)\n\n        grad_gate_weight = torch.mm(grad_gate.t(), x)\n        grad_up_weight = torch.mm(grad_up.t(), x)\n\n        grad_x = (\n            torch.mm(grad_gate, gate_weight).to(torch.float32)\n            + torch.mm(grad_up, up_weight).to(torch.float32)\n        ).to(torch.bfloat16)\n\n        return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight\n\n    # ---- Large N: fused Triton for GEMM2 + SwiGLU bwd + GEMM5+6 ----\n    grad_gate = torch.empty(N, 768, dtype=torch.bfloat16, device=grad_output.device)\n    grad_up = torch.empty(N, 768, dtype=torch.bfloat16, device=grad_output.device)\n    grad_x = torch.empty(N, 2048, dtype=torch.bfloat16, device=grad_output.device)\n\n    # Per-shape tile sizing: use smaller BM when N is small to fill SMs\n    if N <= 256:\n        BM = 64\n    else:\n        BM = 128\n\n    grid = (triton.cdiv(N, BM),)\n    _fused_bwd_kernel[grid](\n        grad_output,\n        down_weight,\n        up,\n        gate_silu,\n        gate,\n        gate_sigmoid,\n        gate_weight,\n        up_weight,\n        grad_x,\n        grad_gate,\n        grad_up,\n        N,\n        BM=BM,\n        BN=128,\n        BK=128,\n        num_warps=8,\n        num_stages=3,\n    )\n\n    grad_gate_weight = torch.mm(grad_gate.t(), x)\n    grad_up_weight = torch.mm(grad_up.t(), x)\n\n    return grad_x, grad_gate_weight, grad_up_weight, grad_down_weight"
+      }
+    ]
+  }
+}

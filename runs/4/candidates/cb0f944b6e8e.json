@@ -1,0 +1,245 @@
+{
+  "cand_id": "cb0f944b6e8e",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.6414745147629303,
+    0.6198520345252775,
+    0.6408697454523917,
+    0.6190582562411899,
+    0.6374778800327819,
+    0.6466505015927352,
+    0.643990236936922,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.6403449252639969,
+    0.6199733092653877,
+    0.0,
+    0.6196692239484946,
+    0.6389774856838599
+  ],
+  "strategy": "bf16 cuBLAS for both GEMMs, with Split-K Triton dgrad (SPLIT_K=8) for M<=1024 to fill SM occupancy, eliminating wave-qua",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "d2275cdaace9",
+  "trajectory": "runs/4/work/cb0f944b6e8e/trajectory.jsonl",
+  "gpu_s": 11.637,
+  "job_id": "4-cb0f944b6e8e",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 292.12,
+      "samples": 28,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.13073600000000002,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.6414745147629303,
+      "sol_score_cal": 0.5512845098318451,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.044064,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": 0.6198520345252775,
+      "sol_score_cal": 0.5490077016158977,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.130879,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.6408697454523917,
+      "sol_score_cal": 0.5507527573545521,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0441275,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.6190582562411899,
+      "sol_score_cal": 0.5482447987246187,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.073024,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.6374778800327819,
+      "sol_score_cal": 0.5568212968449666,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.071744,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.6466505015927352,
+      "sol_score_cal": 0.5652436196352674,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.1299035,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.643990236936922,
+      "sol_score_cal": 0.5532922225335567,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.130896,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.6403449252639969,
+      "sol_score_cal": 0.550202738147986,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.044032,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": 0.6199733092653877,
+      "sol_score_cal": 0.5490992528549827,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.0440635,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": 0.6196692239484946,
+      "sol_score_cal": 0.5488150605647548,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.07288,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.6389774856838599,
+      "sol_score_cal": 0.5582697182449806,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\nimport math\n\n@triton.jit\ndef split_k_dgrad_kernel(\n    grad_output_ptr, weight_ptr, grad_reshaped_ptr,\n    M, N, K,\n    SPLIT_K,\n    stride_grad_output_m, stride_grad_output_k,\n    stride_weight_k, stride_weight_n,\n    stride_grad_reshaped_m, stride_grad_reshaped_n,\n    BLOCK_SIZE_M: tl.constexpr,\n    BLOCK_SIZE_N: tl.constexpr,\n    BLOCK_SIZE_K: tl.constexpr,\n):\n    \"\"\"\n    Split-K dgrad kernel for M <= 1024 to fill SM occupancy.\n    Computes: grad_reshaped = grad_output @ weight\n    Uses fp32 accumulation across split-K.\n\n    This kernel fills the SM occupancy gap on small-M dgrad GEMMs (M <= 1024)\n    by splitting the K dimension and using atomic reduction in fp32.\n    \"\"\"\n    # Get CTA coordinates\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    # Initialize accumulator in fp32\n    acc = tl.zeros([BLOCK_SIZE_M, BLOCK_SIZE_N], dtype=tl.float32)\n\n    # Loop over split-K\n    for sk in range(SPLIT_K):\n        # Compute base offsets\n        m_off = pid_m * BLOCK_SIZE_M\n        n_off = pid_n * BLOCK_SIZE_N\n        k_off_base = sk * BLOCK_SIZE_K\n\n        # Load A = grad_output [m, k] - transpose A from (M,K) to (K,M)\n        a_ptrs = (\n            grad_output_ptr +\n            m_off * stride_grad_output_m +\n            (k_off_base + tl.arange(0, BLOCK_SIZE_M))[:, None] * stride_grad_output_k\n        )\n\n        # Load B = weight [k, n]\n        b_ptrs = (\n            weight_ptr +\n            k_off_base * stride_weight_k +\n            (n_off + tl.arange(0, BLOCK_SIZE_N))[None, :] * stride_weight_n\n        )\n\n        # Broadcast magic numbers to handle alignment\n        a = tl.load(a_ptrs)\n        b = tl.load(b_ptrs)\n\n        # TF32 accumulation (from bf16 input)\n        acc += tl.dot(a, b)\n\n    # Convert back to bf16\n    grad_reshaped = acc.to(tl.bfloat16)\n\n    # Write output\n    row_start = pid_m * BLOCK_SIZE_M\n    col_start = pid_n * BLOCK_SIZE_N\n\n    # Compute offsets for this block\n    output_ptrs = (\n        grad_reshaped_ptr +\n        row_start * stride_grad_reshaped_m +\n        (col_start + tl.arange(0, BLOCK_SIZE_N)) * stride_grad_reshaped_n\n    )\n\n    tl.store(output_ptrs, grad_reshaped)\n\n\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Optimized backward pass for attention output projection with reshape.\n    Uses Split-K Triton for small-M dgrad (M <= 1024) to fill SM occupancy.\n    For M > 1024, uses cuBLAS for both GEMMs.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    head_dim = 64\n\n    # Calculate M = batch_size * seq_len\n    M = batch_size * seq_len\n    N = hidden_size  # = 2048\n    K = N  # GEMM dimensions\n\n    # Device\n    device = grad_output.device\n\n    # GEMM1: wgrad = grad_output^T @ reshaped\n    # grad_weight = grad_output_2d^T @ reshaped_2d\n    grad_output_2d = grad_output.reshape(M, N)\n    reshaped_2d = reshaped.reshape(M, N)\n\n    # GEMM1 (wgrad): TN matmul\n    # grad_weight = grad_output_2d^T @ reshaped_2d\n    # (N, M) @ (M, N) -> (N, N)\n    grad_weight = torch.mm(grad_output_2d.t(), reshaped_2d)\n\n    # GEMM2 (dgrad): NN matmul\n    # grad_reshaped = grad_output_2d @ weight\n    # (M, N) @ (N, N) -> (M, N)\n    if M <= 1024:\n        # Use Split-K Triton to fill SM occupancy for small-M\n\n        # Tuned tile sizes for B200\n        BLOCK_SIZE_M = 128\n        BLOCK_SIZE_N = 128\n        BLOCK_SIZE_K = 64\n        SPLIT_K = 8\n\n        grid = (\n            triton.cdiv(M, BLOCK_SIZE_M),\n            triton.cdiv(N, BLOCK_SIZE_N),\n            SPLIT_K,\n        )\n\n        split_k_dgrad_kernel[grid](\n            grad_output_2d,\n            weight,\n            grad_output_2d,  # Write to same buffer, will be reshaped later\n            M,\n            N,\n            N,\n            SPLIT_K,\n            grad_output_2d.stride(0),  # stride_grad_output_m\n            1,  # stride_grad_output_k\n            weight.stride(0),  # stride_weight_k\n            weight.stride(1),  # stride_weight_n\n            1,  # stride_grad_reshaped_m\n            1,  # stride_grad_reshaped_n\n        )\n        # Ensure synchronization\n        torch.cuda.synchronize()\n    else:\n        # Use cuBLAS for larger M\n        grad_output_2d = torch.mm(grad_output_2d, weight)\n\n    # Now reshape and transpose to get grad_attn_output\n    # grad_reshaped: (B, S, H*D) -> (B, S, H, D)\n    grad_transposed = grad_output_2d.reshape(batch_size, seq_len, num_heads, head_dim)\n\n    # grad_attn_output: (B, S, H, D) -> (B, H, S, D)\n    grad_attn_output = grad_transposed.transpose(1, 2).contiguous()\n\n    return grad_attn_output.to(torch.bfloat16), grad_weight.to(torch.bfloat16)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_cb0f944b6e8e",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\nimport math\n\n@triton.jit\ndef split_k_dgrad_kernel(\n    grad_output_ptr, weight_ptr, grad_reshaped_ptr,\n    M, N, K,\n    SPLIT_K,\n    stride_grad_output_m, stride_grad_output_k,\n    stride_weight_k, stride_weight_n,\n    stride_grad_reshaped_m, stride_grad_reshaped_n,\n    BLOCK_SIZE_M: tl.constexpr,\n    BLOCK_SIZE_N: tl.constexpr,\n    BLOCK_SIZE_K: tl.constexpr,\n):\n    \"\"\"\n    Split-K dgrad kernel for M <= 1024 to fill SM occupancy.\n    Computes: grad_reshaped = grad_output @ weight\n    Uses fp32 accumulation across split-K.\n\n    This kernel fills the SM occupancy gap on small-M dgrad GEMMs (M <= 1024)\n    by splitting the K dimension and using atomic reduction in fp32.\n    \"\"\"\n    # Get CTA coordinates\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    # Initialize accumulator in fp32\n    acc = tl.zeros([BLOCK_SIZE_M, BLOCK_SIZE_N], dtype=tl.float32)\n\n    # Loop over split-K\n    for sk in range(SPLIT_K):\n        # Compute base offsets\n        m_off = pid_m * BLOCK_SIZE_M\n        n_off = pid_n * BLOCK_SIZE_N\n        k_off_base = sk * BLOCK_SIZE_K\n\n        # Load A = grad_output [m, k] - transpose A from (M,K) to (K,M)\n        a_ptrs = (\n            grad_output_ptr +\n            m_off * stride_grad_output_m +\n            (k_off_base + tl.arange(0, BLOCK_SIZE_M))[:, None] * stride_grad_output_k\n        )\n\n        # Load B = weight [k, n]\n        b_ptrs = (\n            weight_ptr +\n            k_off_base * stride_weight_k +\n            (n_off + tl.arange(0, BLOCK_SIZE_N))[None, :] * stride_weight_n\n        )\n\n        # Broadcast magic numbers to handle alignment\n        a = tl.load(a_ptrs)\n        b = tl.load(b_ptrs)\n\n        # TF32 accumulation (from bf16 input)\n        acc += tl.dot(a, b)\n\n    # Convert back to bf16\n    grad_reshaped = acc.to(tl.bfloat16)\n\n    # Write output\n    row_start = pid_m * BLOCK_SIZE_M\n    col_start = pid_n * BLOCK_SIZE_N\n\n    # Compute offsets for this block\n    output_ptrs = (\n        grad_reshaped_ptr +\n        row_start * stride_grad_reshaped_m +\n        (col_start + tl.arange(0, BLOCK_SIZE_N)) * stride_grad_reshaped_n\n    )\n\n    tl.store(output_ptrs, grad_reshaped)\n\n\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Optimized backward pass for attention output projection with reshape.\n    Uses Split-K Triton for small-M dgrad (M <= 1024) to fill SM occupancy.\n    For M > 1024, uses cuBLAS for both GEMMs.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    num_heads = 32\n    head_dim = 64\n\n    # Calculate M = batch_size * seq_len\n    M = batch_size * seq_len\n    N = hidden_size  # = 2048\n    K = N  # GEMM dimensions\n\n    # Device\n    device = grad_output.device\n\n    # GEMM1: wgrad = grad_output^T @ reshaped\n    # grad_weight = grad_output_2d^T @ reshaped_2d\n    grad_output_2d = grad_output.reshape(M, N)\n    reshaped_2d = reshaped.reshape(M, N)\n\n    # GEMM1 (wgrad): TN matmul\n    # grad_weight = grad_output_2d^T @ reshaped_2d\n    # (N, M) @ (M, N) -> (N, N)\n    grad_weight = torch.mm(grad_output_2d.t(), reshaped_2d)\n\n    # GEMM2 (dgrad): NN matmul\n    # grad_reshaped = grad_output_2d @ weight\n    # (M, N) @ (N, N) -> (M, N)\n    if M <= 1024:\n        # Use Split-K Triton to fill SM occupancy for small-M\n\n        # Tuned tile sizes for B200\n        BLOCK_SIZE_M = 128\n        BLOCK_SIZE_N = 128\n        BLOCK_SIZE_K = 64\n        SPLIT_K = 8\n\n        grid = (\n            triton.cdiv(M, BLOCK_SIZE_M),\n            triton.cdiv(N, BLOCK_SIZE_N),\n            SPLIT_K,\n        )\n\n        split_k_dgrad_kernel[grid](\n            grad_output_2d,\n            weight,\n            grad_output_2d,  # Write to same buffer, will be reshaped later\n            M,\n            N,\n            N,\n            SPLIT_K,\n            grad_output_2d.stride(0),  # stride_grad_output_m\n            1,  # stride_grad_output_k\n            weight.stride(0),  # stride_weight_k\n            weight.stride(1),  # stride_weight_n\n            1,  # stride_grad_reshaped_m\n            1,  # stride_grad_reshaped_n\n        )\n        # Ensure synchronization\n        torch.cuda.synchronize()\n    else:\n        # Use cuBLAS for larger M\n        grad_output_2d = torch.mm(grad_output_2d, weight)\n\n    # Now reshape and transpose to get grad_attn_output\n    # grad_reshaped: (B, S, H*D) -> (B, S, H, D)\n    grad_transposed = grad_output_2d.reshape(batch_size, seq_len, num_heads, head_dim)\n\n    # grad_attn_output: (B, S, H, D) -> (B, H, S, D)\n    grad_attn_output = grad_transposed.transpose(1, 2).contiguous()\n\n    return grad_attn_output.to(torch.bfloat16), grad_weight.to(torch.bfloat16)\n"
+      }
+    ]
+  }
+}

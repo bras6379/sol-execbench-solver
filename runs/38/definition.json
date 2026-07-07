@@ -1,0 +1,92 @@
+{
+    "name": "038_flux_multi_head_rmsnorm_qk",
+    "hf_id": "black-forest-labs/FLUX.2-dev",
+    "description": "Per-head RMSNorm applied to query and key tensors after projection in Flux attention. Applies RMSNorm independently to each attention head's Q and K vectors, normalizing across head_dim (128) for each of the 48 heads. This dual variant processes both Q and K tensors together to enable kernel fusion opportunities.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 48,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension of each attention head"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "query": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Query tensor after projection"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Key tensor after projection"
+        },
+        "weight_q": {
+            "shape": [
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Per-head learnable scale parameters for query"
+        },
+        "weight_k": {
+            "shape": [
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Per-head learnable scale parameters for key"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability"
+        }
+    },
+    "outputs": {
+        "query_norm": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized query tensor"
+        },
+        "key_norm": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Normalized key tensor"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, weight_q: torch.Tensor, weight_k: torch.Tensor, eps: float):\n    \"\"\"\n    Per-head RMSNorm for both query and key tensors.\n    \n    Args:\n        query: Query tensor [batch_size, seq_len, num_heads, head_dim]\n        key: Key tensor [batch_size, seq_len, num_heads, head_dim]\n        weight_q: Per-head scale for query [num_heads, head_dim]\n        weight_k: Per-head scale for key [num_heads, head_dim]\n        eps: Epsilon for numerical stability\n    \n    Returns:\n        Tuple of (normalized_query, normalized_key)\n    \"\"\"\n    input_dtype = query.dtype\n    \n    # Compute RMS for query per head (normalize over head_dim dimension)\n    # variance shape: [batch, seq_len, num_heads, 1]\n    q_variance = query.to(torch.float32).pow(2).mean(dim=-1, keepdim=True)\n    query_norm = query * torch.rsqrt(q_variance + eps)\n    \n    # Compute RMS for key per head\n    k_variance = key.to(torch.float32).pow(2).mean(dim=-1, keepdim=True)\n    key_norm = key * torch.rsqrt(k_variance + eps)\n    \n    # Apply learnable scales\n    # weight shape: [num_heads, head_dim]\n    # Broadcast to [batch, seq_len, num_heads, head_dim]\n    query_norm = query_norm * weight_q.unsqueeze(0).unsqueeze(0)\n    key_norm = key_norm * weight_k.unsqueeze(0).unsqueeze(0)\n    \n    return query_norm.to(input_dtype), key_norm.to(input_dtype)\n"
+}

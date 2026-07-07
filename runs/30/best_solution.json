@@ -1,5 +1,5 @@
 {
-  "name": "t30_7e9d1f46430c",
+  "name": "t30_dab79370ed3a",
   "definition": "030_attention_output_projection_with_residual",
   "author": "sol-solver",
   "spec": {
@@ -10,7 +10,7 @@
       "B200",
       "LOCAL"
     ],
-    "entry_point": "reference.py::run",
+    "entry_point": "kernel.py::run",
     "dependencies": [
       "torch"
     ],
@@ -18,8 +18,8 @@
   },
   "sources": [
     {
-      "path": "reference.py",
-      "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n    \n    This performs:\n    1. Linear projection: attn_output @ o_proj_weight.T\n    2. Residual addition: projected + residual\n    \n    In a custom CUDA kernel, these operations would be fused to:\n    - Compute matmul tiles in registers\n    - Add residual directly to register-held results\n    - Write final result to global memory (eliminating intermediate write)\n    \n    Args:\n        attn_output: Attention output of shape (batch, seq_len, hidden_size)\n        residual: Original input before attention of shape (batch, seq_len, hidden_size)\n        o_proj_weight: Output projection weight of shape (hidden_size, hidden_size)\n    \n    Returns:\n        Output with residual added, shape (batch, seq_len, hidden_size)\n    \"\"\"\n    # Linear projection: (batch, seq_len, hidden_size) @ (hidden_size, hidden_size).T\n    # -> (batch, seq_len, hidden_size)\n    projected = torch.matmul(attn_output, o_proj_weight.t())\n    \n    # Residual addition\n    output = projected + residual\n    \n    return output\n"
+      "path": "kernel.py",
+      "content": "import os\n\n# cuBLASLt silently restricts its algorithm search (incl. split-K variants\n# that would fill more SMs on the underfilled small-M shapes in this problem)\n# unless given a generous workspace. Must be set before the first cuBLAS/Lt\n# handle is created, so it goes before `import torch`. Pure config knob: it\n# only widens the algorithm search space, never changes GEMM math, so it\n# cannot affect correctness. (kb/library-playbook.md: \"give cuBLASLt >= 32 MiB\n# workspace or it silently restricts algorithm selection\".)\nos.environ.setdefault(\"CUBLASLT_WORKSPACE_SIZE\", \"131072\")  # KiB = 128 MiB\n\nimport torch\n\n# Reduced-precision (bf16) reduction across cuBLAS split-K partial sums is\n# faster and, given this op's loose tolerance (rtol=0.05), well within\n# budget; also widens the set of algorithms cuBLASLt's heuristic will\n# consider for the underfilled small-M shapes.\ntorch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = True\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n\n    # beta=0 matmul keeps cuBLAS's normal heuristic algo (addmm beta=1.0\n    # regressed every shape in this problem \u2014 likely disables split-K).\n    \"\"\"\n    projected = torch.matmul(attn_output, o_proj_weight.t())\n    projected.add_(residual)\n    return projected\n"
     }
   ]
 }

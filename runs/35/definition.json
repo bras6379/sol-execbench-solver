@@ -1,0 +1,98 @@
+{
+    "name": "035_flux_ada_layer_norm_zero_modulation_extraction",
+    "hf_id": "black-forest-labs/FLUX.1-Kontext-dev",
+    "description": "AdaLayerNormZero modulation parameter extraction for Flux dual-stream transformer. Projects timestep embeddings through a linear layer and chunks into 6 modulation parameters (shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp) that control attention and MLP paths.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "inner_dim": {
+            "type": "const",
+            "value": 3072,
+            "description": "Hidden dimension size"
+        },
+        "output_dim": {
+            "type": "expr",
+            "expression": "inner_dim * 6",
+            "description": "Output dimension of linear projection (6 * inner_dim)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "emb": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Timestep embeddings"
+        },
+        "weight": {
+            "shape": [
+                "output_dim",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Linear projection weight matrix"
+        },
+        "bias": {
+            "shape": [
+                "output_dim"
+            ],
+            "dtype": "float32",
+            "description": "Linear projection bias"
+        }
+    },
+    "outputs": {
+        "shift_msa": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Shift parameter for attention path"
+        },
+        "scale_msa": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Scale parameter for attention path"
+        },
+        "gate_msa": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gate parameter for attention path"
+        },
+        "shift_mlp": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Shift parameter for MLP path"
+        },
+        "scale_mlp": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Scale parameter for MLP path"
+        },
+        "gate_mlp": {
+            "shape": [
+                "batch_size",
+                "inner_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gate parameter for MLP path"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(emb: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor):\n    \"\"\"\n    AdaLayerNormZero modulation parameter extraction.\n    \n    Performs a linear projection followed by chunking into 6 modulation parameters.\n    \n    Args:\n        emb: Timestep embeddings of shape [batch_size, inner_dim]\n        weight: Linear weight matrix of shape [6 * inner_dim, inner_dim]\n        bias: Linear bias of shape [6 * inner_dim]\n        \n    Returns:\n        Tuple of 6 tensors, each of shape [batch_size, inner_dim]:\n        - shift_msa, scale_msa, gate_msa: for attention path\n        - shift_mlp, scale_mlp, gate_mlp: for MLP path\n    \"\"\"\n    # Linear projection: [batch_size, inner_dim] @ [inner_dim, 6*inner_dim] + bias\n    # = [batch_size, 6*inner_dim]\n    emb_out = torch.matmul(emb, weight.t()) + bias\n    \n    # Chunk into 6 equal parts along the last dimension\n    # Each chunk has shape [batch_size, inner_dim]\n    shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp = emb_out.chunk(6, dim=1)\n    \n    return shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp\n"
+}

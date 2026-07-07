@@ -1,0 +1,79 @@
+{
+    "name": "037_flux_feedforward_gelu_approximate",
+    "hf_id": "black-forest-labs/FLUX.1-dev",
+    "description": "FLUX feedforward network with GELU approximate activation (tanh approximation). Performs Linear projection to 4x hidden dimension, GELU-tanh activation, and Linear projection back to hidden dimension. This appears 76 times per forward pass in FLUX transformer blocks.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 3072,
+            "description": "Hidden dimension (inner_dim)"
+        },
+        "mlp_hidden_dim": {
+            "type": "const",
+            "value": 12288,
+            "description": "MLP hidden dimension (4x expansion)"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Input hidden states"
+        },
+        "fc1_weight": {
+            "shape": [
+                "mlp_hidden_dim",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "First linear layer weight matrix"
+        },
+        "fc1_bias": {
+            "shape": [
+                "mlp_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "First linear layer bias"
+        },
+        "fc2_weight": {
+            "shape": [
+                "hidden_dim",
+                "mlp_hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second linear layer weight matrix"
+        },
+        "fc2_bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Second linear layer bias"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Output hidden states after FFN"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\nimport math\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n):\n    \"\"\"\n    FLUX FeedForward with GELU approximate activation.\n    \n    Architecture:\n    - Linear: hidden_dim (3072) -> mlp_hidden_dim (12288)\n    - GELU activation with tanh approximation\n    - Linear: mlp_hidden_dim (12288) -> hidden_dim (3072)\n    \n    GELU(x) \u2248 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    \"\"\"\n    # Step 1: First linear projection [batch, seq, 3072] -> [batch, seq, 12288]\n    x = F.linear(hidden_states, fc1_weight, fc1_bias)\n    \n    # Step 2: GELU activation with tanh approximation\n    # GELU(x) \u2248 0.5 * x * (1 + tanh(sqrt(2/\u03c0) * (x + 0.044715 * x^3)))\n    x = F.gelu(x, approximate=\"tanh\")\n    \n    # Step 3: Second linear projection [batch, seq, 12288] -> [batch, seq, 3072]\n    output = F.linear(x, fc2_weight, fc2_bias)\n    \n    return output\n"
+}

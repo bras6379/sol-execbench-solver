@@ -23,3 +23,8 @@ small T. Study/port the open CuTe-DSL GEMM kernels in NVIDIA cudnn-frontend
 71_blackwell_gemm_with_collective_builder; SM100 EVT is refuted so hand-code the
 per-head store. It was NOT
 
+## 4. from `55dfafb5` — FP8 weight quantization (e4m3, per-row fp32 scales, cached) halves the cold 10.5 MB weight traffic for the memory-bound
+Higher-ceiling reserve: CuTe-DSL SM100 tcgen05 single-kernel GEMM (M=T, N=1024, K=5120) with a custom head-scatter epilogue that writes [B,8,S,128] directly from TMEM — no fp32 scratch, no separate bf16 cast, no atomic-add reduction. This is the only path that hits SOL on both ends: tcgen05 MMA ~80%+ of peak on the compute-bound tail AND single-launch for small T. Study the open CuTe-DSL GEMM kernels in NVIDIA cudnn-frontend (python/cudnn/grouped_gemm, rmsnorm_rht_amax) and CUTLASS ex. 71_blackwell_gemm_with_collective_builder; SM100 EVT is refuted so hand-code the per-head store.
+
+Trigger to
+

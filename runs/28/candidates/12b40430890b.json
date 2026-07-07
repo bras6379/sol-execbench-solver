@@ -1,0 +1,201 @@
+{
+  "cand_id": "12b40430890b",
+  "task_id": 28,
+  "verdict": "entered",
+  "sol_score": 0.771493305405952,
+  "sol_score_calibrated": 0.734995668753177,
+  "correct": true,
+  "vector": [
+    0.8717391304347826,
+    0.7950191570881227,
+    0.7894195066357855,
+    0.7912524850894632,
+    0.7005956552207429,
+    0.7861736334405144,
+    0.7771535580524345,
+    0.7909481490200694,
+    0.7444444444444445,
+    0.7562636232274498,
+    0.7754716981132076,
+    0.6794386241044054
+  ],
+  "strategy": "torch.compile mode='reduce-overhead' eliminates launch overhead for launch-latency-bound kernels (CONFIG: Ladder C). Thi",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "38868ed21f2d",
+  "trajectory": "runs/28/work/12b40430890b/trajectory.jsonl",
+  "gpu_s": 54.638,
+  "job_id": "28-12b40430890b",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 47.0,
+      "power_w_max": 790.33,
+      "samples": 181,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.001344,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": 0.8717391304347826,
+      "sol_score_cal": 0.8425077737625011,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.002112,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.7950191570881227,
+      "sol_score_cal": 0.7585727864297727,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.003264,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": 0.7894195066357855,
+      "sol_score_cal": 0.7549930875219575,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.00208,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": 0.7912524850894632,
+      "sol_score_cal": 0.7542164108394922,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.027744,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": 0.7005956552207429,
+      "sol_score_cal": 0.662364636784343,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.002528,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": 0.7861736334405144,
+      "sol_score_cal": 0.7499769945707188,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.002304,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.7771535580524345,
+      "sol_score_cal": 0.7392760438934017,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.002176,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": 0.7909481490200694,
+      "sol_score_cal": 0.7542423677788828,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.005184,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": 0.7444444444444445,
+      "sol_score_cal": 0.707233102731495,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.005376,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": 0.7562636232274498,
+      "sol_score_cal": 0.7202287266746095,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.002304,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": 0.7754716981132076,
+      "sol_score_cal": 0.7374049088560356,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.010176,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": 0.6794386241044054,
+      "sol_score_cal": 0.6389311851949155,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n\n@triton.jit\ndef _mask2d_kernel(\n    full_ptr,\n    swa_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"Build the two unique [T, S] bool masks in a single kernel launch.\n\n    full_mask[i, j] = (i < j - past)  <=>  (j > i + past)\n    swa_mask  is all False (the reference's masked_fill on zeros is a no-op).\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask_m = offs_m < T\n    mask_n = offs_n < S\n    store_mask = mask_m[:, None] & mask_n[None, :]\n\n    i = offs_m[:, None]\n    j = offs_n[None, :]\n\n    # True where the query position is allowed to attend (matches reference).\n    full_val = j > (i + past)\n\n    out_offs = offs_m[:, None] * S + offs_n[None, :]\n\n    tl.store(full_ptr + out_offs, full_val.to(tl.int8), mask=store_mask)\n    tl.store(\n        swa_ptr + out_offs,\n        tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.int8),\n        mask=store_mask,\n    )\n\n\n@torch.no_grad()\n@torch.compile(mode=\"reduce-overhead\")\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation \u2014 single-launch 2D pattern build wrapped\n    in torch.compile(mode='reduce-overhead') to eliminate launch overhead.\n\n    Both 4D outputs are pure broadcasts over (batch, head).  We only materialize\n    the unique T*S 2D patterns and return zero-copy expand views, eliminating\n    the reference's redundant contiguous 4D copies and ~10 separate launches.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    device = torch.device(\"cuda\")\n\n    full_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n    swa_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n\n    # One configuration covers all graded shapes well: enough blocks to fill\n    # the device on the large memory-bound workloads, while still issuing a\n    # single kernel launch for the launch-bound small shapes.\n    BLOCK_M = 64\n    BLOCK_N = 128\n    grid = (triton.cdiv(T, BLOCK_M), triton.cdiv(S, BLOCK_N))\n\n    _mask2d_kernel[grid](\n        full_2d,\n        swa_2d,\n        T,\n        S,\n        past,\n        BLOCK_M=BLOCK_M,\n        BLOCK_N=BLOCK_N,\n    )\n\n    # Zero-copy broadcast to the required 4D shape.\n    full_attention_mask = full_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_FULL_HEADS, T, S\n    )\n    sliding_window_attention_mask = swa_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_SWA_HEADS, T, S\n    )\n\n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_12b40430890b",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n\n@triton.jit\ndef _mask2d_kernel(\n    full_ptr,\n    swa_ptr,\n    T,\n    S,\n    past,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n):\n    \"\"\"Build the two unique [T, S] bool masks in a single kernel launch.\n\n    full_mask[i, j] = (i < j - past)  <=>  (j > i + past)\n    swa_mask  is all False (the reference's masked_fill on zeros is a no-op).\n    \"\"\"\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_n = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n\n    mask_m = offs_m < T\n    mask_n = offs_n < S\n    store_mask = mask_m[:, None] & mask_n[None, :]\n\n    i = offs_m[:, None]\n    j = offs_n[None, :]\n\n    # True where the query position is allowed to attend (matches reference).\n    full_val = j > (i + past)\n\n    out_offs = offs_m[:, None] * S + offs_n[None, :]\n\n    tl.store(full_ptr + out_offs, full_val.to(tl.int8), mask=store_mask)\n    tl.store(\n        swa_ptr + out_offs,\n        tl.zeros((BLOCK_M, BLOCK_N), dtype=tl.int8),\n        mask=store_mask,\n    )\n\n\n@torch.no_grad()\n@torch.compile(mode=\"reduce-overhead\")\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation \u2014 single-launch 2D pattern build wrapped\n    in torch.compile(mode='reduce-overhead') to eliminate launch overhead.\n\n    Both 4D outputs are pure broadcasts over (batch, head).  We only materialize\n    the unique T*S 2D patterns and return zero-copy expand views, eliminating\n    the reference's redundant contiguous 4D copies and ~10 separate launches.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n\n    device = torch.device(\"cuda\")\n\n    full_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n    swa_2d = torch.empty((T, S), dtype=torch.bool, device=device)\n\n    # One configuration covers all graded shapes well: enough blocks to fill\n    # the device on the large memory-bound workloads, while still issuing a\n    # single kernel launch for the launch-bound small shapes.\n    BLOCK_M = 64\n    BLOCK_N = 128\n    grid = (triton.cdiv(T, BLOCK_M), triton.cdiv(S, BLOCK_N))\n\n    _mask2d_kernel[grid](\n        full_2d,\n        swa_2d,\n        T,\n        S,\n        past,\n        BLOCK_M=BLOCK_M,\n        BLOCK_N=BLOCK_N,\n    )\n\n    # Zero-copy broadcast to the required 4D shape.\n    full_attention_mask = full_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_FULL_HEADS, T, S\n    )\n    sliding_window_attention_mask = swa_2d.unsqueeze(0).unsqueeze(0).expand(\n        B, _NUM_SWA_HEADS, T, S\n    )\n\n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  }
+}

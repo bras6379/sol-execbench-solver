@@ -1,0 +1,25 @@
+{
+  "name": "t36_39c1285bd26f",
+  "definition": "036_flux_output_norm_projection_chain",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    temb: torch.Tensor,\n    linear_weight: torch.Tensor,\n    linear_bias: torch.Tensor,\n    proj_out_weight: torch.Tensor,\n    proj_out_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Flux output normalization and projection chain.\n    \n    Args:\n        hidden_states: Input tensor of shape (batch_size, seq_len, inner_dim)\n        temb: Timestep embeddings of shape (batch_size, inner_dim)\n        linear_weight: Weight for modulation projection (2*inner_dim, inner_dim)\n        linear_bias: Bias for modulation projection (2*inner_dim,)\n        proj_out_weight: Weight for output projection (output_dim, inner_dim)\n        proj_out_bias: Bias for output projection (output_dim,)\n        eps: Epsilon for LayerNorm numerical stability\n        \n    Returns:\n        Output tensor of shape (batch_size, seq_len, output_dim)\n    \"\"\"\n    # Step 1: Layer normalization without affine parameters\n    # Compute mean and variance along the last dimension\n    mean = hidden_states.mean(dim=-1, keepdim=True)\n    var = hidden_states.var(dim=-1, keepdim=True, unbiased=False)\n    hidden_states_norm = (hidden_states - mean) / torch.sqrt(var + eps)\n    \n    # Step 2: SiLU activation on temb followed by linear projection\n    # SiLU: x * sigmoid(x)\n    temb_silu = temb * torch.sigmoid(temb)\n    # Linear projection: (batch_size, inner_dim) @ (inner_dim, 2*inner_dim) + bias\n    modulation = F.linear(temb_silu, linear_weight, linear_bias)\n    \n    # Split into shift and scale\n    inner_dim = temb.shape[-1]\n    shift = modulation[:, :inner_dim]  # (batch_size, inner_dim)\n    scale = modulation[:, inner_dim:]  # (batch_size, inner_dim)\n    \n    # Step 3: Apply adaptive modulation\n    # Expand shift and scale to match hidden_states shape\n    shift = shift.unsqueeze(1)  # (batch_size, 1, inner_dim)\n    scale = scale.unsqueeze(1)  # (batch_size, 1, inner_dim)\n    hidden_states_mod = hidden_states_norm * (1.0 + scale) + shift\n    \n    # Step 4: Large output projection\n    # (batch_size, seq_len, inner_dim) @ (inner_dim, output_dim) + bias\n    output = F.linear(hidden_states_mod, proj_out_weight, proj_out_bias)\n    \n    return output\n"
+    }
+  ]
+}

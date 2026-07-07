@@ -79,9 +79,29 @@ def test_plan_writes_files_and_persists_trajectory(tmp_path):
     assert cand.trajectory == str(wd / "trajectory.jsonl")
 
 
+def test_plan_collision_preserves_every_trajectory(tmp_path):
+    """A hash collision (always true for a no-op — the parent's workdir already
+    exists) must not destroy the fresh call's own trajectory: it used to be
+    rmtree'd, silently losing the only evidence of what that specific call did
+    and cost. Now it survives as a numbered sibling file."""
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
+    ctx = _fake_ctx()
+    cand1 = run(agent.plan(parent=None, ctx=ctx))
+    cand2 = run(agent.plan(parent=None, ctx=ctx))   # same model+prompt -> same fake tag -> same hash
+    assert cand1.cand_id == cand2.cand_id           # confirms this exercises the collision path
+
+    dest = tmp_path / "runs" / "7" / "work" / cand1.cand_id
+    assert (dest / "trajectory.jsonl").exists()             # first call's trajectory untouched
+    assert (dest / "trajectory.dup-1.jsonl").exists()       # second call's trajectory preserved, not deleted
+    assert cand2.trajectory == str(dest / "trajectory.dup-1.jsonl")
+    assert cand2.tokens["in"] == 100                        # second call's own tokens still captured
+
+
 def test_design_reads_file(tmp_path):
     agent = _agent(_fake_spec(tmp_path), tmp_path)
-    assert "roofline" in run(agent.design(7))                 # from design.md
+    text, tokens = run(agent.design(7))                       # from design.md
+    assert "roofline" in text
+    assert tokens["in"] == 100 and tokens["out"] == 50         # cost/tokens must not be discarded
 
 
 def test_provider_routing_injects_anthropic_endpoint(monkeypatch, tmp_path):
@@ -159,3 +179,25 @@ def test_cli_agent_drives_the_real_loop(tmp_path):
     pd = next(e for e in evs if e["ev"] == "plan_done")
     assert pd["agent"] == "fake" and pd["model"] == "gpt-5.5" and pd["tok_in"] == 100
     assert pd.get("trajectory", "").endswith("trajectory.jsonl")
+
+
+def test_parse_review_treats_hand_trace_line_as_not_an_issue():
+    """Line 2 is the required hand-trace summary, not a bullet issue — it must
+    not leak into verdict.issues on either a ship or a revise."""
+    from solver.engine.cli_agent import _parse_review
+
+    ship = _parse_review(
+        "VERDICT: SHIP\n"
+        "traced M=17 (odd, smallest graded shape) through the mask — matches reference.\n",
+        reviewer="r")
+    assert ship.ship and ship.issues == []
+
+    revise = _parse_review(
+        "VERDICT: REVISE\n"
+        "traced M=17 — accumulation dtype step couldn't be confirmed against reference.\n"
+        "- kernel.py:42 accumulates in fp16, reference accumulates in fp32\n"
+        "- workloads.md shape (17, 2048) triggers the tail mask, unverified\n",
+        reviewer="r")
+    assert not revise.ship
+    assert len(revise.issues) == 2
+    assert "fp16" in revise.issues[0]

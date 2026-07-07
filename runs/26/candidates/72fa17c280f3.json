@@ -1,0 +1,113 @@
+{
+  "cand_id": "72fa17c280f3",
+  "task_id": 26,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Fused 2-stage kernel: conv3d+embeddings via 2D grid (H_out, W_out) with frame/batch tiling, then separate LayerNorm per ",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "94d1df0737af",
+  "trajectory": "runs/26/work/72fa17c280f3/trajectory.jsonl",
+  "gpu_s": 6.189,
+  "job_id": "26-72fa17c280f3",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 345.23,
+      "samples": 16,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 1.3911,
+      "baseline_latency_ms": 12.3104,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 1.0221,
+      "baseline_latency_ms": 9.067864,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.4545,
+      "baseline_latency_ms": 3.698826,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.2261,
+      "baseline_latency_ms": 2.042006,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _video_patch_embed_conv_kernel(\n    # Input pointers\n    video_ptr,\n    weight_ptr,\n    bias_ptr,\n    spatial_emb_ptr,\n    temporal_emb_ptr,\n    # Output pointer\n    patches_ptr,\n    # Dimensions\n    B,\n    F,\n    C,\n    H,\n    W,\n    K,\n    P,\n    H_out,\n    W_out,\n    S,\n    C_stride,\n    F_stride,\n    B_stride,\n    # Tiling constants\n    BLOCK_HIDDEN: tl.constexpr,\n    K_TILES: tl.constexpr,\n):\n    \"\"\"\n    Compute conv3d + spatial embed + temporal embed (fusion).\n    Grid: 2D over spatial output positions (H_out, W_out).\n    Each program handles a tile of output positions and streams through frames/batches.\n    \"\"\"\n    # Grid dimensions\n    pid_h = tl.program_id(0)\n    pid_w = tl.program_id(1)\n\n    # Spatial output position\n    h_idx = pid_h\n    w_idx = pid_w\n    s_idx = h_idx * W_out + w_idx\n\n    # Get range of positions this block handles\n    tile_h = tl.arange(0, BLOCK_H)\n    tile_w = tl.arange(0, BLOCK_W)\n    spatial_mask = (\n        h_idx * BLOCK_W + tile_w < H_out\n        if BLOCK_W == 1\n        else h_idx * BLOCK_W + tile_w < H_out\n    )\n\n    # Process positions in tiles\n    for pos in range(0, BLOCK_H * BLOCK_W, BLOCK_W):\n        cur_h = h_idx * BLOCK_W + (pos // BLOCK_W)\n        cur_w = h_idx * BLOCK_W + (pos % BLOCK_W)\n        if cur_h >= H_out:\n            continue\n\n        for b in range(0, B, B_TILE):\n            cur_b = b + (tl.arange(0, B_TILE) // (B_TILE // B))\n            if cur_b[0] >= B:\n                continue\n            mask_b = cur_b < B\n\n            for f in range(0, F, F_TILE):\n                cur_f = f + (tl.arange(0, F_TILE) // (F_TILE // F))\n                if cur_f[0] >= F:\n                    continue\n                mask_f = cur_f < F\n\n                # Spatial coordinates in input\n                h_in = cur_h * P\n                w_in = cur_w * P\n\n                # Build input patch offsets (64 elements: C=16 * P*P=4)\n                elem_offs = tl.arange(0, 64)\n                c_idx = elem_offs // 4\n                local_idx = elem_offs % 4\n                r_idx = local_idx // 2\n                col_idx = local_idx % 2\n\n                video_base = (\n                    cur_b * B_stride\n                    + cur_f * F_stride\n                    + h_in * W\n                    + w_in\n                )\n                vid_offs = video_base + c_idx * C_stride + r_idx * W + col_idx\n\n                # Pre-compute embedding base offsets\n                spatial_emb_base = s_idx * K\n                temporal_emb_base = cur_f * K\n\n                # Compute conv3d + embeddings (single pass)\n                output_val = tl.zeros([BLOCK_HIDDEN], dtype=tl.float32)\n\n                for tile_idx in range(K_TILES):\n                    start_h = tile_idx * BLOCK_HIDDEN\n                    h_offs = start_h + tl.arange(0, BLOCK_HIDDEN)\n\n                    # Load weight tile\n                    w_row_offs = tl.arange(0, BLOCK_HIDDEN)[:, None] * 64\n                    w_col_offs = tl.arange(0, 64)[None, :]\n                    w_tile = tl.load(weight_ptr + start_h * 64 + w_row_offs + w_col_offs)\n\n                    # Load input patch\n                    x_patch = tl.load(video_ptr + vid_offs)\n\n                    # Dot product + accumulate\n                    partial = tl.sum(w_tile.to(tl.float32) * x_patch.to(tl.float32), axis=1)\n\n                    # Add bias, spatial emb, temporal emb\n                    bias_tile = tl.load(bias_ptr + h_offs)\n                    spatial_tile = tl.load(spatial_emb_ptr + spatial_emb_base + h_offs)\n                    temporal_tile = tl.load(temporal_emb_ptr + temporal_emb_base + h_offs)\n\n                    output_val += partial + bias_tile.to(tl.float32) + spatial_tile.to(tl.float32) + temporal_tile.to(tl.float32)\n\n                # Store output patch\n                out_ptr = patches_ptr + (\n                    cur_b * F * S * K\n                    + cur_f * S * K\n                    + s_idx * K\n                    + tl.arange(0, BLOCK_HIDDEN)\n                )\n                tl.store(out_ptr, output_val.to(tl.float16))\n\n\n@triton.jit\ndef _video_patch_embed_ln_kernel(\n    # Input pointers\n    patches_ptr,\n    norm_weight_ptr,\n    norm_bias_ptr,\n    # Output pointer\n    output_ptr,\n    # Dimensions\n    B,\n    F,\n    S,\n    K,\n    total_patches,\n    eps,\n    # Tiling constants\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    LayerNorm along hidden dimension.\n    Grid: 1D over output positions.\n    \"\"\"\n    pid = tl.program_id(0)\n    total_pos = B * F * S\n    if pid >= total_pos:\n        return\n\n    # Decode position\n    rem = pid\n    f_idx = rem // S\n    rem = rem % S\n    s_idx = rem\n\n    b_idx = 0\n\n    # Read input\n    in_ptr = patches_ptr + (b_idx * F * S * K + f_idx * S * K + s_idx * K + tl.arange(0, BLOCK_SIZE))\n    x = tl.load(in_ptr, mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n\n    # Online Welford\n    mean = tl.sum(x) / K\n    var = tl.sum((x - mean) ** 2) / K\n    inv_std = 1.0 / tl.sqrt(var + eps)\n\n    # Normalize\n    normalized = (x - mean) * inv_std\n\n    # Apply scale and bias\n    gamma = tl.load(norm_weight_ptr + tl.arange(0, BLOCK_SIZE), mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n    beta = tl.load(norm_bias_ptr + tl.arange(0, BLOCK_SIZE), mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n\n    out = normalized * gamma + beta\n\n    # Write output\n    out_ptr = output_ptr + (b_idx * total_patches * K + f_idx * S * K + s_idx * K + tl.arange(0, BLOCK_SIZE))\n    tl.store(out_ptr, out.to(tl.float16))\n\n\n@torch.no_grad()\ndef run(\n    video: torch.Tensor,\n    patch_projection_weight: torch.Tensor,\n    patch_projection_bias: torch.Tensor,\n    spatial_pos_embedding: torch.Tensor,\n    temporal_pos_embedding: torch.Tensor,\n    norm_weight: torch.Tensor,\n    norm_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Fused video patch embedding projection.\n    Stage 1: conv3d + spatial embed + temporal embed\n    Stage 2: LayerNorm (along hidden dimension)\n    \"\"\"\n    batch_size, frames, channels, height, width = video.shape\n    hidden_size = patch_projection_weight.shape[0]\n    patch_size = patch_projection_weight.shape[3]\n\n    # Spatial output dimensions\n    h_out = height // patch_size\n    w_out = width // patch_size\n    num_spatial_patches = h_out * w_out\n    total_patches = frames * num_spatial_patches\n\n    # Strides\n    C_stride = height * width\n    F_stride = channels * C_stride\n    B_stride = frames * F_stride\n\n    # Tiling constants\n    BLOCK_HIDDEN = 256\n    K_TILES = hidden_size // BLOCK_HIDDEN\n\n    BLOCK_H = 16\n    BLOCK_W = 16\n    B_TILE = 1\n    F_TILE = 1\n\n    # Stage 1: conv3d + embeddings\n    patches = torch.empty(\n        batch_size, frames, num_spatial_patches, hidden_size,\n        dtype=video.dtype, device=video.device\n    )\n\n    grid = (h_out, w_out)\n    _video_patch_embed_conv_kernel[grid](\n        video,\n        patch_projection_weight,\n        patch_projection_bias,\n        spatial_pos_embedding,\n        temporal_pos_embedding,\n        patches,\n        batch_size,\n        frames,\n        channels,\n        height,\n        width,\n        hidden_size,\n        patch_size,\n        h_out,\n        w_out,\n        num_spatial_patches,\n        C_stride,\n        F_stride,\n        B_stride,\n        BLOCK_HIDDEN=BLOCK_HIDDEN,\n        K_TILES=K_TILES,\n        num_warps=4,\n        BLOCK_H=BLOCK_H,\n        BLOCK_W=BLOCK_W,\n        num_ctas=(1, 1),\n    )\n\n    # Stage 2: LayerNorm\n    output = torch.empty(\n        batch_size, total_patches, hidden_size,\n        dtype=video.dtype, device=video.device\n    )\n\n    grid = (batch_size * frames * num_spatial_patches,)\n    _video_patch_embed_ln_kernel[grid](\n        patches,\n        norm_weight,\n        norm_bias,\n        output,\n        batch_size,\n        frames,\n        num_spatial_patches,\n        hidden_size,\n        total_patches,\n        eps,\n        BLOCK_SIZE=BLOCK_HIDDEN,\n        num_warps=4,\n    )\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t26_72fa17c280f3",
+    "definition": "026_video_patch_embedding_projection",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _video_patch_embed_conv_kernel(\n    # Input pointers\n    video_ptr,\n    weight_ptr,\n    bias_ptr,\n    spatial_emb_ptr,\n    temporal_emb_ptr,\n    # Output pointer\n    patches_ptr,\n    # Dimensions\n    B,\n    F,\n    C,\n    H,\n    W,\n    K,\n    P,\n    H_out,\n    W_out,\n    S,\n    C_stride,\n    F_stride,\n    B_stride,\n    # Tiling constants\n    BLOCK_HIDDEN: tl.constexpr,\n    K_TILES: tl.constexpr,\n):\n    \"\"\"\n    Compute conv3d + spatial embed + temporal embed (fusion).\n    Grid: 2D over spatial output positions (H_out, W_out).\n    Each program handles a tile of output positions and streams through frames/batches.\n    \"\"\"\n    # Grid dimensions\n    pid_h = tl.program_id(0)\n    pid_w = tl.program_id(1)\n\n    # Spatial output position\n    h_idx = pid_h\n    w_idx = pid_w\n    s_idx = h_idx * W_out + w_idx\n\n    # Get range of positions this block handles\n    tile_h = tl.arange(0, BLOCK_H)\n    tile_w = tl.arange(0, BLOCK_W)\n    spatial_mask = (\n        h_idx * BLOCK_W + tile_w < H_out\n        if BLOCK_W == 1\n        else h_idx * BLOCK_W + tile_w < H_out\n    )\n\n    # Process positions in tiles\n    for pos in range(0, BLOCK_H * BLOCK_W, BLOCK_W):\n        cur_h = h_idx * BLOCK_W + (pos // BLOCK_W)\n        cur_w = h_idx * BLOCK_W + (pos % BLOCK_W)\n        if cur_h >= H_out:\n            continue\n\n        for b in range(0, B, B_TILE):\n            cur_b = b + (tl.arange(0, B_TILE) // (B_TILE // B))\n            if cur_b[0] >= B:\n                continue\n            mask_b = cur_b < B\n\n            for f in range(0, F, F_TILE):\n                cur_f = f + (tl.arange(0, F_TILE) // (F_TILE // F))\n                if cur_f[0] >= F:\n                    continue\n                mask_f = cur_f < F\n\n                # Spatial coordinates in input\n                h_in = cur_h * P\n                w_in = cur_w * P\n\n                # Build input patch offsets (64 elements: C=16 * P*P=4)\n                elem_offs = tl.arange(0, 64)\n                c_idx = elem_offs // 4\n                local_idx = elem_offs % 4\n                r_idx = local_idx // 2\n                col_idx = local_idx % 2\n\n                video_base = (\n                    cur_b * B_stride\n                    + cur_f * F_stride\n                    + h_in * W\n                    + w_in\n                )\n                vid_offs = video_base + c_idx * C_stride + r_idx * W + col_idx\n\n                # Pre-compute embedding base offsets\n                spatial_emb_base = s_idx * K\n                temporal_emb_base = cur_f * K\n\n                # Compute conv3d + embeddings (single pass)\n                output_val = tl.zeros([BLOCK_HIDDEN], dtype=tl.float32)\n\n                for tile_idx in range(K_TILES):\n                    start_h = tile_idx * BLOCK_HIDDEN\n                    h_offs = start_h + tl.arange(0, BLOCK_HIDDEN)\n\n                    # Load weight tile\n                    w_row_offs = tl.arange(0, BLOCK_HIDDEN)[:, None] * 64\n                    w_col_offs = tl.arange(0, 64)[None, :]\n                    w_tile = tl.load(weight_ptr + start_h * 64 + w_row_offs + w_col_offs)\n\n                    # Load input patch\n                    x_patch = tl.load(video_ptr + vid_offs)\n\n                    # Dot product + accumulate\n                    partial = tl.sum(w_tile.to(tl.float32) * x_patch.to(tl.float32), axis=1)\n\n                    # Add bias, spatial emb, temporal emb\n                    bias_tile = tl.load(bias_ptr + h_offs)\n                    spatial_tile = tl.load(spatial_emb_ptr + spatial_emb_base + h_offs)\n                    temporal_tile = tl.load(temporal_emb_ptr + temporal_emb_base + h_offs)\n\n                    output_val += partial + bias_tile.to(tl.float32) + spatial_tile.to(tl.float32) + temporal_tile.to(tl.float32)\n\n                # Store output patch\n                out_ptr = patches_ptr + (\n                    cur_b * F * S * K\n                    + cur_f * S * K\n                    + s_idx * K\n                    + tl.arange(0, BLOCK_HIDDEN)\n                )\n                tl.store(out_ptr, output_val.to(tl.float16))\n\n\n@triton.jit\ndef _video_patch_embed_ln_kernel(\n    # Input pointers\n    patches_ptr,\n    norm_weight_ptr,\n    norm_bias_ptr,\n    # Output pointer\n    output_ptr,\n    # Dimensions\n    B,\n    F,\n    S,\n    K,\n    total_patches,\n    eps,\n    # Tiling constants\n    BLOCK_SIZE: tl.constexpr,\n):\n    \"\"\"\n    LayerNorm along hidden dimension.\n    Grid: 1D over output positions.\n    \"\"\"\n    pid = tl.program_id(0)\n    total_pos = B * F * S\n    if pid >= total_pos:\n        return\n\n    # Decode position\n    rem = pid\n    f_idx = rem // S\n    rem = rem % S\n    s_idx = rem\n\n    b_idx = 0\n\n    # Read input\n    in_ptr = patches_ptr + (b_idx * F * S * K + f_idx * S * K + s_idx * K + tl.arange(0, BLOCK_SIZE))\n    x = tl.load(in_ptr, mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n\n    # Online Welford\n    mean = tl.sum(x) / K\n    var = tl.sum((x - mean) ** 2) / K\n    inv_std = 1.0 / tl.sqrt(var + eps)\n\n    # Normalize\n    normalized = (x - mean) * inv_std\n\n    # Apply scale and bias\n    gamma = tl.load(norm_weight_ptr + tl.arange(0, BLOCK_SIZE), mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n    beta = tl.load(norm_bias_ptr + tl.arange(0, BLOCK_SIZE), mask=tl.arange(0, BLOCK_SIZE) < K, other=0.0).to(tl.float32)\n\n    out = normalized * gamma + beta\n\n    # Write output\n    out_ptr = output_ptr + (b_idx * total_patches * K + f_idx * S * K + s_idx * K + tl.arange(0, BLOCK_SIZE))\n    tl.store(out_ptr, out.to(tl.float16))\n\n\n@torch.no_grad()\ndef run(\n    video: torch.Tensor,\n    patch_projection_weight: torch.Tensor,\n    patch_projection_bias: torch.Tensor,\n    spatial_pos_embedding: torch.Tensor,\n    temporal_pos_embedding: torch.Tensor,\n    norm_weight: torch.Tensor,\n    norm_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Fused video patch embedding projection.\n    Stage 1: conv3d + spatial embed + temporal embed\n    Stage 2: LayerNorm (along hidden dimension)\n    \"\"\"\n    batch_size, frames, channels, height, width = video.shape\n    hidden_size = patch_projection_weight.shape[0]\n    patch_size = patch_projection_weight.shape[3]\n\n    # Spatial output dimensions\n    h_out = height // patch_size\n    w_out = width // patch_size\n    num_spatial_patches = h_out * w_out\n    total_patches = frames * num_spatial_patches\n\n    # Strides\n    C_stride = height * width\n    F_stride = channels * C_stride\n    B_stride = frames * F_stride\n\n    # Tiling constants\n    BLOCK_HIDDEN = 256\n    K_TILES = hidden_size // BLOCK_HIDDEN\n\n    BLOCK_H = 16\n    BLOCK_W = 16\n    B_TILE = 1\n    F_TILE = 1\n\n    # Stage 1: conv3d + embeddings\n    patches = torch.empty(\n        batch_size, frames, num_spatial_patches, hidden_size,\n        dtype=video.dtype, device=video.device\n    )\n\n    grid = (h_out, w_out)\n    _video_patch_embed_conv_kernel[grid](\n        video,\n        patch_projection_weight,\n        patch_projection_bias,\n        spatial_pos_embedding,\n        temporal_pos_embedding,\n        patches,\n        batch_size,\n        frames,\n        channels,\n        height,\n        width,\n        hidden_size,\n        patch_size,\n        h_out,\n        w_out,\n        num_spatial_patches,\n        C_stride,\n        F_stride,\n        B_stride,\n        BLOCK_HIDDEN=BLOCK_HIDDEN,\n        K_TILES=K_TILES,\n        num_warps=4,\n        BLOCK_H=BLOCK_H,\n        BLOCK_W=BLOCK_W,\n        num_ctas=(1, 1),\n    )\n\n    # Stage 2: LayerNorm\n    output = torch.empty(\n        batch_size, total_patches, hidden_size,\n        dtype=video.dtype, device=video.device\n    )\n\n    grid = (batch_size * frames * num_spatial_patches,)\n    _video_patch_embed_ln_kernel[grid](\n        patches,\n        norm_weight,\n        norm_bias,\n        output,\n        batch_size,\n        frames,\n        num_spatial_patches,\n        hidden_size,\n        total_patches,\n        eps,\n        BLOCK_SIZE=BLOCK_HIDDEN,\n        num_warps=4,\n    )\n\n    return output\n"
+      }
+    ]
+  }
+}

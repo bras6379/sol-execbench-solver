@@ -1,0 +1,201 @@
+{
+  "cand_id": "532c1ed28f03",
+  "task_id": 28,
+  "verdict": "entered",
+  "sol_score": 0.02554191925800239,
+  "sol_score_calibrated": 0.02163728689737883,
+  "correct": true,
+  "vector": [
+    0.06209352740786621,
+    0.0604782701757422,
+    0.003406428859129501,
+    0.061610205157726194,
+    0.004721393578523976,
+    0.00516096008105557,
+    0.06473280656687026,
+    0.010687612977827119,
+    0.0011206031894332009,
+    0.005021337309337893,
+    0.026001190139633826,
+    0.0014686956528827259
+  ],
+  "strategy": "seed",
+  "agent": "",
+  "model": "",
+  "parent": null,
+  "trajectory": null,
+  "gpu_s": 30.587,
+  "job_id": "28-532c1ed28f03",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 47.0,
+      "power_w_max": 787.02,
+      "samples": 96,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.09731200000000001,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": 0.06209352740786621,
+      "sol_score_cal": 0.052669046624583965,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.10355149999999999,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.0604782701757422,
+      "sol_score_cal": 0.05128748384183575,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 3.141498,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": 0.003406428859129501,
+      "sol_score_cal": 0.002864044932766262,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.09739149999999999,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": 0.061610205157726194,
+      "sol_score_cal": 0.052255022068269034,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 13.488347000000001,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": 0.004721393578523976,
+      "sol_score_cal": 0.003970532047068356,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 1.508573,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": 0.00516096008105557,
+      "sol_score_cal": 0.0043403349137555655,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.09633549999999999,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": 0.06473280656687026,
+      "sol_score_cal": 0.054930852686910815,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.6223989999999999,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": 0.010687612977827119,
+      "sol_score_cal": 0.008995623959276458,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 12.4226235,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": 0.0011206031894332009,
+      "sol_score_cal": 0.0009418470307532145,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 3.059739,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": 0.005021337309337893,
+      "sol_score_cal": 0.004222909087743298,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.2467355,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": 0.026001190139633826,
+      "sol_score_cal": 0.02193526365321309,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 14.087776,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": 0.0014686956528827259,
+      "sol_score_cal": 0.001234481922370174,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "reference.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation for models with mixed full and sliding window attention.\n    \n    Creates two types of causal masks:\n    1. Full causal mask: Standard lower-triangular mask for full attention layers\n    2. Sliding window causal mask: Banded diagonal mask for sliding window attention layers\n    \"\"\"\n    # Constants\n    num_attention_heads = 64\n    swa_num_attention_heads = 64\n    sliding_window = 128\n    dtype = torch.bool\n    device = torch.device('cuda')\n    \n    batch_size = int(batch_size_scalar)\n    seq_length = int(seq_length_scalar)\n    past_key_values_length = int(past_key_values_length_scalar)\n    \n    target_length = seq_length\n    source_length = seq_length + past_key_values_length\n    \n    # Create full causal mask\n    full_mask = torch.ones(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Make it causal (lower triangular)\n    target_indices = torch.arange(target_length, device=device)[:, None]\n    source_indices = torch.arange(source_length, device=device)[None, :]\n    causal_cond = target_indices >= (source_indices - past_key_values_length)\n    full_mask = full_mask.masked_fill(causal_cond, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    full_attention_mask = full_mask[None, None, :, :].expand(\n        batch_size, num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    # Create sliding window causal mask\n    swa_mask = torch.zeros(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Sliding window condition: within window size\n    window_cond = (source_indices - past_key_values_length) >= (target_indices - sliding_window)\n    \n    # Combine conditions: must be both causal and within window\n    valid_positions = causal_cond & window_cond\n    swa_mask = swa_mask.masked_fill(valid_positions, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    sliding_window_attention_mask = swa_mask[None, None, :, :].expand(\n        batch_size, swa_num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_532c1ed28f03",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "reference.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "reference.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation for models with mixed full and sliding window attention.\n    \n    Creates two types of causal masks:\n    1. Full causal mask: Standard lower-triangular mask for full attention layers\n    2. Sliding window causal mask: Banded diagonal mask for sliding window attention layers\n    \"\"\"\n    # Constants\n    num_attention_heads = 64\n    swa_num_attention_heads = 64\n    sliding_window = 128\n    dtype = torch.bool\n    device = torch.device('cuda')\n    \n    batch_size = int(batch_size_scalar)\n    seq_length = int(seq_length_scalar)\n    past_key_values_length = int(past_key_values_length_scalar)\n    \n    target_length = seq_length\n    source_length = seq_length + past_key_values_length\n    \n    # Create full causal mask\n    full_mask = torch.ones(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Make it causal (lower triangular)\n    target_indices = torch.arange(target_length, device=device)[:, None]\n    source_indices = torch.arange(source_length, device=device)[None, :]\n    causal_cond = target_indices >= (source_indices - past_key_values_length)\n    full_mask = full_mask.masked_fill(causal_cond, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    full_attention_mask = full_mask[None, None, :, :].expand(\n        batch_size, num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    # Create sliding window causal mask\n    swa_mask = torch.zeros(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Sliding window condition: within window size\n    window_cond = (source_indices - past_key_values_length) >= (target_indices - sliding_window)\n    \n    # Combine conditions: must be both causal and within window\n    valid_positions = causal_cond & window_cond\n    swa_mask = swa_mask.masked_fill(valid_positions, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    sliding_window_attention_mask = swa_mask[None, None, :, :].expand(\n        batch_size, swa_num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "cand_id": "5fcf1d109399",
+  "task_id": 30,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Split-K Triton GEMM for small-M (\u2264512) to fill 148 SMs; cuBLAS with \u03b2=1.0 fusion for larger M.",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "7e9d1f46430c",
+  "trajectory": "runs/30/work/5fcf1d109399/trajectory.jsonl",
+  "gpu_s": 3.934,
+  "job_id": "30-5fcf1d109399",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  030_attention_output_projection_with_residual\nSolution: t30_30-5fcf1d109399\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u283c Evaluating 16 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_g39l7f5o/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_g39l7f5o/kernel.py\", line 4, in <module>\n    from triton.language.math import bfloat16  # Already available in triton \n2.3+\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nImportError: cannot import name 'bfloat16' from 'triton.language.math' \n(/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/triton/language/math.py)\n[W707 19:33:12.203337399 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 810.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 251.78,
+      "samples": 9,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.0859844999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0041,
+      "baseline_latency_ms": 0.012,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085952,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0118,
+      "baseline_latency_ms": 0.021984,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044192,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0301,
+      "baseline_latency_ms": 0.044096,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0581,
+      "baseline_latency_ms": 0.085728,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.0441915,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085984,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0078,
+      "baseline_latency_ms": 0.01584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.02592,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.014,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.025952,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.009888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\nfrom triton.language.math import bfloat16  # Already available in triton 2.3+\n\n@triton.autotune(\n    configs=[\n        # Regime A: Small-M with split-K, need smaller tiles to fill SMs\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 256, 'SPLIT_K': 8, 'STAGES': 4, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 256, 'SPLIT_K': 8, 'STAGES': 4, 'NUM_WARPS': 8}, num_warps=8, num_ctas=148),\n        # Regime A with 4-way split\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 4, 'STAGES': 3, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        # Regime B/C: Larger tiles\n        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 1, 'STAGES': 3, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 1, 'STAGES': 4, 'NUM_WARPS': 8}, num_warps=8, num_ctas=148),\n    ],\n    key=['M', 'N', 'K', 'SPLIT_K'],\n)\n@triton.jit\ndef fused_o_proj_residual_splitk(\n    A_ptr, W_ptr, R_ptr, C_ptr,\n    M, N, K,\n    stride_am, stride_ak,\n    stride_wk, stride_wn,\n    stride_rm, stride_rn,\n    stride_cm, stride_cn,\n    SPLIT_K,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    STAGES: tl.constexpr,\n    NUM_WARPS: tl.constexpr,\n):\n    \"\"\"\n    Fused GEMM + residual with split-K for small-M to fill SMs.\n    Accumulates in fp32 partials, then final reduce + residual add, then downcast to bf16.\n    \"\"\"\n    # CTA grid\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    # Pointers for A and W\n    A_ptrs = A_ptr + pid_m * BLOCK_M * stride_am + pid_k * BLOCK_K * stride_ak\n    W_ptrs = W_ptr + pid_k * BLOCK_K * stride_wk + pid_n * BLOCK_N * stride_wn\n\n    # Accumulator (fp32 for precision)\n    acc = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)\n\n    # Load A tile and W tile for each k-stage\n    for stage in range(STAGES):\n        # Load A tile\n        a = tl.load(A_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_k * BLOCK_K + tl.arange(0, BLOCK_K)[None, :] < K), other=0.0)\n        # Load W tile\n        w = tl.load(W_ptrs, mask=(pid_k * BLOCK_K + tl.arange(0, BLOCK_K)[None, :] < K) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # GEMM: A[BM, BK] @ W[BK, BN]\n        acc += tl.dot(a, w)\n\n        # Advance pointers\n        A_ptrs += BLOCK_K * stride_ak\n        W_ptrs += BLOCK_K * stride_wk\n\n    # Split-K reduction across partials\n    # For simplicity, just sum partials (when SPLIT_K=1, this is a no-op)\n    if SPLIT_K > 1:\n        # Load residual for this partial\n        r_ptrs = R_ptr + pid_m * BLOCK_M * stride_rm + pid_n * BLOCK_N * stride_rn\n        r = tl.load(r_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # Add residual and convert to bf16\n        c = (acc + r).to(tl.bfloat16)\n\n        # Write to C\n        C_ptrs = C_ptr + pid_m * BLOCK_M * stride_cm + pid_n * BLOCK_N * stride_cn\n        tl.store(C_ptrs, c, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N))\n    else:\n        # For non-split cases, we need to do a global reduction\n        # This is simplified - in production you'd use a proper reduce kernel\n        # Load residual and add\n        r_ptrs = R_ptr + pid_m * BLOCK_M * stride_rm + pid_n * BLOCK_N * stride_rn\n        r = tl.load(r_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # Add residual\n        c = (acc + r).to(tl.bfloat16)\n\n        # Write to C\n        C_ptrs = C_ptr + pid_m * BLOCK_M * stride_cm + pid_n * BLOCK_N * stride_cn\n        tl.store(C_ptrs, c, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N))\n\n\ndef run(attn_output, residual, o_proj_weight):\n    \"\"\"\n    Fused attention output projection with residual addition using split-K for small-M shapes.\n\n    Args:\n        attn_output: Attention output of shape (B, S, H)\n        residual: Residual tensor of shape (B, S, H)\n        o_proj_weight: Output projection weight of shape (H, H)\n\n    Returns:\n        Output with projection and residual added, shape (B, S, H)\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n    K = H\n    N = H\n\n    # Output tensor\n    C = torch.empty((B, S, H), dtype=attn_output.dtype, device=attn_output.device)\n\n    # Regime A: Small-M (< 512) -> use split-K Triton to fill SMs\n    # Regime B: Medium-M (512 - 2048) -> cuBLAS\n    # Regime C: Large-M (> 2048) -> cuBLAS\n\n    if M <= 512:\n        # Split-K Triton kernel\n        # Grid: (M-tiles, N-tiles, SPLIT_K)\n        grid = lambda META: (\n            triton.cdiv(M, META['BLOCK_M']),\n            triton.cdiv(N, META['BLOCK_N']),\n            META['SPLIT_K'],\n        )\n\n        fused_o_proj_residual_splitk[grid](\n            attn_output, o_proj_weight, residual, C,\n            M, N, K,\n            stride_am=H, stride_ak=1,\n            stride_wk=H, stride_wn=H,\n            stride_rm=H, stride_rn=1,\n            stride_cm=H, stride_cn=1,\n            SPLIT_K=8,  # Use 8-way split for maximum SM fill\n        )\n    elif M <= 2048:\n        # Medium-M: Use cuBLAS with \u03b2=1.0 fusion (residual pre-filled as C)\n        # Pre-fill C with residual\n        C.copy_(residual)\n\n        # GEMM: C += A @ W.T\n        torch.matmul(attn_output, o_proj_weight.t(), out=C, alpha=1.0, beta=1.0)\n    else:\n        # Large-M: cuBLAS with \u03b2=1.0 fusion\n        C.copy_(residual)\n        torch.matmul(attn_output, o_proj_weight.t(), out=C, alpha=1.0, beta=1.0)\n\n    return C\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t30_5fcf1d109399",
+    "definition": "030_attention_output_projection_with_residual",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\nfrom triton.language.math import bfloat16  # Already available in triton 2.3+\n\n@triton.autotune(\n    configs=[\n        # Regime A: Small-M with split-K, need smaller tiles to fill SMs\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 256, 'SPLIT_K': 8, 'STAGES': 4, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 256, 'BLOCK_K': 256, 'SPLIT_K': 8, 'STAGES': 4, 'NUM_WARPS': 8}, num_warps=8, num_ctas=148),\n        # Regime A with 4-way split\n        triton.Config({'BLOCK_M': 64, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 4, 'STAGES': 3, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        # Regime B/C: Larger tiles\n        triton.Config({'BLOCK_M': 128, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 1, 'STAGES': 3, 'NUM_WARPS': 4}, num_warps=4, num_ctas=148),\n        triton.Config({'BLOCK_M': 256, 'BLOCK_N': 128, 'BLOCK_K': 128, 'SPLIT_K': 1, 'STAGES': 4, 'NUM_WARPS': 8}, num_warps=8, num_ctas=148),\n    ],\n    key=['M', 'N', 'K', 'SPLIT_K'],\n)\n@triton.jit\ndef fused_o_proj_residual_splitk(\n    A_ptr, W_ptr, R_ptr, C_ptr,\n    M, N, K,\n    stride_am, stride_ak,\n    stride_wk, stride_wn,\n    stride_rm, stride_rn,\n    stride_cm, stride_cn,\n    SPLIT_K,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n    STAGES: tl.constexpr,\n    NUM_WARPS: tl.constexpr,\n):\n    \"\"\"\n    Fused GEMM + residual with split-K for small-M to fill SMs.\n    Accumulates in fp32 partials, then final reduce + residual add, then downcast to bf16.\n    \"\"\"\n    # CTA grid\n    pid_m = tl.program_id(0)\n    pid_n = tl.program_id(1)\n    pid_k = tl.program_id(2)\n\n    # Pointers for A and W\n    A_ptrs = A_ptr + pid_m * BLOCK_M * stride_am + pid_k * BLOCK_K * stride_ak\n    W_ptrs = W_ptr + pid_k * BLOCK_K * stride_wk + pid_n * BLOCK_N * stride_wn\n\n    # Accumulator (fp32 for precision)\n    acc = tl.zeros([BLOCK_M, BLOCK_N], dtype=tl.float32)\n\n    # Load A tile and W tile for each k-stage\n    for stage in range(STAGES):\n        # Load A tile\n        a = tl.load(A_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_k * BLOCK_K + tl.arange(0, BLOCK_K)[None, :] < K), other=0.0)\n        # Load W tile\n        w = tl.load(W_ptrs, mask=(pid_k * BLOCK_K + tl.arange(0, BLOCK_K)[None, :] < K) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # GEMM: A[BM, BK] @ W[BK, BN]\n        acc += tl.dot(a, w)\n\n        # Advance pointers\n        A_ptrs += BLOCK_K * stride_ak\n        W_ptrs += BLOCK_K * stride_wk\n\n    # Split-K reduction across partials\n    # For simplicity, just sum partials (when SPLIT_K=1, this is a no-op)\n    if SPLIT_K > 1:\n        # Load residual for this partial\n        r_ptrs = R_ptr + pid_m * BLOCK_M * stride_rm + pid_n * BLOCK_N * stride_rn\n        r = tl.load(r_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # Add residual and convert to bf16\n        c = (acc + r).to(tl.bfloat16)\n\n        # Write to C\n        C_ptrs = C_ptr + pid_m * BLOCK_M * stride_cm + pid_n * BLOCK_N * stride_cn\n        tl.store(C_ptrs, c, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N))\n    else:\n        # For non-split cases, we need to do a global reduction\n        # This is simplified - in production you'd use a proper reduce kernel\n        # Load residual and add\n        r_ptrs = R_ptr + pid_m * BLOCK_M * stride_rm + pid_n * BLOCK_N * stride_rn\n        r = tl.load(r_ptrs, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N), other=0.0)\n\n        # Add residual\n        c = (acc + r).to(tl.bfloat16)\n\n        # Write to C\n        C_ptrs = C_ptr + pid_m * BLOCK_M * stride_cm + pid_n * BLOCK_N * stride_cn\n        tl.store(C_ptrs, c, mask=(pid_m * BLOCK_M + tl.arange(0, BLOCK_M)[:, None] < M) & (pid_n * BLOCK_N + tl.arange(0, BLOCK_N) < N))\n\n\ndef run(attn_output, residual, o_proj_weight):\n    \"\"\"\n    Fused attention output projection with residual addition using split-K for small-M shapes.\n\n    Args:\n        attn_output: Attention output of shape (B, S, H)\n        residual: Residual tensor of shape (B, S, H)\n        o_proj_weight: Output projection weight of shape (H, H)\n\n    Returns:\n        Output with projection and residual added, shape (B, S, H)\n    \"\"\"\n    B, S, H = attn_output.shape\n    M = B * S\n    K = H\n    N = H\n\n    # Output tensor\n    C = torch.empty((B, S, H), dtype=attn_output.dtype, device=attn_output.device)\n\n    # Regime A: Small-M (< 512) -> use split-K Triton to fill SMs\n    # Regime B: Medium-M (512 - 2048) -> cuBLAS\n    # Regime C: Large-M (> 2048) -> cuBLAS\n\n    if M <= 512:\n        # Split-K Triton kernel\n        # Grid: (M-tiles, N-tiles, SPLIT_K)\n        grid = lambda META: (\n            triton.cdiv(M, META['BLOCK_M']),\n            triton.cdiv(N, META['BLOCK_N']),\n            META['SPLIT_K'],\n        )\n\n        fused_o_proj_residual_splitk[grid](\n            attn_output, o_proj_weight, residual, C,\n            M, N, K,\n            stride_am=H, stride_ak=1,\n            stride_wk=H, stride_wn=H,\n            stride_rm=H, stride_rn=1,\n            stride_cm=H, stride_cn=1,\n            SPLIT_K=8,  # Use 8-way split for maximum SM fill\n        )\n    elif M <= 2048:\n        # Medium-M: Use cuBLAS with \u03b2=1.0 fusion (residual pre-filled as C)\n        # Pre-fill C with residual\n        C.copy_(residual)\n\n        # GEMM: C += A @ W.T\n        torch.matmul(attn_output, o_proj_weight.t(), out=C, alpha=1.0, beta=1.0)\n    else:\n        # Large-M: cuBLAS with \u03b2=1.0 fusion\n        C.copy_(residual)\n        torch.matmul(attn_output, o_proj_weight.t(), out=C, alpha=1.0, beta=1.0)\n\n    return C\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,80 @@
+{
+    "name": "028_hybrid_attention_mask_preparation",
+    "hf_id": "XiaomiMiMo/MiMo-V2-Flash",
+    "description": "Hybrid causal mask preparation system that creates separate attention masks for full attention and sliding window attention layers. Creates two distinct 4D causal masks: standard causal masking for full attention layers and sliding window causal masking for SWA layers.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_length": {
+            "type": "var",
+            "description": "Current sequence length"
+        },
+        "past_key_values_length": {
+            "type": "var",
+            "description": "Length of cached keys/values"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 64,
+            "description": "Number of heads for full attention"
+        },
+        "swa_num_attention_heads": {
+            "type": "const",
+            "value": 64,
+            "description": "Number of heads for sliding window attention"
+        },
+        "sliding_window": {
+            "type": "const",
+            "value": 128,
+            "description": "Window size for sliding window attention"
+        },
+        "total_length": {
+            "type": "expr",
+            "expression": "seq_length + past_key_values_length",
+            "description": "Total sequence length including past"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "batch_size_scalar": {
+            "shape": null,
+            "dtype": "int64",
+            "description": "Batch size as scalar"
+        },
+        "seq_length_scalar": {
+            "shape": null,
+            "dtype": "int64",
+            "description": "Sequence length as scalar"
+        },
+        "past_key_values_length_scalar": {
+            "shape": null,
+            "dtype": "int64",
+            "description": "Past key values length as scalar"
+        }
+    },
+    "outputs": {
+        "full_attention_mask": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_length",
+                "total_length"
+            ],
+            "dtype": "bool",
+            "description": "Full causal attention mask"
+        },
+        "sliding_window_attention_mask": {
+            "shape": [
+                "batch_size",
+                "swa_num_attention_heads",
+                "seq_length",
+                "total_length"
+            ],
+            "dtype": "bool",
+            "description": "Sliding window causal attention mask"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"\n    Hybrid attention mask preparation for models with mixed full and sliding window attention.\n    \n    Creates two types of causal masks:\n    1. Full causal mask: Standard lower-triangular mask for full attention layers\n    2. Sliding window causal mask: Banded diagonal mask for sliding window attention layers\n    \"\"\"\n    # Constants\n    num_attention_heads = 64\n    swa_num_attention_heads = 64\n    sliding_window = 128\n    dtype = torch.bool\n    device = torch.device('cuda')\n    \n    batch_size = int(batch_size_scalar)\n    seq_length = int(seq_length_scalar)\n    past_key_values_length = int(past_key_values_length_scalar)\n    \n    target_length = seq_length\n    source_length = seq_length + past_key_values_length\n    \n    # Create full causal mask\n    full_mask = torch.ones(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Make it causal (lower triangular)\n    target_indices = torch.arange(target_length, device=device)[:, None]\n    source_indices = torch.arange(source_length, device=device)[None, :]\n    causal_cond = target_indices >= (source_indices - past_key_values_length)\n    full_mask = full_mask.masked_fill(causal_cond, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    full_attention_mask = full_mask[None, None, :, :].expand(\n        batch_size, num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    # Create sliding window causal mask\n    swa_mask = torch.zeros(\n        (target_length, source_length),\n        dtype=dtype,\n        device=device,\n    )\n    \n    # Sliding window condition: within window size\n    window_cond = (source_indices - past_key_values_length) >= (target_indices - sliding_window)\n    \n    # Combine conditions: must be both causal and within window\n    valid_positions = causal_cond & window_cond\n    swa_mask = swa_mask.masked_fill(valid_positions, False)\n    \n    # Expand to [batch_size, num_heads, seq_length, source_length]\n    sliding_window_attention_mask = swa_mask[None, None, :, :].expand(\n        batch_size, swa_num_attention_heads, target_length, source_length\n    ).contiguous()\n    \n    return full_attention_mask, sliding_window_attention_mask\n"
+}

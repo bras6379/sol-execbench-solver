@@ -1,0 +1,248 @@
+{
+  "cand_id": "88904751123b",
+  "task_id": 16,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Cache one CUDA graph per distinct rope_theta and replay it to cut CPU launch overhead, with the kernel still computing e",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "a16a4a9cdf99",
+  "trajectory": "runs/16/work/88904751123b/trajectory.jsonl",
+  "gpu_s": 54.9,
+  "job_id": "16-88904751123b",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  016_rope_inverse_frequency_computation\nSolution: t16_16-88904751123b\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u280b Compiling C++/CUDA solution...\nCompilation succeeded\n\u280f Evaluating 16 workload(s)...\nEvaluation failed\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 36.0,
+      "power_w_max": 252.79,
+      "samples": 181,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002303,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021925,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0021285,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002112,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0022234999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.002048,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020959999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0020794999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_runtime.h>\n#include <cmath>\n#include <cstring>\n#include <mutex>\n#include <unordered_map>\n\n// Problem 016 \u2014 RoPE inverse-frequency initialization.\n//\n//   inv_freq[i] = 1 / rope_theta^(2*i / head_dim)\n//               = rope_theta^(-i / 64)                 for i in [0, 64)\n//               = exp2( i * c ),   c = -log2(rope_theta) / 64\n//\n// This op is pure launch/latency-bound: a 256-byte, write-only, 64-element\n// output.  The previous single-kernel exp2f implementation already removed\n// the heavy powf+reciprocal compute, leaving the residual time dominated by\n// CPU dispatch / kernel-launch overhead.\n//\n// Lever pulled here: cache a CUDA graph per distinct rope_theta value.  A\n// graph replay has much lower CPU overhead than a fresh kernel launch, so it\n// drives the per-call latency closer to the ~0.4us SOL floor.  The output\n// buffer is owned by the graph and written by the replayed kernel each call,\n// so the values are freshly computed every invocation (not a cached result).\n//\n// Correctness: same kernel body as the proven exp2f approach.  c is computed\n// once on the host in double precision and rounded to fp32; exp2f(i*c) then\n// matches the reference 1/(theta^(i/64)) to well under the 1e-5 gate for all\n// theta > 1 (inv_freq in (0,1], so abs err equals rel err ~2.7e-6).\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void __launch_bounds__(N)\nrope_inv_freq_kernel(float* __restrict__ out, float c)\n{\n    const int i = threadIdx.x;            // 0 .. N-1, blockDim.x == N\n    out[i] = exp2f(static_cast<float>(i) * c);\n}\n\nstruct CachedGraph {\n    cudaGraphExec_t exec = nullptr;\n    torch::Tensor out;\n};\n\nstatic std::unordered_map<std::uint32_t, CachedGraph> g_graph_cache;\nstatic std::mutex g_mutex;\n\ntorch::Tensor run(float rope_theta)\n{\n    // Stable key from the float bit pattern (avoids NaN/rounding hazards).\n    std::uint32_t key = 0;\n    static_assert(sizeof(key) == sizeof(rope_theta), \"float key size mismatch\");\n    std::memcpy(&key, &rope_theta, sizeof(key));\n\n    std::lock_guard<std::mutex> lock(g_mutex);\n    auto it = g_graph_cache.find(key);\n    if (it == g_graph_cache.end()) {\n        auto out = torch::empty(\n            {N},\n            torch::TensorOptions()\n                .dtype(torch::kFloat32)\n                .device(torch::kCUDA));\n\n        // Host-side log2 fold: c = -log2(theta) / 64.  /64 is exact (power of two).\n        const double L = std::log2(static_cast<double>(rope_theta));\n        const float c = static_cast<float>(-L / static_cast<double>(N));\n\n        at::cuda::CUDAStream stream = at::cuda::getCurrentCUDAStream(out.device().index());\n\n        cudaGraph_t graph;\n        cudaStreamBeginCapture(stream.stream(), cudaStreamCaptureModeThreadLocal);\n        rope_inv_freq_kernel<<<1, N, 0, stream.stream()>>>(out.data_ptr<float>(), c);\n        cudaStreamEndCapture(stream.stream(), &graph);\n\n        cudaGraphExec_t exec;\n        cudaGraphInstantiateWithFlags(&exec, graph, 0);\n        cudaGraphDestroy(graph);\n\n        CachedGraph cg;\n        cg.exec = exec;\n        cg.out = std::move(out);\n        it = g_graph_cache.emplace(key, std::move(cg)).first;\n    }\n\n    at::cuda::CUDAStream stream = at::cuda::getCurrentCUDAStream(it->second.out.device().index());\n    cudaGraphLaunch(it->second.exec, stream.stream());\n    return it->second.out;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32)\");\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t16_88904751123b",
+    "definition": "016_rope_inverse_frequency_computation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_runtime.h>\n#include <cmath>\n#include <cstring>\n#include <mutex>\n#include <unordered_map>\n\n// Problem 016 \u2014 RoPE inverse-frequency initialization.\n//\n//   inv_freq[i] = 1 / rope_theta^(2*i / head_dim)\n//               = rope_theta^(-i / 64)                 for i in [0, 64)\n//               = exp2( i * c ),   c = -log2(rope_theta) / 64\n//\n// This op is pure launch/latency-bound: a 256-byte, write-only, 64-element\n// output.  The previous single-kernel exp2f implementation already removed\n// the heavy powf+reciprocal compute, leaving the residual time dominated by\n// CPU dispatch / kernel-launch overhead.\n//\n// Lever pulled here: cache a CUDA graph per distinct rope_theta value.  A\n// graph replay has much lower CPU overhead than a fresh kernel launch, so it\n// drives the per-call latency closer to the ~0.4us SOL floor.  The output\n// buffer is owned by the graph and written by the replayed kernel each call,\n// so the values are freshly computed every invocation (not a cached result).\n//\n// Correctness: same kernel body as the proven exp2f approach.  c is computed\n// once on the host in double precision and rounded to fp32; exp2f(i*c) then\n// matches the reference 1/(theta^(i/64)) to well under the 1e-5 gate for all\n// theta > 1 (inv_freq in (0,1], so abs err equals rel err ~2.7e-6).\n\nconstexpr int HEAD_DIM = 128;\nconstexpr int N = HEAD_DIM / 2;  // 64\n\n__global__ void __launch_bounds__(N)\nrope_inv_freq_kernel(float* __restrict__ out, float c)\n{\n    const int i = threadIdx.x;            // 0 .. N-1, blockDim.x == N\n    out[i] = exp2f(static_cast<float>(i) * c);\n}\n\nstruct CachedGraph {\n    cudaGraphExec_t exec = nullptr;\n    torch::Tensor out;\n};\n\nstatic std::unordered_map<std::uint32_t, CachedGraph> g_graph_cache;\nstatic std::mutex g_mutex;\n\ntorch::Tensor run(float rope_theta)\n{\n    // Stable key from the float bit pattern (avoids NaN/rounding hazards).\n    std::uint32_t key = 0;\n    static_assert(sizeof(key) == sizeof(rope_theta), \"float key size mismatch\");\n    std::memcpy(&key, &rope_theta, sizeof(key));\n\n    std::lock_guard<std::mutex> lock(g_mutex);\n    auto it = g_graph_cache.find(key);\n    if (it == g_graph_cache.end()) {\n        auto out = torch::empty(\n            {N},\n            torch::TensorOptions()\n                .dtype(torch::kFloat32)\n                .device(torch::kCUDA));\n\n        // Host-side log2 fold: c = -log2(theta) / 64.  /64 is exact (power of two).\n        const double L = std::log2(static_cast<double>(rope_theta));\n        const float c = static_cast<float>(-L / static_cast<double>(N));\n\n        at::cuda::CUDAStream stream = at::cuda::getCurrentCUDAStream(out.device().index());\n\n        cudaGraph_t graph;\n        cudaStreamBeginCapture(stream.stream(), cudaStreamCaptureModeThreadLocal);\n        rope_inv_freq_kernel<<<1, N, 0, stream.stream()>>>(out.data_ptr<float>(), c);\n        cudaStreamEndCapture(stream.stream(), &graph);\n\n        cudaGraphExec_t exec;\n        cudaGraphInstantiateWithFlags(&exec, graph, 0);\n        cudaGraphDestroy(graph);\n\n        CachedGraph cg;\n        cg.exec = exec;\n        cg.out = std::move(out);\n        it = g_graph_cache.emplace(key, std::move(cg)).first;\n    }\n\n    at::cuda::CUDAStream stream = at::cuda::getCurrentCUDAStream(it->second.out.device().index());\n    cudaGraphLaunch(it->second.exec, stream.stream());\n    return it->second.out;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m)\n{\n    m.def(\"run\", &run, \"RoPE inverse frequency (float scalar -> (64,) fp32)\");\n}\n"
+      }
+    ]
+  }
+}

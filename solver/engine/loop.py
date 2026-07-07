@@ -223,12 +223,15 @@ async def solve_problem(
     if ctx.fresh():
         ctx.record("run_started", agent=str(cfg.design_model), name=name, family=family)
         _persist_reference(runs_dir, task_id, problems_dir)   # ground truth beside the frontier
+        dtok: dict = {}
         try:
-            design = await agents[cfg.design_model].design(task_id)
+            design, dtok = await agents[cfg.design_model].design(task_id)
         except Exception as exc:                              # a slow/failed design must not abort
             design = ""
             ctx.record("design_error", error=repr(exc)[:200])
-        ctx.record("design_done", text=design, dur_s=0.0)
+        ctx.record("design_done", text=design, dur_s=0.0, model=str(cfg.design_model),
+                   tok_in=(dtok.get("in") or 0), tok_out=(dtok.get("out") or 0),
+                   tok_cached=(dtok.get("cached") or 0), cost_usd=(dtok.get("cost_usd") or 0.0))
         # cross-problem transfer: hand the agent the best SAME-OP sibling's kernel as a
         # warm start to adapt (NOT eval'd — a sibling kernel usually hardcodes its shape).
         if knowledge is not None:
@@ -286,8 +289,8 @@ async def solve_problem(
         ctx.record("plan_done", cand=cand.cand_id, parent=cand.parent, agent=persp.agent,
                    model=persp.model, strategy=cand.strategy, solution=cand.solution,
                    dur_s=0.0, tok_in=(tok.get("in") or 0), tok_out=(tok.get("out") or 0),
-                   cost_usd=(tok.get("cost_usd") or 0.0), no_op=is_noop,
-                   trajectory=cand.trajectory, handoff=cand.handoff)
+                   tok_cached=(tok.get("cached") or 0), cost_usd=(tok.get("cost_usd") or 0.0),
+                   no_op=is_noop, trajectory=cand.trajectory, handoff=cand.handoff)
 
         ok, _errs = check_fn(cand.solution, task_id)
         ctx.record("check", cand=cand.cand_id, ok=ok)
@@ -334,9 +337,11 @@ async def solve_problem(
                     ctx.record("review_error", cand=cand.cand_id, reviewer=str(review_persp),
                               error=repr(exc)[:200])
                     break                          # review itself failed → fail open, ship as-is
+                vtok = verdict.tokens or {}
                 ctx.record("review", cand=cand.cand_id, reviewer=str(review_persp),
                           verdict=verdict.verdict, issues=verdict.issues, round=round_n,
-                          cost_usd=verdict.cost_usd)
+                          cost_usd=verdict.cost_usd, tok_in=(vtok.get("in") or 0),
+                          tok_out=(vtok.get("out") or 0), tok_cached=(vtok.get("cached") or 0))
                 if verdict.ship or round_n >= cfg.review_max_rounds:
                     break
                 round_n += 1
@@ -353,7 +358,8 @@ async def solve_problem(
                 ctx.record("plan_done", cand=repaired.cand_id, parent=repaired.parent,
                           agent=persp.agent, model=persp.model, strategy=repaired.strategy,
                           solution=repaired.solution, dur_s=0.0, tok_in=(rtok.get("in") or 0),
-                          tok_out=(rtok.get("out") or 0), cost_usd=(rtok.get("cost_usd") or 0.0),
+                          tok_out=(rtok.get("out") or 0), tok_cached=(rtok.get("cached") or 0),
+                          cost_usd=(rtok.get("cost_usd") or 0.0),
                           repair=True, trajectory=repaired.trajectory, handoff=repaired.handoff)
                 rok, _rerrs = check_fn(repaired.solution, task_id)
                 ctx.record("check", cand=repaired.cand_id, ok=rok)

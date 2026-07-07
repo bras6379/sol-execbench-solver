@@ -1,0 +1,258 @@
+{
+  "cand_id": "4a8ca65694f9",
+  "task_id": 25,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Custom CUDA kernel: float4 vectorized LDG.E.128/STG.E.128 (128-bit transactions), persistent grid-stride with 8-way warp",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "270e508f08ee",
+  "trajectory": "runs/25/work/4a8ca65694f9/trajectory.jsonl",
+  "gpu_s": 1.214,
+  "job_id": "25-4a8ca65694f9",
+  "asi": {
+    "stage": "harness",
+    "error": "Traceback (most recent call last):\n  File \"/root/SOL-ExecBench/.venv/bin/sol-execbench\", line 10, in <module>\n    sys.exit(cli())\n             ^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1485, in __call__\n    return self.main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1406, in main\n    rv = self.invoke(ctx)\n         ^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1269, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 824, in invoke\n    return callback(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 272, in cli\n    solution = _load_solution(solution_file)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 74, in _load_solution\n    return Solution(**sol_dict)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/pydantic/main.py\", line 250, in __init__\n    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for Solution\nspec\n  Value error, C++ and Python cannot be mixed, but got [<SupportedLanguages.CUDA_CPP: 'cuda_cpp'>] and [<SupportedLanguages.PYTORCH: 'pytorch'>] [type=value_error, input_value={'languages': ['cuda_cpp'...lse, 'binding': 'torch'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 120.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 198.1,
+      "samples": 1,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.008624,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0345,
+      "baseline_latency_ms": 0.045472,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0096,
+      "baseline_latency_ms": 0.014944,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.0057445,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1404,
+      "baseline_latency_ms": 0.17256,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0092,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1404,
+      "baseline_latency_ms": 0.1727685,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0354,
+      "baseline_latency_ms": 0.046896,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1404,
+      "baseline_latency_ms": 0.1724804999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1078,
+      "baseline_latency_ms": 0.133409,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0029,
+      "baseline_latency_ms": 0.0061125,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.0042555,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0354,
+      "baseline_latency_ms": 0.0467835,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.008672,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.005776,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.00576,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n\n// GELU tanh-approximation: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n// Fused element-wise: 1 read + 1 write = 8 B/elem vs 84 B/elem for the 9-op reference.\n//\n// Memory-bound (AI=3 << 9.74 ridge): HBM bandwidth is the ceiling.\n// Levers: float4 vectorized LDG.E.128 / STG.E.128 (128-bit transactions),\n// persistent grid-stride (fills 148 SMs), 8-way warp coarsening (8 elements/thread),\n// tanhf() intrinsic (same SFU path as torch.tanh, bit-exact).\n\n__global__ void gelu_tanh_kernel(\n    const float* __restrict__ x,\n    float* __restrict__ out,\n    size_t n\n) {\n    // Each thread processes 8 elements per iteration = 2 x float4 loads/stores.\n    constexpr int ELEMS_PER_THREAD = 8;\n    constexpr float SQRT_2_OVER_PI = 0.7978845608028654f;\n    constexpr float COEFF = 0.044715f;\n\n    size_t tid = blockIdx.x * blockDim.x + threadIdx.x;\n    size_t stride = gridDim.x * blockDim.x * ELEMS_PER_THREAD;\n\n    for (size_t i = tid * ELEMS_PER_THREAD; i < n; i += stride) {\n        int rem = static_cast<int>(n - i);\n\n        if (rem >= 8) {\n            // Full vectorized path: 2 x float4 (128-bit each), coalesced.\n            const float4* x4 = reinterpret_cast<const float4*>(x + i);\n            float4* o4 = reinterpret_cast<float4*>(out + i);\n\n            float4 v0 = x4[0];\n            float4 v1 = x4[1];\n\n            float a0 = v0.x, a1 = v0.y, a2 = v0.z, a3 = v0.w;\n            float b0 = v1.x, b1 = v1.y, b2 = v1.z, b3 = v1.w;\n\n            // Unrolled GELU tanh: 8 independent computations to maximize ILP.\n            // Each: v3 = v^3, inner = sqrt(2/pi) * (v + 0.044715 * v3),\n            //       t = tanhf(inner), result = 0.5 * v * (1 + t)\n            float v, v3, inner, t;\n\n            v = a0; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a0 = 0.5f * v * (1.0f + t);\n\n            v = a1; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a1 = 0.5f * v * (1.0f + t);\n\n            v = a2; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a2 = 0.5f * v * (1.0f + t);\n\n            v = a3; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a3 = 0.5f * v * (1.0f + t);\n\n            v = b0; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b0 = 0.5f * v * (1.0f + t);\n\n            v = b1; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b1 = 0.5f * v * (1.0f + t);\n\n            v = b2; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b2 = 0.5f * v * (1.0f + t);\n\n            v = b3; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b3 = 0.5f * v * (1.0f + t);\n\n            o4[0] = make_float4(a0, a1, a2, a3);\n            o4[1] = make_float4(b0, b1, b2, b3);\n        } else {\n            // Scalar tail: handles the last partial block (< 8 elements).\n            // Since n = B*S*4096 and 4096 % 8 = 0, n is always a multiple of 8,\n            // so this path is only taken when the grid-stride misaligns with n.\n            // The compiler will still preserve it for correctness.\n            for (int j = 0; j < rem; ++j) {\n                float v = x[i + j];\n                float v3 = v * v * v;\n                float inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n                float t = tanhf(inner);\n                out[i + j] = 0.5f * v * (1.0f + t);\n            }\n        }\n    }\n}\n\ntorch::Tensor run(torch::Tensor x) {\n    auto output = torch::empty_like(x);\n    size_t n = x.numel();\n\n    constexpr int BLOCK_SIZE = 256;\n    constexpr int ELEMS_PER_THREAD = 8;\n\n    // Persistent grid-stride: size the grid to fill all 148 SMs at 100% occupancy\n    // (8 blocks/SM \u00d7 256 threads = 2048 threads/SM = 64 warps/SM = max).\n    // For small shapes, the grid scales down naturally to avoid launching blocks\n    // that do zero work.\n    int max_grid = 148 * 8;   // 148 SMs \u00d7 8 blocks/SM\n    int needed = static_cast<int>(\n        (n + BLOCK_SIZE * ELEMS_PER_THREAD - 1) / (BLOCK_SIZE * ELEMS_PER_THREAD)\n    );\n    int grid = (needed < max_grid) ? needed : max_grid;\n\n    gelu_tanh_kernel<<<grid, BLOCK_SIZE>>>(\n        x.data_ptr<float>(),\n        output.data_ptr<float>(),\n        n\n    );\n\n    return output;\n}"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        # Small shapes: fewer warps, moderate blocks \u2014 keep grid large enough\n        # to fill 148 SMs while minimizing per-block overhead\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=8),\n        # Medium shapes: balance occupancy and vectorization\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=16),\n        # Large shapes: maximize vectorized BW, fewer blocks \u2192 less scheduling\n        triton.Config({'BLOCK_SIZE': 4096}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 4096}, num_warps=16),\n        triton.Config({'BLOCK_SIZE': 8192}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 8192}, num_warps=16),\n    ],\n    key=['n_elements'],\n)\n@triton.jit\ndef _gelu_tanh_kernel(\n    x_ptr,\n    out_ptr,\n    n_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    block_start = pid * BLOCK_SIZE\n    offsets = block_start + tl.arange(0, BLOCK_SIZE)\n    mask = offsets < n_elements\n\n    x = tl.load(x_ptr + offsets, mask=mask, other=0.0)\n\n    # GELU tanh approximation:\n    #   0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n    sqrt_2_over_pi = 0.7978845608028654\n    coeff = 0.044715\n\n    x_cubed = x * x * x\n    inner = sqrt_2_over_pi * (x + coeff * x_cubed)\n    # tanh(z) = (exp(2z) - 1) / (exp(2z) + 1)  \u2014 SFU exp, same hardware path\n    exp2x = tl.math.exp(2.0 * inner)\n    tanh_val = (exp2x - 1.0) / (exp2x + 1.0)\n    output = 0.5 * x * (1.0 + tanh_val)\n\n    tl.store(out_ptr + offsets, output, mask=mask)\n\n\ndef run(x: torch.Tensor) -> torch.Tensor:\n    \"\"\"Fused GELU tanh activation: 1 read + 1 write vs 9-op reference.\"\"\"\n    output = torch.empty_like(x)\n    n_elements = x.numel()\n    grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)\n    _gelu_tanh_kernel[grid](x, output, n_elements)\n    return output"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t25_4a8ca65694f9",
+    "definition": "025_video_latent_gelu_activation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n\n// GELU tanh-approximation: 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n// Fused element-wise: 1 read + 1 write = 8 B/elem vs 84 B/elem for the 9-op reference.\n//\n// Memory-bound (AI=3 << 9.74 ridge): HBM bandwidth is the ceiling.\n// Levers: float4 vectorized LDG.E.128 / STG.E.128 (128-bit transactions),\n// persistent grid-stride (fills 148 SMs), 8-way warp coarsening (8 elements/thread),\n// tanhf() intrinsic (same SFU path as torch.tanh, bit-exact).\n\n__global__ void gelu_tanh_kernel(\n    const float* __restrict__ x,\n    float* __restrict__ out,\n    size_t n\n) {\n    // Each thread processes 8 elements per iteration = 2 x float4 loads/stores.\n    constexpr int ELEMS_PER_THREAD = 8;\n    constexpr float SQRT_2_OVER_PI = 0.7978845608028654f;\n    constexpr float COEFF = 0.044715f;\n\n    size_t tid = blockIdx.x * blockDim.x + threadIdx.x;\n    size_t stride = gridDim.x * blockDim.x * ELEMS_PER_THREAD;\n\n    for (size_t i = tid * ELEMS_PER_THREAD; i < n; i += stride) {\n        int rem = static_cast<int>(n - i);\n\n        if (rem >= 8) {\n            // Full vectorized path: 2 x float4 (128-bit each), coalesced.\n            const float4* x4 = reinterpret_cast<const float4*>(x + i);\n            float4* o4 = reinterpret_cast<float4*>(out + i);\n\n            float4 v0 = x4[0];\n            float4 v1 = x4[1];\n\n            float a0 = v0.x, a1 = v0.y, a2 = v0.z, a3 = v0.w;\n            float b0 = v1.x, b1 = v1.y, b2 = v1.z, b3 = v1.w;\n\n            // Unrolled GELU tanh: 8 independent computations to maximize ILP.\n            // Each: v3 = v^3, inner = sqrt(2/pi) * (v + 0.044715 * v3),\n            //       t = tanhf(inner), result = 0.5 * v * (1 + t)\n            float v, v3, inner, t;\n\n            v = a0; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a0 = 0.5f * v * (1.0f + t);\n\n            v = a1; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a1 = 0.5f * v * (1.0f + t);\n\n            v = a2; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a2 = 0.5f * v * (1.0f + t);\n\n            v = a3; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); a3 = 0.5f * v * (1.0f + t);\n\n            v = b0; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b0 = 0.5f * v * (1.0f + t);\n\n            v = b1; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b1 = 0.5f * v * (1.0f + t);\n\n            v = b2; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b2 = 0.5f * v * (1.0f + t);\n\n            v = b3; v3 = v * v * v;\n            inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n            t = tanhf(inner); b3 = 0.5f * v * (1.0f + t);\n\n            o4[0] = make_float4(a0, a1, a2, a3);\n            o4[1] = make_float4(b0, b1, b2, b3);\n        } else {\n            // Scalar tail: handles the last partial block (< 8 elements).\n            // Since n = B*S*4096 and 4096 % 8 = 0, n is always a multiple of 8,\n            // so this path is only taken when the grid-stride misaligns with n.\n            // The compiler will still preserve it for correctness.\n            for (int j = 0; j < rem; ++j) {\n                float v = x[i + j];\n                float v3 = v * v * v;\n                float inner = SQRT_2_OVER_PI * (v + COEFF * v3);\n                float t = tanhf(inner);\n                out[i + j] = 0.5f * v * (1.0f + t);\n            }\n        }\n    }\n}\n\ntorch::Tensor run(torch::Tensor x) {\n    auto output = torch::empty_like(x);\n    size_t n = x.numel();\n\n    constexpr int BLOCK_SIZE = 256;\n    constexpr int ELEMS_PER_THREAD = 8;\n\n    // Persistent grid-stride: size the grid to fill all 148 SMs at 100% occupancy\n    // (8 blocks/SM \u00d7 256 threads = 2048 threads/SM = 64 warps/SM = max).\n    // For small shapes, the grid scales down naturally to avoid launching blocks\n    // that do zero work.\n    int max_grid = 148 * 8;   // 148 SMs \u00d7 8 blocks/SM\n    int needed = static_cast<int>(\n        (n + BLOCK_SIZE * ELEMS_PER_THREAD - 1) / (BLOCK_SIZE * ELEMS_PER_THREAD)\n    );\n    int grid = (needed < max_grid) ? needed : max_grid;\n\n    gelu_tanh_kernel<<<grid, BLOCK_SIZE>>>(\n        x.data_ptr<float>(),\n        output.data_ptr<float>(),\n        n\n    );\n\n    return output;\n}"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.autotune(\n    configs=[\n        # Small shapes: fewer warps, moderate blocks \u2014 keep grid large enough\n        # to fill 148 SMs while minimizing per-block overhead\n        triton.Config({'BLOCK_SIZE': 256}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 512}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=4),\n        triton.Config({'BLOCK_SIZE': 1024}, num_warps=8),\n        # Medium shapes: balance occupancy and vectorization\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 2048}, num_warps=16),\n        # Large shapes: maximize vectorized BW, fewer blocks \u2192 less scheduling\n        triton.Config({'BLOCK_SIZE': 4096}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 4096}, num_warps=16),\n        triton.Config({'BLOCK_SIZE': 8192}, num_warps=8),\n        triton.Config({'BLOCK_SIZE': 8192}, num_warps=16),\n    ],\n    key=['n_elements'],\n)\n@triton.jit\ndef _gelu_tanh_kernel(\n    x_ptr,\n    out_ptr,\n    n_elements,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    block_start = pid * BLOCK_SIZE\n    offsets = block_start + tl.arange(0, BLOCK_SIZE)\n    mask = offsets < n_elements\n\n    x = tl.load(x_ptr + offsets, mask=mask, other=0.0)\n\n    # GELU tanh approximation:\n    #   0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n    sqrt_2_over_pi = 0.7978845608028654\n    coeff = 0.044715\n\n    x_cubed = x * x * x\n    inner = sqrt_2_over_pi * (x + coeff * x_cubed)\n    # tanh(z) = (exp(2z) - 1) / (exp(2z) + 1)  \u2014 SFU exp, same hardware path\n    exp2x = tl.math.exp(2.0 * inner)\n    tanh_val = (exp2x - 1.0) / (exp2x + 1.0)\n    output = 0.5 * x * (1.0 + tanh_val)\n\n    tl.store(out_ptr + offsets, output, mask=mask)\n\n\ndef run(x: torch.Tensor) -> torch.Tensor:\n    \"\"\"Fused GELU tanh activation: 1 read + 1 write vs 9-op reference.\"\"\"\n    output = torch.empty_like(x)\n    n_elements = x.numel()\n    grid = lambda meta: (triton.cdiv(n_elements, meta['BLOCK_SIZE']),)\n    _gelu_tanh_kernel[grid](x, output, n_elements)\n    return output"
+      }
+    ]
+  }
+}

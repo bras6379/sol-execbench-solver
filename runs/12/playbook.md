@@ -23,3 +23,6 @@ launch-floor-limited and won't move.
 FALLBACK if this round REGRESSES or fails to compile: the proven Triton flat kernel
 (frontier e9827f4b, 0.894) is still the retained frontier and the nex
 
+## 5. from `d3257b2c` — Replace FP64 range reduction (x - 2π*rint(x/2π)) with fp32 Cody-Waite (nearbyint + FMA) to shorten per-thread latency ch
+4-freq/thread with float4 loads + int2 packed stores, using the same Cody-Waite reduction. The prior 4-freq CUDA attempt (0.000_6e334853) had a fatal index bug: `base = (row << 6) | (lane << 1)` should be `base = (row << 5) | (lane << 1)` — the int2 stores index into 32 slots/row (128 bf16 / 4), not 64. Fix that, keep the grid-stride loop, and use the Cody-Waite reduction from this round. Trigger: if this round only ties 0.898 or the large shape (B=64/S=541) is the one workload holding the score down, the 4-freq approach halves per-element instruction count and could move the bandwidth-bound s
+

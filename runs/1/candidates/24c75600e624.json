@@ -1,0 +1,245 @@
+{
+  "cand_id": "24c75600e624",
+  "task_id": 1,
+  "verdict": "dominated",
+  "sol_score": 0.04936698555755652,
+  "sol_score_calibrated": 0.04192753448866158,
+  "correct": true,
+  "vector": [
+    0.005455850231562269,
+    0.04544506088952404,
+    0.08289904790964701,
+    0.09048357218887572,
+    0.014799622922980824,
+    0.13648673352209642,
+    0.019098662621751354,
+    0.10473145867401432,
+    0.018912652823324015,
+    0.03351510461535638,
+    0.03140493945931661,
+    0.01923696379727347,
+    0.05254933986378707,
+    0.05426371369848067,
+    0.008879810182341644,
+    0.07170923552057244
+  ],
+  "strategy": "Reconstruct P_drop in-register from P+mask in dV kernel (replaces attn_weights_dropped HBM load) to cut ~28% HBM traffic",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "c9dca185303e",
+  "trajectory": "runs/1/work/24c75600e624/trajectory.jsonl",
+  "gpu_s": 136.921,
+  "job_id": "1-24c75600e624",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 48.0,
+      "power_w_max": 789.07,
+      "samples": 440,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 12.700886,
+      "sol_ms": 0.0201,
+      "baseline_latency_ms": 0.089664,
+      "sol_score": 0.005455850231562269,
+      "sol_score_cal": 0.00458758966357408,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 15.776207,
+      "sol_ms": 0.0942,
+      "baseline_latency_ms": 0.8407990000000001,
+      "sol_score": 0.04544506088952404,
+      "sol_score_cal": 0.0384328076046807,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 30.050013,
+      "sol_ms": 0.5409,
+      "baseline_latency_ms": 3.2083025,
+      "sol_score": 0.08289904790964701,
+      "sol_score_cal": 0.07040598729885468,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 15.663671,
+      "sol_ms": 0.0923,
+      "baseline_latency_ms": 1.6414235,
+      "sol_score": 0.09048357218887572,
+      "sol_score_cal": 0.07708389068011326,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 12.824734,
+      "sol_ms": 0.0187,
+      "baseline_latency_ms": 0.2110715,
+      "sol_score": 0.014799622922980824,
+      "sol_score_cal": 0.012463245342259078,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 52.585612999999995,
+      "sol_ms": 1.1427,
+      "baseline_latency_ms": 9.2737565,
+      "sol_score": 0.13648673352209642,
+      "sol_score_cal": 0.11688390597146132,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 12.5677,
+      "sol_ms": 0.0119,
+      "baseline_latency_ms": 0.256368,
+      "sol_score": 0.019098662621751354,
+      "sol_score_cal": 0.016095989690897452,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 31.967844,
+      "sol_ms": 0.5781,
+      "baseline_latency_ms": 4.250175499999999,
+      "sol_score": 0.10473145867401432,
+      "sol_score_cal": 0.08926734247439577,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 12.8787605,
+      "sol_ms": 0.0188,
+      "baseline_latency_ms": 0.2667045,
+      "sol_score": 0.018912652823324015,
+      "sol_score_cal": 0.015937461743292483,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 13.571397,
+      "sol_ms": 0.0398,
+      "baseline_latency_ms": 0.5090395000000001,
+      "sol_score": 0.03351510461535638,
+      "sol_score_cal": 0.028302558921074427,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 13.7445495,
+      "sol_ms": 0.0409,
+      "baseline_latency_ms": 0.485216,
+      "sol_score": 0.03140493945931661,
+      "sol_score_cal": 0.02651140298438451,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 14.6200995,
+      "sol_ms": 0.0693,
+      "baseline_latency_ms": 0.3547035,
+      "sol_score": 0.01923696379727347,
+      "sol_score_cal": 0.016203198879807458,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 17.4926055,
+      "sol_ms": 0.147,
+      "baseline_latency_ms": 1.1090555,
+      "sol_score": 0.05254933986378707,
+      "sol_score_cal": 0.04447524905620893,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 13.884916,
+      "sol_ms": 0.0464,
+      "baseline_latency_ms": 0.8404155,
+      "sol_score": 0.05426371369848067,
+      "sol_score_cal": 0.04597480613361469,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 12.835029500000001,
+      "sol_ms": 0.0185,
+      "baseline_latency_ms": 0.133328,
+      "sol_score": 0.008879810182341644,
+      "sol_score_cal": 0.007470911001542702,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 46.424938,
+      "sol_ms": 1.0638,
+      "baseline_latency_ms": 4.567888,
+      "sol_score": 0.07170923552057244,
+      "sol_score_cal": 0.06074420437242369,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Fused B200 backward for attention softmax + dropout + value matmul.\n\nSecond half of an attention backward.  Given the materialized softmax matrix P\n(`attn_weights`), the dropout `mask`, the output-grad dO (`grad_attn_output`) and\nGQA values V (`value_states`), produce dS (grad w.r.t. attention scores) and dV (grad\nw.r.t. value states).  Memory-bound fusion: the two matmuls are cheap and hide under\nthe cost of streaming the four (B,80,Sq,Skv) attention matrices through HBM.\n\nTwo fused Triton kernels (no f32 intermediates touch HBM; the reference\nmaterializes ~5 big f32 temporaries plus a 10x V/dV GQA blow-up):\n\n  dS kernel  - grid (B*H, Sq-blocks).  For large Skv, two passes over Skv:\n      pass 1 accumulates the softmax-bwd row term  delta[i] = sum_j P*dP  (f32);\n      pass 2 writes  dS = P * (dP - delta),  dP = (dO@V^T) * mask * inv_keep.\n      For Skv <= 256 a single-pass \"full-row\" kernel loads the whole softmax row\n      once (dO@V^T, row reduce, write dS) -> reads P and mask from HBM ONCE\n      instead of twice.  GQA handled by indexing V at kv-head  h // 10  (never\n      materialized).\n  dV kernel  - grid (B*Hkv, Skv-blocks).  Accumulates  dV += P_drop^T @ dO\n      over the 10 group heads and all query tiles -> one bf16 write per kv-tile\n      (the GQA reduction folds into the head loop; no atomics).\n\nCRITICAL FIX: dV now reconstructs P_drop IN-REGISTER from P + mask instead of\nreading attn_weights_dropped from HBM.  This eliminates 1 of the 4 HBM-resident\nmatrices (~2 of 7 B/elem, ~28% traffic) with zero cross-kernel coupling, matching\nthe expert's diagnosis that `c9dca185` is already at the traffic floor and only\nsurgical memory savings can close the gap.\n\nAll matmuls are bf16 tensor-core MMA with f32 accumulate: numerically\nequivalent to the reference's f32 matmul because the operands are already bf16\n(products are exact in f32).  The softmax-backward `delta` is accumulated in f32\nfrom the *separate* P and mask operands (matching the reference exactly) -- it\nis deliberately NOT derived from P_drop, whose bf16 rounding would perturb delta\nnear dP==delta cancellation.  A correct torch path is kept as a fallback for\nnon-CUDA / no-triton / kernel-error situations.\n\"\"\"\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - grader runs on B200 with triton\n    _HAS_TRITON = False\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\nif _HAS_TRITON:\n\n    # ----------------------------------------------------------------------- #\n    # Kernel 1: dS = grad_attn_scores  (B, H, Sq, Skv) bf16\n    # ----------------------------------------------------------------------- #\n    # Small BLOCK_Q keeps the live CTAs' P/mask working set inside the 126 MB L2\n    # so the two-pass double-read hits L2 (21 TB/s) not HBM (7.7 TB/s); deeper\n    # num_stages buys memory-level parallelism to saturate BW.\n    _CONFIGS_DS = [\n        triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 256}, num_warps=8, num_stages=2),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_DS, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _ds_kernel(\n        dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n        Sq, Skv, inv_keep,\n        H: tl.constexpr, GRP: tl.constexpr,\n        s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n        s_v_b, s_v_h, s_v_s, s_v_d,          # value_states (B,Hkv,Skv,D)\n        s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights & mask (B,H,Sq,Skv)\n        s_ds_b, s_ds_h, s_ds_q, s_ds_k,      # grad_attn_scores out (B,H,Sq,Skv)\n        D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n    ):\n        pid_bh = tl.program_id(0)\n        pid_q = tl.program_id(1)\n        b = pid_bh // H\n        h = pid_bh % H\n        kv = h // GRP\n\n        offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n        offs_d = tl.arange(0, D)\n        q_valid = offs_q < Sq\n\n        # dO block (BLOCK_Q, D): grad_attn_output[b, offs_q, h, :] (transpose via strides)\n        dO_blk = tl.load(\n            dO_ptr + b * s_do_b + h * s_do_h\n            + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n            mask=q_valid[:, None], other=0.0,\n        )  # bf16\n\n        p_base = P_ptr + b * s_p_b + h * s_p_h\n        m_base = M_ptr + b * s_p_b + h * s_p_h\n        v_base = V_ptr + b * s_v_b + kv * s_v_h\n\n        # ---- pass 1: delta = rowsum_kv( dP * P ), dP = (dO@V^T) * mask * inv_keep ----\n        delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n        for k0 in range(0, Skv, BLOCK_K):\n            offs_k = k0 + tl.arange(0, BLOCK_K)\n            k_valid = offs_k < Skv\n            both = q_valid[:, None] & k_valid[None, :]\n            V_blk = tl.load(\n                v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n                mask=k_valid[:, None], other=0.0,\n            )                                                        # (BK, D) bf16\n            dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)   # (BQ, BK) f32\n            pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n            P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n            dP = dpd * M_blk * inv_keep\n            delta += tl.sum(dP * P_blk, axis=1)\n\n        # ---- pass 2: dS = P * (dP - delta) ----\n        for k0 in range(0, Skv, BLOCK_K):\n            offs_k = k0 + tl.arange(0, BLOCK_K)\n            k_valid = offs_k < Skv\n            both = q_valid[:, None] & k_valid[None, :]\n            V_blk = tl.load(\n                v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n                mask=k_valid[:, None], other=0.0,\n            )\n            dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n            pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n            P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n            dP = dpd * M_blk * inv_keep\n            dS = P_blk * (dP - delta[:, None])\n            tl.store(\n                dS_ptr + b * s_ds_b + h * s_ds_h\n                + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n                dS.to(tl.bfloat16), mask=both,\n            )\n\n    # Small-KV specialization: if the whole softmax row fits in one tile,\n    # compute dO@V^T once, reduce the row term, and write dS in a single pass.\n    _CONFIGS_FULLROW = [\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_FULLROW, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _ds_fullrow_kernel(\n        dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n        Sq, Skv, inv_keep,\n        H: tl.constexpr, GRP: tl.constexpr,\n        s_do_b, s_do_s, s_do_h, s_do_d,\n        s_v_b, s_v_h, s_v_s, s_v_d,\n        s_p_b, s_p_h, s_p_q, s_p_k,\n        s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n        D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n    ):\n        pid_bh = tl.program_id(0)\n        pid_q = tl.program_id(1)\n        b = pid_bh // H\n        h = pid_bh % H\n        kv = h // GRP\n\n        offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n        offs_k = tl.arange(0, BLOCK_K)\n        offs_d = tl.arange(0, D)\n        q_valid = offs_q < Sq\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        dO_blk = tl.load(\n            dO_ptr + b * s_do_b + h * s_do_h\n            + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n            mask=q_valid[:, None], other=0.0,\n        )\n        V_blk = tl.load(\n            V_ptr + b * s_v_b + kv * s_v_h\n            + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        p_base = P_ptr + b * s_p_b + h * s_p_h\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(\n            M_ptr + b * s_p_b + h * s_p_h + pk,\n            mask=both, other=0,\n        ).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        delta = tl.sum(dP * P_blk, axis=1)\n        dS = P_blk * (dP - delta[:, None])\n\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n    # ----------------------------------------------------------------------- #\n    # Kernel 2: dV = grad_value_states  (B, Hkv, Skv, D) bf16\n    # ----------------------------------------------------------------------- #\n    # CRITICAL OPTIMIZATION: reconstructs P_drop IN-REGISTER from P + mask\n    # instead of loading attn_weights_dropped from HBM.  This removes 1 of the\n    # 4 HBM-resident matrices (~2 of 7 B/elem, ~28% traffic) with zero\n    # cross-kernel coupling.\n    _CONFIGS_DV = [\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=16, num_stages=3),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=2),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 256}, num_warps=8, num_stages=3),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_DV, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _dv_kernel(\n        P_ptr, M_ptr, dO_ptr, dV_ptr,\n        Sq, Skv,\n        KVH: tl.constexpr, GRP: tl.constexpr,\n        s_p_b, s_p_h, s_p_q, s_p_k,      # attn_weights & mask (B,H,Sq,Skv)\n        s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n        s_dv_b, s_dv_h, s_dv_s, s_dv_d,      # grad_value_states (B,Hkv,Skv,D)\n        D: tl.constexpr, BLOCK_J: tl.constexpr, BLOCK_Q: tl.constexpr,\n    ):\n        # kv-block is the fast grid dim so consecutive CTAs share the same\n        # (b, kv-head) dO working set and keep it resident in L2 across kv tiles.\n        pid_j = tl.program_id(0)\n        pid_bkv = tl.program_id(1)\n        b = pid_bkv // KVH\n        kvh = pid_bkv % KVH\n\n        offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)   # kv positions\n        offs_d = tl.arange(0, D)\n        j_valid = offs_j < Skv\n\n        acc = tl.zeros((BLOCK_J, D), dtype=tl.float32)\n        for g in range(0, GRP):\n            h = kvh * GRP + g\n            # RECONSTRUCT P_drop IN-REGISTER instead of loading from HBM:\n            # P_drop = (P * mask * inv_keep).to(bf16)\n            do_hb = dO_ptr + b * s_do_b + h * s_do_h\n            for q0 in range(0, Sq, BLOCK_Q):\n                offs_q = q0 + tl.arange(0, BLOCK_Q)\n                q_valid = offs_q < Sq\n\n                # Load P (BQ, BK) and mask (BQ, BK) - both needed for in-register P_drop reconstruction\n                pk = offs_q[:, None] * s_p_q + offs_j[None, :] * s_p_k\n                p_base = P_ptr + b * s_p_b + h * s_p_h\n                P_blk = tl.load(p_base + pk, mask=q_valid[:, None] & j_valid[None, :], other=0.0).to(tl.float32)\n\n                # Load mask as float (1.0 for kept, 0.0 for dropped)\n                M_base = M_ptr + b * s_p_b + h * s_p_h\n                M_blk = tl.load(M_base + pk, mask=q_valid[:, None] & j_valid[None, :], other=0.0).to(tl.float32)\n\n                # RECONSTRUCT P_drop: (P * mask * inv_keep).to(bf16)\n                # mask is boolean 0/1, so this effectively zeroes dropped elements\n                P_drop_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n\n                # Load dO block (BLOCK_Q, D)\n                do = tl.load(\n                    do_hb + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n                    mask=q_valid[:, None], other=0.0,\n                )  # (BQ, D) bf16\n\n                # Accumulate dV += P_drop^T @ dO using bf16 TC with f32 acc\n                acc += tl.dot(tl.trans(P_drop_blk), do, out_dtype=tl.float32)\n\n        tl.store(\n            dV_ptr + b * s_dv_b + kvh * s_dv_h\n            + offs_j[:, None] * s_dv_s + offs_d[None, :] * s_dv_d,\n            acc.to(tl.bfloat16), mask=j_valid[:, None],\n        )\n\n\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    \"\"\"Reference-equivalent path (no 10x V materialize).  Fallback only.\"\"\"\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)          # (B,H,Sq,D)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)                  # (B,KVH,1,Skv,D)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt)\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    if (not _HAS_TRITON) or (not grad_attn_output.is_cuda):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    try:\n        dev = grad_attn_output.device\n        dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n        dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n        # bool mask -> int8 view (1 byte, no copy); loaded 0/1, cast to f32 in-kernel.\n        mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n        s_do = grad_attn_output.stride()\n        s_v = value_states.stride()\n        s_p = attn_weights.stride()\n        s_ds = dS.stride()\n        s_pd = attn_weights_dropped.stride()\n        s_dv = dV.stride()\n\n        if Skv <= 256:\n            block_k = _next_pow2(Skv)\n            grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n            _ds_fullrow_kernel[grid_ds](\n                grad_attn_output, value_states, attn_weights, mask_i8, dS,\n                Sq, Skv, inv_keep,\n                H, G,\n                s_do[0], s_do[1], s_do[2], s_do[3],\n                s_v[0], s_v[1], s_v[2], s_v[3],\n                s_p[0], s_p[1], s_p[2], s_p[3],\n                s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n                D=D, BLOCK_K=block_k,\n            )\n        else:\n            # Skv > 256: two-pass.  Single-pass full-row above 256 needs a V tile\n            # >64 KB whose occupancy collapse regressed earlier attempts, so\n            # those shapes stay on the small-BQ / deep-num_stages two-pass path.\n            grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n            _ds_kernel[grid_ds](\n                grad_attn_output, value_states, attn_weights, mask_i8, dS,\n                Sq, Skv, inv_keep,\n                H, G,\n                s_do[0], s_do[1], s_do[2], s_do[3],\n                s_v[0], s_v[1], s_v[2], s_v[3],\n                s_p[0], s_p[1], s_p[2], s_p[3],\n                s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n                D=D,\n            )\n\n        grid_dv = lambda meta: (triton.cdiv(Skv, meta[\"BLOCK_J\"]), B * KVH)\n        # P and mask only needed for dV now (P_drop reconstructed in-register)\n        _dv_kernel[grid_dv](\n            attn_weights, mask_i8, grad_attn_output, dV,\n            Sq, Skv,\n            KVH, G,\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_dv[0], s_dv[1], s_dv[2], s_dv[3],\n            D=D,\n        )\n        return dS, dV\n    except Exception:\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t1_24c75600e624",
+    "definition": "001_attention_softmax_dropout_value_matmul_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Fused B200 backward for attention softmax + dropout + value matmul.\n\nSecond half of an attention backward.  Given the materialized softmax matrix P\n(`attn_weights`), the dropout `mask`, the output-grad dO (`grad_attn_output`) and\nGQA values V (`value_states`), produce dS (grad w.r.t. attention scores) and dV (grad\nw.r.t. value states).  Memory-bound fusion: the two matmuls are cheap and hide under\nthe cost of streaming the four (B,80,Sq,Skv) attention matrices through HBM.\n\nTwo fused Triton kernels (no f32 intermediates touch HBM; the reference\nmaterializes ~5 big f32 temporaries plus a 10x V/dV GQA blow-up):\n\n  dS kernel  - grid (B*H, Sq-blocks).  For large Skv, two passes over Skv:\n      pass 1 accumulates the softmax-bwd row term  delta[i] = sum_j P*dP  (f32);\n      pass 2 writes  dS = P * (dP - delta),  dP = (dO@V^T) * mask * inv_keep.\n      For Skv <= 256 a single-pass \"full-row\" kernel loads the whole softmax row\n      once (dO@V^T, row reduce, write dS) -> reads P and mask from HBM ONCE\n      instead of twice.  GQA handled by indexing V at kv-head  h // 10  (never\n      materialized).\n  dV kernel  - grid (B*Hkv, Skv-blocks).  Accumulates  dV += P_drop^T @ dO\n      over the 10 group heads and all query tiles -> one bf16 write per kv-tile\n      (the GQA reduction folds into the head loop; no atomics).\n\nCRITICAL FIX: dV now reconstructs P_drop IN-REGISTER from P + mask instead of\nreading attn_weights_dropped from HBM.  This eliminates 1 of the 4 HBM-resident\nmatrices (~2 of 7 B/elem, ~28% traffic) with zero cross-kernel coupling, matching\nthe expert's diagnosis that `c9dca185` is already at the traffic floor and only\nsurgical memory savings can close the gap.\n\nAll matmuls are bf16 tensor-core MMA with f32 accumulate: numerically\nequivalent to the reference's f32 matmul because the operands are already bf16\n(products are exact in f32).  The softmax-backward `delta` is accumulated in f32\nfrom the *separate* P and mask operands (matching the reference exactly) -- it\nis deliberately NOT derived from P_drop, whose bf16 rounding would perturb delta\nnear dP==delta cancellation.  A correct torch path is kept as a fallback for\nnon-CUDA / no-triton / kernel-error situations.\n\"\"\"\n\nimport torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAS_TRITON = True\nexcept Exception:  # pragma: no cover - grader runs on B200 with triton\n    _HAS_TRITON = False\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\nif _HAS_TRITON:\n\n    # ----------------------------------------------------------------------- #\n    # Kernel 1: dS = grad_attn_scores  (B, H, Sq, Skv) bf16\n    # ----------------------------------------------------------------------- #\n    # Small BLOCK_Q keeps the live CTAs' P/mask working set inside the 126 MB L2\n    # so the two-pass double-read hits L2 (21 TB/s) not HBM (7.7 TB/s); deeper\n    # num_stages buys memory-level parallelism to saturate BW.\n    _CONFIGS_DS = [\n        triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n        triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 256}, num_warps=8, num_stages=2),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_DS, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _ds_kernel(\n        dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n        Sq, Skv, inv_keep,\n        H: tl.constexpr, GRP: tl.constexpr,\n        s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n        s_v_b, s_v_h, s_v_s, s_v_d,          # value_states (B,Hkv,Skv,D)\n        s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights & mask (B,H,Sq,Skv)\n        s_ds_b, s_ds_h, s_ds_q, s_ds_k,      # grad_attn_scores out (B,H,Sq,Skv)\n        D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n    ):\n        pid_bh = tl.program_id(0)\n        pid_q = tl.program_id(1)\n        b = pid_bh // H\n        h = pid_bh % H\n        kv = h // GRP\n\n        offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n        offs_d = tl.arange(0, D)\n        q_valid = offs_q < Sq\n\n        # dO block (BLOCK_Q, D): grad_attn_output[b, offs_q, h, :] (transpose via strides)\n        dO_blk = tl.load(\n            dO_ptr + b * s_do_b + h * s_do_h\n            + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n            mask=q_valid[:, None], other=0.0,\n        )  # bf16\n\n        p_base = P_ptr + b * s_p_b + h * s_p_h\n        m_base = M_ptr + b * s_p_b + h * s_p_h\n        v_base = V_ptr + b * s_v_b + kv * s_v_h\n\n        # ---- pass 1: delta = rowsum_kv( dP * P ), dP = (dO@V^T) * mask * inv_keep ----\n        delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n        for k0 in range(0, Skv, BLOCK_K):\n            offs_k = k0 + tl.arange(0, BLOCK_K)\n            k_valid = offs_k < Skv\n            both = q_valid[:, None] & k_valid[None, :]\n            V_blk = tl.load(\n                v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n                mask=k_valid[:, None], other=0.0,\n            )                                                        # (BK, D) bf16\n            dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)   # (BQ, BK) f32\n            pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n            P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n            dP = dpd * M_blk * inv_keep\n            delta += tl.sum(dP * P_blk, axis=1)\n\n        # ---- pass 2: dS = P * (dP - delta) ----\n        for k0 in range(0, Skv, BLOCK_K):\n            offs_k = k0 + tl.arange(0, BLOCK_K)\n            k_valid = offs_k < Skv\n            both = q_valid[:, None] & k_valid[None, :]\n            V_blk = tl.load(\n                v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n                mask=k_valid[:, None], other=0.0,\n            )\n            dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n            pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n            P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n            dP = dpd * M_blk * inv_keep\n            dS = P_blk * (dP - delta[:, None])\n            tl.store(\n                dS_ptr + b * s_ds_b + h * s_ds_h\n                + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n                dS.to(tl.bfloat16), mask=both,\n            )\n\n    # Small-KV specialization: if the whole softmax row fits in one tile,\n    # compute dO@V^T once, reduce the row term, and write dS in a single pass.\n    _CONFIGS_FULLROW = [\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_FULLROW, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _ds_fullrow_kernel(\n        dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n        Sq, Skv, inv_keep,\n        H: tl.constexpr, GRP: tl.constexpr,\n        s_do_b, s_do_s, s_do_h, s_do_d,\n        s_v_b, s_v_h, s_v_s, s_v_d,\n        s_p_b, s_p_h, s_p_q, s_p_k,\n        s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n        D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n    ):\n        pid_bh = tl.program_id(0)\n        pid_q = tl.program_id(1)\n        b = pid_bh // H\n        h = pid_bh % H\n        kv = h // GRP\n\n        offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n        offs_k = tl.arange(0, BLOCK_K)\n        offs_d = tl.arange(0, D)\n        q_valid = offs_q < Sq\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        dO_blk = tl.load(\n            dO_ptr + b * s_do_b + h * s_do_h\n            + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n            mask=q_valid[:, None], other=0.0,\n        )\n        V_blk = tl.load(\n            V_ptr + b * s_v_b + kv * s_v_h\n            + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        p_base = P_ptr + b * s_p_b + h * s_p_h\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(\n            M_ptr + b * s_p_b + h * s_p_h + pk,\n            mask=both, other=0,\n        ).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        delta = tl.sum(dP * P_blk, axis=1)\n        dS = P_blk * (dP - delta[:, None])\n\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n    # ----------------------------------------------------------------------- #\n    # Kernel 2: dV = grad_value_states  (B, Hkv, Skv, D) bf16\n    # ----------------------------------------------------------------------- #\n    # CRITICAL OPTIMIZATION: reconstructs P_drop IN-REGISTER from P + mask\n    # instead of loading attn_weights_dropped from HBM.  This removes 1 of the\n    # 4 HBM-resident matrices (~2 of 7 B/elem, ~28% traffic) with zero\n    # cross-kernel coupling.\n    _CONFIGS_DV = [\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n        triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=16, num_stages=3),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=2),\n        triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n        triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 256}, num_warps=8, num_stages=3),\n    ]\n\n    @triton.autotune(configs=_CONFIGS_DV, key=[\"Sq\", \"Skv\"])\n    @triton.jit\n    def _dv_kernel(\n        P_ptr, M_ptr, dO_ptr, dV_ptr,\n        Sq, Skv,\n        KVH: tl.constexpr, GRP: tl.constexpr,\n        s_p_b, s_p_h, s_p_q, s_p_k,      # attn_weights & mask (B,H,Sq,Skv)\n        s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n        s_dv_b, s_dv_h, s_dv_s, s_dv_d,      # grad_value_states (B,Hkv,Skv,D)\n        D: tl.constexpr, BLOCK_J: tl.constexpr, BLOCK_Q: tl.constexpr,\n    ):\n        # kv-block is the fast grid dim so consecutive CTAs share the same\n        # (b, kv-head) dO working set and keep it resident in L2 across kv tiles.\n        pid_j = tl.program_id(0)\n        pid_bkv = tl.program_id(1)\n        b = pid_bkv // KVH\n        kvh = pid_bkv % KVH\n\n        offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)   # kv positions\n        offs_d = tl.arange(0, D)\n        j_valid = offs_j < Skv\n\n        acc = tl.zeros((BLOCK_J, D), dtype=tl.float32)\n        for g in range(0, GRP):\n            h = kvh * GRP + g\n            # RECONSTRUCT P_drop IN-REGISTER instead of loading from HBM:\n            # P_drop = (P * mask * inv_keep).to(bf16)\n            do_hb = dO_ptr + b * s_do_b + h * s_do_h\n            for q0 in range(0, Sq, BLOCK_Q):\n                offs_q = q0 + tl.arange(0, BLOCK_Q)\n                q_valid = offs_q < Sq\n\n                # Load P (BQ, BK) and mask (BQ, BK) - both needed for in-register P_drop reconstruction\n                pk = offs_q[:, None] * s_p_q + offs_j[None, :] * s_p_k\n                p_base = P_ptr + b * s_p_b + h * s_p_h\n                P_blk = tl.load(p_base + pk, mask=q_valid[:, None] & j_valid[None, :], other=0.0).to(tl.float32)\n\n                # Load mask as float (1.0 for kept, 0.0 for dropped)\n                M_base = M_ptr + b * s_p_b + h * s_p_h\n                M_blk = tl.load(M_base + pk, mask=q_valid[:, None] & j_valid[None, :], other=0.0).to(tl.float32)\n\n                # RECONSTRUCT P_drop: (P * mask * inv_keep).to(bf16)\n                # mask is boolean 0/1, so this effectively zeroes dropped elements\n                P_drop_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n\n                # Load dO block (BLOCK_Q, D)\n                do = tl.load(\n                    do_hb + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n                    mask=q_valid[:, None], other=0.0,\n                )  # (BQ, D) bf16\n\n                # Accumulate dV += P_drop^T @ dO using bf16 TC with f32 acc\n                acc += tl.dot(tl.trans(P_drop_blk), do, out_dtype=tl.float32)\n\n        tl.store(\n            dV_ptr + b * s_dv_b + kvh * s_dv_h\n            + offs_j[:, None] * s_dv_s + offs_d[None, :] * s_dv_d,\n            acc.to(tl.bfloat16), mask=j_valid[:, None],\n        )\n\n\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    \"\"\"Reference-equivalent path (no 10x V materialize).  Fallback only.\"\"\"\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)          # (B,H,Sq,D)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)                  # (B,KVH,1,Skv,D)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt)\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    if (not _HAS_TRITON) or (not grad_attn_output.is_cuda):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    try:\n        dev = grad_attn_output.device\n        dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n        dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n        # bool mask -> int8 view (1 byte, no copy); loaded 0/1, cast to f32 in-kernel.\n        mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n        s_do = grad_attn_output.stride()\n        s_v = value_states.stride()\n        s_p = attn_weights.stride()\n        s_ds = dS.stride()\n        s_pd = attn_weights_dropped.stride()\n        s_dv = dV.stride()\n\n        if Skv <= 256:\n            block_k = _next_pow2(Skv)\n            grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n            _ds_fullrow_kernel[grid_ds](\n                grad_attn_output, value_states, attn_weights, mask_i8, dS,\n                Sq, Skv, inv_keep,\n                H, G,\n                s_do[0], s_do[1], s_do[2], s_do[3],\n                s_v[0], s_v[1], s_v[2], s_v[3],\n                s_p[0], s_p[1], s_p[2], s_p[3],\n                s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n                D=D, BLOCK_K=block_k,\n            )\n        else:\n            # Skv > 256: two-pass.  Single-pass full-row above 256 needs a V tile\n            # >64 KB whose occupancy collapse regressed earlier attempts, so\n            # those shapes stay on the small-BQ / deep-num_stages two-pass path.\n            grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n            _ds_kernel[grid_ds](\n                grad_attn_output, value_states, attn_weights, mask_i8, dS,\n                Sq, Skv, inv_keep,\n                H, G,\n                s_do[0], s_do[1], s_do[2], s_do[3],\n                s_v[0], s_v[1], s_v[2], s_v[3],\n                s_p[0], s_p[1], s_p[2], s_p[3],\n                s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n                D=D,\n            )\n\n        grid_dv = lambda meta: (triton.cdiv(Skv, meta[\"BLOCK_J\"]), B * KVH)\n        # P and mask only needed for dV now (P_drop reconstructed in-register)\n        _dv_kernel[grid_dv](\n            attn_weights, mask_i8, grad_attn_output, dV,\n            Sq, Skv,\n            KVH, G,\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_dv[0], s_dv[1], s_dv[2], s_dv[3],\n            D=D,\n        )\n        return dS, dV\n    except Exception:\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n"
+      }
+    ]
+  }
+}

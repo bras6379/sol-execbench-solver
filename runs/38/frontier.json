@@ -1,0 +1,70 @@
+{
+  "task_id": 38,
+  "family": "reduction",
+  "name": "reduction_38",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "5527f42c7ae3",
+  "best_score": 0.5940913914753766,
+  "best_score_cal": 0.5284352624526168,
+  "members": [
+    {
+      "cand_id": "5527f42c7ae3",
+      "sol_score": 0.5940913914753766,
+      "sol_score_cal": 0.5284352624526168,
+      "all_passed": true,
+      "shapes_won": 11,
+      "vector": [
+        0.6670902160101653,
+        0.5436653275374809,
+        0.5366112225659055,
+        0.5473199329983249,
+        0.5860318538647343,
+        0.658856235107228,
+        0.5342784041688771,
+        0.5861753958587089,
+        0.5830314009661836,
+        0.7169014084507042,
+        0.5363245566899517,
+        0.5574755128442062,
+        0.7137183012526734,
+        0.5512872245984989,
+        0.5111427079101619,
+        0.6755525627822203
+      ],
+      "strategy": "Single fused Triton kernel: flatten [B,S,H,D] to [N,128] rows, one program does BLOCK_M contiguous rows (coalesced float",
+      "agent": "claude",
+      "model": "opus",
+      "candidate": "candidates/5527f42c7ae3.json"
+    },
+    {
+      "cand_id": "3a952eb27120",
+      "sol_score": 0.5901389508648776,
+      "sol_score_cal": 0.5248883732317574,
+      "all_passed": true,
+      "shapes_won": 5,
+      "vector": [
+        0.6662700773349197,
+        0.528310639118887,
+        0.522145617883631,
+        0.5436041851699411,
+        0.5896033870630898,
+        0.6572900158478605,
+        0.5244731273525514,
+        0.5822746521476104,
+        0.5844430992736077,
+        0.7209312618952773,
+        0.5270355898194108,
+        0.5583009439200445,
+        0.7136560031423209,
+        0.5529191383078363,
+        0.5047024862650153,
+        0.6662629892960362
+      ],
+      "strategy": "Same single-launch fused Q+K RMSNorm Triton kernel (proven best structure at 0.528), but switch Q/K/out loads-stores fro",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/3a952eb27120.json"
+    }
+  ]
+}

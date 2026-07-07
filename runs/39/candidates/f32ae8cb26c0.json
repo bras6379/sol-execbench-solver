@@ -1,0 +1,245 @@
+{
+  "cand_id": "f32ae8cb26c0",
+  "task_id": 39,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.4054591812887976,
+    0.0,
+    0.320538408184498,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.4055772588735678,
+    0.0,
+    0.0
+  ],
+  "strategy": "Two fused Triton kernels: one spatial-reduction pass that atomically accumulates grad_bias/grad_weight and per-(N,C) par",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "bb3a719690e2",
+  "trajectory": "runs/39/work/f32ae8cb26c0/trajectory.jsonl",
+  "gpu_s": 46.773,
+  "job_id": "39-f32ae8cb26c0",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 54.0,
+      "power_w_max": 944.49,
+      "samples": 158,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 2.0277015,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.1328325,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0368,
+      "baseline_latency_ms": 1.0731225,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 1.388271,
+      "sol_ms": 0.0272,
+      "baseline_latency_ms": 0.95541,
+      "sol_score": 0.4054591812887976,
+      "sol_score_cal": 0.3635687098622872,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0158,
+      "baseline_latency_ms": 0.573617,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.7917909999999999,
+      "sol_ms": 0.0081,
+      "baseline_latency_ms": 0.377809,
+      "sol_score": 0.320538408184498,
+      "sol_score_cal": 0.2835539006084864,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.293633,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0312,
+      "baseline_latency_ms": 1.0331545,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0927,
+      "baseline_latency_ms": 2.843912,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0283,
+      "baseline_latency_ms": 0.974355,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.2478575,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.9100505,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.319745,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 2.1218865,
+      "sol_ms": 0.0523,
+      "baseline_latency_ms": 1.464388,
+      "sol_score": 0.4055772588735678,
+      "sol_score_cal": 0.3634874455675917,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1054,
+      "baseline_latency_ms": 2.5281835,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0945,
+      "baseline_latency_ms": 2.851128,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Kernel 1: spatial reductions per (N, C).\n# Produces per-channel (grad_bias, grad_weight) and per-(N,C) partials\n# (A, B, C2) that finalize needs to reconstruct grad_var / grad_mean.\n# ---------------------------------------------------------------------------\n@triton.autotune(\n    configs=[\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 1024, 'num_warps': 8}),\n    ],\n    key=['N', 'C', 'S'],\n)\n@triton.jit\ndef _reduce_kernel(\n    grad_output_ptr, x_ptr, mean_ptr, std_ptr, weight_ptr,\n    grad_bias_ptr, grad_weight_ptr, A_ptr, B_ptr, C2_ptr,\n    N, C, S,\n    HW_PER_BLOCK: tl.constexpr,\n    BLOCK_SIZE: tl.constexpr,\n):\n    nc = tl.program_id(0)\n    blk = tl.program_id(1)\n    c = nc % C\n    n = nc // C\n\n    base = n * C * S + c * S\n    hw0 = blk * HW_PER_BLOCK\n    hw1 = tl.minimum(hw0 + HW_PER_BLOCK, S)\n\n    mn = tl.load(mean_ptr + nc)\n    st = tl.load(std_ptr + nc)\n    wt = tl.load(weight_ptr + c)\n\n    acc_bias = 0.0\n    acc_weight = 0.0\n    acc_A = 0.0\n    acc_B = 0.0\n    acc_C2 = 0.0\n\n    for off in range(hw0, hw1, BLOCK_SIZE):\n        hw = off + tl.arange(0, BLOCK_SIZE)\n        mask = hw < hw1\n        idx = base + hw\n\n        go = tl.load(grad_output_ptr + idx, mask=mask, other=0.0)\n        xi = tl.load(x_ptr + idx, mask=mask, other=0.0)\n        xc = xi - mn\n        xn = xc / st\n        gos = go * wt\n\n        acc_bias  += tl.sum(go, axis=0)\n        acc_weight += tl.sum(go * xn, axis=0)\n        acc_A     += tl.sum(gos * xc, axis=0)\n        acc_B     += tl.sum(gos / (-st), axis=0)\n        acc_C2    += tl.sum(tl.where(mask, -2.0 * xc, 0.0), axis=0)\n\n    tl.atomic_add(grad_bias_ptr + c, acc_bias)\n    tl.atomic_add(grad_weight_ptr + c, acc_weight)\n    tl.atomic_add(A_ptr + nc, acc_A)\n    tl.atomic_add(B_ptr + nc, acc_B)\n    tl.atomic_add(C2_ptr + nc, acc_C2)\n\n\n# ---------------------------------------------------------------------------\n# Kernel 2: elementwise finalize. Reconstructs grad_var / grad_mean from the\n# reduced partials and writes grad_input.\n# ---------------------------------------------------------------------------\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'BLOCK_SIZE': 2048, 'num_warps': 4}),\n        triton.Config({'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'BLOCK_SIZE': 2048, 'num_warps': 8}),\n    ],\n    key=['N', 'C', 'S'],\n)\n@triton.jit\ndef _finalize_kernel(\n    grad_output_ptr, x_ptr, mean_ptr, std_ptr, weight_ptr,\n    A_ptr, B_ptr, C2_ptr, grad_input_ptr,\n    N, C, S,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    total = N * C * S\n    offs = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = offs < total\n\n    n = offs // (C * S)\n    rem = offs % (C * S)\n    c = rem // S\n    hw = rem % S\n\n    base = n * C * S + c * S + hw\n    nc = n * C + c\n\n    go = tl.load(grad_output_ptr + base, mask=mask, other=0.0)\n    xi = tl.load(x_ptr + base, mask=mask, other=0.0)\n    mn = tl.load(mean_ptr + nc)\n    st = tl.load(std_ptr + nc)\n    wt = tl.load(weight_ptr + c)\n    A = tl.load(A_ptr + nc)\n    B = tl.load(B_ptr + nc)\n    C2 = tl.load(C2_ptr + nc)\n\n    xc = xi - mn\n    inv_std3 = 1.0 / (st * st * st)\n    gos = go * wt\n\n    grad_var = A * (-0.5) * inv_std3\n    grad_mean = B + grad_var * C2 / S\n\n    gi = gos / st + grad_var * 2.0 * xc / S + grad_mean / S\n    tl.store(grad_input_ptr + base, gi, mask=mask)\n\n\n# ---------------------------------------------------------------------------\n# Execution helpers + CUDA graph cache\n# ---------------------------------------------------------------------------\n_CUDA_GRAPH_CACHE = {}\n_FAILED_GRAPH_KEYS = set()\n\n\ndef _graph_key(*ts):\n    return tuple(\n        (tuple(t.shape), tuple(t.stride()), t.dtype, t.device.index, t.data_ptr())\n        for t in ts\n    )\n\n\ndef _run_kernels(\n    grad_output, x, weight, mean, std,\n    grad_input, grad_weight, grad_bias, A, B, C2,\n    N, C, H, W, S,\n):\n    grid_reduce = lambda meta: (N * C, triton.cdiv(S, meta['HW_PER_BLOCK']))\n    _reduce_kernel[grid_reduce](\n        grad_output, x, mean, std, weight,\n        grad_bias, grad_weight, A, B, C2,\n        N, C, S,\n    )\n\n    grid_finalize = lambda meta: (triton.cdiv(N * C * S, meta['BLOCK_SIZE']),)\n    _finalize_kernel[grid_finalize](\n        grad_output, x, mean, std, weight,\n        A, B, C2, grad_input,\n        N, C, S,\n    )\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    weight: torch.Tensor,\n    mean: torch.Tensor,\n    std: torch.Tensor,\n):\n    N, C, H, W = x.shape\n    S = H * W\n    device = x.device\n\n    key = _graph_key(grad_output, x, weight, mean, std)\n\n    cached = _CUDA_GRAPH_CACHE.get(key)\n    if cached is not None:\n        g, grad_input, grad_weight, grad_bias, A, B, C2 = cached\n        g.replay()\n        return grad_input, grad_weight, grad_bias\n\n    grad_input = torch.empty(N, C, H, W, device=device, dtype=torch.float32)\n    grad_weight = torch.zeros(C, device=device, dtype=torch.float32)\n    grad_bias = torch.zeros(C, device=device, dtype=torch.float32)\n    A = torch.empty(N, C, device=device, dtype=torch.float32)\n    B = torch.empty(N, C, device=device, dtype=torch.float32)\n    C2 = torch.empty(N, C, device=device, dtype=torch.float32)\n\n    def _capture_run():\n        grad_bias.zero_()\n        grad_weight.zero_()\n        A.zero_()\n        B.zero_()\n        C2.zero_()\n        _run_kernels(\n            grad_output, x, weight, mean, std,\n            grad_input, grad_weight, grad_bias, A, B, C2,\n            N, C, H, W, S,\n        )\n\n    if key not in _FAILED_GRAPH_KEYS and torch.cuda.is_available():\n        try:\n            s = torch.cuda.Stream()\n            s.wait_stream(torch.cuda.current_stream())\n            with torch.cuda.stream(s):\n                for _ in range(3):\n                    _capture_run()\n            torch.cuda.current_stream().wait_stream(s)\n\n            g = torch.cuda.CUDAGraph()\n            with torch.cuda.graph(g):\n                _capture_run()\n\n            _CUDA_GRAPH_CACHE[key] = (g, grad_input, grad_weight, grad_bias, A, B, C2)\n            g.replay()\n            return grad_input, grad_weight, grad_bias\n        except Exception:\n            _FAILED_GRAPH_KEYS.add(key)\n\n    # Eager fallback (also used when CUDA graphs are unavailable).\n    _capture_run()\n    return grad_input, grad_weight, grad_bias\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t39_f32ae8cb26c0",
+    "definition": "039_adaptive_instance_normalization_2d_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Kernel 1: spatial reductions per (N, C).\n# Produces per-channel (grad_bias, grad_weight) and per-(N,C) partials\n# (A, B, C2) that finalize needs to reconstruct grad_var / grad_mean.\n# ---------------------------------------------------------------------------\n@triton.autotune(\n    configs=[\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 4096,  'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 16384, 'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 512,  'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 512,  'num_warps': 8}),\n        triton.Config({'HW_PER_BLOCK': 65536, 'BLOCK_SIZE': 1024, 'num_warps': 8}),\n    ],\n    key=['N', 'C', 'S'],\n)\n@triton.jit\ndef _reduce_kernel(\n    grad_output_ptr, x_ptr, mean_ptr, std_ptr, weight_ptr,\n    grad_bias_ptr, grad_weight_ptr, A_ptr, B_ptr, C2_ptr,\n    N, C, S,\n    HW_PER_BLOCK: tl.constexpr,\n    BLOCK_SIZE: tl.constexpr,\n):\n    nc = tl.program_id(0)\n    blk = tl.program_id(1)\n    c = nc % C\n    n = nc // C\n\n    base = n * C * S + c * S\n    hw0 = blk * HW_PER_BLOCK\n    hw1 = tl.minimum(hw0 + HW_PER_BLOCK, S)\n\n    mn = tl.load(mean_ptr + nc)\n    st = tl.load(std_ptr + nc)\n    wt = tl.load(weight_ptr + c)\n\n    acc_bias = 0.0\n    acc_weight = 0.0\n    acc_A = 0.0\n    acc_B = 0.0\n    acc_C2 = 0.0\n\n    for off in range(hw0, hw1, BLOCK_SIZE):\n        hw = off + tl.arange(0, BLOCK_SIZE)\n        mask = hw < hw1\n        idx = base + hw\n\n        go = tl.load(grad_output_ptr + idx, mask=mask, other=0.0)\n        xi = tl.load(x_ptr + idx, mask=mask, other=0.0)\n        xc = xi - mn\n        xn = xc / st\n        gos = go * wt\n\n        acc_bias  += tl.sum(go, axis=0)\n        acc_weight += tl.sum(go * xn, axis=0)\n        acc_A     += tl.sum(gos * xc, axis=0)\n        acc_B     += tl.sum(gos / (-st), axis=0)\n        acc_C2    += tl.sum(tl.where(mask, -2.0 * xc, 0.0), axis=0)\n\n    tl.atomic_add(grad_bias_ptr + c, acc_bias)\n    tl.atomic_add(grad_weight_ptr + c, acc_weight)\n    tl.atomic_add(A_ptr + nc, acc_A)\n    tl.atomic_add(B_ptr + nc, acc_B)\n    tl.atomic_add(C2_ptr + nc, acc_C2)\n\n\n# ---------------------------------------------------------------------------\n# Kernel 2: elementwise finalize. Reconstructs grad_var / grad_mean from the\n# reduced partials and writes grad_input.\n# ---------------------------------------------------------------------------\n@triton.autotune(\n    configs=[\n        triton.Config({'BLOCK_SIZE': 1024, 'num_warps': 4}),\n        triton.Config({'BLOCK_SIZE': 2048, 'num_warps': 4}),\n        triton.Config({'BLOCK_SIZE': 1024, 'num_warps': 8}),\n        triton.Config({'BLOCK_SIZE': 2048, 'num_warps': 8}),\n    ],\n    key=['N', 'C', 'S'],\n)\n@triton.jit\ndef _finalize_kernel(\n    grad_output_ptr, x_ptr, mean_ptr, std_ptr, weight_ptr,\n    A_ptr, B_ptr, C2_ptr, grad_input_ptr,\n    N, C, S,\n    BLOCK_SIZE: tl.constexpr,\n):\n    pid = tl.program_id(0)\n    total = N * C * S\n    offs = pid * BLOCK_SIZE + tl.arange(0, BLOCK_SIZE)\n    mask = offs < total\n\n    n = offs // (C * S)\n    rem = offs % (C * S)\n    c = rem // S\n    hw = rem % S\n\n    base = n * C * S + c * S + hw\n    nc = n * C + c\n\n    go = tl.load(grad_output_ptr + base, mask=mask, other=0.0)\n    xi = tl.load(x_ptr + base, mask=mask, other=0.0)\n    mn = tl.load(mean_ptr + nc)\n    st = tl.load(std_ptr + nc)\n    wt = tl.load(weight_ptr + c)\n    A = tl.load(A_ptr + nc)\n    B = tl.load(B_ptr + nc)\n    C2 = tl.load(C2_ptr + nc)\n\n    xc = xi - mn\n    inv_std3 = 1.0 / (st * st * st)\n    gos = go * wt\n\n    grad_var = A * (-0.5) * inv_std3\n    grad_mean = B + grad_var * C2 / S\n\n    gi = gos / st + grad_var * 2.0 * xc / S + grad_mean / S\n    tl.store(grad_input_ptr + base, gi, mask=mask)\n\n\n# ---------------------------------------------------------------------------\n# Execution helpers + CUDA graph cache\n# ---------------------------------------------------------------------------\n_CUDA_GRAPH_CACHE = {}\n_FAILED_GRAPH_KEYS = set()\n\n\ndef _graph_key(*ts):\n    return tuple(\n        (tuple(t.shape), tuple(t.stride()), t.dtype, t.device.index, t.data_ptr())\n        for t in ts\n    )\n\n\ndef _run_kernels(\n    grad_output, x, weight, mean, std,\n    grad_input, grad_weight, grad_bias, A, B, C2,\n    N, C, H, W, S,\n):\n    grid_reduce = lambda meta: (N * C, triton.cdiv(S, meta['HW_PER_BLOCK']))\n    _reduce_kernel[grid_reduce](\n        grad_output, x, mean, std, weight,\n        grad_bias, grad_weight, A, B, C2,\n        N, C, S,\n    )\n\n    grid_finalize = lambda meta: (triton.cdiv(N * C * S, meta['BLOCK_SIZE']),)\n    _finalize_kernel[grid_finalize](\n        grad_output, x, mean, std, weight,\n        A, B, C2, grad_input,\n        N, C, S,\n    )\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    weight: torch.Tensor,\n    mean: torch.Tensor,\n    std: torch.Tensor,\n):\n    N, C, H, W = x.shape\n    S = H * W\n    device = x.device\n\n    key = _graph_key(grad_output, x, weight, mean, std)\n\n    cached = _CUDA_GRAPH_CACHE.get(key)\n    if cached is not None:\n        g, grad_input, grad_weight, grad_bias, A, B, C2 = cached\n        g.replay()\n        return grad_input, grad_weight, grad_bias\n\n    grad_input = torch.empty(N, C, H, W, device=device, dtype=torch.float32)\n    grad_weight = torch.zeros(C, device=device, dtype=torch.float32)\n    grad_bias = torch.zeros(C, device=device, dtype=torch.float32)\n    A = torch.empty(N, C, device=device, dtype=torch.float32)\n    B = torch.empty(N, C, device=device, dtype=torch.float32)\n    C2 = torch.empty(N, C, device=device, dtype=torch.float32)\n\n    def _capture_run():\n        grad_bias.zero_()\n        grad_weight.zero_()\n        A.zero_()\n        B.zero_()\n        C2.zero_()\n        _run_kernels(\n            grad_output, x, weight, mean, std,\n            grad_input, grad_weight, grad_bias, A, B, C2,\n            N, C, H, W, S,\n        )\n\n    if key not in _FAILED_GRAPH_KEYS and torch.cuda.is_available():\n        try:\n            s = torch.cuda.Stream()\n            s.wait_stream(torch.cuda.current_stream())\n            with torch.cuda.stream(s):\n                for _ in range(3):\n                    _capture_run()\n            torch.cuda.current_stream().wait_stream(s)\n\n            g = torch.cuda.CUDAGraph()\n            with torch.cuda.graph(g):\n                _capture_run()\n\n            _CUDA_GRAPH_CACHE[key] = (g, grad_input, grad_weight, grad_bias, A, B, C2)\n            g.replay()\n            return grad_input, grad_weight, grad_bias\n        except Exception:\n            _FAILED_GRAPH_KEYS.add(key)\n\n    # Eager fallback (also used when CUDA graphs are unavailable).\n    _capture_run()\n    return grad_input, grad_weight, grad_bias\n"
+      }
+    ]
+  }
+}

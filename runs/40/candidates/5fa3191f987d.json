@@ -1,0 +1,245 @@
+{
+  "cand_id": "5fa3191f987d",
+  "task_id": 40,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.5207229739255139,
+    0.0,
+    0.0,
+    0.31939559072896867,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.33460109635153923,
+    0.32537484611786444,
+    0.0,
+    0.0,
+    0.48729164559315225,
+    0.0
+  ],
+  "strategy": "Compose two 3x3 convs into one 5x5 conv (linear composition eliminates the 32-channel intermediate: 10.7x less HBM, 7.7x",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "65986f1ee3ee",
+  "trajectory": "runs/40/work/5fa3191f987d/trajectory.jsonl",
+  "gpu_s": 7.262,
+  "job_id": "40-5fa3191f987d",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 40.0,
+      "power_w_max": 290.39,
+      "samples": 20,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.476959,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.517824,
+      "sol_score": 0.5207229739255139,
+      "sol_score_cal": 0.4768916174945874,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.655103,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.1861114999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.601647,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.283616,
+      "sol_score": 0.31939559072896867,
+      "sol_score_cal": 0.28269280701232885,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.053504,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.1100475,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.5362235,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.506847,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.190176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.045312,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.21556799999999998,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.1088475,
+      "sol_score": 0.33460109635153923,
+      "sol_score_cal": 0.29690701812030157,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.346095,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.167648,
+      "sol_score": 0.32537484611786444,
+      "sol_score_cal": 0.28827414134238183,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.052528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0529759999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.18903999999999999,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.179743,
+      "sol_score": 0.48729164559315225,
+      "sol_score_cal": 0.4437210200831166,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.4669594999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    conv_in_weight: torch.Tensor,\n    conv_in_bias: torch.Tensor,\n    conv_out_weight: torch.Tensor,\n    conv_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Conv2D residual block: two 3x3 convs + residual add.\n\n    Optimization: Since both convs are linear (no activation between them),\n    two sequential 3x3 convs with padding=1 are mathematically equivalent to\n    a single 5x5 conv with padding=2.  This eliminates the (B,32,H,W)\n    intermediate tensor entirely \u2014 a 10.7x reduction in HBM traffic and\n    7.7x fewer FLOPs.  The effective kernel is precomputed analytically.\n\n    w_eff[co, ic, dy, dx] = sum_{ci,kh,kw} w_out[co,ci,kh,kw] * w_in[ci,ic,dy-kh,dx-kw]\n    b_eff[co] = b_out[co] + sum_{ci} b_in[ci] * sum_{kh,kw} w_out[co,ci,kh,kw]\n    \"\"\"\n    # Compose the two 3x3 kernels into one 5x5 kernel.\n    # F.conv2d does cross-correlation; we flip w_in to convert it to convolution.\n    # Shape: (C_out, C_hidden, 3, 3) \u22c6 (C_hidden, C_in, 3, 3) \u2192 (C_out, C_in, 5, 5)\n    w_eff = F.conv2d(\n        conv_out_weight,                                  # input:  (3, 32, 3, 3)\n        conv_in_weight.flip(-1, -2).permute(1, 0, 2, 3),  # kernel: (3, 32, 3, 3)\n        padding=2,\n    )  # -> (3, 3, 5, 5)\n\n    # Compose the biases through the second convolution.\n    # b_eff[co] = b_out[co] + sum_{ci} b_in[ci] * sum_{kh,kw} w_out[co, ci, kh, kw]\n    b_eff = conv_out_bias + (\n        conv_in_bias.unsqueeze(0) * conv_out_weight.sum(dim=(-1, -2))\n    ).sum(dim=1)\n\n    # Single 5x5 convolution with padding=2 (replaces two 3x3 convs with padding=1).\n    out = F.conv2d(x, w_eff, b_eff, padding=2)\n\n    # Residual connection.\n    out = out + x\n\n    return out"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t40_5fa3191f987d",
+    "definition": "040_conv2d_residual_block",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    conv_in_weight: torch.Tensor,\n    conv_in_bias: torch.Tensor,\n    conv_out_weight: torch.Tensor,\n    conv_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Conv2D residual block: two 3x3 convs + residual add.\n\n    Optimization: Since both convs are linear (no activation between them),\n    two sequential 3x3 convs with padding=1 are mathematically equivalent to\n    a single 5x5 conv with padding=2.  This eliminates the (B,32,H,W)\n    intermediate tensor entirely \u2014 a 10.7x reduction in HBM traffic and\n    7.7x fewer FLOPs.  The effective kernel is precomputed analytically.\n\n    w_eff[co, ic, dy, dx] = sum_{ci,kh,kw} w_out[co,ci,kh,kw] * w_in[ci,ic,dy-kh,dx-kw]\n    b_eff[co] = b_out[co] + sum_{ci} b_in[ci] * sum_{kh,kw} w_out[co,ci,kh,kw]\n    \"\"\"\n    # Compose the two 3x3 kernels into one 5x5 kernel.\n    # F.conv2d does cross-correlation; we flip w_in to convert it to convolution.\n    # Shape: (C_out, C_hidden, 3, 3) \u22c6 (C_hidden, C_in, 3, 3) \u2192 (C_out, C_in, 5, 5)\n    w_eff = F.conv2d(\n        conv_out_weight,                                  # input:  (3, 32, 3, 3)\n        conv_in_weight.flip(-1, -2).permute(1, 0, 2, 3),  # kernel: (3, 32, 3, 3)\n        padding=2,\n    )  # -> (3, 3, 5, 5)\n\n    # Compose the biases through the second convolution.\n    # b_eff[co] = b_out[co] + sum_{ci} b_in[ci] * sum_{kh,kw} w_out[co, ci, kh, kw]\n    b_eff = conv_out_bias + (\n        conv_in_bias.unsqueeze(0) * conv_out_weight.sum(dim=(-1, -2))\n    ).sum(dim=1)\n\n    # Single 5x5 convolution with padding=2 (replaces two 3x3 convs with padding=1).\n    out = F.conv2d(x, w_eff, b_eff, padding=2)\n\n    # Residual connection.\n    out = out + x\n\n    return out"
+      }
+    ]
+  }
+}

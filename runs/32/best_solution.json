@@ -1,0 +1,25 @@
+{
+  "name": "t32_da7136326220",
+  "definition": "032_attention_weights_matmul_with_value_projection",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\n\n@torch.no_grad()\ndef run(\n    attn_weights: torch.Tensor,\n    value_states: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention weights @ value matmul with transpose and reshape.\n    \n    Args:\n        attn_weights: Attention weights after softmax, shape (batch, 40, seq_len, seq_len)\n        value_states: Value states after GQA expansion, shape (batch, 40, seq_len, 128)\n        \n    Returns:\n        Reshaped attention output ready for output projection, shape (batch, seq_len, 5120)\n    \"\"\"\n    # Constants\n    num_attention_heads = 40\n    head_dim = 128\n    hidden_size = 5120\n    \n    # Step 1: Attention weights @ value states\n    # (batch, 40, seq_len, seq_len) @ (batch, 40, seq_len, 128) -> (batch, 40, seq_len, 128)\n    attn_output = torch.matmul(attn_weights, value_states)\n    \n    # Step 2: Transpose to move heads dimension\n    # (batch, 40, seq_len, 128) -> (batch, seq_len, 40, 128)\n    attn_output = attn_output.transpose(1, 2)\n    \n    # Step 3: Reshape to combine heads\n    # (batch, seq_len, 40, 128) -> (batch, seq_len, 5120)\n    batch_size, seq_len = attn_output.shape[0], attn_output.shape[1]\n    attn_output = attn_output.reshape(batch_size, seq_len, hidden_size)\n    \n    # Ensure contiguous for next operation\n    attn_output = attn_output.contiguous()\n    \n    return attn_output\n"
+    }
+  ]
+}

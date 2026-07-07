@@ -1,0 +1,245 @@
+{
+  "cand_id": "c6599b0faa10",
+  "task_id": 5,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.88177961815732,
+    0.5875200020021555,
+    0.8863839784300648,
+    0.8662211019889389,
+    0.0,
+    0.1013993420119355,
+    0.9156374351259202,
+    0.8545823269977948,
+    0.0,
+    0.0,
+    0.8752602285762842,
+    0.8791710422257658,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "cuBLAS GEMM1 + int32-indexed Triton middle + split-K Triton GEMM2 (K=2048 split 8 ways) for M<=2560, all captured in a C",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "e987d5d9b4ac",
+  "trajectory": "runs/5/work/c6599b0faa10/trajectory.jsonl",
+  "gpu_s": 104.46,
+  "job_id": "5-c6599b0faa10",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 638.74,
+      "samples": 314,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.1995355,
+      "sol_ms": 0.1522,
+      "baseline_latency_ms": 0.505265,
+      "sol_score": 0.88177961815732,
+      "sol_score_cal": 0.8055102362015918,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.2019515,
+      "sol_ms": 0.0701,
+      "baseline_latency_ms": 0.257904,
+      "sol_score": 0.5875200020021555,
+      "sol_score_cal": 0.5245536651031083,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.11216,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.3560645,
+      "sol_score": 0.8863839784300648,
+      "sol_score_cal": 0.8303221186051074,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.1074555,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.2780325,
+      "sol_score": 0.8662211019889389,
+      "sol_score_cal": 0.7964030017700631,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0384,
+      "baseline_latency_ms": 0.1528485,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.467519,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.05728,
+      "sol_score": 0.1013993420119355,
+      "sol_score_cal": 0.0864726756536712,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.19958350000000002,
+      "sol_ms": 0.1522,
+      "baseline_latency_ms": 0.6664815,
+      "sol_score": 0.9156374351259202,
+      "sol_score_cal": 0.8577278585444972,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.10953550000000001,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.2716165,
+      "sol_score": 0.8545823269977948,
+      "sol_score_cal": 0.7832594108658418,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0384,
+      "baseline_latency_ms": 0.157936,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.057344,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.198112,
+      "sol_ms": 0.1482,
+      "baseline_latency_ms": 0.498417,
+      "sol_score": 0.8752602285762842,
+      "sol_score_cal": 0.8000017726191919,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.19879950000000002,
+      "sol_ms": 0.1522,
+      "baseline_latency_ms": 0.4912655,
+      "sol_score": 0.8791710422257658,
+      "sol_score_cal": 0.8007462174323232,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.092064,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0405,
+      "baseline_latency_ms": 0.16768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0384,
+      "baseline_latency_ms": 0.1584645,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.1166085,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# ---------------------------------------------------------------------------\n# Problem 005 \u2014 conv_gated_projection_with_causal_conv (LFM2-1.2B short-conv), B200.\n#\n# Op graph (M = batch*seq, H = hidden = 2048, Kconv = conv kernel = 4):\n#   1. BCx = linear(x, in_proj_w, in_proj_b)          (M, 3H)  GEMM1\n#   2. B, C, x_proj = chunk(BCx.T, 3)                  views\n#   3. Bx = B * x_proj                                elementwise\n#   4. conv_out = depthwise causal conv1d(Bx, K=4)    tiny stencil\n#   5. y = C * conv_out                               elementwise\n#   6. output = linear(y, out_proj_w, out_proj_b)    (M, H)  GEMM2\n#\n# Improvement over 0.772 frontier: replace GEMM2 with a Triton split-K matmul\n# for M<=2560.  At small M the (M,H)x(H,H) cuBLAS call is occupancy-bound\n# (only ~16-32 M-tiles); splitting K 8 ways turns each M/N tile into 8\n# independent parallel units, filling the 148 SMs.  The partial sums are kept\n# in fp32, reduced, bias is added, and the final result is cast to bf16 to\n# match the reference numerical path.  GEMM1 and the fused middle are unchanged.\n# ---------------------------------------------------------------------------\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover\n    _HAVE_TRITON = False\n\n\nif _HAVE_TRITON:\n\n    def _mid_configs():\n        cfgs = []\n        for bs, bc, w, st in [\n            (16, 128, 4, 2),\n            (16, 256, 4, 2),\n            (32, 64, 4, 2),\n            (32, 128, 4, 2),\n            (32, 256, 4, 3),\n            (32, 256, 8, 2),\n            (64, 64, 4, 2),\n            (64, 128, 4, 3),\n            (64, 256, 8, 3),\n            (128, 64, 4, 3),\n            (128, 128, 4, 3),\n            (128, 256, 8, 3),\n            (256, 64, 4, 3),\n            (256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config(\n                {\"BLOCK_S\": bs, \"BLOCK_C\": bc}, num_warps=w, num_stages=st))\n        return cfgs\n\n    @triton.autotune(configs=_mid_configs(), key=[\"seq\", \"batch\"])\n    @triton.jit\n    def _middle_kernel(\n        BCx_ptr,\n        W_ptr,\n        CB_ptr,\n        Y_ptr,\n        seq,\n        batch,\n        H: tl.constexpr,\n        THREEH: tl.constexpr,\n        BLOCK_S: tl.constexpr,\n        BLOCK_C: tl.constexpr,\n    ):\n        pid0 = tl.program_id(0)\n        pid_c = tl.program_id(1)\n\n        num_s_blocks = tl.cdiv(seq, BLOCK_S)\n        b = pid0 // num_s_blocks\n        sb = pid0 % num_s_blocks\n        s0 = sb * BLOCK_S\n        c0 = pid_c * BLOCK_C\n\n        s_idx = s0 + tl.arange(0, BLOCK_S)\n        c_idx = c0 + tl.arange(0, BLOCK_C)\n        c_mask = c_idx < H\n        s_mask = s_idx < seq\n\n        w0 = tl.load(W_ptr + c_idx * 4 + 0, mask=c_mask, other=0.0).to(tl.float32)\n        w1 = tl.load(W_ptr + c_idx * 4 + 1, mask=c_mask, other=0.0).to(tl.float32)\n        w2 = tl.load(W_ptr + c_idx * 4 + 2, mask=c_mask, other=0.0).to(tl.float32)\n        w3 = tl.load(W_ptr + c_idx * 4 + 3, mask=c_mask, other=0.0).to(tl.float32)\n        cb = tl.load(CB_ptr + c_idx, mask=c_mask, other=0.0).to(tl.float32)\n\n        batch_off = b * seq * THREEH\n\n        acc = tl.zeros((BLOCK_S, BLOCK_C), tl.float32) + cb[None, :]\n\n        for k in range(4):\n            s_k = s_idx - 3 + k\n            valid = (s_k >= 0) & (s_k < seq)\n            row_off = batch_off + s_k[:, None] * THREEH\n            m2d = valid[:, None] & c_mask[None, :]\n\n            b_off = row_off + c_idx[None, :]\n            x_off = row_off + (2 * H + c_idx[None, :])\n            b_val = tl.load(BCx_ptr + b_off, mask=m2d, other=0.0).to(tl.float32)\n            x_val = tl.load(BCx_ptr + x_off, mask=m2d, other=0.0).to(tl.float32)\n            bx = (b_val * x_val).to(tl.bfloat16).to(tl.float32)\n\n            if k == 0:\n                acc += bx * w0[None, :]\n            elif k == 1:\n                acc += bx * w1[None, :]\n            elif k == 2:\n                acc += bx * w2[None, :]\n            else:\n                acc += bx * w3[None, :]\n\n        conv_out = acc.to(tl.bfloat16).to(tl.float32)\n\n        c_row = batch_off + s_idx[:, None] * THREEH + (H + c_idx[None, :])\n        out_mask = s_mask[:, None] & c_mask[None, :]\n        c_val = tl.load(BCx_ptr + c_row, mask=out_mask, other=0.0).to(tl.float32)\n        y = c_val * conv_out\n\n        y_off = b * seq * H + s_idx[:, None] * H + c_idx[None, :]\n        tl.store(Y_ptr + y_off, y.to(tl.bfloat16), mask=out_mask)\n\n    # -----------------------------------------------------------------------\n    # Split-K GEMM for small/medium M (M <= 2560).\n    # Compute output = A[M,K] @ B[K,N] + bias[N].\n    # B is passed as W.t().contiguous(), so the matmul is plain A @ B.\n    # -----------------------------------------------------------------------\n\n    _K_SPLIT = 8\n    _REDUCE_BLOCK_M = 128\n    _REDUCE_BLOCK_N = 128\n\n    def _gemm2_configs():\n        cfgs = []\n        # SPLIT_K is fixed to _K_SPLIT; K=2048 => each split covers 256 elements.\n        for bm, bn, bk, warps, stages in [\n            (64, 64, 128, 4, 2),\n            (64, 64, 256, 4, 2),\n            (64, 128, 128, 4, 2),\n            (64, 128, 256, 8, 2),\n            (128, 64, 128, 4, 2),\n            (128, 64, 256, 8, 2),\n            (128, 128, 128, 8, 2),\n            (128, 128, 256, 8, 3),\n            (256, 64, 128, 8, 2),\n            (256, 128, 128, 8, 3),\n            (64, 256, 128, 8, 3),\n            (128, 256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config(\n                {\"BLOCK_M\": bm, \"BLOCK_N\": bn, \"BLOCK_K\": bk, \"SPLIT_K\": _K_SPLIT},\n                num_warps=warps, num_stages=stages))\n        return cfgs\n\n    @triton.autotune(configs=_gemm2_configs(), key=[\"M\", \"N\", \"K\"])\n    @triton.jit\n    def _gemm2_splitk_kernel(\n        A_ptr,\n        B_ptr,\n        P_ptr,\n        M,\n        N,\n        K,\n        stride_am,\n        stride_ak,\n        stride_bk,\n        stride_bn,\n        stride_pm,\n        stride_pn,\n        stride_ps,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n        SPLIT_K: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n        pid_k = tl.program_id(2)\n\n        k_per_split = K // SPLIT_K\n        k_start = pid_k * k_per_split\n\n        m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        k_base = tl.arange(0, BLOCK_K)\n\n        a_mask = m_offs[:, None] < M\n        b_mask = n_offs[None, :] < N\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n\n        for k0 in range(0, k_per_split, BLOCK_K):\n            k_offs = k_start + k0 + k_base\n            a = tl.load(\n                A_ptr + m_offs[:, None] * stride_am + k_offs[None, :] * stride_ak,\n                mask=a_mask,\n                other=0.0,\n            )\n            b = tl.load(\n                B_ptr + k_offs[:, None] * stride_bk + n_offs[None, :] * stride_bn,\n                mask=b_mask,\n                other=0.0,\n            )\n            acc += tl.dot(a, b)\n\n        p_off = (\n            m_offs[:, None] * stride_pm\n            + n_offs[None, :] * stride_pn\n            + pid_k * stride_ps\n        )\n        tl.store(\n            P_ptr + p_off,\n            acc,\n            mask=(m_offs[:, None] < M) & (n_offs[None, :] < N),\n        )\n\n    @triton.jit\n    def _gemm2_reduce_kernel(\n        P_ptr,\n        Bias_ptr,\n        Out_ptr,\n        M,\n        N,\n        stride_pm,\n        stride_pn,\n        stride_ps,\n        stride_om,\n        stride_on,\n        KSLICES: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n\n        m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n        for k in range(KSLICES):\n            p = tl.load(\n                P_ptr + m_offs[:, None] * stride_pm + n_offs[None, :] * stride_pn + k * stride_ps,\n                mask=mask,\n                other=0.0,\n            )\n            acc += p\n\n        bias = tl.load(Bias_ptr + n_offs, mask=n_offs < N, other=0.0).to(tl.float32)\n        out = (acc + bias[None, :]).to(tl.bfloat16)\n\n        tl.store(\n            Out_ptr + m_offs[:, None] * stride_om + n_offs[None, :] * stride_on,\n            out,\n            mask=mask,\n        )\n\n\ndef _middle_triton(BCx, conv_weight, conv_bias, batch, seq, H):\n    THREEH = 3 * H\n    W = conv_weight.reshape(H, -1).contiguous()\n    CB = conv_bias.contiguous()\n    Y = torch.empty((batch, seq, H), dtype=BCx.dtype, device=BCx.device)\n\n    grid = lambda META: (\n        batch * ((seq + META[\"BLOCK_S\"] - 1) // META[\"BLOCK_S\"]),\n        (H + META[\"BLOCK_C\"] - 1) // META[\"BLOCK_C\"],\n    )\n\n    _middle_kernel[grid](BCx, W, CB, Y, seq, batch, H=H, THREEH=THREEH)\n    return Y\n\n\ndef _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H):\n    dt = BCx.dtype\n    B_ = BCx[..., 0:H]\n    C_ = BCx[..., H:2 * H]\n    xp = BCx[..., 2 * H:3 * H]\n    Bx = (B_.float() * xp.float()).to(dt).float()\n    w = conv_weight.reshape(H, 4).float()\n    conv_out = conv_bias.float().view(1, 1, H) + w[:, 3].view(1, 1, H) * Bx\n    if seq > 1:\n        conv_out[:, 1:, :] += w[:, 2].view(1, 1, H) * Bx[:, :-1, :]\n    if seq > 2:\n        conv_out[:, 2:, :] += w[:, 1].view(1, 1, H) * Bx[:, :-2, :]\n    if seq > 3:\n        conv_out[:, 3:, :] += w[:, 0].view(1, 1, H) * Bx[:, :-3, :]\n    conv_out = conv_out.to(dt).float()\n    y = (C_.float() * conv_out).to(dt)\n    return y\n\n\ndef _middle(BCx, conv_weight, conv_bias, batch, seq, H):\n    if _HAVE_TRITON and BCx.is_cuda:\n        try:\n            return _middle_triton(BCx, conv_weight, conv_bias, batch, seq, H)\n        except Exception:\n            return _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H)\n    return _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H)\n\n\ndef _gemm2_splitk(a, wt, bias):\n    \"\"\"a: (M, K), wt: (K, N) contiguous, bias: (N,).\"\"\"\n    M, K = a.shape\n    K2, N = wt.shape\n    assert K == K2\n    out = torch.empty((M, N), dtype=a.dtype, device=a.device)\n\n    # Partial fp32 accumulator.  Every autotune config uses SPLIT_K == _K_SPLIT,\n    # so all slices are written before the reduction reads them.\n    P = torch.empty((M, N, _K_SPLIT), dtype=torch.float32, device=a.device)\n\n    grid = lambda META: (\n        triton.cdiv(M, META[\"BLOCK_M\"]),\n        triton.cdiv(N, META[\"BLOCK_N\"]),\n        META[\"SPLIT_K\"],\n    )\n    _gemm2_splitk_kernel[grid](\n        a, wt, P,\n        M, N, K,\n        a.stride(0), a.stride(1),\n        wt.stride(0), wt.stride(1),\n        P.stride(0), P.stride(1), P.stride(2),\n    )\n\n    reduce_grid = (\n        triton.cdiv(M, _REDUCE_BLOCK_M),\n        triton.cdiv(N, _REDUCE_BLOCK_N),\n    )\n    _gemm2_reduce_kernel[reduce_grid](\n        P, bias, out,\n        M, N,\n        P.stride(0), P.stride(1), P.stride(2),\n        out.stride(0), out.stride(1),\n        KSLICES=_K_SPLIT,\n        BLOCK_M=_REDUCE_BLOCK_M,\n        BLOCK_N=_REDUCE_BLOCK_N,\n    )\n    return out\n\n\n# Small/medium M threshold for the split-K Triton GEMM2 and CUDA-graph path.\n_SPLITK_MAX_M = 2560\n\n# Cache the transposed output-projection weight so the CUDA graph does not\n# replay a transpose copy every iteration.\n_GEMM2_WT_CACHE = {}\n\n\ndef _gemm2_out(y, out_weight, out_bias):\n    M = y.shape[0]\n    if _HAVE_TRITON and y.is_cuda and M <= _SPLITK_MAX_M:\n        key = out_weight.data_ptr()\n        wt = _GEMM2_WT_CACHE.get(key)\n        if wt is None:\n            wt = out_weight.t().contiguous()\n            _GEMM2_WT_CACHE[key] = wt\n        return _gemm2_splitk(y, wt, out_bias)\n    return F.linear(y, out_weight, out_bias)\n\n\ndef _run_impl(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    batch, seq, H = x.shape\n    M = batch * seq\n\n    BCx = F.linear(x.view(M, H), in_proj_weight, in_proj_bias)\n    BCx = BCx.view(batch, seq, -1)\n\n    y = _middle(BCx, conv_weight, conv_bias, batch, seq, H)\n\n    output = _gemm2_out(y.view(M, H), out_proj_weight, out_proj_bias)\n    output = output.view(batch, seq, -1)\n    return output\n\n\n# ---------------------------------------------------------------------------\n# CUDA graph for M <= SPLITK_MAX_M to eliminate host launch gaps between GEMM1,\n# the middle kernel, the split-K GEMM2, and its reduction.\n# ---------------------------------------------------------------------------\n\n_GRAPH_CACHE = {}\n_GRAPH_CALLS = {}\n_GRAPH_CAPTURE_AFTER = 3\n_GRAPH_MAX_TOKENS = _SPLITK_MAX_M\n\n\ndef _graph_key(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    return tuple(t.data_ptr() for t in (\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    ))\n\n\ndef _capture_or_run(\n    key,\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    try:\n        warm_stream = torch.cuda.Stream()\n        warm_stream.wait_stream(torch.cuda.current_stream())\n        with torch.cuda.stream(warm_stream):\n            _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n            _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n        torch.cuda.current_stream().wait_stream(warm_stream)\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            static_out = _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n            static_out = static_out.clone()\n\n        graph.replay()\n        _GRAPH_CACHE[key] = (graph, static_out)\n        return static_out\n    except Exception:\n        _GRAPH_CACHE[key] = None\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n\n\ndef _run_with_graph(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    if (\n        not x.is_cuda\n        or x.numel() // x.shape[-1] > _GRAPH_MAX_TOKENS\n        or not torch.cuda.is_available()\n    ):\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n\n    key = _graph_key(\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n    cached = _GRAPH_CACHE.get(key, \"missing\")\n    if cached != \"missing\":\n        if cached is None:\n            return _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n        graph, static_out = cached\n        graph.replay()\n        return static_out\n\n    calls = _GRAPH_CALLS.get(key, 0) + 1\n    _GRAPH_CALLS[key] = calls\n    if calls < _GRAPH_CAPTURE_AFTER:\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n    return _capture_or_run(\n        key,\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    in_proj_weight: torch.Tensor,\n    in_proj_bias: torch.Tensor,\n    conv_weight: torch.Tensor,\n    conv_bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n):\n    return _run_with_graph(\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t5_c6599b0faa10",
+    "definition": "005_conv_gated_projection_with_causal_conv",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# ---------------------------------------------------------------------------\n# Problem 005 \u2014 conv_gated_projection_with_causal_conv (LFM2-1.2B short-conv), B200.\n#\n# Op graph (M = batch*seq, H = hidden = 2048, Kconv = conv kernel = 4):\n#   1. BCx = linear(x, in_proj_w, in_proj_b)          (M, 3H)  GEMM1\n#   2. B, C, x_proj = chunk(BCx.T, 3)                  views\n#   3. Bx = B * x_proj                                elementwise\n#   4. conv_out = depthwise causal conv1d(Bx, K=4)    tiny stencil\n#   5. y = C * conv_out                               elementwise\n#   6. output = linear(y, out_proj_w, out_proj_b)    (M, H)  GEMM2\n#\n# Improvement over 0.772 frontier: replace GEMM2 with a Triton split-K matmul\n# for M<=2560.  At small M the (M,H)x(H,H) cuBLAS call is occupancy-bound\n# (only ~16-32 M-tiles); splitting K 8 ways turns each M/N tile into 8\n# independent parallel units, filling the 148 SMs.  The partial sums are kept\n# in fp32, reduced, bias is added, and the final result is cast to bf16 to\n# match the reference numerical path.  GEMM1 and the fused middle are unchanged.\n# ---------------------------------------------------------------------------\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover\n    _HAVE_TRITON = False\n\n\nif _HAVE_TRITON:\n\n    def _mid_configs():\n        cfgs = []\n        for bs, bc, w, st in [\n            (16, 128, 4, 2),\n            (16, 256, 4, 2),\n            (32, 64, 4, 2),\n            (32, 128, 4, 2),\n            (32, 256, 4, 3),\n            (32, 256, 8, 2),\n            (64, 64, 4, 2),\n            (64, 128, 4, 3),\n            (64, 256, 8, 3),\n            (128, 64, 4, 3),\n            (128, 128, 4, 3),\n            (128, 256, 8, 3),\n            (256, 64, 4, 3),\n            (256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config(\n                {\"BLOCK_S\": bs, \"BLOCK_C\": bc}, num_warps=w, num_stages=st))\n        return cfgs\n\n    @triton.autotune(configs=_mid_configs(), key=[\"seq\", \"batch\"])\n    @triton.jit\n    def _middle_kernel(\n        BCx_ptr,\n        W_ptr,\n        CB_ptr,\n        Y_ptr,\n        seq,\n        batch,\n        H: tl.constexpr,\n        THREEH: tl.constexpr,\n        BLOCK_S: tl.constexpr,\n        BLOCK_C: tl.constexpr,\n    ):\n        pid0 = tl.program_id(0)\n        pid_c = tl.program_id(1)\n\n        num_s_blocks = tl.cdiv(seq, BLOCK_S)\n        b = pid0 // num_s_blocks\n        sb = pid0 % num_s_blocks\n        s0 = sb * BLOCK_S\n        c0 = pid_c * BLOCK_C\n\n        s_idx = s0 + tl.arange(0, BLOCK_S)\n        c_idx = c0 + tl.arange(0, BLOCK_C)\n        c_mask = c_idx < H\n        s_mask = s_idx < seq\n\n        w0 = tl.load(W_ptr + c_idx * 4 + 0, mask=c_mask, other=0.0).to(tl.float32)\n        w1 = tl.load(W_ptr + c_idx * 4 + 1, mask=c_mask, other=0.0).to(tl.float32)\n        w2 = tl.load(W_ptr + c_idx * 4 + 2, mask=c_mask, other=0.0).to(tl.float32)\n        w3 = tl.load(W_ptr + c_idx * 4 + 3, mask=c_mask, other=0.0).to(tl.float32)\n        cb = tl.load(CB_ptr + c_idx, mask=c_mask, other=0.0).to(tl.float32)\n\n        batch_off = b * seq * THREEH\n\n        acc = tl.zeros((BLOCK_S, BLOCK_C), tl.float32) + cb[None, :]\n\n        for k in range(4):\n            s_k = s_idx - 3 + k\n            valid = (s_k >= 0) & (s_k < seq)\n            row_off = batch_off + s_k[:, None] * THREEH\n            m2d = valid[:, None] & c_mask[None, :]\n\n            b_off = row_off + c_idx[None, :]\n            x_off = row_off + (2 * H + c_idx[None, :])\n            b_val = tl.load(BCx_ptr + b_off, mask=m2d, other=0.0).to(tl.float32)\n            x_val = tl.load(BCx_ptr + x_off, mask=m2d, other=0.0).to(tl.float32)\n            bx = (b_val * x_val).to(tl.bfloat16).to(tl.float32)\n\n            if k == 0:\n                acc += bx * w0[None, :]\n            elif k == 1:\n                acc += bx * w1[None, :]\n            elif k == 2:\n                acc += bx * w2[None, :]\n            else:\n                acc += bx * w3[None, :]\n\n        conv_out = acc.to(tl.bfloat16).to(tl.float32)\n\n        c_row = batch_off + s_idx[:, None] * THREEH + (H + c_idx[None, :])\n        out_mask = s_mask[:, None] & c_mask[None, :]\n        c_val = tl.load(BCx_ptr + c_row, mask=out_mask, other=0.0).to(tl.float32)\n        y = c_val * conv_out\n\n        y_off = b * seq * H + s_idx[:, None] * H + c_idx[None, :]\n        tl.store(Y_ptr + y_off, y.to(tl.bfloat16), mask=out_mask)\n\n    # -----------------------------------------------------------------------\n    # Split-K GEMM for small/medium M (M <= 2560).\n    # Compute output = A[M,K] @ B[K,N] + bias[N].\n    # B is passed as W.t().contiguous(), so the matmul is plain A @ B.\n    # -----------------------------------------------------------------------\n\n    _K_SPLIT = 8\n    _REDUCE_BLOCK_M = 128\n    _REDUCE_BLOCK_N = 128\n\n    def _gemm2_configs():\n        cfgs = []\n        # SPLIT_K is fixed to _K_SPLIT; K=2048 => each split covers 256 elements.\n        for bm, bn, bk, warps, stages in [\n            (64, 64, 128, 4, 2),\n            (64, 64, 256, 4, 2),\n            (64, 128, 128, 4, 2),\n            (64, 128, 256, 8, 2),\n            (128, 64, 128, 4, 2),\n            (128, 64, 256, 8, 2),\n            (128, 128, 128, 8, 2),\n            (128, 128, 256, 8, 3),\n            (256, 64, 128, 8, 2),\n            (256, 128, 128, 8, 3),\n            (64, 256, 128, 8, 3),\n            (128, 256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config(\n                {\"BLOCK_M\": bm, \"BLOCK_N\": bn, \"BLOCK_K\": bk, \"SPLIT_K\": _K_SPLIT},\n                num_warps=warps, num_stages=stages))\n        return cfgs\n\n    @triton.autotune(configs=_gemm2_configs(), key=[\"M\", \"N\", \"K\"])\n    @triton.jit\n    def _gemm2_splitk_kernel(\n        A_ptr,\n        B_ptr,\n        P_ptr,\n        M,\n        N,\n        K,\n        stride_am,\n        stride_ak,\n        stride_bk,\n        stride_bn,\n        stride_pm,\n        stride_pn,\n        stride_ps,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n        BLOCK_K: tl.constexpr,\n        SPLIT_K: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n        pid_k = tl.program_id(2)\n\n        k_per_split = K // SPLIT_K\n        k_start = pid_k * k_per_split\n\n        m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        k_base = tl.arange(0, BLOCK_K)\n\n        a_mask = m_offs[:, None] < M\n        b_mask = n_offs[None, :] < N\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n\n        for k0 in range(0, k_per_split, BLOCK_K):\n            k_offs = k_start + k0 + k_base\n            a = tl.load(\n                A_ptr + m_offs[:, None] * stride_am + k_offs[None, :] * stride_ak,\n                mask=a_mask,\n                other=0.0,\n            )\n            b = tl.load(\n                B_ptr + k_offs[:, None] * stride_bk + n_offs[None, :] * stride_bn,\n                mask=b_mask,\n                other=0.0,\n            )\n            acc += tl.dot(a, b)\n\n        p_off = (\n            m_offs[:, None] * stride_pm\n            + n_offs[None, :] * stride_pn\n            + pid_k * stride_ps\n        )\n        tl.store(\n            P_ptr + p_off,\n            acc,\n            mask=(m_offs[:, None] < M) & (n_offs[None, :] < N),\n        )\n\n    @triton.jit\n    def _gemm2_reduce_kernel(\n        P_ptr,\n        Bias_ptr,\n        Out_ptr,\n        M,\n        N,\n        stride_pm,\n        stride_pn,\n        stride_ps,\n        stride_om,\n        stride_on,\n        KSLICES: tl.constexpr,\n        BLOCK_M: tl.constexpr,\n        BLOCK_N: tl.constexpr,\n    ):\n        pid_m = tl.program_id(0)\n        pid_n = tl.program_id(1)\n\n        m_offs = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n        n_offs = pid_n * BLOCK_N + tl.arange(0, BLOCK_N)\n        mask = (m_offs[:, None] < M) & (n_offs[None, :] < N)\n\n        acc = tl.zeros((BLOCK_M, BLOCK_N), tl.float32)\n        for k in range(KSLICES):\n            p = tl.load(\n                P_ptr + m_offs[:, None] * stride_pm + n_offs[None, :] * stride_pn + k * stride_ps,\n                mask=mask,\n                other=0.0,\n            )\n            acc += p\n\n        bias = tl.load(Bias_ptr + n_offs, mask=n_offs < N, other=0.0).to(tl.float32)\n        out = (acc + bias[None, :]).to(tl.bfloat16)\n\n        tl.store(\n            Out_ptr + m_offs[:, None] * stride_om + n_offs[None, :] * stride_on,\n            out,\n            mask=mask,\n        )\n\n\ndef _middle_triton(BCx, conv_weight, conv_bias, batch, seq, H):\n    THREEH = 3 * H\n    W = conv_weight.reshape(H, -1).contiguous()\n    CB = conv_bias.contiguous()\n    Y = torch.empty((batch, seq, H), dtype=BCx.dtype, device=BCx.device)\n\n    grid = lambda META: (\n        batch * ((seq + META[\"BLOCK_S\"] - 1) // META[\"BLOCK_S\"]),\n        (H + META[\"BLOCK_C\"] - 1) // META[\"BLOCK_C\"],\n    )\n\n    _middle_kernel[grid](BCx, W, CB, Y, seq, batch, H=H, THREEH=THREEH)\n    return Y\n\n\ndef _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H):\n    dt = BCx.dtype\n    B_ = BCx[..., 0:H]\n    C_ = BCx[..., H:2 * H]\n    xp = BCx[..., 2 * H:3 * H]\n    Bx = (B_.float() * xp.float()).to(dt).float()\n    w = conv_weight.reshape(H, 4).float()\n    conv_out = conv_bias.float().view(1, 1, H) + w[:, 3].view(1, 1, H) * Bx\n    if seq > 1:\n        conv_out[:, 1:, :] += w[:, 2].view(1, 1, H) * Bx[:, :-1, :]\n    if seq > 2:\n        conv_out[:, 2:, :] += w[:, 1].view(1, 1, H) * Bx[:, :-2, :]\n    if seq > 3:\n        conv_out[:, 3:, :] += w[:, 0].view(1, 1, H) * Bx[:, :-3, :]\n    conv_out = conv_out.to(dt).float()\n    y = (C_.float() * conv_out).to(dt)\n    return y\n\n\ndef _middle(BCx, conv_weight, conv_bias, batch, seq, H):\n    if _HAVE_TRITON and BCx.is_cuda:\n        try:\n            return _middle_triton(BCx, conv_weight, conv_bias, batch, seq, H)\n        except Exception:\n            return _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H)\n    return _middle_torch(BCx, conv_weight, conv_bias, batch, seq, H)\n\n\ndef _gemm2_splitk(a, wt, bias):\n    \"\"\"a: (M, K), wt: (K, N) contiguous, bias: (N,).\"\"\"\n    M, K = a.shape\n    K2, N = wt.shape\n    assert K == K2\n    out = torch.empty((M, N), dtype=a.dtype, device=a.device)\n\n    # Partial fp32 accumulator.  Every autotune config uses SPLIT_K == _K_SPLIT,\n    # so all slices are written before the reduction reads them.\n    P = torch.empty((M, N, _K_SPLIT), dtype=torch.float32, device=a.device)\n\n    grid = lambda META: (\n        triton.cdiv(M, META[\"BLOCK_M\"]),\n        triton.cdiv(N, META[\"BLOCK_N\"]),\n        META[\"SPLIT_K\"],\n    )\n    _gemm2_splitk_kernel[grid](\n        a, wt, P,\n        M, N, K,\n        a.stride(0), a.stride(1),\n        wt.stride(0), wt.stride(1),\n        P.stride(0), P.stride(1), P.stride(2),\n    )\n\n    reduce_grid = (\n        triton.cdiv(M, _REDUCE_BLOCK_M),\n        triton.cdiv(N, _REDUCE_BLOCK_N),\n    )\n    _gemm2_reduce_kernel[reduce_grid](\n        P, bias, out,\n        M, N,\n        P.stride(0), P.stride(1), P.stride(2),\n        out.stride(0), out.stride(1),\n        KSLICES=_K_SPLIT,\n        BLOCK_M=_REDUCE_BLOCK_M,\n        BLOCK_N=_REDUCE_BLOCK_N,\n    )\n    return out\n\n\n# Small/medium M threshold for the split-K Triton GEMM2 and CUDA-graph path.\n_SPLITK_MAX_M = 2560\n\n# Cache the transposed output-projection weight so the CUDA graph does not\n# replay a transpose copy every iteration.\n_GEMM2_WT_CACHE = {}\n\n\ndef _gemm2_out(y, out_weight, out_bias):\n    M = y.shape[0]\n    if _HAVE_TRITON and y.is_cuda and M <= _SPLITK_MAX_M:\n        key = out_weight.data_ptr()\n        wt = _GEMM2_WT_CACHE.get(key)\n        if wt is None:\n            wt = out_weight.t().contiguous()\n            _GEMM2_WT_CACHE[key] = wt\n        return _gemm2_splitk(y, wt, out_bias)\n    return F.linear(y, out_weight, out_bias)\n\n\ndef _run_impl(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    batch, seq, H = x.shape\n    M = batch * seq\n\n    BCx = F.linear(x.view(M, H), in_proj_weight, in_proj_bias)\n    BCx = BCx.view(batch, seq, -1)\n\n    y = _middle(BCx, conv_weight, conv_bias, batch, seq, H)\n\n    output = _gemm2_out(y.view(M, H), out_proj_weight, out_proj_bias)\n    output = output.view(batch, seq, -1)\n    return output\n\n\n# ---------------------------------------------------------------------------\n# CUDA graph for M <= SPLITK_MAX_M to eliminate host launch gaps between GEMM1,\n# the middle kernel, the split-K GEMM2, and its reduction.\n# ---------------------------------------------------------------------------\n\n_GRAPH_CACHE = {}\n_GRAPH_CALLS = {}\n_GRAPH_CAPTURE_AFTER = 3\n_GRAPH_MAX_TOKENS = _SPLITK_MAX_M\n\n\ndef _graph_key(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    return tuple(t.data_ptr() for t in (\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    ))\n\n\ndef _capture_or_run(\n    key,\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    try:\n        warm_stream = torch.cuda.Stream()\n        warm_stream.wait_stream(torch.cuda.current_stream())\n        with torch.cuda.stream(warm_stream):\n            _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n            _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n        torch.cuda.current_stream().wait_stream(warm_stream)\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            static_out = _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n            static_out = static_out.clone()\n\n        graph.replay()\n        _GRAPH_CACHE[key] = (graph, static_out)\n        return static_out\n    except Exception:\n        _GRAPH_CACHE[key] = None\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n\n\ndef _run_with_graph(\n    x,\n    in_proj_weight,\n    in_proj_bias,\n    conv_weight,\n    conv_bias,\n    out_proj_weight,\n    out_proj_bias,\n):\n    if (\n        not x.is_cuda\n        or x.numel() // x.shape[-1] > _GRAPH_MAX_TOKENS\n        or not torch.cuda.is_available()\n    ):\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n\n    key = _graph_key(\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n    cached = _GRAPH_CACHE.get(key, \"missing\")\n    if cached != \"missing\":\n        if cached is None:\n            return _run_impl(\n                x, in_proj_weight, in_proj_bias,\n                conv_weight, conv_bias,\n                out_proj_weight, out_proj_bias,\n            )\n        graph, static_out = cached\n        graph.replay()\n        return static_out\n\n    calls = _GRAPH_CALLS.get(key, 0) + 1\n    _GRAPH_CALLS[key] = calls\n    if calls < _GRAPH_CAPTURE_AFTER:\n        return _run_impl(\n            x, in_proj_weight, in_proj_bias,\n            conv_weight, conv_bias,\n            out_proj_weight, out_proj_bias,\n        )\n    return _capture_or_run(\n        key,\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    in_proj_weight: torch.Tensor,\n    in_proj_bias: torch.Tensor,\n    conv_weight: torch.Tensor,\n    conv_bias: torch.Tensor,\n    out_proj_weight: torch.Tensor,\n    out_proj_bias: torch.Tensor,\n):\n    return _run_with_graph(\n        x, in_proj_weight, in_proj_bias,\n        conv_weight, conv_bias,\n        out_proj_weight, out_proj_bias,\n    )\n"
+      }
+    ]
+  }
+}

@@ -35,7 +35,8 @@ def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
 
     async def fake_call(prompt, model, timeout, cwd=None):
         calls.append((model, prompt))
-        return "**Root cause:** memory-bound.\n**Spent:** bf16 cublas.\n**The one lever:** try fp8.", model, 0.01
+        return ("**Root cause:** memory-bound.\n**Spent:** bf16 cublas.\n**The one lever:** try fp8.",
+                model, {"cost_usd": 0.01})
 
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
 
@@ -65,7 +66,7 @@ def test_diagnose_only_stuck_deduped_and_attached(tmp_path, monkeypatch):
 
 def test_attach_is_idempotent(tmp_path, monkeypatch):
     async def fake_call(p, m, t, cwd=None):
-        return "**The one lever:** try split-K.", m, 0.01
+        return "**The one lever:** try split-K.", m, {"cost_usd": 0.01}
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])
@@ -78,7 +79,7 @@ def test_attach_is_idempotent(tmp_path, monkeypatch):
 
 def test_fable_failure_is_graceful(tmp_path, monkeypatch):
     async def fail(p, m, t, cwd=None):
-        return None, "", 0.0                         # e.g. quota exceeded (all fallbacks too)
+        return None, "", {}                          # e.g. quota exceeded (all fallbacks too)
     monkeypatch.setattr(diagnose, "_call_fable", fail)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])
@@ -99,14 +100,14 @@ def test_call_fable_falls_back_when_primary_provider_fails(monkeypatch):
     async def fake_try(prompt, model, timeout, cwd, env):
         attempts.append((model, env.get("ANTHROPIC_BASE_URL")))
         if env.get("ANTHROPIC_BASE_URL") is None:
-            return None, 0.0                # primary (native claude) fails — e.g. rate-limited
-        return f"diagnosis from {model}", 0.02
+            return None, {}                  # primary (native claude) fails — e.g. rate-limited
+        return f"diagnosis from {model}", {"cost_usd": 0.02}
 
     monkeypatch.setattr(diagnose, "_try_model", fake_try)
-    prose, used, cost = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
+    prose, used, usage = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
     assert prose == "diagnosis from deepseek/deepseek-v4-pro"
     assert used == "openrouter:deepseek/deepseek-v4-pro"
-    assert cost == 0.02
+    assert usage["cost_usd"] == 0.02
     # tried native claude first, then the first fallback that has a key configured
     assert attempts[0] == ("claude-sonnet-5", None)
     assert attempts[1][0] == "deepseek/deepseek-v4-pro"
@@ -117,11 +118,11 @@ def test_call_fable_skips_fallback_with_no_api_key(monkeypatch):
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
 
     async def always_fail(prompt, model, timeout, cwd, env):
-        return None, 0.0
+        return None, {}
 
     monkeypatch.setattr(diagnose, "_try_model", always_fail)
-    prose, used, cost = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
-    assert prose is None and used == "" and cost == 0.0   # graceful — no crash, no rungs available
+    prose, used, usage = run(diagnose._call_fable("prompt", "claude-sonnet-5", 10))
+    assert prose is None and used == "" and not usage     # graceful — no crash, no rungs available
 
 
 def test_diagnose_cost_is_persisted_and_journaled(tmp_path, monkeypatch):
@@ -129,7 +130,7 @@ def test_diagnose_cost_is_persisted_and_journaled(tmp_path, monkeypatch):
     own journal.jsonl (cumulative, dashboard-scannable) — on success AND failure,
     since a failed-but-billed call (e.g. 402 mid-fallback) must still count."""
     async def fake_call(prompt, model, timeout, cwd=None):
-        return "**The one lever:** try split-K.", model, 0.05
+        return "**The one lever:** try split-K.", model, {"cost_usd": 0.05, "in": 100, "out": 40, "cached": 10}
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])
@@ -137,6 +138,7 @@ def test_diagnose_cost_is_persisted_and_journaled(tmp_path, monkeypatch):
 
     d = json.loads((tmp_path / "3" / "diagnosis.json").read_text())
     assert d["cost_usd"] == 0.05
+    assert d["tok_in"] == 100 and d["tok_out"] == 40 and d["tok_cached"] == 10
     lines = [json.loads(l) for l in (tmp_path / "3" / "journal.jsonl").read_text().splitlines()]
     cost_ev = [e for e in lines if e.get("ev") == "diagnose_cost"]
     assert len(cost_ev) == 1 and cost_ev[0]["cost_usd"] == 0.05 and cost_ev[0]["success"] is True
@@ -144,7 +146,7 @@ def test_diagnose_cost_is_persisted_and_journaled(tmp_path, monkeypatch):
 
 def test_diagnose_failed_but_billed_cost_still_journaled(tmp_path, monkeypatch):
     async def fake_call(prompt, model, timeout, cwd=None):
-        return None, "", 0.03           # e.g. a 402 that still billed a partial request
+        return None, "", {"cost_usd": 0.03}   # e.g. a 402 that still billed a partial request
     monkeypatch.setattr(diagnose, "_call_fable", fake_call)
     _mk_problem(tmp_path, 3, [0.70, 0.55, 0.60, 0.52, 0.58, 0.50], ["seed"] + ["bf16"] * 5, "regressing")
     refls = R.reflect_all(tmp_path, [3])

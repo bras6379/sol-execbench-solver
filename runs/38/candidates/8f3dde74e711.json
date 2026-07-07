@@ -1,0 +1,245 @@
+{
+  "cand_id": "8f3dde74e711",
+  "task_id": 38,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.6645569620253164,
+    0.0,
+    0.534656112953257,
+    0.0,
+    0.5874730430176686,
+    0.6541798107255521,
+    0.5348530785933728,
+    0.5901400624628768,
+    0.5934234787953288,
+    0.7189265536723164,
+    0.5348301361054549,
+    0.5626748740906548,
+    0.7019532088430994,
+    0.5492608291119612,
+    0.0,
+    0.6662369623813404
+  ],
+  "strategy": "Fused single-launch Triton RMSNorm over Q+K, but split into a 2D grid (tensor-lane x row-block) so each program only loa",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "5527f42c7ae3",
+  "trajectory": "runs/38/work/8f3dde74e711/trajectory.jsonl",
+  "gpu_s": 48.334,
+  "job_id": "38-8f3dde74e711",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 51.0,
+      "power_w_max": 930.06,
+      "samples": 160,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.00624,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.0104,
+      "sol_score": 0.6645569620253164,
+      "sol_score_cal": 0.6075685684527254,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0429,
+      "baseline_latency_ms": 0.1072485,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.061504,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.066688,
+      "sol_score": 0.534656112953257,
+      "sol_score_cal": 0.462407906957812,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.04,
+      "baseline_latency_ms": 0.102736,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.017903500000000003,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.0225275,
+      "sol_score": 0.5874730430176686,
+      "sol_score_cal": 0.5204865203963508,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.011216,
+      "sol_ms": 0.0042,
+      "baseline_latency_ms": 0.017472,
+      "sol_score": 0.6541798107255521,
+      "sol_score_cal": 0.59199680271769,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.061296,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.0664805,
+      "sol_score": 0.5348530785933728,
+      "sol_score_cal": 0.46244167530585517,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0176955,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.0224,
+      "sol_score": 0.5901400624628768,
+      "sol_score_cal": 0.522784492786168,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.017584000000000002,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.022448,
+      "sol_score": 0.5934234787953288,
+      "sol_score_cal": 0.5259258855763941,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.004384,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.009344,
+      "sol_score": 0.7189265536723164,
+      "sol_score_cal": 0.6696839723179749,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.061424,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.066624,
+      "sol_score": 0.5348301361054549,
+      "sol_score_cal": 0.46251930060001006,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.032256,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.037632,
+      "sol_score": 0.5626748740906548,
+      "sol_score_cal": 0.49232260717992915,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.0046715,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.009376,
+      "sol_score": 0.7019532088430994,
+      "sol_score_cal": 0.6522492667580635,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.03312,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.0374085,
+      "sol_score": 0.5492608291119612,
+      "sol_score_cal": 0.47988510938092754,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0529,
+      "baseline_latency_ms": 0.12336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.006272,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.0105274999999999,
+      "sol_score": 0.6662369623813404,
+      "sol_score_cal": 0.6094911222641666,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Problem 038 \u2014 Flux multi-head RMSNorm (Q and K fused).\n#\n# Op: per-head RMSNorm over head_dim=128 for both Q and K, then per-head\n# learnable scale.  Inputs/outputs/weights are all fp32.  This is a textbook\n# *memory-bound* fusion: the reference launches 6 kernels and materialises\n# intermediates (~88 B/elem of HBM traffic); a single fused kernel touches\n# each element exactly once (read Q,K + write Qn,Kn = 16 B/elem \u2014 the hard\n# floor).  So the only lever is achieved HBM bandwidth%.\n#\n# Layout is [B, S, H, D] contiguous, D=128 innermost.  Flatten to rows\n# [N, D] with N = B*S*H; head index of row r is  h = r % H  (since the\n# (b*S+s)*H stride is a multiple of H).  d = tl.arange(0, D) is added\n# directly as a compile-time-provable unit-stride element offset (no\n# runtime stride multiply), which is the lever the sibling \"reduction\"\n# family problem (#18, fused RoPE+QK-norm+KV-cache, reached 0.90) uses to\n# get the compiler to lower these into wide vectorized LDG/STG.\n#\n# Structural change vs the 0.528 frontier parent: instead of one program\n# loading BOTH the Q-row-tile and the K-row-tile (2x the register/local\n# footprint per program), the grid's leading dimension selects Q (0) or K\n# (1) and each program only ever touches one tensor.  Total HBM traffic is\n# identical and it's still a single kernel launch (no extra launch overhead\n# for the small B*S<=256 shapes), but peak per-program register pressure is\n# roughly halved, which should let the scheduler keep more warps resident\n# per SM (higher occupancy -> more outstanding memory transactions -> higher\n# achieved bandwidth on the memory-bound shapes).  This mirrors the\n# `is_kv`-branch-by-program_id trick problem #18 used to reach 0.85-0.90 on\n# a near-identical per-head-128 reduction+elementwise op.\n#\n# CUDA graphs were tried twice on this exact problem (prior/0.428, 0.390)\n# and both scored *below* the plain single-launch kernel (0.528): the\n# per-call copy-in (fresh inputs -> static graph buffers) and copy-out\n# (clone of static outputs) traffic outweighs the ~3-5us launch overhead\n# they were meant to remove, especially since Q+K read+write is already the\n# whole budget (16 B/elem) \u2014 doubling it via graph copies is a net loss.\n# Not retried here.\n# ---------------------------------------------------------------------------\n\n\ndef _configs():\n    cfgs = []\n    for bm in (4, 8, 16, 32, 64):\n        for nw in (2, 4, 8, 16):\n            for ns in (1, 2):\n                cfgs.append(triton.Config({\"BLOCK_M\": bm}, num_warps=nw, num_stages=ns))\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"N\"])\n@triton.jit\ndef _rmsnorm_qk_kernel(\n    Q_ptr, K_ptr, Wq_ptr, Wk_ptr, OQ_ptr, OK_ptr,\n    N, eps,\n    H: tl.constexpr, D: tl.constexpr, BLOCK_M: tl.constexpr,\n):\n    pid_t = tl.program_id(0)   # 0 -> Q lane, 1 -> K lane\n    pid_m = tl.program_id(1)\n\n    row_ids = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rmask = row_ids < N\n\n    d = tl.arange(0, D)\n    offs = row_ids[:, None] * D + d[None, :]        # [BLOCK_M, D] data offsets\n    dmask = rmask[:, None]\n\n    # Per-head learnable scale.  Weight row for data-row r is r % H; the\n    # gather hits the tiny 24 KB weight buffer (L2-resident), not HBM.\n    heads = row_ids % H\n    woffs = heads[:, None] * D + d[None, :]\n\n    if pid_t == 0:\n        q = tl.load(Q_ptr + offs, mask=dmask, other=0.0)\n        wq = tl.load(Wq_ptr + woffs, mask=dmask, other=0.0)\n        q_inv = tl.rsqrt(tl.sum(q * q, axis=1) / D + eps)\n        qn = q * q_inv[:, None] * wq\n        tl.store(OQ_ptr + offs, qn, mask=dmask)\n    else:\n        k = tl.load(K_ptr + offs, mask=dmask, other=0.0)\n        wk = tl.load(Wk_ptr + woffs, mask=dmask, other=0.0)\n        k_inv = tl.rsqrt(tl.sum(k * k, axis=1) / D + eps)\n        kn = k * k_inv[:, None] * wk\n        tl.store(OK_ptr + offs, kn, mask=dmask)\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, weight_q: torch.Tensor,\n        weight_k: torch.Tensor, eps: float):\n    B, S, H, D = query.shape\n    N = B * S * H\n\n    q2 = query.reshape(N, D)\n    k2 = key.reshape(N, D)\n    out_q = torch.empty_like(q2)\n    out_k = torch.empty_like(k2)\n\n    wq = weight_q.reshape(H, D)\n    wk = weight_k.reshape(H, D)\n\n    grid = lambda meta: (2, triton.cdiv(N, meta[\"BLOCK_M\"]))\n    _rmsnorm_qk_kernel[grid](\n        q2, k2, wq, wk, out_q, out_k,\n        N, float(eps),\n        H, D,\n    )\n\n    return out_q.view(B, S, H, D), out_k.view(B, S, H, D)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t38_8f3dde74e711",
+    "definition": "038_flux_multi_head_rmsnorm_qk",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Problem 038 \u2014 Flux multi-head RMSNorm (Q and K fused).\n#\n# Op: per-head RMSNorm over head_dim=128 for both Q and K, then per-head\n# learnable scale.  Inputs/outputs/weights are all fp32.  This is a textbook\n# *memory-bound* fusion: the reference launches 6 kernels and materialises\n# intermediates (~88 B/elem of HBM traffic); a single fused kernel touches\n# each element exactly once (read Q,K + write Qn,Kn = 16 B/elem \u2014 the hard\n# floor).  So the only lever is achieved HBM bandwidth%.\n#\n# Layout is [B, S, H, D] contiguous, D=128 innermost.  Flatten to rows\n# [N, D] with N = B*S*H; head index of row r is  h = r % H  (since the\n# (b*S+s)*H stride is a multiple of H).  d = tl.arange(0, D) is added\n# directly as a compile-time-provable unit-stride element offset (no\n# runtime stride multiply), which is the lever the sibling \"reduction\"\n# family problem (#18, fused RoPE+QK-norm+KV-cache, reached 0.90) uses to\n# get the compiler to lower these into wide vectorized LDG/STG.\n#\n# Structural change vs the 0.528 frontier parent: instead of one program\n# loading BOTH the Q-row-tile and the K-row-tile (2x the register/local\n# footprint per program), the grid's leading dimension selects Q (0) or K\n# (1) and each program only ever touches one tensor.  Total HBM traffic is\n# identical and it's still a single kernel launch (no extra launch overhead\n# for the small B*S<=256 shapes), but peak per-program register pressure is\n# roughly halved, which should let the scheduler keep more warps resident\n# per SM (higher occupancy -> more outstanding memory transactions -> higher\n# achieved bandwidth on the memory-bound shapes).  This mirrors the\n# `is_kv`-branch-by-program_id trick problem #18 used to reach 0.85-0.90 on\n# a near-identical per-head-128 reduction+elementwise op.\n#\n# CUDA graphs were tried twice on this exact problem (prior/0.428, 0.390)\n# and both scored *below* the plain single-launch kernel (0.528): the\n# per-call copy-in (fresh inputs -> static graph buffers) and copy-out\n# (clone of static outputs) traffic outweighs the ~3-5us launch overhead\n# they were meant to remove, especially since Q+K read+write is already the\n# whole budget (16 B/elem) \u2014 doubling it via graph copies is a net loss.\n# Not retried here.\n# ---------------------------------------------------------------------------\n\n\ndef _configs():\n    cfgs = []\n    for bm in (4, 8, 16, 32, 64):\n        for nw in (2, 4, 8, 16):\n            for ns in (1, 2):\n                cfgs.append(triton.Config({\"BLOCK_M\": bm}, num_warps=nw, num_stages=ns))\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"N\"])\n@triton.jit\ndef _rmsnorm_qk_kernel(\n    Q_ptr, K_ptr, Wq_ptr, Wk_ptr, OQ_ptr, OK_ptr,\n    N, eps,\n    H: tl.constexpr, D: tl.constexpr, BLOCK_M: tl.constexpr,\n):\n    pid_t = tl.program_id(0)   # 0 -> Q lane, 1 -> K lane\n    pid_m = tl.program_id(1)\n\n    row_ids = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    rmask = row_ids < N\n\n    d = tl.arange(0, D)\n    offs = row_ids[:, None] * D + d[None, :]        # [BLOCK_M, D] data offsets\n    dmask = rmask[:, None]\n\n    # Per-head learnable scale.  Weight row for data-row r is r % H; the\n    # gather hits the tiny 24 KB weight buffer (L2-resident), not HBM.\n    heads = row_ids % H\n    woffs = heads[:, None] * D + d[None, :]\n\n    if pid_t == 0:\n        q = tl.load(Q_ptr + offs, mask=dmask, other=0.0)\n        wq = tl.load(Wq_ptr + woffs, mask=dmask, other=0.0)\n        q_inv = tl.rsqrt(tl.sum(q * q, axis=1) / D + eps)\n        qn = q * q_inv[:, None] * wq\n        tl.store(OQ_ptr + offs, qn, mask=dmask)\n    else:\n        k = tl.load(K_ptr + offs, mask=dmask, other=0.0)\n        wk = tl.load(Wk_ptr + woffs, mask=dmask, other=0.0)\n        k_inv = tl.rsqrt(tl.sum(k * k, axis=1) / D + eps)\n        kn = k * k_inv[:, None] * wk\n        tl.store(OK_ptr + offs, kn, mask=dmask)\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, weight_q: torch.Tensor,\n        weight_k: torch.Tensor, eps: float):\n    B, S, H, D = query.shape\n    N = B * S * H\n\n    q2 = query.reshape(N, D)\n    k2 = key.reshape(N, D)\n    out_q = torch.empty_like(q2)\n    out_k = torch.empty_like(k2)\n\n    wq = weight_q.reshape(H, D)\n    wk = weight_k.reshape(H, D)\n\n    grid = lambda meta: (2, triton.cdiv(N, meta[\"BLOCK_M\"]))\n    _rmsnorm_qk_kernel[grid](\n        q2, k2, wq, wk, out_q, out_k,\n        N, float(eps),\n        H, D,\n    )\n\n    return out_q.view(B, S, H, D), out_k.view(B, S, H, D)\n"
+      }
+    ]
+  }
+}

@@ -16,9 +16,9 @@ Fable is expensive, so this is gated hard:
     OpenRouter-routed models before giving up — one blocked provider never stalls
     the Coach; only total exhaustion leaves the deterministic card standing alone.
 
-The result is persisted to `<task>/diagnosis.json` {fingerprint, model, ts, prose}
-so `reflection.reflect_all` can re-attach it to the card on every (cheap) pass
-without re-spending on fable.
+The result is persisted to `<task>/diagnosis.json` {fingerprint, model, ts, prose,
+cost_usd, tok_in, tok_out, tok_cached} so `reflection.reflect_all` can re-attach it
+to the card on every (cheap) pass without re-spending on fable.
 """
 
 from __future__ import annotations
@@ -110,12 +110,17 @@ def _provider_env(spec_name: str) -> dict | None:
     return {**os.environ, "ANTHROPIC_BASE_URL": spec.base_url, "ANTHROPIC_AUTH_TOKEN": key} if key else None
 
 
+def _add_usage(a: dict, b: dict) -> dict:
+    return {k: (a.get(k) or 0) + (b.get(k) or 0) for k in (set(a) | set(b))}
+
+
 async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
-                     env: dict) -> tuple[str | None, float]:
+                     env: dict) -> tuple[str | None, dict]:
     """One-shot claude-CLI call against a single (already-resolved) provider env.
-    Returns (text_or_None, cost_usd) — cost is 0.0 whenever the CLI doesn't report
-    one (e.g. the call failed before producing a result). None text on any
-    failure — quota/credits, timeout, non-zero exit, empty output."""
+    Returns (text_or_None, usage) where usage is {cost_usd, in, out, cached} — all
+    0 whenever the CLI doesn't report them (e.g. the call failed before producing
+    a result). None text on any failure — quota/credits, timeout, non-zero exit,
+    empty output."""
     cmd = ["claude", "-p", prompt, "--model", model, "--output-format", "stream-json",
            "--verbose", "--dangerously-skip-permissions"]
     try:
@@ -129,27 +134,28 @@ async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
             proc.kill()
         except Exception:
             pass
-        return None, 0.0
+        return None, {}
     raw = out.decode("utf-8", "replace")
-    cost = _extract_cost(raw)
+    usage = _extract_usage(raw)
     if proc.returncode:
-        return None, cost                    # a failed call can still have billed something
-    return _extract_text(raw), cost
+        return None, usage                   # a failed call can still have billed something
+    return _extract_text(raw), usage
 
 
 async def _call_fable(prompt: str, model: str, timeout: float,
-                      cwd: str | None = None) -> tuple[str | None, str, float]:
+                      cwd: str | None = None) -> tuple[str | None, str, dict]:
     """Try the requested reflection model, then walk FALLBACK_CHAIN so a single
     blocked provider (rate limit, no credits) never stalls the Coach. `cwd` is
     optional and unused by the diagnose caller (kb content is embedded directly
     in the prompt — see _kb_index — so no file/tool access is needed for this
     call); kept as a parameter for callers that do want a specific cwd.
-    Returns (prose_or_None, label of the model that actually produced it,
-    total $ cost across every rung tried — including failed ones that billed)."""
+    Returns (prose_or_None, label of the model that actually produced it, total
+    usage {cost_usd, in, out, cached} summed across every rung tried — including
+    failed ones that billed)."""
     if not shutil.which("claude"):
-        return None, "", 0.0
+        return None, "", {}
     seen: set[tuple[str, str]] = set()
-    total_cost = 0.0
+    total_usage: dict = {}
     for spec_name, fallback_model in FALLBACK_CHAIN:
         m = fallback_model or model
         # Skip the native-claude rung entirely when the requested model isn't a
@@ -164,15 +170,16 @@ async def _call_fable(prompt: str, model: str, timeout: float,
         env = _provider_env(spec_name)
         if env is None:
             continue                                     # required key missing — skip this rung
-        text, cost = await _try_model(prompt, m, timeout, cwd, env)
-        total_cost += cost
+        text, usage = await _try_model(prompt, m, timeout, cwd, env)
+        total_usage = _add_usage(total_usage, usage)
         if text:
-            return text, (m if spec_name == "claude" else f"{spec_name}:{m}"), total_cost
-    return None, "", total_cost
+            return text, (m if spec_name == "claude" else f"{spec_name}:{m}"), total_usage
+    return None, "", total_usage
 
 
-def _extract_cost(raw: str) -> float:
-    """Pull total_cost_usd off the stream's terminal 'result' event, if present."""
+def _extract_usage(raw: str) -> dict:
+    """Pull {cost_usd, in, out, cached} off the stream's terminal 'result' event —
+    same schema as cli_agent.py's claude branch of _parse_tokens."""
     for line in raw.splitlines():
         line = line.strip()
         if not line.startswith("{"):
@@ -181,9 +188,15 @@ def _extract_cost(raw: str) -> float:
             e = json.loads(line)
         except json.JSONDecodeError:
             continue
-        if e.get("type") == "result" and isinstance(e.get("total_cost_usd"), (int, float)):
-            return float(e["total_cost_usd"])
-    return 0.0
+        if e.get("type") == "result":
+            u = e.get("usage") or {}
+            cache_read = u.get("cache_read_input_tokens") or 0
+            cache_creation = u.get("cache_creation_input_tokens") or 0
+            usage = {"in": u.get("input_tokens"), "out": u.get("output_tokens"),
+                     "cached": (cache_read + cache_creation) or None,
+                     "cost_usd": e.get("total_cost_usd")}
+            return {k: v for k, v in usage.items() if v is not None}
+    return {}
 
 
 def _extract_text(raw: str) -> str | None:
@@ -301,15 +314,17 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
     # No cwd pinned to the kb root anymore — kb content is embedded directly in the
     # prompt (see _kb_index), so this call needs no file/tool access at all; running
     # with no special cwd avoids inviting any exploratory tool use.
-    prose, used_model, cost = await _call_fable(prompt, model, timeout)
-    # Cost is journaled into the PROBLEM's own journal.jsonl (same file the dashboard
-    # already scans for plan/review costs) whether this attempt succeeded or not — a
-    # failed-but-billed call (e.g. a 402 mid-fallback-chain) still needs to show up in
-    # total spend, or the dashboard would silently under-count real cost.
-    if cost:
+    prose, used_model, usage = await _call_fable(prompt, model, timeout)
+    cost = usage.get("cost_usd", 0.0)
+    # Cost/tokens are journaled into the PROBLEM's own journal.jsonl (same file the
+    # dashboard already scans for plan/review costs) whether this attempt succeeded
+    # or not — a failed-but-billed call (e.g. a 402 mid-fallback-chain) still needs
+    # to show up in total spend, or the dashboard would silently under-count real cost.
+    if usage:
         from .. import journal as journal_mod
         journal_mod.Journal(pdir / "journal.jsonl", r.task_id).append(
-            "diagnose_cost", model=(used_model or model), cost_usd=cost, success=bool(prose))
+            "diagnose_cost", model=(used_model or model), cost_usd=cost, success=bool(prose),
+            tok_in=usage.get("in"), tok_out=usage.get("out"), tok_cached=usage.get("cached"))
     if not prose:
         billed = f" (billed ${cost:.4f})" if cost else ""
         log(f"[diagnose] task {r.task_id}: {model} + all fallbacks unavailable/failed — "
@@ -317,7 +332,9 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
         return False
     ts = datetime.datetime.now(datetime.timezone.utc).isoformat()
     dfile.write_text(json.dumps({"fingerprint": fp, "model": used_model, "ts": ts,
-                                 "prose": prose, "cost_usd": cost}))
+                                 "prose": prose, "cost_usd": cost,
+                                 "tok_in": usage.get("in"), "tok_out": usage.get("out"),
+                                 "tok_cached": usage.get("cached")}))
     note = "" if used_model == model else f" [fell back from {model} to {used_model}]"
     log(f"[diagnose] task {r.task_id}: fresh diagnosis via {used_model} "
         f"({len(prose)} chars, ${cost:.4f}){note}")

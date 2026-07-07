@@ -1,0 +1,246 @@
+{
+  "cand_id": "d3257b2ccfb0",
+  "task_id": 12,
+  "verdict": "entered",
+  "sol_score": 0.9195445907206147,
+  "sol_score_calibrated": 0.8997635798525854,
+  "correct": true,
+  "vector": [
+    0.9180662049155645,
+    0.9169478815148105,
+    0.9174721189591077,
+    0.9177442528735632,
+    0.9300422871851443,
+    0.9119402985074627,
+    0.9218399401645475,
+    0.9212467724087053,
+    0.9217991787980591,
+    0.9149175412293854,
+    0.9113737075332349,
+    0.9291666666666667,
+    0.9201550927538251,
+    0.919990101868272,
+    0.9205470530771735,
+    0.9194643530743116
+  ],
+  "strategy": "Replace FP64 range reduction (x - 2\u03c0*rint(x/2\u03c0)) with fp32 Cody-Waite (nearbyint + FMA) to shorten per-thread latency ch",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "996a46d34363",
+  "trajectory": "runs/12/work/d3257b2ccfb0/trajectory.jsonl",
+  "gpu_s": 73.989,
+  "job_id": "12-d3257b2ccfb0",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 242.05,
+      "samples": 229,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0023685,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9180662049155645,
+      "sol_score_cal": 0.8993163679799624,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.002272,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020064,
+      "sol_score": 0.9169478815148105,
+      "sol_score_cal": 0.8987636716453017,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.002576,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9174721189591077,
+      "sol_score_cal": 0.8970696210353376,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.002832,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.02144,
+      "sol_score": 0.9177442528735632,
+      "sol_score_cal": 0.8960950597279799,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.006944,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.044368,
+      "sol_score": 0.9300422871851443,
+      "sol_score_cal": 0.902671701237705,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.002688,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020352,
+      "sol_score": 0.9119402985074627,
+      "sol_score_cal": 0.8907224911073532,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.002272,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.02032,
+      "sol_score": 0.9218399401645475,
+      "sol_score_cal": 0.903605624715905,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02048,
+      "sol_score": 0.9212467724087053,
+      "sol_score_cal": 0.9037648727672757,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.002176,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020256,
+      "sol_score": 0.9217991787980591,
+      "sol_score_cal": 0.9043534943677033,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0024159999999999997,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020128,
+      "sol_score": 0.9149175412293854,
+      "sol_score_cal": 0.8956549178463187,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.00272,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.020544,
+      "sol_score": 0.9113737075332349,
+      "sol_score_cal": 0.8901392195051577,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.003104,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.026176,
+      "sol_score": 0.9291666666666667,
+      "sol_score_cal": 0.9092179909835397,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.0023195,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.020416,
+      "sol_score": 0.9201550927538251,
+      "sol_score_cal": 0.9017025460037346,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.00304,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0234069999999999,
+      "sol_score": 0.919990101868272,
+      "sol_score_cal": 0.8985844686319211,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.020289,
+      "sol_score": 0.9205470530771735,
+      "sol_score_cal": 0.902926194487081,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.002208,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.02,
+      "sol_score": 0.9194643530743116,
+      "sol_score_cal": 0.9016290355990886,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n// Cody-Waite edition: fp32 range reduction replaces the FP64 divide path\n// to shorten the per-thread latency chain on tiny/launch-bound shapes.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (what changed from the 0.898 frontier):\n//   * The FP64 range reduction (x - 2\u03c0*rint(x/2\u03c0) in double) is replaced with\n//     fp32 Cody-Waite two-constant reduction:\n//       k = nearbyintf(x * INV_2PI)\n//       r = fmaf(-k, TWOPI_HI, x) - k * TWOPI_LO\n//     This avoids the slow FP64 divide (FP64 vector is only ~37 TF on B200),\n//     cutting the per-thread latency chain from ~4 FP64 ops to ~4 FP32 ops.\n//     Accurate to ~1e-5 for |x| < 1e5 (freqs \u2264 seq_len_max = 4096).\n//   * Everything else is unchanged from the frontier: 2 freqs/thread via\n//     float2 load, packed __nv_bfloat162 stores to both output halves,\n//     natural grid = cdiv(n_pairs, 256), no over-spreading.\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n// Cody-Waite range reduction for 2\u03c0 \u2014 fp32 only, no FP64 divide.\n// Constants: TWOPI_HI = nearest float to 2\u03c0; TWOPI_LO = 2\u03c0 - TWOPI_HI.\n// Accurate to ~1e-5 abs error for |x| < 1e5 (freqs \u2264 4096 for our graded shapes).\n__device__ __forceinline__ float cw_reduce(float x) {\n    const float INV_2PI   = 0.15915494f;       // 1/(2\u03c0)\n    const float TWOPI_HI  = 6.28318548f;        // 2\u03c0 (nearest float)\n    const float TWOPI_LO  = -1.7484556e-7f;    // 2\u03c0 - TWOPI_HI  (correction)\n    float k = nearbyintf(x * INV_2PI);\n    float r = fmaf(-k, TWOPI_HI, x);\n    return r - k * TWOPI_LO;\n}\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                  __nv_bfloat16* __restrict__ cos_out,\n                                  __nv_bfloat16* __restrict__ sin_out,\n                                  long n_pairs, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_pairs) return;\n\n    // One 8-byte load pulls two consecutive frequencies (same row).\n    const float2 f = reinterpret_cast<const float2*>(freqs)[t];\n\n    // Cody-Waite fp32 range reduction \u2014 faster than the FP64 divide path.\n    float r0 = cw_reduce(f.x);\n    float r1 = cw_reduce(f.y);\n\n    float s0, c0, s1, c1;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n\n    // fp32 scale, then round-to-nearest-even into bf16 (matches torch .to(bf16)).\n    __nv_bfloat162 cpair = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 spair = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n\n    // Map the pair back to output positions.\n    long two_t = t << 1;\n    long row   = two_t >> 6;          // / 64\n    long col   = two_t & (HALF - 1);  // % 64\n    long lo    = (row << 7) + col;    // row*128 + col\n    long hi    = lo + HALF;\n\n    __nv_bfloat162* cptr = reinterpret_cast<__nv_bfloat162*>(cos_out);\n    __nv_bfloat162* sptr = reinterpret_cast<__nv_bfloat162*>(sin_out);\n    cptr[lo >> 1] = cpair;   // cos[..., col : col+2]\n    cptr[hi >> 1] = cpair;   // cos[..., col+64 : col+66]  (duplicate)\n    sptr[lo >> 1] = spair;\n    sptr[hi >> 1] = spair;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_pairs = n_freqs / 2;  // n_freqs is a multiple of 64 -> even\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_pairs > 0) {\n        const int block = 256;\n        const int grid = (int)((n_pairs + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_pairs, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t12_d3257b2ccfb0",
+    "definition": "012_fused_cos_sin_embedding_generation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// Problem 012 \u2014 Fused cos/sin embedding generation (RoPE), CUDA.\n// Cody-Waite edition: fp32 range reduction replaces the FP64 divide path\n// to shorten the per-thread latency chain on tiny/launch-bound shapes.\n//\n// Reference: emb = cat(freqs, freqs); cos = emb.cos()*scale -> bf16;\n//            sin = emb.sin()*scale -> bf16.  freqs is [B,S,64] fp32, outputs\n//            are [B,S,128] bf16.  head_dim=128 (const) so half=64.\n//\n// Design (what changed from the 0.898 frontier):\n//   * The FP64 range reduction (x - 2\u03c0*rint(x/2\u03c0) in double) is replaced with\n//     fp32 Cody-Waite two-constant reduction:\n//       k = nearbyintf(x * INV_2PI)\n//       r = fmaf(-k, TWOPI_HI, x) - k * TWOPI_LO\n//     This avoids the slow FP64 divide (FP64 vector is only ~37 TF on B200),\n//     cutting the per-thread latency chain from ~4 FP64 ops to ~4 FP32 ops.\n//     Accurate to ~1e-5 for |x| < 1e5 (freqs \u2264 seq_len_max = 4096).\n//   * Everything else is unchanged from the frontier: 2 freqs/thread via\n//     float2 load, packed __nv_bfloat162 stores to both output halves,\n//     natural grid = cdiv(n_pairs, 256), no over-spreading.\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <cuda_bf16.h>\n#include <tuple>\n\n#define HALF 64\n#define FULL 128\n\n// Cody-Waite range reduction for 2\u03c0 \u2014 fp32 only, no FP64 divide.\n// Constants: TWOPI_HI = nearest float to 2\u03c0; TWOPI_LO = 2\u03c0 - TWOPI_HI.\n// Accurate to ~1e-5 abs error for |x| < 1e5 (freqs \u2264 4096 for our graded shapes).\n__device__ __forceinline__ float cw_reduce(float x) {\n    const float INV_2PI   = 0.15915494f;       // 1/(2\u03c0)\n    const float TWOPI_HI  = 6.28318548f;        // 2\u03c0 (nearest float)\n    const float TWOPI_LO  = -1.7484556e-7f;    // 2\u03c0 - TWOPI_HI  (correction)\n    float k = nearbyintf(x * INV_2PI);\n    float r = fmaf(-k, TWOPI_HI, x);\n    return r - k * TWOPI_LO;\n}\n\n__global__ void fused_rope_kernel(const float* __restrict__ freqs,\n                                  __nv_bfloat16* __restrict__ cos_out,\n                                  __nv_bfloat16* __restrict__ sin_out,\n                                  long n_pairs, float scale) {\n    long t = (long)blockIdx.x * blockDim.x + threadIdx.x;\n    if (t >= n_pairs) return;\n\n    // One 8-byte load pulls two consecutive frequencies (same row).\n    const float2 f = reinterpret_cast<const float2*>(freqs)[t];\n\n    // Cody-Waite fp32 range reduction \u2014 faster than the FP64 divide path.\n    float r0 = cw_reduce(f.x);\n    float r1 = cw_reduce(f.y);\n\n    float s0, c0, s1, c1;\n    __sincosf(r0, &s0, &c0);\n    __sincosf(r1, &s1, &c1);\n\n    // fp32 scale, then round-to-nearest-even into bf16 (matches torch .to(bf16)).\n    __nv_bfloat162 cpair = __floats2bfloat162_rn(c0 * scale, c1 * scale);\n    __nv_bfloat162 spair = __floats2bfloat162_rn(s0 * scale, s1 * scale);\n\n    // Map the pair back to output positions.\n    long two_t = t << 1;\n    long row   = two_t >> 6;          // / 64\n    long col   = two_t & (HALF - 1);  // % 64\n    long lo    = (row << 7) + col;    // row*128 + col\n    long hi    = lo + HALF;\n\n    __nv_bfloat162* cptr = reinterpret_cast<__nv_bfloat162*>(cos_out);\n    __nv_bfloat162* sptr = reinterpret_cast<__nv_bfloat162*>(sin_out);\n    cptr[lo >> 1] = cpair;   // cos[..., col : col+2]\n    cptr[hi >> 1] = cpair;   // cos[..., col+64 : col+66]  (duplicate)\n    sptr[lo >> 1] = spair;\n    sptr[hi >> 1] = spair;\n}\n\nstd::tuple<torch::Tensor, torch::Tensor> run(torch::Tensor freqs,\n                                             double attention_scaling) {\n    freqs = freqs.contiguous();\n    const int64_t B    = freqs.size(0);\n    const int64_t S    = freqs.size(1);\n    const int64_t half = freqs.size(2);   // 64\n    const int64_t full = half * 2;        // 128\n    const int64_t n_freqs = B * S * half;\n    const int64_t n_pairs = n_freqs / 2;  // n_freqs is a multiple of 64 -> even\n\n    auto opts = torch::TensorOptions().dtype(torch::kBFloat16).device(freqs.device());\n    auto cos_out = torch::empty({B, S, full}, opts);\n    auto sin_out = torch::empty({B, S, full}, opts);\n\n    if (n_pairs > 0) {\n        const int block = 256;\n        const int grid = (int)((n_pairs + block - 1) / block);\n        cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n        fused_rope_kernel<<<grid, block, 0, stream>>>(\n            freqs.data_ptr<float>(),\n            reinterpret_cast<__nv_bfloat16*>(cos_out.data_ptr<at::BFloat16>()),\n            reinterpret_cast<__nv_bfloat16*>(sin_out.data_ptr<at::BFloat16>()),\n            n_pairs, (float)attention_scaling);\n    }\n    return std::make_tuple(cos_out, sin_out);\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"fused cos/sin RoPE embedding generation (CUDA)\");\n}"
+      }
+    ]
+  }
+}

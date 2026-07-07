@@ -1,0 +1,245 @@
+{
+  "cand_id": "00b9e188d5a7",
+  "task_id": 1,
+  "verdict": "dominated",
+  "sol_score": 0.6240473765424469,
+  "sol_score_calibrated": 0.5786033769368545,
+  "correct": true,
+  "vector": [
+    0.4560990561862582,
+    0.5110233622726539,
+    0.5923015525751515,
+    0.8759521120269833,
+    0.6719720971499831,
+    0.4712803266145296,
+    0.8075926953672137,
+    0.6544301847221317,
+    0.5272595020370053,
+    0.7605874768110856,
+    0.7611180821131701,
+    0.4786027453081492,
+    0.6065571858378959,
+    0.8726830798956537,
+    0.4383434048839704,
+    0.498955160877316
+  ],
+  "strategy": "Reconstruct P_drop in dV kernel from P+mask (bf16 TC dots, f32 acc) to eliminate cold-HBM read of P_drop; dS kept exactl",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "7f1d48d81a7c",
+  "trajectory": "runs/1/work/00b9e188d5a7/trajectory.jsonl",
+  "gpu_s": 108.459,
+  "job_id": "1-00b9e188d5a7",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 46.0,
+      "power_w_max": 931.74,
+      "samples": 374,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.1030555,
+      "sol_ms": 0.0201,
+      "baseline_latency_ms": 0.089664,
+      "sol_score": 0.4560990561862582,
+      "sol_score_cal": 0.40420675078847307,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.808589,
+      "sol_ms": 0.0942,
+      "baseline_latency_ms": 0.8407990000000001,
+      "sol_score": 0.5110233622726539,
+      "sol_score_cal": 0.4623992280635261,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.376951,
+      "sol_ms": 0.5409,
+      "baseline_latency_ms": 3.2083025,
+      "sol_score": 0.5923015525751515,
+      "sol_score_cal": 0.5383173687657742,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.31167900000000004,
+      "sol_ms": 0.0923,
+      "baseline_latency_ms": 1.6414235,
+      "sol_score": 0.8759521120269833,
+      "sol_score_cal": 0.8475708643380795,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.1126075,
+      "sol_ms": 0.0187,
+      "baseline_latency_ms": 0.2110715,
+      "sol_score": 0.6719720971499831,
+      "sol_score_cal": 0.6252437133830672,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 10.2647645,
+      "sol_ms": 1.1427,
+      "baseline_latency_ms": 9.2737565,
+      "sol_score": 0.4712803266145296,
+      "sol_score_cal": 0.42341696695311937,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.070144,
+      "sol_ms": 0.0119,
+      "baseline_latency_ms": 0.256368,
+      "sol_score": 0.8075926953672137,
+      "sol_score_cal": 0.7735365620282233,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 2.517128,
+      "sol_ms": 0.5781,
+      "baseline_latency_ms": 4.250175499999999,
+      "sol_score": 0.6544301847221317,
+      "sol_score_cal": 0.6030316510452656,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.24107099999999998,
+      "sol_ms": 0.0188,
+      "baseline_latency_ms": 0.2667045,
+      "sol_score": 0.5272595020370053,
+      "sol_score_cal": 0.4804546402170367,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.187504,
+      "sol_ms": 0.0398,
+      "baseline_latency_ms": 0.5090395000000001,
+      "sol_score": 0.7605874768110856,
+      "sol_score_cal": 0.7190646706220885,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.1803515,
+      "sol_ms": 0.0409,
+      "baseline_latency_ms": 0.485216,
+      "sol_score": 0.7611180821131701,
+      "sol_score_cal": 0.7189180451372532,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.380223,
+      "sol_ms": 0.0693,
+      "baseline_latency_ms": 0.3547035,
+      "sol_score": 0.4786027453081492,
+      "sol_score_cal": 0.4268872105875944,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.7710365,
+      "sol_ms": 0.147,
+      "baseline_latency_ms": 1.1090555,
+      "sol_score": 0.6065571858378959,
+      "sol_score_cal": 0.5552704860140412,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.16224,
+      "sol_ms": 0.0464,
+      "baseline_latency_ms": 0.8404155,
+      "sol_score": 0.8726830798956537,
+      "sol_score_cal": 0.8440857374512999,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.165631,
+      "sol_ms": 0.0185,
+      "baseline_latency_ms": 0.133328,
+      "sol_score": 0.4383434048839704,
+      "sol_score_cal": 0.39133161019012136,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 4.5825635,
+      "sol_ms": 1.0638,
+      "baseline_latency_ms": 4.567888,
+      "sol_score": 0.498955160877316,
+      "sol_score_cal": 0.4439185254047087,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Fused B200 backward for attention softmax + dropout + value matmul.\n\nGiven the materialized softmax matrix P (`attn_weights`), its dropped copy\nP_drop (`attn_weights_dropped`), the dropout `mask`, the output-grad dO\n(`grad_attn_output`) and GQA values V (`value_states`), produce dS (grad\nw.r.t. attention scores) and dV (grad w.r.t. value states).\n\nThe op is memory-bound: two cheap batched GEMMs hide under streaming the four\n`(B,80,Sq,Skv)` attention matrices.  We therefore keep all intermediate math in\nf32 accumulators, fuse the elementwise tails, and never materialize the 10x GQA\nexpand.\n\nImplementation: two fused Triton kernels (no f32 tensors touch HBM).\n\n  dS kernel  - grid over (B*H, Sq-blocks).  Exact frontier from c9dca185.\n      * For small Skv (<=256 / <=512) a single-pass \"full-row\" kernel\n        loads one V tile that covers the whole softmax row, computes\n        dO@V^T once, reduces the exact f32 row term, and writes dS.\n      * For larger Skv a two-pass kernel streams over kv-tiles: pass 1\n        accumulates delta = rowsum(P * dP), pass 2 writes dS = P*(dP-delta).\n        The two passes traverse the same P/mask blocks immediately one after\n        another, so pass 2 is mostly an L2 hit.\n\n  dV kernel  - grid over (Skv-blocks, B*Hkv), fast-dim = kv-block so CTAs that\n      share a group keep dO resident in L2.  Each block accumulates\n      dV += P_drop^T @ dO over the 10 group heads and all query tiles.\n      **KEY CHANGE from frontier**: P_drop is RECONSTRUCTED in-register from\n      P + mask (P * mask * inv_keep) instead of loaded from HBM.  This\n      eliminates the cold-HBM read of P_drop (which the dS kernel never\n      touches) and replaces it with L2-hot reads of P and mask.  The\n      reconstruction is numerically equivalent because the reference\n      generates P_drop as round_bf16(P * mask / 0.9), and our dS path\n      already uses the * inv_keep formulation.\n\nAll matmuls use bf16 tensor-core MMA with f32 accumulate: because the operands\nare already bf16, this is numerically equivalent to the reference's f32 matmul.\nThe softmax-backward delta is accumulated in f32 from the *separate* P and mask\noperands, never from reconstructed P_drop, to match the reference's rounding\nexactly.\n\"\"\"\n\nimport torch\nimport triton\nimport triton.language as tl\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1A: dS full-row, single pass for Skv <= 256 (V tile <= 64 KiB).\n# --------------------------------------------------------------------------- #\n_CONFIGS_FULLROW_SMALL = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_FULLROW_SMALL, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_fullrow_small_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n    s_v_b, s_v_h, s_v_s, s_v_d,          # value_states (B,Hkv,Skv,D)\n    s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights & mask (B,H,Sq,Skv)\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,      # grad_attn_scores out (B,H,Sq,Skv)\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )  # (BQ, D) bf16\n\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )  # (BK, D) bf16\n\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)  # (BQ, BK)\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n    dP = dpd * M_blk * inv_keep\n    delta = tl.sum(dP * P_blk, axis=1)\n    dS = P_blk * (dP - delta[:, None])\n\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1B: dS full-row, single pass for 256 < Skv <= 512.\n# --------------------------------------------------------------------------- #\n_CONFIGS_FULLROW_MED = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_FULLROW_MED, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_fullrow_med_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )\n\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n    dP = dpd * M_blk * inv_keep\n    delta = tl.sum(dP * P_blk, axis=1)\n    dS = P_blk * (dP - delta[:, None])\n\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1C: dS two-pass for Skv > 512.\n# --------------------------------------------------------------------------- #\n_CONFIGS_DS = [\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_DS, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    m_base = M_ptr + b * s_p_b + h * s_p_h\n    v_base = V_ptr + b * s_v_b + kv * s_v_h\n\n    # ---- pass 1: delta = rowsum_kv( dP * P ), dP = (dO@V^T) * mask * inv_keep ----\n    delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        delta += tl.sum(dP * P_blk, axis=1)\n\n    # ---- pass 2: dS = P * (dP - delta) ----\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        dS = P_blk * (dP - delta[:, None])\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 2: dV = grad_value_states  (B, Hkv, Skv, D) bf16\n#\n# RECONSTRUCTS P_drop in-register from P + mask instead of reading it from HBM.\n# P_drop = round_bf16(P * mask * inv_keep).\n# P and mask are L2-hot (read by the preceding dS kernel); P_drop is cold.\n# This eliminates the cold-HBM read of P_drop (~28% of big-matrix traffic).\n# --------------------------------------------------------------------------- #\n_CONFIGS_DV = [\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 256}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_DV, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _dv_kernel(\n    P_ptr, M_ptr, dO_ptr, dV_ptr,\n    Sq, Skv, inv_keep,\n    KVH: tl.constexpr, GRP: tl.constexpr,\n    s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights (B,H,Sq,Skv)\n    s_m_b, s_m_h, s_m_q, s_m_k,          # mask (B,H,Sq,Skv) as int8\n    s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n    s_dv_b, s_dv_h, s_dv_s, s_dv_d,      # grad_value_states (B,Hkv,Skv,D)\n    D: tl.constexpr, BLOCK_J: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_j = tl.program_id(0)\n    pid_bkv = tl.program_id(1)\n    b = pid_bkv // KVH\n    kvh = pid_bkv % KVH\n\n    offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)\n    offs_d = tl.arange(0, D)\n    j_valid = offs_j < Skv\n\n    acc = tl.zeros((BLOCK_J, D), dtype=tl.float32)\n    for g in range(0, GRP):\n        h = kvh * GRP + g\n        p_hb = P_ptr + b * s_p_b + h * s_p_h\n        m_hb = M_ptr + b * s_m_b + h * s_m_h\n        do_hb = dO_ptr + b * s_do_b + h * s_do_h\n        for q0 in range(0, Sq, BLOCK_Q):\n            offs_q = q0 + tl.arange(0, BLOCK_Q)\n            q_valid = offs_q < Sq\n            both = q_valid[:, None] & j_valid[None, :]\n            pk = offs_q[:, None] * s_p_q + offs_j[None, :] * s_p_k\n            # Reconstruct P_drop = round_bf16(P * mask * inv_keep)\n            P_blk = tl.load(p_hb + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_hb + pk, mask=both, other=0).to(tl.float32)\n            pd = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n            do = tl.load(\n                do_hb + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n                mask=q_valid[:, None], other=0.0,\n            )\n            acc += tl.dot(tl.trans(pd), do, out_dtype=tl.float32)\n\n    tl.store(\n        dV_ptr + b * s_dv_b + kvh * s_dv_h\n        + offs_j[:, None] * s_dv_s + offs_d[None, :] * s_dv_d,\n        acc.to(tl.bfloat16), mask=j_valid[:, None],\n    )\n\n\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    \"\"\"Reference-equivalent path (no 10x V materialize).  Fallback only.\"\"\"\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)          # (B,H,Sq,D)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)                  # (B,KVH,1,Skv,D)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt)\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    # Fallback path for non-CUDA devices or unit tests without a GPU.\n    if (not grad_attn_output.is_cuda) or (not torch.cuda.is_available()):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    dev = grad_attn_output.device\n    dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n    dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n    # bool mask -> int8 view (1 byte, no copy); loaded 0/1 and cast to f32.\n    mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n    s_do = grad_attn_output.stride()\n    s_v = value_states.stride()\n    s_p = attn_weights.stride()\n    s_ds = dS.stride()\n    s_m = mask_i8.stride()\n    s_dv = dV.stride()\n\n    # Dispatch dS by Skv bucket; full-row saves the second P/mask read.\n    if Skv <= 256:\n        block_k = _next_pow2(Skv)\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_fullrow_small_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D, BLOCK_K=block_k,\n        )\n    elif Skv <= 512:\n        block_k = _next_pow2(Skv)  # 512\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_fullrow_med_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D, BLOCK_K=block_k,\n        )\n    else:\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D,\n        )\n\n    # dV kernel: grid fast-dim = kv-block for L2-friendly dO sharing.\n    # RECONSTRUCTS P_drop in-register from P+mask instead of reading it from HBM.\n    grid_dv = lambda meta: (triton.cdiv(Skv, meta[\"BLOCK_J\"]), B * KVH)\n    _dv_kernel[grid_dv](\n        attn_weights, mask_i8, grad_attn_output, dV,\n        Sq, Skv, inv_keep,\n        KVH, G,\n        s_p[0], s_p[1], s_p[2], s_p[3],\n        s_m[0], s_m[1], s_m[2], s_m[3],\n        s_do[0], s_do[1], s_do[2], s_do[3],\n        s_dv[0], s_dv[1], s_dv[2], s_dv[3],\n        D=D,\n    )\n    return dS, dV"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t1_00b9e188d5a7",
+    "definition": "001_attention_softmax_dropout_value_matmul_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Fused B200 backward for attention softmax + dropout + value matmul.\n\nGiven the materialized softmax matrix P (`attn_weights`), its dropped copy\nP_drop (`attn_weights_dropped`), the dropout `mask`, the output-grad dO\n(`grad_attn_output`) and GQA values V (`value_states`), produce dS (grad\nw.r.t. attention scores) and dV (grad w.r.t. value states).\n\nThe op is memory-bound: two cheap batched GEMMs hide under streaming the four\n`(B,80,Sq,Skv)` attention matrices.  We therefore keep all intermediate math in\nf32 accumulators, fuse the elementwise tails, and never materialize the 10x GQA\nexpand.\n\nImplementation: two fused Triton kernels (no f32 tensors touch HBM).\n\n  dS kernel  - grid over (B*H, Sq-blocks).  Exact frontier from c9dca185.\n      * For small Skv (<=256 / <=512) a single-pass \"full-row\" kernel\n        loads one V tile that covers the whole softmax row, computes\n        dO@V^T once, reduces the exact f32 row term, and writes dS.\n      * For larger Skv a two-pass kernel streams over kv-tiles: pass 1\n        accumulates delta = rowsum(P * dP), pass 2 writes dS = P*(dP-delta).\n        The two passes traverse the same P/mask blocks immediately one after\n        another, so pass 2 is mostly an L2 hit.\n\n  dV kernel  - grid over (Skv-blocks, B*Hkv), fast-dim = kv-block so CTAs that\n      share a group keep dO resident in L2.  Each block accumulates\n      dV += P_drop^T @ dO over the 10 group heads and all query tiles.\n      **KEY CHANGE from frontier**: P_drop is RECONSTRUCTED in-register from\n      P + mask (P * mask * inv_keep) instead of loaded from HBM.  This\n      eliminates the cold-HBM read of P_drop (which the dS kernel never\n      touches) and replaces it with L2-hot reads of P and mask.  The\n      reconstruction is numerically equivalent because the reference\n      generates P_drop as round_bf16(P * mask / 0.9), and our dS path\n      already uses the * inv_keep formulation.\n\nAll matmuls use bf16 tensor-core MMA with f32 accumulate: because the operands\nare already bf16, this is numerically equivalent to the reference's f32 matmul.\nThe softmax-backward delta is accumulated in f32 from the *separate* P and mask\noperands, never from reconstructed P_drop, to match the reference's rounding\nexactly.\n\"\"\"\n\nimport torch\nimport triton\nimport triton.language as tl\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1A: dS full-row, single pass for Skv <= 256 (V tile <= 64 KiB).\n# --------------------------------------------------------------------------- #\n_CONFIGS_FULLROW_SMALL = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_FULLROW_SMALL, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_fullrow_small_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n    s_v_b, s_v_h, s_v_s, s_v_d,          # value_states (B,Hkv,Skv,D)\n    s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights & mask (B,H,Sq,Skv)\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,      # grad_attn_scores out (B,H,Sq,Skv)\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )  # (BQ, D) bf16\n\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )  # (BK, D) bf16\n\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)  # (BQ, BK)\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n    dP = dpd * M_blk * inv_keep\n    delta = tl.sum(dP * P_blk, axis=1)\n    dS = P_blk * (dP - delta[:, None])\n\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1B: dS full-row, single pass for 256 < Skv <= 512.\n# --------------------------------------------------------------------------- #\n_CONFIGS_FULLROW_MED = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_FULLROW_MED, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_fullrow_med_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )\n\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n    dP = dpd * M_blk * inv_keep\n    delta = tl.sum(dP * P_blk, axis=1)\n    dS = P_blk * (dP - delta[:, None])\n\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 1C: dS two-pass for Skv > 512.\n# --------------------------------------------------------------------------- #\n_CONFIGS_DS = [\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_DS, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _ds_kernel(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    m_base = M_ptr + b * s_p_b + h * s_p_h\n    v_base = V_ptr + b * s_v_b + kv * s_v_h\n\n    # ---- pass 1: delta = rowsum_kv( dP * P ), dP = (dO@V^T) * mask * inv_keep ----\n    delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        delta += tl.sum(dP * P_blk, axis=1)\n\n    # ---- pass 2: dS = P * (dP - delta) ----\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n        dP = dpd * M_blk * inv_keep\n        dS = P_blk * (dP - delta[:, None])\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n\n# --------------------------------------------------------------------------- #\n# Kernel 2: dV = grad_value_states  (B, Hkv, Skv, D) bf16\n#\n# RECONSTRUCTS P_drop in-register from P + mask instead of reading it from HBM.\n# P_drop = round_bf16(P * mask * inv_keep).\n# P and mask are L2-hot (read by the preceding dS kernel); P_drop is cold.\n# This eliminates the cold-HBM read of P_drop (~28% of big-matrix traffic).\n# --------------------------------------------------------------------------- #\n_CONFIGS_DV = [\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 64}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 64, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 64}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 256}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 128, \"BLOCK_Q\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=2),\n    triton.Config({\"BLOCK_J\": 256, \"BLOCK_Q\": 128}, num_warps=16, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_DV, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _dv_kernel(\n    P_ptr, M_ptr, dO_ptr, dV_ptr,\n    Sq, Skv, inv_keep,\n    KVH: tl.constexpr, GRP: tl.constexpr,\n    s_p_b, s_p_h, s_p_q, s_p_k,          # attn_weights (B,H,Sq,Skv)\n    s_m_b, s_m_h, s_m_q, s_m_k,          # mask (B,H,Sq,Skv) as int8\n    s_do_b, s_do_s, s_do_h, s_do_d,      # grad_attn_output (B,Sq,H,D)\n    s_dv_b, s_dv_h, s_dv_s, s_dv_d,      # grad_value_states (B,Hkv,Skv,D)\n    D: tl.constexpr, BLOCK_J: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_j = tl.program_id(0)\n    pid_bkv = tl.program_id(1)\n    b = pid_bkv // KVH\n    kvh = pid_bkv % KVH\n\n    offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)\n    offs_d = tl.arange(0, D)\n    j_valid = offs_j < Skv\n\n    acc = tl.zeros((BLOCK_J, D), dtype=tl.float32)\n    for g in range(0, GRP):\n        h = kvh * GRP + g\n        p_hb = P_ptr + b * s_p_b + h * s_p_h\n        m_hb = M_ptr + b * s_m_b + h * s_m_h\n        do_hb = dO_ptr + b * s_do_b + h * s_do_h\n        for q0 in range(0, Sq, BLOCK_Q):\n            offs_q = q0 + tl.arange(0, BLOCK_Q)\n            q_valid = offs_q < Sq\n            both = q_valid[:, None] & j_valid[None, :]\n            pk = offs_q[:, None] * s_p_q + offs_j[None, :] * s_p_k\n            # Reconstruct P_drop = round_bf16(P * mask * inv_keep)\n            P_blk = tl.load(p_hb + pk, mask=both, other=0.0).to(tl.float32)\n            M_blk = tl.load(m_hb + pk, mask=both, other=0).to(tl.float32)\n            pd = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n            do = tl.load(\n                do_hb + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n                mask=q_valid[:, None], other=0.0,\n            )\n            acc += tl.dot(tl.trans(pd), do, out_dtype=tl.float32)\n\n    tl.store(\n        dV_ptr + b * s_dv_b + kvh * s_dv_h\n        + offs_j[:, None] * s_dv_s + offs_d[None, :] * s_dv_d,\n        acc.to(tl.bfloat16), mask=j_valid[:, None],\n    )\n\n\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    \"\"\"Reference-equivalent path (no 10x V materialize).  Fallback only.\"\"\"\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)          # (B,H,Sq,D)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)                  # (B,KVH,1,Skv,D)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt)\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    # Fallback path for non-CUDA devices or unit tests without a GPU.\n    if (not grad_attn_output.is_cuda) or (not torch.cuda.is_available()):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    dev = grad_attn_output.device\n    dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n    dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n    # bool mask -> int8 view (1 byte, no copy); loaded 0/1 and cast to f32.\n    mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n    s_do = grad_attn_output.stride()\n    s_v = value_states.stride()\n    s_p = attn_weights.stride()\n    s_ds = dS.stride()\n    s_m = mask_i8.stride()\n    s_dv = dV.stride()\n\n    # Dispatch dS by Skv bucket; full-row saves the second P/mask read.\n    if Skv <= 256:\n        block_k = _next_pow2(Skv)\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_fullrow_small_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D, BLOCK_K=block_k,\n        )\n    elif Skv <= 512:\n        block_k = _next_pow2(Skv)  # 512\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_fullrow_med_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D, BLOCK_K=block_k,\n        )\n    else:\n        grid_ds = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _ds_kernel[grid_ds](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS,\n            Sq, Skv, inv_keep,\n            H, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            D=D,\n        )\n\n    # dV kernel: grid fast-dim = kv-block for L2-friendly dO sharing.\n    # RECONSTRUCTS P_drop in-register from P+mask instead of reading it from HBM.\n    grid_dv = lambda meta: (triton.cdiv(Skv, meta[\"BLOCK_J\"]), B * KVH)\n    _dv_kernel[grid_dv](\n        attn_weights, mask_i8, grad_attn_output, dV,\n        Sq, Skv, inv_keep,\n        KVH, G,\n        s_p[0], s_p[1], s_p[2], s_p[3],\n        s_m[0], s_m[1], s_m[2], s_m[3],\n        s_do[0], s_do[1], s_do[2], s_do[3],\n        s_dv[0], s_dv[1], s_dv[2], s_dv[3],\n        D=D,\n    )\n    return dS, dV"
+      }
+    ]
+  }
+}

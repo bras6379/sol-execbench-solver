@@ -1,0 +1,245 @@
+{
+  "cand_id": "8b1d7f813f0b",
+  "task_id": 35,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.09022262855868075,
+    0.15495669353390296,
+    0.0901275859891581,
+    0.10503826379582441,
+    0.0,
+    0.16493085470873223,
+    0.1673262463374558,
+    0.058013452657850156,
+    0.0,
+    0.0573248308621979,
+    0.24271920148118628,
+    0.0613673340717288,
+    0.0,
+    0.10490837883770826,
+    0.0706036834948712,
+    0.2422952713310719
+  ],
+  "strategy": "cuBLASLt TF32 GEMM with fused bias epilogue via torch.nn.functional.linear, plus CUDA graphs for smallest batches (B=5,1",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "f015864cd594",
+  "trajectory": "runs/35/work/8b1d7f813f0b/trajectory.jsonl",
+  "gpu_s": 9.11,
+  "job_id": "35-8b1d7f813f0b",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 505.43,
+      "samples": 26,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.945902,
+      "sol_ms": 0.0324,
+      "baseline_latency_ms": 0.122992,
+      "sol_score": 0.09022262855868075,
+      "sol_score_cal": 0.07652544605392778,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.47729449999999995,
+      "sol_ms": 0.0162,
+      "baseline_latency_ms": 0.1007515,
+      "sol_score": 0.15495669353390296,
+      "sol_score_cal": 0.13287325795229002,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.9435,
+      "sol_ms": 0.0285,
+      "baseline_latency_ms": 0.1191355,
+      "sol_score": 0.0901275859891581,
+      "sol_score_cal": 0.0764920767608757,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.760637,
+      "sol_ms": 0.0237,
+      "baseline_latency_ms": 0.1101915,
+      "sol_score": 0.10503826379582441,
+      "sol_score_cal": 0.08935538198980271,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.083088,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.432878,
+      "sol_ms": 0.0161,
+      "baseline_latency_ms": 0.098416,
+      "sol_score": 0.16493085470873223,
+      "sol_score_cal": 0.14159680030726213,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.4039975,
+      "sol_ms": 0.0158,
+      "baseline_latency_ms": 0.0938084999999999,
+      "sol_score": 0.1673262463374558,
+      "sol_score_cal": 0.14367118428006992,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 1.8744895000000001,
+      "sol_ms": 0.0579,
+      "baseline_latency_ms": 0.169777,
+      "sol_score": 0.058013452657850156,
+      "sol_score_cal": 0.048969642321249465,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0153,
+      "baseline_latency_ms": 0.084768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 1.872793,
+      "sol_ms": 0.0537,
+      "baseline_latency_ms": 0.1643204999999999,
+      "sol_score": 0.0573248308621979,
+      "sol_score_cal": 0.04840007095553087,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.24955100000000002,
+      "sol_ms": 0.0158,
+      "baseline_latency_ms": 0.0907205,
+      "sol_score": 0.24271920148118628,
+      "sol_score_cal": 0.21039990346157483,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.6245379999999998,
+      "sol_ms": 0.0487,
+      "baseline_latency_ms": 0.1517275,
+      "sol_score": 0.0613673340717288,
+      "sol_score_cal": 0.05183701286943561,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.082848,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7588455000000001,
+      "sol_ms": 0.0244,
+      "baseline_latency_ms": 0.11048,
+      "sol_score": 0.10490837883770826,
+      "sol_score_cal": 0.08922924399947715,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 1.378491,
+      "sol_ms": 0.0436,
+      "baseline_latency_ms": 0.145008,
+      "sol_score": 0.0706036834948712,
+      "sol_score_cal": 0.059714560186111966,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.2484635,
+      "sol_ms": 0.0156,
+      "baseline_latency_ms": 0.090064,
+      "sol_score": 0.2422952713310719,
+      "sol_score_cal": 0.2100325252277582,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nAdaLayerNormZero modulation parameter extraction for Flux dual-stream transformer.\n\nThis kernel performs a linear projection with fused bias epilogue:\n    [B, 3072] @ [3072, 18432] + bias \u2192 [B, 18432]\nthen chunks into 6 views (shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp).\n\nPrecision: TF32 (10-bit mantissa) - matches the reference's tensor-core throughput.\nThis is the library-first approach per the optimization-recipe: plain dense GEMM \u2192 cuBLAS.\n\nStrategy:\n- Use torch.nn.functional.linear for TF32 GEMM with fused bias epilogue (single kernel)\n- For small batches (B \u2264 32), use CUDA graphs to eliminate launch overhead\n- Chunk is free (returns views into output tensor)\n\"\"\"\n\nimport torch\nfrom typing import Tuple\n\n\n# CUDA graph cache: pre-record the graph for each batch size\n_cuda_graph_cache: dict[int, Tuple[torch.cuda.CUDAGraph, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]] = {}\n\n\ndef _get_cuda_graph(batch_size: int) -> Tuple[torch.cuda.CUDAGraph, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Get or create a CUDA graph for the given batch size.\n\n    Pre-allocate input/output tensors with known dtype and device.\n    The graph records:\n        out = torch.nn.functional.linear(emb, weight, bias)\n\n    where emb \u2192 [batch_size, 3072], weight \u2192 [18432, 3072], bias \u2192 [18432]\n    out \u2192 [batch_size, 18432]\n\n    The graph is reused across calls; we only update the input emb values.\n    \"\"\"\n    if batch_size not in _cuda_graph_cache:\n        emb = torch.empty(batch_size, 3072, dtype=torch.float32, device='cuda')\n        weight = torch.empty(18432, 3072, dtype=torch.float32, device='cuda')\n        bias = torch.empty(18432, dtype=torch.float32, device='cuda')\n        out = torch.empty(batch_size, 18432, dtype=torch.float32, device='cuda')\n\n        g = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(g, capture_error=True):\n            out = torch.nn.functional.linear(emb, weight, bias)\n\n        _cuda_graph_cache[batch_size] = (g, emb, weight, bias, out)\n\n    return _cuda_graph_cache[batch_size]\n\n\n@torch.no_grad()\ndef run(emb: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n    \"\"\"\n    AdaLayerNormZero modulation parameter extraction.\n\n    Performs a linear projection followed by chunking into 6 modulation parameters.\n\n    Args:\n        emb: Timestep embeddings of shape [batch_size, 3072] (fp32)\n        weight: Linear weight matrix of shape [18432, 3072] (fp32)\n        bias: Linear bias of shape [18432] (fp32)\n\n    Returns:\n        Tuple of 6 tensors, each of shape [batch_size, 3072]:\n        - shift_msa, scale_msa, gate_msa: for attention path\n        - shift_mlp, scale_mlp, gate_mlp: for MLP path\n    \"\"\"\n    batch_size = emb.shape[0]\n\n    # For small batches, use CUDA graphs to eliminate launch overhead\n    # This is particularly beneficial for the two smallest shapes (B=5, 16)\n    if batch_size in (5, 16, 32):\n        g, emb_cached, weight_cached, bias_cached, out = _get_cuda_graph(batch_size)\n\n        # Copy input data into pre-allocated buffers (requires contiguous)\n        emb_cont = emb.contiguous()\n        emb_cached.copy_(emb_cont)\n\n        # Execute the pre-recorded graph\n        g.replay()\n\n        # Chunk into 6 views (free operation - just slicing references)\n        chunks = out.chunk(6, dim=1)\n        return chunks\n    else:\n        # For medium and large batches, use standard cuBLAS TF32 GEMM with fused bias\n        # torch.nn.functional.linear uses cuBLASLt with TF32 precision and fused bias epilogue\n        out = torch.nn.functional.linear(emb, weight, bias)\n\n        # Chunk into 6 equal parts (free views)\n        chunks = out.chunk(6, dim=1)\n        return chunks\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t35_8b1d7f813f0b",
+    "definition": "035_flux_ada_layer_norm_zero_modulation_extraction",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nAdaLayerNormZero modulation parameter extraction for Flux dual-stream transformer.\n\nThis kernel performs a linear projection with fused bias epilogue:\n    [B, 3072] @ [3072, 18432] + bias \u2192 [B, 18432]\nthen chunks into 6 views (shift_msa, scale_msa, gate_msa, shift_mlp, scale_mlp, gate_mlp).\n\nPrecision: TF32 (10-bit mantissa) - matches the reference's tensor-core throughput.\nThis is the library-first approach per the optimization-recipe: plain dense GEMM \u2192 cuBLAS.\n\nStrategy:\n- Use torch.nn.functional.linear for TF32 GEMM with fused bias epilogue (single kernel)\n- For small batches (B \u2264 32), use CUDA graphs to eliminate launch overhead\n- Chunk is free (returns views into output tensor)\n\"\"\"\n\nimport torch\nfrom typing import Tuple\n\n\n# CUDA graph cache: pre-record the graph for each batch size\n_cuda_graph_cache: dict[int, Tuple[torch.cuda.CUDAGraph, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]] = {}\n\n\ndef _get_cuda_graph(batch_size: int) -> Tuple[torch.cuda.CUDAGraph, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Get or create a CUDA graph for the given batch size.\n\n    Pre-allocate input/output tensors with known dtype and device.\n    The graph records:\n        out = torch.nn.functional.linear(emb, weight, bias)\n\n    where emb \u2192 [batch_size, 3072], weight \u2192 [18432, 3072], bias \u2192 [18432]\n    out \u2192 [batch_size, 18432]\n\n    The graph is reused across calls; we only update the input emb values.\n    \"\"\"\n    if batch_size not in _cuda_graph_cache:\n        emb = torch.empty(batch_size, 3072, dtype=torch.float32, device='cuda')\n        weight = torch.empty(18432, 3072, dtype=torch.float32, device='cuda')\n        bias = torch.empty(18432, dtype=torch.float32, device='cuda')\n        out = torch.empty(batch_size, 18432, dtype=torch.float32, device='cuda')\n\n        g = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(g, capture_error=True):\n            out = torch.nn.functional.linear(emb, weight, bias)\n\n        _cuda_graph_cache[batch_size] = (g, emb, weight, bias, out)\n\n    return _cuda_graph_cache[batch_size]\n\n\n@torch.no_grad()\ndef run(emb: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:\n    \"\"\"\n    AdaLayerNormZero modulation parameter extraction.\n\n    Performs a linear projection followed by chunking into 6 modulation parameters.\n\n    Args:\n        emb: Timestep embeddings of shape [batch_size, 3072] (fp32)\n        weight: Linear weight matrix of shape [18432, 3072] (fp32)\n        bias: Linear bias of shape [18432] (fp32)\n\n    Returns:\n        Tuple of 6 tensors, each of shape [batch_size, 3072]:\n        - shift_msa, scale_msa, gate_msa: for attention path\n        - shift_mlp, scale_mlp, gate_mlp: for MLP path\n    \"\"\"\n    batch_size = emb.shape[0]\n\n    # For small batches, use CUDA graphs to eliminate launch overhead\n    # This is particularly beneficial for the two smallest shapes (B=5, 16)\n    if batch_size in (5, 16, 32):\n        g, emb_cached, weight_cached, bias_cached, out = _get_cuda_graph(batch_size)\n\n        # Copy input data into pre-allocated buffers (requires contiguous)\n        emb_cont = emb.contiguous()\n        emb_cached.copy_(emb_cont)\n\n        # Execute the pre-recorded graph\n        g.replay()\n\n        # Chunk into 6 views (free operation - just slicing references)\n        chunks = out.chunk(6, dim=1)\n        return chunks\n    else:\n        # For medium and large batches, use standard cuBLAS TF32 GEMM with fused bias\n        # torch.nn.functional.linear uses cuBLASLt with TF32 precision and fused bias epilogue\n        out = torch.nn.functional.linear(emb, weight, bias)\n\n        # Chunk into 6 equal parts (free views)\n        chunks = out.chunk(6, dim=1)\n        return chunks\n"
+      }
+    ]
+  }
+}

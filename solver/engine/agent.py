@@ -39,6 +39,8 @@ class ReviewVerdict:
     issues: list[str] = field(default_factory=list)
     reviewer: str = ""                  # the Perspective that produced this verdict
     cost_usd: float = 0.0               # $ this review call cost, when the CLI reports it
+    tokens: dict = field(default_factory=dict)   # {in, out, cached} — pricing varies by
+                                                  # provider, so raw tokens matter alongside $
 
     @property
     def ship(self) -> bool:
@@ -58,7 +60,7 @@ def solution_hash(solution: dict) -> str:
 class Agent(Protocol):
     perspective: Perspective
 
-    async def design(self, task_id: int) -> str: ...
+    async def design(self, task_id: int) -> tuple[str, dict]: ...
     async def plan(self, parent: Any, ctx: Any) -> Candidate: ...
     async def review(self, cand: Candidate, ctx: Any) -> ReviewVerdict: ...
 
@@ -103,8 +105,8 @@ class StubAgent:
         self.calls = 0
         self.review_calls = 0
 
-    async def design(self, task_id: int) -> str:
-        return self._design_text
+    async def design(self, task_id: int) -> tuple[str, dict]:
+        return self._design_text, {}
 
     async def review(self, cand: Candidate, ctx: Any) -> ReviewVerdict:
         self.review_calls += 1

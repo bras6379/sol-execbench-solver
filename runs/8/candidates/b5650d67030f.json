@@ -1,0 +1,248 @@
+{
+  "cand_id": "b5650d67030f",
+  "task_id": 8,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Single cooperative CUDA kernel fuses clone + bf16x2 atomic scatter-add in one launch with a grid-wide barrier, cutting l",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "9cf3918880bb",
+  "trajectory": "runs/8/work/b5650d67030f/trajectory.jsonl",
+  "gpu_s": 14.186,
+  "job_id": "8-b5650d67030f",
+  "asi": {
+    "stage": "harness",
+    "error": "_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_zfajlyxr/kernel.cu -o kernel.cuda.o \nFAILED:  kernel.cuda.o \n/usr/local/cuda/bin/nvcc --generate-dependencies-with-compile \n--dependency-output kernel.cuda.o.d -DTORCH_EXTENSION_NAME=benchmark_kernel \n-DTORCH_API_INCLUDE_EXTENSION_H -I/tmp/sol_execbench_zfajlyxr \n-I/usr/local/cutlass/include -I/usr/local/cutlass/tools/util/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include -isystem \n/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/include/torch/csrc/\napi/include -isystem /usr/local/cuda/include -isystem /usr/include/python3.12 \n-D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ \n-D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ \n--expt-relaxed-constexpr --compiler-options '-fPIC' \n-gencode=arch=compute_100a,code=sm_100a -gencode=arch=compute_100,code=sm_100 \n-std=c++17 -c /tmp/sol_execbench_zfajlyxr/kernel.cu -o kernel.cuda.o \n/tmp/sol_execbench_zfajlyxr/kernel.cu(145): error: a value of type \"const int *\"\ncannot be used to initialize an entity of type \"void *\"\n          &T,\n          ^\n\n/tmp/sol_execbench_zfajlyxr/kernel.cu(146): error: a value of type \"const int *\"\ncannot be used to initialize an entity of type \"void *\"\n          &N,\n          ^\n\n/tmp/sol_execbench_zfajlyxr/kernel.cu(147): error: a value of type \"const int *\"\ncannot be used to initialize an entity of type \"void *\"\n          &H,\n          ^\n\n/tmp/sol_execbench_zfajlyxr/kernel.cu(156): error: namespace \"at::cuda\" has no \nmember \"getCurrentCUDAStream\"\n          at::cuda::getCurrentCUDAStream(device).stream());\n                    ^\n\n4 errors detected in the compilation of \"/tmp/sol_execbench_zfajlyxr/kernel.cu\".\nninja: build stopped: subcommand failed.\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 254.8,
+      "samples": 43,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2203675,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.2321755,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.0402075,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846127,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2232635,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.06392,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.427264,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.1168,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.116992,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.031072,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.115232,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0064,
+      "baseline_latency_ms": 0.3912795,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.0639355,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.037824,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846895,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.844943,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <cooperative_groups.h>\n\nnamespace cg = cooperative_groups;\n\n// Problem 008: MoE expert-output combine.\n// Fused single-kernel implementation that seeds output = final_hidden_states\n// and then atomically scatters expert_outputs[rows] back to their token rows.\n// A grid-wide barrier guarantees every output row is seeded before any scatter\n// add touches it, eliminating the separate clone launch and its sync overhead.\n\n__global__ void fused_scatter_add_bf16_kernel(\n    __nv_bfloat16* __restrict__ out,\n    const __nv_bfloat16* __restrict__ fhs,\n    const __nv_bfloat16* __restrict__ eo,\n    const int64_t* __restrict__ idx,\n    int T,\n    int N,\n    int H)\n{\n    const int block_id = blockIdx.x;\n    const int thread_id = threadIdx.x;\n    const int block_dim = blockDim.x;\n    const int grid_dim = gridDim.x;\n\n    // Phase 1: seed output = final_hidden_states.\n    // 8 bf16 = 16 bytes per thread (float4) for full memory-width copies.\n    const int total_out = T * H;\n    const int seed_vec = total_out >> 3;          // number of float4 elements\n    const int total_threads = grid_dim * block_dim;\n    const int gid = block_id * block_dim + thread_id;\n\n    for (int i = gid; i < seed_vec; i += total_threads) {\n        reinterpret_cast<float4*>(out)[i] = reinterpret_cast<const float4*>(fhs)[i];\n    }\n\n    // Every token row must be visible before any atomic add is issued.\n    cg::this_grid().sync();\n\n    // Phase 2: scatter-add expert outputs.\n    // Each block owns a contiguous slice of expert-output rows.\n    const int rows_per_block = (N + grid_dim - 1) / grid_dim;\n    const int row_begin = block_id * rows_per_block;\n    const int row_end = min(row_begin + rows_per_block, N);\n    const int cols_per_row = H >> 1;              // number of bf16x2 per row\n\n    for (int row = row_begin; row < row_end; ++row) {\n        const int64_t out_row = idx[row];\n        const __nv_bfloat162* eo_row_ptr =\n            reinterpret_cast<const __nv_bfloat162*>(eo + row * H);\n        __nv_bfloat162* out_row_ptr =\n            reinterpret_cast<__nv_bfloat162*>(out + out_row * H);\n\n        for (int c = thread_id; c < cols_per_row; c += block_dim) {\n            __nv_bfloat162 val = eo_row_ptr[c];\n            atomicAdd(&out_row_ptr[c], val);\n        }\n    }\n}\n\nstatic void fallback_run(\n    torch::Tensor& output,\n    const torch::Tensor& final_hidden_states,\n    const torch::Tensor& expert_outputs,\n    const torch::Tensor& token_indices)\n{\n    output.copy_(final_hidden_states);\n    output.index_add_(0, token_indices, expert_outputs);\n}\n\ntorch::Tensor run(\n    torch::Tensor final_hidden_states,\n    torch::Tensor expert_outputs,\n    torch::Tensor token_indices)\n{\n    const bool can_fast_path =\n        final_hidden_states.is_cuda() &&\n        final_hidden_states.scalar_type() == at::kBFloat16 &&\n        expert_outputs.scalar_type() == at::kBFloat16 &&\n        token_indices.dtype() == at::kLong &&\n        final_hidden_states.dim() == 2 &&\n        expert_outputs.dim() == 2 &&\n        token_indices.dim() == 1 &&\n        final_hidden_states.is_contiguous() &&\n        expert_outputs.is_contiguous() &&\n        final_hidden_states.size(1) == 3072 &&\n        expert_outputs.size(1) == 3072;\n\n    auto output = torch::empty_like(final_hidden_states);\n\n    if (!can_fast_path) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    const int T = static_cast<int>(final_hidden_states.size(0));\n    const int H = static_cast<int>(final_hidden_states.size(1));\n    const int N = static_cast<int>(expert_outputs.size(0));\n\n    if (N == 0) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    // Fixed cooperative grid tuned to fit concurrently on B200 while giving\n    // each block enough rows to amortize loop overhead on large shapes.\n    const int block_size = 128;\n    const int grid_size = 1024;\n\n    const int device = final_hidden_states.device().index();\n    int num_sms = 0;\n    int max_blocks_per_sm = 0;\n\n    cudaError_t err = cudaDeviceGetAttribute(&num_sms, cudaDevAttrMultiProcessorCount, device);\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    err = cudaOccupancyMaxActiveBlocksPerMultiprocessor(\n        &max_blocks_per_sm, fused_scatter_add_bf16_kernel, block_size, 0);\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    const int max_coop_grid = max_blocks_per_sm * num_sms;\n    if (grid_size > max_coop_grid) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    auto out_ptr = output.data_ptr<__nv_bfloat16>();\n    auto fhs_ptr = final_hidden_states.data_ptr<__nv_bfloat16>();\n    auto eo_ptr = expert_outputs.data_ptr<__nv_bfloat16>();\n    auto idx_ptr = token_indices.data_ptr<int64_t>();\n\n    void* args[] = {\n        &out_ptr,\n        &fhs_ptr,\n        &eo_ptr,\n        &idx_ptr,\n        &T,\n        &N,\n        &H,\n    };\n\n    err = cudaLaunchCooperativeKernel(\n        reinterpret_cast<void*>(fused_scatter_add_bf16_kernel),\n        dim3(grid_size),\n        dim3(block_size),\n        args,\n        0,\n        at::cuda::getCurrentCUDAStream(device).stream());\n\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    return output;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"Problem 008 fused expert-output scatter-add\");\n}\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t8_b5650d67030f",
+    "definition": "008_expert_output_weighted_index_add_accumulation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "#include <torch/extension.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <cooperative_groups.h>\n\nnamespace cg = cooperative_groups;\n\n// Problem 008: MoE expert-output combine.\n// Fused single-kernel implementation that seeds output = final_hidden_states\n// and then atomically scatters expert_outputs[rows] back to their token rows.\n// A grid-wide barrier guarantees every output row is seeded before any scatter\n// add touches it, eliminating the separate clone launch and its sync overhead.\n\n__global__ void fused_scatter_add_bf16_kernel(\n    __nv_bfloat16* __restrict__ out,\n    const __nv_bfloat16* __restrict__ fhs,\n    const __nv_bfloat16* __restrict__ eo,\n    const int64_t* __restrict__ idx,\n    int T,\n    int N,\n    int H)\n{\n    const int block_id = blockIdx.x;\n    const int thread_id = threadIdx.x;\n    const int block_dim = blockDim.x;\n    const int grid_dim = gridDim.x;\n\n    // Phase 1: seed output = final_hidden_states.\n    // 8 bf16 = 16 bytes per thread (float4) for full memory-width copies.\n    const int total_out = T * H;\n    const int seed_vec = total_out >> 3;          // number of float4 elements\n    const int total_threads = grid_dim * block_dim;\n    const int gid = block_id * block_dim + thread_id;\n\n    for (int i = gid; i < seed_vec; i += total_threads) {\n        reinterpret_cast<float4*>(out)[i] = reinterpret_cast<const float4*>(fhs)[i];\n    }\n\n    // Every token row must be visible before any atomic add is issued.\n    cg::this_grid().sync();\n\n    // Phase 2: scatter-add expert outputs.\n    // Each block owns a contiguous slice of expert-output rows.\n    const int rows_per_block = (N + grid_dim - 1) / grid_dim;\n    const int row_begin = block_id * rows_per_block;\n    const int row_end = min(row_begin + rows_per_block, N);\n    const int cols_per_row = H >> 1;              // number of bf16x2 per row\n\n    for (int row = row_begin; row < row_end; ++row) {\n        const int64_t out_row = idx[row];\n        const __nv_bfloat162* eo_row_ptr =\n            reinterpret_cast<const __nv_bfloat162*>(eo + row * H);\n        __nv_bfloat162* out_row_ptr =\n            reinterpret_cast<__nv_bfloat162*>(out + out_row * H);\n\n        for (int c = thread_id; c < cols_per_row; c += block_dim) {\n            __nv_bfloat162 val = eo_row_ptr[c];\n            atomicAdd(&out_row_ptr[c], val);\n        }\n    }\n}\n\nstatic void fallback_run(\n    torch::Tensor& output,\n    const torch::Tensor& final_hidden_states,\n    const torch::Tensor& expert_outputs,\n    const torch::Tensor& token_indices)\n{\n    output.copy_(final_hidden_states);\n    output.index_add_(0, token_indices, expert_outputs);\n}\n\ntorch::Tensor run(\n    torch::Tensor final_hidden_states,\n    torch::Tensor expert_outputs,\n    torch::Tensor token_indices)\n{\n    const bool can_fast_path =\n        final_hidden_states.is_cuda() &&\n        final_hidden_states.scalar_type() == at::kBFloat16 &&\n        expert_outputs.scalar_type() == at::kBFloat16 &&\n        token_indices.dtype() == at::kLong &&\n        final_hidden_states.dim() == 2 &&\n        expert_outputs.dim() == 2 &&\n        token_indices.dim() == 1 &&\n        final_hidden_states.is_contiguous() &&\n        expert_outputs.is_contiguous() &&\n        final_hidden_states.size(1) == 3072 &&\n        expert_outputs.size(1) == 3072;\n\n    auto output = torch::empty_like(final_hidden_states);\n\n    if (!can_fast_path) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    const int T = static_cast<int>(final_hidden_states.size(0));\n    const int H = static_cast<int>(final_hidden_states.size(1));\n    const int N = static_cast<int>(expert_outputs.size(0));\n\n    if (N == 0) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    // Fixed cooperative grid tuned to fit concurrently on B200 while giving\n    // each block enough rows to amortize loop overhead on large shapes.\n    const int block_size = 128;\n    const int grid_size = 1024;\n\n    const int device = final_hidden_states.device().index();\n    int num_sms = 0;\n    int max_blocks_per_sm = 0;\n\n    cudaError_t err = cudaDeviceGetAttribute(&num_sms, cudaDevAttrMultiProcessorCount, device);\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    err = cudaOccupancyMaxActiveBlocksPerMultiprocessor(\n        &max_blocks_per_sm, fused_scatter_add_bf16_kernel, block_size, 0);\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    const int max_coop_grid = max_blocks_per_sm * num_sms;\n    if (grid_size > max_coop_grid) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    auto out_ptr = output.data_ptr<__nv_bfloat16>();\n    auto fhs_ptr = final_hidden_states.data_ptr<__nv_bfloat16>();\n    auto eo_ptr = expert_outputs.data_ptr<__nv_bfloat16>();\n    auto idx_ptr = token_indices.data_ptr<int64_t>();\n\n    void* args[] = {\n        &out_ptr,\n        &fhs_ptr,\n        &eo_ptr,\n        &idx_ptr,\n        &T,\n        &N,\n        &H,\n    };\n\n    err = cudaLaunchCooperativeKernel(\n        reinterpret_cast<void*>(fused_scatter_add_bf16_kernel),\n        dim3(grid_size),\n        dim3(block_size),\n        args,\n        0,\n        at::cuda::getCurrentCUDAStream(device).stream());\n\n    if (err != cudaSuccess) {\n        fallback_run(output, final_hidden_states, expert_outputs, token_indices);\n        return output;\n    }\n\n    return output;\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"Problem 008 fused expert-output scatter-add\");\n}\n"
+      }
+    ]
+  }
+}

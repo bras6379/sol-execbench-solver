@@ -3,7 +3,7 @@
   "family": "rope",
   "name": "rope_1",
   "epsilon": 0.02,
-  "size": 3,
+  "size": 4,
   "best_cand": "c9dca185303e",
   "best_score": 0.6694275664673348,
   "best_score_cal": 0.6239796105179323,
@@ -13,7 +13,7 @@
       "sol_score": 0.6694275664673348,
       "sol_score_cal": 0.6239796105179323,
       "all_passed": true,
-      "shapes_won": 8,
+      "shapes_won": 3,
       "vector": [
         0.5010371650821088,
         0.5180637324716967,
@@ -71,7 +71,7 @@
       "sol_score": 0.6642164521278474,
       "sol_score_cal": 0.6185141284401524,
       "all_passed": true,
-      "shapes_won": 6,
+      "shapes_won": 3,
       "vector": [
         0.48766364640109355,
         0.5203224665520227,
@@ -94,6 +94,35 @@
       "agent": "codex",
       "model": "gpt-5.5",
       "candidate": "candidates/9d66689d4dd3.json"
+    },
+    {
+      "cand_id": "7f1d48d81a7c",
+      "sol_score": 0.65130108669589,
+      "sol_score_cal": 0.6066151333529914,
+      "all_passed": true,
+      "shapes_won": 8,
+      "vector": [
+        0.37498483921481957,
+        0.5592543764372768,
+        0.6281581999189193,
+        0.887905303765215,
+        0.7061072274761919,
+        0.501668169264786,
+        0.8553828820554269,
+        0.6807496323109908,
+        0.5635832696784518,
+        0.7929993113384117,
+        0.8074127378719816,
+        0.5066323827140002,
+        0.6433060412113382,
+        0.8828049300468578,
+        0.49384245192338705,
+        0.5360256319061856
+      ],
+      "strategy": "Two fused Triton kernels: single-pass full-row dS for Skv\u2264512, two-pass L2-resident dS for larger Skv; dV uses fast-dim ",
+      "agent": "openrouter",
+      "model": "moonshotai/kimi-k2.7-code",
+      "candidate": "candidates/7f1d48d81a7c.json"
     }
   ]
 }

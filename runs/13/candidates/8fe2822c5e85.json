@@ -1,0 +1,245 @@
+{
+  "cand_id": "8fe2822c5e85",
+  "task_id": 13,
+  "verdict": "entered",
+  "sol_score": 0.7547019562770894,
+  "sol_score_calibrated": 0.7160101396658634,
+  "correct": true,
+  "vector": [
+    0.7151721914790738,
+    0.714933614040436,
+    0.679406400265296,
+    0.9177571901985923,
+    0.5662189598625644,
+    0.7088689546125162,
+    0.7199827836979429,
+    0.9196553330228225,
+    0.895563209076175,
+    0.7568210680246803,
+    0.7410295062091136,
+    0.7361360072603944,
+    0.7148284666690398,
+    0.7214464619969022,
+    0.6640962368908082,
+    0.9033149171270718
+  ],
+  "strategy": "Fuse the proven 0.653 kernel's separate row_dx and grad_weight-partial Triton launches into one loop-based kernel (BLOCK",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "3b40d0a8e488",
+  "trajectory": "runs/13/work/8fe2822c5e85/trajectory.jsonl",
+  "gpu_s": 15.963,
+  "job_id": "13-8fe2822c5e85",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 57.0,
+      "power_w_max": 896.9,
+      "samples": 49,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.053312,
+      "sol_ms": 0.0109,
+      "baseline_latency_ms": 0.117392,
+      "sol_score": 0.7151721914790738,
+      "sol_score_cal": 0.6696208491706893,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 2.6904965,
+      "sol_ms": 0.7006,
+      "baseline_latency_ms": 5.6911705,
+      "sol_score": 0.714933614040436,
+      "sol_score_cal": 0.6661500402700732,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.017967999999999998,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.03528,
+      "sol_score": 0.679406400265296,
+      "sol_score_cal": 0.6345099059423266,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0096,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.0959525,
+      "sol_score": 0.9177571901985923,
+      "sol_score_cal": 0.9018411907602933,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.02432,
+      "sol_ms": 0.0021,
+      "baseline_latency_ms": 0.031104,
+      "sol_score": 0.5662189598625644,
+      "sol_score_cal": 0.5193679626393147,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0283835,
+      "sol_ms": 0.005,
+      "baseline_latency_ms": 0.061936,
+      "sol_score": 0.7088689546125162,
+      "sol_score_cal": 0.6642682184769957,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.097168,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.215744,
+      "sol_score": 0.7199827836979429,
+      "sol_score_cal": 0.6738249074777327,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.00928,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.095776,
+      "sol_score": 0.9196553330228225,
+      "sol_score_cal": 0.9041854927341555,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.008848,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.071328,
+      "sol_score": 0.895563209076175,
+      "sol_score_cal": 0.8768971666729485,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.19856,
+      "sol_ms": 0.0469,
+      "baseline_latency_ms": 0.518896,
+      "sol_score": 0.7568210680246803,
+      "sol_score_cal": 0.713650680755944,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.29419249999999997,
+      "sol_ms": 0.0712,
+      "baseline_latency_ms": 0.7092805,
+      "sol_score": 0.7410295062091136,
+      "sol_score_cal": 0.6958578751099784,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.556576,
+      "sol_ms": 0.1475,
+      "baseline_latency_ms": 1.288753,
+      "sol_score": 0.7361360072603944,
+      "sol_score_cal": 0.6891297974992054,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.05536,
+      "sol_ms": 0.0113,
+      "baseline_latency_ms": 0.1217435,
+      "sol_score": 0.7148284666690398,
+      "sol_score_cal": 0.6692657156413786,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.68608,
+      "sol_ms": 0.1755,
+      "baseline_latency_ms": 1.497889,
+      "sol_score": 0.7214464619969022,
+      "sol_score_cal": 0.6735459176838955,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.020224,
+      "sol_ms": 0.0028,
+      "baseline_latency_ms": 0.037248,
+      "sol_score": 0.6640962368908082,
+      "sol_score_cal": 0.6182943919865831,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.00816,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0712319999999999,
+      "sol_score": 0.9033149171270718,
+      "sol_score_cal": 0.8857521218322999,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nHIDDEN_SIZE = 2560\nBLOCK_H = 4096          # next_pow2(HIDDEN_SIZE); tl.arange needs a power of 2\nREDUCE_BLOCK_H = 32\nTARGET_BLOCKS = 512     # ~3.5x SM count on B200 (148 SMs) -> good occupancy floor\nMAX_BLOCK_M = 32        # cap on rows fused per CTA (loop-based, so register-safe)\n\n\n@triton.jit\ndef _fused_dx_gwpartial_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    partial_gw,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"One CTA handles BLOCK_M consecutive rows via an unrolled loop (not a\n    2D tile), so register pressure per thread stays at the single-row level\n    regardless of BLOCK_M. Each row is read exactly once (grad_output +\n    normalized) and used for BOTH the dx computation and the grad_weight\n    partial-sum accumulation, eliminating the redundant second read that a\n    separate grad-weight kernel would need. The partial sum for this CTA's\n    BLOCK_M rows is written once, amortizing the grad_weight write/read\n    traffic by a factor of BLOCK_M.\n    \"\"\"\n    pid = tl.program_id(0)\n    row_start = pid * BLOCK_M\n    cols = tl.arange(0, BLOCK_H)\n    col_mask = cols < H\n\n    w = tl.load(weight + cols, mask=col_mask, other=0.0).to(tl.float32)\n    gw_acc = tl.zeros((BLOCK_H,), dtype=tl.float32)\n\n    for m in range(BLOCK_M):\n        row = row_start + m\n        row_valid = row < n_rows\n        mask = col_mask & row_valid\n        offs = row * H + cols\n\n        go = tl.load(grad_output + offs, mask=mask, other=0.0).to(tl.float32)\n        norm = tl.load(normalized + offs, mask=mask, other=0.0).to(tl.float32)\n        rs = tl.load(rstd + row, mask=row_valid, other=0.0).to(tl.float32)\n\n        grad_norm = go * w\n        mean = tl.sum(grad_norm * norm, axis=0) * (1.0 / H)\n        out = (grad_norm - mean * norm) * rs\n        tl.store(grad_x + offs, out, mask=mask)\n\n        gw_acc += go * norm\n\n    tl.store(partial_gw + pid * H + cols, gw_acc, mask=col_mask)\n\n\n@triton.jit\ndef _grad_weight_reduce_kernel(\n    partial,\n    grad_weight,\n    H: tl.constexpr,\n    NUM_BLOCKS: tl.constexpr,\n    BLOCK_R: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    acc = tl.zeros((BLOCK_H,), tl.float32)\n\n    for start in range(0, NUM_BLOCKS, BLOCK_R):\n        block_ids = start + tl.arange(0, BLOCK_R)\n        mask = (block_ids[:, None] < NUM_BLOCKS) & (cols[None, :] < H)\n        vals = tl.load(\n            partial + block_ids[:, None] * H + cols[None, :],\n            mask=mask,\n            other=0.0,\n        )\n        acc += tl.sum(vals, axis=0)\n\n    tl.store(grad_weight + cols, acc, mask=cols < H)\n\n\ndef _choose_block_m(n_rows: int) -> int:\n    return max(1, min(MAX_BLOCK_M, n_rows // TARGET_BLOCKS))\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n):\n    n_rows = grad_output.numel() // HIDDEN_SIZE\n    grad_x = torch.empty_like(grad_output)\n    grad_weight = torch.empty_like(weight)\n\n    if n_rows == 0:\n        return grad_x, grad_x, torch.zeros_like(weight)\n\n    block_m = _choose_block_m(n_rows)\n    num_row_blocks = triton.cdiv(n_rows, block_m)\n\n    partial = torch.empty(\n        (num_row_blocks, HIDDEN_SIZE),\n        device=grad_output.device,\n        dtype=torch.float32,\n    )\n\n    _fused_dx_gwpartial_kernel[(num_row_blocks,)](\n        grad_output,\n        normalized,\n        rstd,\n        weight,\n        grad_x,\n        partial,\n        n_rows,\n        HIDDEN_SIZE,\n        BLOCK_M=block_m,\n        BLOCK_H=BLOCK_H,\n        num_warps=8,\n    )\n\n    reduce_block = min(1024, triton.next_power_of_2(num_row_blocks))\n    _grad_weight_reduce_kernel[(triton.cdiv(HIDDEN_SIZE, REDUCE_BLOCK_H),)](\n        partial,\n        grad_weight,\n        HIDDEN_SIZE,\n        NUM_BLOCKS=num_row_blocks,\n        BLOCK_R=reduce_block,\n        BLOCK_H=REDUCE_BLOCK_H,\n        num_warps=8,\n    )\n\n    return grad_x, grad_x, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t13_8fe2822c5e85",
+    "definition": "013_fused_residual_rms_norm_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nHIDDEN_SIZE = 2560\nBLOCK_H = 4096          # next_pow2(HIDDEN_SIZE); tl.arange needs a power of 2\nREDUCE_BLOCK_H = 32\nTARGET_BLOCKS = 512     # ~3.5x SM count on B200 (148 SMs) -> good occupancy floor\nMAX_BLOCK_M = 32        # cap on rows fused per CTA (loop-based, so register-safe)\n\n\n@triton.jit\ndef _fused_dx_gwpartial_kernel(\n    grad_output,\n    normalized,\n    rstd,\n    weight,\n    grad_x,\n    partial_gw,\n    n_rows,\n    H: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    \"\"\"One CTA handles BLOCK_M consecutive rows via an unrolled loop (not a\n    2D tile), so register pressure per thread stays at the single-row level\n    regardless of BLOCK_M. Each row is read exactly once (grad_output +\n    normalized) and used for BOTH the dx computation and the grad_weight\n    partial-sum accumulation, eliminating the redundant second read that a\n    separate grad-weight kernel would need. The partial sum for this CTA's\n    BLOCK_M rows is written once, amortizing the grad_weight write/read\n    traffic by a factor of BLOCK_M.\n    \"\"\"\n    pid = tl.program_id(0)\n    row_start = pid * BLOCK_M\n    cols = tl.arange(0, BLOCK_H)\n    col_mask = cols < H\n\n    w = tl.load(weight + cols, mask=col_mask, other=0.0).to(tl.float32)\n    gw_acc = tl.zeros((BLOCK_H,), dtype=tl.float32)\n\n    for m in range(BLOCK_M):\n        row = row_start + m\n        row_valid = row < n_rows\n        mask = col_mask & row_valid\n        offs = row * H + cols\n\n        go = tl.load(grad_output + offs, mask=mask, other=0.0).to(tl.float32)\n        norm = tl.load(normalized + offs, mask=mask, other=0.0).to(tl.float32)\n        rs = tl.load(rstd + row, mask=row_valid, other=0.0).to(tl.float32)\n\n        grad_norm = go * w\n        mean = tl.sum(grad_norm * norm, axis=0) * (1.0 / H)\n        out = (grad_norm - mean * norm) * rs\n        tl.store(grad_x + offs, out, mask=mask)\n\n        gw_acc += go * norm\n\n    tl.store(partial_gw + pid * H + cols, gw_acc, mask=col_mask)\n\n\n@triton.jit\ndef _grad_weight_reduce_kernel(\n    partial,\n    grad_weight,\n    H: tl.constexpr,\n    NUM_BLOCKS: tl.constexpr,\n    BLOCK_R: tl.constexpr,\n    BLOCK_H: tl.constexpr,\n):\n    pid_h = tl.program_id(0)\n    cols = pid_h * BLOCK_H + tl.arange(0, BLOCK_H)\n    acc = tl.zeros((BLOCK_H,), tl.float32)\n\n    for start in range(0, NUM_BLOCKS, BLOCK_R):\n        block_ids = start + tl.arange(0, BLOCK_R)\n        mask = (block_ids[:, None] < NUM_BLOCKS) & (cols[None, :] < H)\n        vals = tl.load(\n            partial + block_ids[:, None] * H + cols[None, :],\n            mask=mask,\n            other=0.0,\n        )\n        acc += tl.sum(vals, axis=0)\n\n    tl.store(grad_weight + cols, acc, mask=cols < H)\n\n\ndef _choose_block_m(n_rows: int) -> int:\n    return max(1, min(MAX_BLOCK_M, n_rows // TARGET_BLOCKS))\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    x: torch.Tensor,\n    normalized: torch.Tensor,\n    rstd: torch.Tensor,\n    weight: torch.Tensor,\n):\n    n_rows = grad_output.numel() // HIDDEN_SIZE\n    grad_x = torch.empty_like(grad_output)\n    grad_weight = torch.empty_like(weight)\n\n    if n_rows == 0:\n        return grad_x, grad_x, torch.zeros_like(weight)\n\n    block_m = _choose_block_m(n_rows)\n    num_row_blocks = triton.cdiv(n_rows, block_m)\n\n    partial = torch.empty(\n        (num_row_blocks, HIDDEN_SIZE),\n        device=grad_output.device,\n        dtype=torch.float32,\n    )\n\n    _fused_dx_gwpartial_kernel[(num_row_blocks,)](\n        grad_output,\n        normalized,\n        rstd,\n        weight,\n        grad_x,\n        partial,\n        n_rows,\n        HIDDEN_SIZE,\n        BLOCK_M=block_m,\n        BLOCK_H=BLOCK_H,\n        num_warps=8,\n    )\n\n    reduce_block = min(1024, triton.next_power_of_2(num_row_blocks))\n    _grad_weight_reduce_kernel[(triton.cdiv(HIDDEN_SIZE, REDUCE_BLOCK_H),)](\n        partial,\n        grad_weight,\n        HIDDEN_SIZE,\n        NUM_BLOCKS=num_row_blocks,\n        BLOCK_R=reduce_block,\n        BLOCK_H=REDUCE_BLOCK_H,\n        num_warps=8,\n    )\n\n    return grad_x, grad_x, grad_weight\n"
+      }
+    ]
+  }
+}

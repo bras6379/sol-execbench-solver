@@ -1,0 +1,245 @@
+{
+  "cand_id": "6a82558c0c3f",
+  "task_id": 40,
+  "verdict": "entered",
+  "sol_score": 0.650742771971865,
+  "sol_score_calibrated": 0.6105076297127986,
+  "correct": true,
+  "vector": [
+    0.6179517793868433,
+    0.6689207213866035,
+    0.7598598403737589,
+    0.6159891791841675,
+    0.5802447552447552,
+    0.6712839556102971,
+    0.7379306912144211,
+    0.7372897334223923,
+    0.7123137136835767,
+    0.6215677590788309,
+    0.592418297066652,
+    0.5981187365421665,
+    0.6263013402377705,
+    0.5642170329670325,
+    0.5916063281959199,
+    0.7158704879546524
+  ],
+  "strategy": "Single CUDA graph capture of fp16 channels_last convs (no NCHW fallback) for all 16 workloads.",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "d8d5b0389bf4",
+  "trajectory": "runs/40/work/6a82558c0c3f/trajectory.jsonl",
+  "gpu_s": 22.524,
+  "job_id": "40-6a82558c0c3f",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 290.3,
+      "samples": 73,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.321824,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.517824,
+      "sol_score": 0.6179517793868433,
+      "sol_score_cal": 0.5755909542766718,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.3264625,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.655103,
+      "sol_score": 0.6689207213866035,
+      "sol_score_cal": 0.6288240877073649,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.059296,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.1861114999999999,
+      "sol_score": 0.7598598403737589,
+      "sol_score_cal": 0.7263242196396699,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.1777115,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.283616,
+      "sol_score": 0.6159891791841675,
+      "sol_score_cal": 0.5735676027881182,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.038816,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.053504,
+      "sol_score": 0.5802447552447552,
+      "sol_score_cal": 0.5369733406245653,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0541435,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.1100475,
+      "sol_score": 0.6712839556102971,
+      "sol_score_cal": 0.6314768020074446,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.19204700000000002,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.5362235,
+      "sol_score": 0.7379306912144211,
+      "sol_score_cal": 0.702490129013601,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.182144,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.506847,
+      "sol_score": 0.7372897334223923,
+      "sol_score_cal": 0.7017920853353089,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.077344,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.190176,
+      "sol_score": 0.7123137136835767,
+      "sol_score_cal": 0.6749844231072079,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.027744,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.045312,
+      "sol_score": 0.6215677590788309,
+      "sol_score_cal": 0.5793051640091962,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.0751675,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.1088475,
+      "sol_score": 0.592418297066652,
+      "sol_score_cal": 0.5493600214659956,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.1131035,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.167648,
+      "sol_score": 0.5981187365421665,
+      "sol_score_cal": 0.5551942065146588,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.031503500000000004,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.052528,
+      "sol_score": 0.6263013402377705,
+      "sol_score_cal": 0.5842821838151884,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.041008,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0529759999999999,
+      "sol_score": 0.5642170329670325,
+      "sol_score_cal": 0.5206806560639643,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.1245435,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.179743,
+      "sol_score": 0.5916063281959199,
+      "sol_score_cal": 0.5485247850540836,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.186784,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.4669594999999999,
+      "sol_score": 0.7158704879546524,
+      "sol_score_cal": 0.6787514139817389,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# -----------------------------------------------------------------------------\n# 040_conv2d_residual_block\n#\n#   x -> Conv3x3 (3->32) -> Conv3x3 (32->3) -> +x\n#\n# Strategy:\n#   * FP16 cuDNN tensor-core convs: 2x TF32 throughput, halves the (B,32,H,W)\n#     intermediate HBM traffic.\n#   * CUDA graph capture: all 16 workloads use the same channels_last body,\n#     eliminating per-shape dispatch overhead.\n#   * No NCHW fallback: previous NCHW for B=1 doubled intermediate traffic.\n# -----------------------------------------------------------------------------\n\n# cuDNN TF32 tensor cores; exhaustive algo search.\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\n# Disable compile caps for batched shapes to avoid thrashing to eager.\nimport torch._dynamo as _dynamo\ntry:\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 2048)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 4096\n        )\nexcept Exception:\n    pass\n\n_CL = torch.channels_last\n_HALF = torch.float16\n\n\ndef _core_cl(\n    x,\n    conv_in_weight,\n    conv_in_bias,\n    conv_out_weight,\n    conv_out_bias,\n):\n    \"\"\"Channels-last body: fp16 convs, fp32 residual.\"\"\"\n    xh = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv_in_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv_out_weight.to(dtype=_HALF, memory_format=_CL)\n    b1 = conv_in_bias.to(_HALF)\n    b2 = conv_out_bias.to(_HALF)\n\n    out = F.conv2d(xh, w1, b1, padding=1)\n    out = F.conv2d(out, w2, b2, padding=1)\n    return out.to(torch.float32) + x\n\n\n# ---- CUDA graph capture (warmup in run()) ----\n\n_graph = None\n_graph_error = None\n\n\ndef _get_graph():\n    global _graph, _graph_error\n    if _graph is not None or _graph_error is not None:\n        return _graph\n\n    if not hasattr(torch, \"compile\"):\n        _graph_error = True\n        return None\n\n    try:\n        # Mode='reduce-overhead' for small shapes, dynamic=False keeps the same graph.\n        _graph = torch.compile(_core_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception as e:\n        _graph_error = True\n        _graph = None\n    return _graph\n\n\n# ---- entry point (single code path for all 16 workloads) ----\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    conv_in_weight: torch.Tensor,\n    conv_in_bias: torch.Tensor,\n    conv_out_weight: torch.Tensor,\n    conv_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Fused-precision conv2d residual block (3->32->3, 3x3, pad=1) + residual.\n\n    This kernel uses fp16 storage for all inputs and intermediates, channels_last\n    layout for cuDNN tensor-core paths, and a single CUDA graph capture for all\n    16 workloads. No per-shape dispatch avoids the NCHW-to-NHWC transpose that\n    doubled the intermediate traffic on B=1 shapes in previous attempts.\n    \"\"\"\n    fn = _get_graph()\n    if fn is not None:\n        try:\n            return fn(x, conv_in_weight, conv_in_bias, conv_out_weight, conv_out_bias)\n        except Exception:\n            pass\n\n    # Eager fallback if graph capture failed.\n    return _core_cl(x, conv_in_weight, conv_in_bias, conv_out_weight, conv_out_bias)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t40_6a82558c0c3f",
+    "definition": "040_conv2d_residual_block",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# -----------------------------------------------------------------------------\n# 040_conv2d_residual_block\n#\n#   x -> Conv3x3 (3->32) -> Conv3x3 (32->3) -> +x\n#\n# Strategy:\n#   * FP16 cuDNN tensor-core convs: 2x TF32 throughput, halves the (B,32,H,W)\n#     intermediate HBM traffic.\n#   * CUDA graph capture: all 16 workloads use the same channels_last body,\n#     eliminating per-shape dispatch overhead.\n#   * No NCHW fallback: previous NCHW for B=1 doubled intermediate traffic.\n# -----------------------------------------------------------------------------\n\n# cuDNN TF32 tensor cores; exhaustive algo search.\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\n# Disable compile caps for batched shapes to avoid thrashing to eager.\nimport torch._dynamo as _dynamo\ntry:\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 2048)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 4096\n        )\nexcept Exception:\n    pass\n\n_CL = torch.channels_last\n_HALF = torch.float16\n\n\ndef _core_cl(\n    x,\n    conv_in_weight,\n    conv_in_bias,\n    conv_out_weight,\n    conv_out_bias,\n):\n    \"\"\"Channels-last body: fp16 convs, fp32 residual.\"\"\"\n    xh = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv_in_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv_out_weight.to(dtype=_HALF, memory_format=_CL)\n    b1 = conv_in_bias.to(_HALF)\n    b2 = conv_out_bias.to(_HALF)\n\n    out = F.conv2d(xh, w1, b1, padding=1)\n    out = F.conv2d(out, w2, b2, padding=1)\n    return out.to(torch.float32) + x\n\n\n# ---- CUDA graph capture (warmup in run()) ----\n\n_graph = None\n_graph_error = None\n\n\ndef _get_graph():\n    global _graph, _graph_error\n    if _graph is not None or _graph_error is not None:\n        return _graph\n\n    if not hasattr(torch, \"compile\"):\n        _graph_error = True\n        return None\n\n    try:\n        # Mode='reduce-overhead' for small shapes, dynamic=False keeps the same graph.\n        _graph = torch.compile(_core_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception as e:\n        _graph_error = True\n        _graph = None\n    return _graph\n\n\n# ---- entry point (single code path for all 16 workloads) ----\n\n\n@torch.no_grad()\ndef run(\n    x: torch.Tensor,\n    conv_in_weight: torch.Tensor,\n    conv_in_bias: torch.Tensor,\n    conv_out_weight: torch.Tensor,\n    conv_out_bias: torch.Tensor,\n):\n    \"\"\"\n    Fused-precision conv2d residual block (3->32->3, 3x3, pad=1) + residual.\n\n    This kernel uses fp16 storage for all inputs and intermediates, channels_last\n    layout for cuDNN tensor-core paths, and a single CUDA graph capture for all\n    16 workloads. No per-shape dispatch avoids the NCHW-to-NHWC transpose that\n    doubled the intermediate traffic on B=1 shapes in previous attempts.\n    \"\"\"\n    fn = _get_graph()\n    if fn is not None:\n        try:\n            return fn(x, conv_in_weight, conv_in_bias, conv_out_weight, conv_out_bias)\n        except Exception:\n            pass\n\n    # Eager fallback if graph capture failed.\n    return _core_cl(x, conv_in_weight, conv_in_bias, conv_out_weight, conv_out_bias)\n"
+      }
+    ]
+  }
+}

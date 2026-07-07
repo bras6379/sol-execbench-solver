@@ -1,0 +1,289 @@
+{
+  "cand_id": "da8813ca387a",
+  "task_id": 2,
+  "verdict": "dominated",
+  "sol_score": 0.5785276410413722,
+  "sol_score_calibrated": 0.5240288630855168,
+  "correct": true,
+  "vector": [
+    0.639875383490212,
+    0.5937780390458216,
+    0.5813345380618928,
+    0.6432335553372657,
+    0.638330274312809,
+    0.5626585350845408,
+    0.5282666462146469,
+    0.58548606563564,
+    0.6613963213413777,
+    0.6041808007358062,
+    0.4443556532383736,
+    0.4772874571499752,
+    0.535906534931554,
+    0.6526375509239629,
+    0.6168857606082954,
+    0.45893771487103846,
+    0.5627830885704898,
+    0.5643644575610615,
+    0.5937662507590676,
+    0.6250881929536135
+  ],
+  "strategy": "Fix the two bugs that made 6cdaf06c's B==1-large Triton GN1+SiLU+NCHW->NHWC fusion path silently dead code (undefined st",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "c3dd0c43392a",
+  "trajectory": "runs/2/work/da8813ca387a/trajectory.jsonl",
+  "gpu_s": 92.294,
+  "job_id": "2-da8813ca387a",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 46.0,
+      "power_w_max": 763.21,
+      "samples": 293,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.27537500000000004,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.42264,
+      "sol_score": 0.639875383490212,
+      "sol_score_cal": 0.5820267868135096,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.12673600000000002,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.175232,
+      "sol_score": 0.5937780390458216,
+      "sol_score_cal": 0.5431918390036167,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.13863950000000003,
+      "sol_ms": 0.0228,
+      "baseline_latency_ms": 0.183648,
+      "sol_score": 0.5813345380618928,
+      "sol_score_cal": 0.5308006736846856,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 1.761803,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 2.6277915,
+      "sol_score": 0.6432335553372657,
+      "sol_score_cal": 0.5791077322203789,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.184287,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2922884999999999,
+      "sol_score": 0.638330274312809,
+      "sol_score_cal": 0.5857882940980069,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.37364699999999995,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4561275,
+      "sol_score": 0.5626585350845408,
+      "sol_score_cal": 0.507877182610858,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.798478,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.873664,
+      "sol_score": 0.5282666462146469,
+      "sol_score_cal": 0.47417585990218686,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.1232955,
+      "sol_ms": 0.0217,
+      "baseline_latency_ms": 0.1652,
+      "sol_score": 0.58548606563564,
+      "sol_score_cal": 0.53440757075654,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.8900765,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.412656,
+      "sol_score": 0.6613963213413777,
+      "sol_score_cal": 0.5988410701958967,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.09803100000000001,
+      "sol_ms": 0.0111,
+      "baseline_latency_ms": 0.1437919999999999,
+      "sol_score": 0.6041808007358062,
+      "sol_score_cal": 0.556946980949208,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 6.8030035,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 5.714099,
+      "sol_score": 0.4443556532383736,
+      "sol_score_cal": 0.39250431366090915,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.675549,
+      "sol_ms": 0.1122,
+      "baseline_latency_ms": 0.6265925,
+      "sol_score": 0.4772874571499752,
+      "sol_score_cal": 0.42649389520721415,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 1.4298039999999999,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 1.5981445,
+      "sol_score": 0.535906534931554,
+      "sol_score_cal": 0.48025043672302264,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.4607025,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.715216,
+      "sol_score": 0.6526375509239629,
+      "sol_score_cal": 0.5906266849522901,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.175311,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.2559845,
+      "sol_score": 0.6168857606082954,
+      "sol_score_cal": 0.5625843492014725,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 4.207924,
+      "sol_ms": 0.7687,
+      "baseline_latency_ms": 3.685905,
+      "sol_score": 0.45893771487103846,
+      "sol_score_cal": 0.40766233614075975,
+      "error": null
+    },
+    {
+      "index": 16,
+      "correct": true,
+      "latency_ms": 0.31855900000000004,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.391552,
+      "sol_score": 0.5627830885704898,
+      "sol_score_cal": 0.509711800598161,
+      "error": null
+    },
+    {
+      "index": 17,
+      "correct": true,
+      "latency_ms": 0.309582,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3820325,
+      "sol_score": 0.5643644575610615,
+      "sol_score_cal": 0.5109629591689065,
+      "error": null
+    },
+    {
+      "index": 18,
+      "correct": true,
+      "latency_ms": 0.3279665,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.4397594999999999,
+      "sol_score": 0.5937662507590676,
+      "sol_score_cal": 0.5375731975794562,
+      "error": null
+    },
+    {
+      "index": 19,
+      "correct": true,
+      "latency_ms": 0.4639665,
+      "sol_ms": 0.1284,
+      "baseline_latency_ms": 0.687888,
+      "sol_score": 0.6250881929536135,
+      "sol_score_cal": 0.5690432982432555,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "# score=0.5559  strategy: fix 6cdaf06c Triton dead-code bugs + ship\n#\n# 002_vae_conv3x3_groupnorm_silu_residual_fused  (Sana / DC-AE VAE residual block)\n#\n#   x -> Conv3x3 -> GroupNorm(32) -> SiLU -> Conv3x3 -> GroupNorm(32) -> SiLU -> +x\n#\n# C=256, G=32, k=3, stride=1, pad=1, fp32 in/out.\n#\n# This revision fixes the two bugs that made 6cdaf06c's B==1-large Triton fusion\n# path silently dead code (see memory/problem-002-vae-resblock.md):\n#   1. _gn_silu_kernel body referenced undefined stride_b/stride_c (only defined\n#      as params of _gn_stats_kernel) instead of its own stride_xb/stride_xc.\n#   2. _gn_silu_nchw_to_nhwc_fp16 allocated y as (B,H,W,C) channels_last instead\n#      of (B,C,H,W) channels_last, so F.conv2d(y,w2) saw in_channels=H != 256.\n# Both caused RuntimeError caught by the dispatch try/except -> every B==1 large\n# call silently fell back to _core_nchw.  Fixing them makes the Triton path\n# actually execute for the first time.\n#\n# Dispatch (unchanged from 6cdaf06c):\n#   P = B*H*W <= 32768:\n#       B == 1  -> reduce-overhead CUDA graph of pure-NCHW body.\n#       B >= 2  -> reduce-overhead CUDA graph of explicit-CL body.\n#   P > 32768:\n#       B == 1  -> plain compile of Triton-fused first-tail body.\n#       B >= 2  -> plain compile of explicit-CL body.\n# -----------------------------------------------------------------------------\n\nimport torch\nimport torch.nn.functional as F\n\n# cuDNN tensor-core convs; benchmark=True autotunes the implicit-GEMM algo\n# once per shape (algo is cached by shape, shifting data_ptrs don't defeat it).\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\n# All ~20 workload shapes run in one process; raise recompile caps so later\n# shapes keep their optimized graphs instead of thrashing to eager.\ntry:  # pragma: no cover - config surface varies across torch versions\n    import torch._dynamo as _dynamo\n\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 512)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 2048\n        )\nexcept Exception:\n    pass\n\n_NUM_GROUPS = 32\n_CL = torch.channels_last\n_HALF = torch.float16\n\n# B*H*W at/under which launch overhead dominates enough that a CUDA-graph replay\n# beats a plain compiled dispatch.\n_P_CUDAGRAPH_MAX = 1 << 15  # 32768\n\n# -----------------------------------------------------------------------------\n# Triton kernel: fused GroupNorm + SiLU + NCHW -> NHWC fp16 cast.\n# Reads fp16 conv1 output in NCHW, computes fp32 group stats, normalizes,\n# applies SiLU, and writes fp16 NHWC so conv2 can run the fast NHWC kernel.\n# -----------------------------------------------------------------------------\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _gn_stats_kernel(\n    x_ptr,\n    partials_ptr,\n    B,\n    C,\n    H,\n    W,\n    HW,\n    num_tiles,\n    TILE_SIZE: tl.constexpr,\n    stride_b,\n    stride_c,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Per-tile sum/sumsq reduction for each (sample, group).\"\"\"\n    b = tl.program_id(0)\n    g = tl.program_id(1)\n    tile_idx = tl.program_id(2)\n\n    start = tile_idx * TILE_SIZE\n    end = tl.minimum(start + TILE_SIZE, HW)\n    c_base = g * 8\n\n    acc_sum = tl.zeros((BLOCK,), dtype=tl.float32)\n    acc_sumsq = tl.zeros((BLOCK,), dtype=tl.float32)\n    offs = start + tl.arange(0, BLOCK)\n\n    for _ in range(0, tl.cdiv(end - start, BLOCK)):\n        mask = offs < end\n        for co in range(8):\n            c = c_base + co\n            val = tl.load(\n                x_ptr + b * stride_b + c * stride_c + offs,\n                mask=mask,\n                other=0.0,\n            ).to(tl.float32)\n            acc_sum += val\n            acc_sumsq += val * val\n        offs += BLOCK\n\n    s_sum = tl.sum(acc_sum, axis=0)\n    s_sumsq = tl.sum(acc_sumsq, axis=0)\n    base = ((b * 32 + g) * num_tiles + tile_idx) * 2\n    tl.store(partials_ptr + base + 0, s_sum)\n    tl.store(partials_ptr + base + 1, s_sumsq)\n\n\n@triton.jit\ndef _gn_silu_kernel(\n    x_ptr,\n    partials_ptr,\n    w_ptr,\n    b_ptr,\n    y_ptr,\n    B,\n    C,\n    H,\n    W,\n    HW,\n    num_tiles,\n    TILE_SIZE: tl.constexpr,\n    eps,\n    stride_xb,   # FIXED (was stride_b \u2014 undefined name)\n    stride_xc,   # FIXED (was stride_c \u2014 undefined name)\n    stride_yb,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Reduce per-group partials and apply GN + SiLU + NCHW->NHWC cast.\"\"\"\n    b = tl.program_id(0)\n    g = tl.program_id(1)\n    tile_idx = tl.program_id(2)\n\n    start = tile_idx * TILE_SIZE\n    end = tl.minimum(start + TILE_SIZE, HW)\n    c_base = g * 8\n\n    # Reduce partial sums/sumsqs for this (sample, group).\n    total_sum = tl.zeros((), dtype=tl.float32)\n    total_sumsq = tl.zeros((), dtype=tl.float32)\n    tidx = tl.arange(0, BLOCK)\n    pbase = ((b * 32 + g) * num_tiles) * 2\n    for t in range(0, tl.cdiv(num_tiles, BLOCK)):\n        offs_t = t * BLOCK + tidx\n        mask_t = offs_t < num_tiles\n        p0 = tl.load(\n            partials_ptr + pbase + offs_t * 2 + 0,\n            mask=mask_t,\n            other=0.0,\n        )\n        p1 = tl.load(\n            partials_ptr + pbase + offs_t * 2 + 1,\n            mask=mask_t,\n            other=0.0,\n        )\n        total_sum += tl.sum(p0, axis=0)\n        total_sumsq += tl.sum(p1, axis=0)\n\n    n = 8 * HW\n    mean = total_sum / n\n    var = total_sumsq / n - mean * mean\n    inv_std = tl.rsqrt(var + eps)\n\n    offs = start + tl.arange(0, BLOCK)\n    for _ in range(0, tl.cdiv(end - start, BLOCK)):\n        mask = offs < end\n        for co in range(8):\n            c = c_base + co\n            val = tl.load(\n                x_ptr + b * stride_xb + c * stride_xc + offs,  # FIXED\n                mask=mask,\n                other=0.0,\n            ).to(tl.float32)\n            cw = tl.load(w_ptr + c)\n            cb = tl.load(b_ptr + c)\n            val = (val - mean) * inv_std * cw + cb\n            val = val * tl.sigmoid(val)\n            # NHWC: position idx -> b*H*W*C + offs*C + c\n            tl.store(\n                y_ptr + b * stride_yb + offs * C + c,\n                val.to(tl.float16),\n                mask=mask,\n            )\n        offs += BLOCK\n\n\n_TILE_SIZE = 4096\n\n\ndef _gn_silu_nchw_to_nhwc_fp16(x, weight, bias, eps):\n    \"\"\"Fused GN+SiLU with NCHW->NHWC fp16 conversion (C=256, G=32).\"\"\"\n    B, C, H, W = x.shape\n    HW = H * W\n    num_tiles = (HW + _TILE_SIZE - 1) // _TILE_SIZE\n    partials = x.new_empty((B, 32, num_tiles, 2), dtype=torch.float32)\n    # FIXED: logical shape (B, C, H, W) + channels_last, NOT (B, H, W, C).\n    # The store address math (b*stride_yb + offs*C + c) was already correct\n    # for this layout \u2014 only the declared shape was wrong.\n    y = torch.empty(\n        (B, C, H, W),\n        dtype=torch.float16,\n        memory_format=torch.channels_last,\n        device=x.device,\n    )\n    grid = (B, 32, num_tiles)\n    _gn_stats_kernel[grid](\n        x,\n        partials,\n        B,\n        C,\n        H,\n        W,\n        HW,\n        num_tiles,\n        _TILE_SIZE,\n        x.stride(0),\n        x.stride(1),\n        BLOCK=256,\n    )\n    _gn_silu_kernel[grid](\n        x,\n        partials,\n        weight,\n        bias,\n        y,\n        B,\n        C,\n        H,\n        W,\n        HW,\n        num_tiles,\n        _TILE_SIZE,\n        eps,\n        x.stride(0),\n        x.stride(1),\n        y.stride(0),\n        BLOCK=256,\n    )\n    return y\n\n\n# -----------------------------------------------------------------------------\n# Body definitions (pure eager, no compile)\n# -----------------------------------------------------------------------------\n\n\ndef _core_cl(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NHWC body: force channels_last on the fp16 intermediate handed to conv2.\n\n    For B >= 2 cuDNN emits NHWC between convs, so the intermediate cast is a\n    no-op and conv2 gets the fast NHWC tensor-core kernel.\"\"\"\n    x_h = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv1_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _core_nchw(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NCHW body: no memory-format conversions anywhere.\n\n    For B == 1 the conv is a tall-skinny implicit GEMM and cuDNN emits NCHW\n    regardless of input layout.  Matching NCHW weights avoids the expensive\n    full-tensor NCHW->NHWC transpose.\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    w2 = conv2_weight.to(dtype=_HALF)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _core_triton_b1(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"B==1 large body: NCHW conv1 + Triton fused GN1/SiLU/NCHW->NHWC + NHWC conv2.\n\n    The Triton kernel replaces the expensive uncoalesced PyTorch NCHW->NHWC\n    transpose with a single bandwidth pass that also performs the first GroupNorm\n    and SiLU, letting conv2 run in the fast NHWC layout.\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = _gn_silu_nchw_to_nhwc_fp16(out, norm1_weight, norm1_bias, eps)\n\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\n# -----------------------------------------------------------------------------\n# Lazily-built compiled entry points with graceful degradation\n# -----------------------------------------------------------------------------\n\n_compiled_graph_cl = None      # reduce-overhead NHWC graph  -> small P, B>=2\n_compiled_graph_nchw = None    # reduce-overhead NCHW graph  -> small P, B==1\n_compiled_triton_b1 = None     # plain compile Triton body   -> large P, B==1\n_compiled_default_cl = None    # plain compile NHWC          -> large P, B>=2\n_compiled_default_nchw = None  # plain compile NCHW          -> large P, B==1 fallback\n_graph_cl_disabled = False\n_graph_nchw_disabled = False\n_triton_b1_disabled = False\n_default_cl_disabled = False\n_default_nchw_disabled = False\n\n\ndef _get_graph_cl():\n    global _compiled_graph_cl, _graph_cl_disabled\n    if _compiled_graph_cl is not None or _graph_cl_disabled:\n        return _compiled_graph_cl\n    if not hasattr(torch, \"compile\"):\n        _graph_cl_disabled = True\n        return None\n    try:\n        _compiled_graph_cl = torch.compile(_core_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_cl_disabled = True\n        _compiled_graph_cl = None\n    return _compiled_graph_cl\n\n\ndef _get_graph_nchw():\n    global _compiled_graph_nchw, _graph_nchw_disabled\n    if _compiled_graph_nchw is not None or _graph_nchw_disabled:\n        return _compiled_graph_nchw\n    if not hasattr(torch, \"compile\"):\n        _graph_nchw_disabled = True\n        return None\n    try:\n        _compiled_graph_nchw = torch.compile(_core_nchw, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_nchw_disabled = True\n        _compiled_graph_nchw = None\n    return _compiled_graph_nchw\n\n\ndef _get_triton_b1():\n    global _compiled_triton_b1, _triton_b1_disabled\n    if _compiled_triton_b1 is not None or _triton_b1_disabled:\n        return _compiled_triton_b1\n    if not hasattr(torch, \"compile\"):\n        _triton_b1_disabled = True\n        return None\n    try:\n        _compiled_triton_b1 = torch.compile(_core_triton_b1, dynamic=False)\n    except Exception:\n        _triton_b1_disabled = True\n        _compiled_triton_b1 = None\n    return _compiled_triton_b1\n\n\ndef _get_default_cl():\n    global _compiled_default_cl, _default_cl_disabled\n    if _compiled_default_cl is not None or _default_cl_disabled:\n        return _compiled_default_cl\n    if not hasattr(torch, \"compile\"):\n        _default_cl_disabled = True\n        return None\n    try:\n        _compiled_default_cl = torch.compile(_core_cl, dynamic=False)\n    except Exception:\n        _default_cl_disabled = True\n        _compiled_default_cl = None\n    return _compiled_default_cl\n\n\ndef _get_default_nchw():\n    global _compiled_default_nchw, _default_nchw_disabled\n    if _compiled_default_nchw is not None or _default_nchw_disabled:\n        return _compiled_default_nchw\n    if not hasattr(torch, \"compile\"):\n        _default_nchw_disabled = True\n        return None\n    try:\n        _compiled_default_nchw = torch.compile(_core_nchw, dynamic=False)\n    except Exception:\n        _default_nchw_disabled = True\n        _compiled_default_nchw = None\n    return _compiled_default_nchw\n\n\n# -----------------------------------------------------------------------------\n# Dispatch (fallback logic isolated from run())\n# -----------------------------------------------------------------------------\n\n\ndef _dispatch(args):\n    global _graph_cl_disabled, _graph_nchw_disabled, _triton_b1_disabled\n    global _default_cl_disabled, _default_nchw_disabled\n\n    x = args[0]\n    b = x.shape[0]\n    p = b * x.shape[2] * x.shape[3]\n\n    # ---- small shapes: CUDA-graph replay collapses per-iteration launch gaps ----\n    if p <= _P_CUDAGRAPH_MAX:\n        if b == 1:\n            fn = _get_graph_nchw()\n            if fn is not None:\n                try:\n                    return fn(*args).clone()\n                except Exception:\n                    _graph_nchw_disabled = True\n        else:\n            fn = _get_graph_cl()\n            if fn is not None:\n                try:\n                    return fn(*args).clone()\n                except Exception:\n                    _graph_cl_disabled = True\n\n        if b == 1:\n            fn = _get_default_nchw()\n            if fn is not None:\n                try:\n                    return fn(*args)\n                except Exception:\n                    _default_nchw_disabled = True\n        else:\n            fn = _get_default_cl()\n            if fn is not None:\n                try:\n                    return fn(*args)\n                except Exception:\n                    _default_cl_disabled = True\n\n        return _core_nchw(*args)\n\n    # ---- large shapes: plain compile with the fastest body per regime ----\n    if b == 1:\n        # Triton-fused first tail: NCHW conv1 -> NHWC conv2 with no separate transpose.\n        fn = _get_triton_b1()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _triton_b1_disabled = True\n        fn = _get_default_nchw()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_nchw_disabled = True\n        return _core_nchw(*args)\n\n    fn = _get_default_cl()\n    if fn is not None:\n        try:\n            return fn(*args)\n        except Exception:\n            _default_cl_disabled = True\n    return _core_nchw(*args)\n\n\n# -----------------------------------------------------------------------------\n# Entry point\n# -----------------------------------------------------------------------------\n\n\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    return _dispatch(\n        (x, conv1_weight, norm1_weight, norm1_bias, conv2_weight, norm2_weight, norm2_bias, eps)\n    )"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t2_da8813ca387a",
+    "definition": "002_vae_conv3x3_groupnorm_silu_residual_fused",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "# score=0.5559  strategy: fix 6cdaf06c Triton dead-code bugs + ship\n#\n# 002_vae_conv3x3_groupnorm_silu_residual_fused  (Sana / DC-AE VAE residual block)\n#\n#   x -> Conv3x3 -> GroupNorm(32) -> SiLU -> Conv3x3 -> GroupNorm(32) -> SiLU -> +x\n#\n# C=256, G=32, k=3, stride=1, pad=1, fp32 in/out.\n#\n# This revision fixes the two bugs that made 6cdaf06c's B==1-large Triton fusion\n# path silently dead code (see memory/problem-002-vae-resblock.md):\n#   1. _gn_silu_kernel body referenced undefined stride_b/stride_c (only defined\n#      as params of _gn_stats_kernel) instead of its own stride_xb/stride_xc.\n#   2. _gn_silu_nchw_to_nhwc_fp16 allocated y as (B,H,W,C) channels_last instead\n#      of (B,C,H,W) channels_last, so F.conv2d(y,w2) saw in_channels=H != 256.\n# Both caused RuntimeError caught by the dispatch try/except -> every B==1 large\n# call silently fell back to _core_nchw.  Fixing them makes the Triton path\n# actually execute for the first time.\n#\n# Dispatch (unchanged from 6cdaf06c):\n#   P = B*H*W <= 32768:\n#       B == 1  -> reduce-overhead CUDA graph of pure-NCHW body.\n#       B >= 2  -> reduce-overhead CUDA graph of explicit-CL body.\n#   P > 32768:\n#       B == 1  -> plain compile of Triton-fused first-tail body.\n#       B >= 2  -> plain compile of explicit-CL body.\n# -----------------------------------------------------------------------------\n\nimport torch\nimport torch.nn.functional as F\n\n# cuDNN tensor-core convs; benchmark=True autotunes the implicit-GEMM algo\n# once per shape (algo is cached by shape, shifting data_ptrs don't defeat it).\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.deterministic = False\n\n# All ~20 workload shapes run in one process; raise recompile caps so later\n# shapes keep their optimized graphs instead of thrashing to eager.\ntry:  # pragma: no cover - config surface varies across torch versions\n    import torch._dynamo as _dynamo\n\n    _dynamo.config.cache_size_limit = max(getattr(_dynamo.config, \"cache_size_limit\", 8), 512)\n    if hasattr(_dynamo.config, \"accumulated_cache_size_limit\"):\n        _dynamo.config.accumulated_cache_size_limit = max(\n            _dynamo.config.accumulated_cache_size_limit, 2048\n        )\nexcept Exception:\n    pass\n\n_NUM_GROUPS = 32\n_CL = torch.channels_last\n_HALF = torch.float16\n\n# B*H*W at/under which launch overhead dominates enough that a CUDA-graph replay\n# beats a plain compiled dispatch.\n_P_CUDAGRAPH_MAX = 1 << 15  # 32768\n\n# -----------------------------------------------------------------------------\n# Triton kernel: fused GroupNorm + SiLU + NCHW -> NHWC fp16 cast.\n# Reads fp16 conv1 output in NCHW, computes fp32 group stats, normalizes,\n# applies SiLU, and writes fp16 NHWC so conv2 can run the fast NHWC kernel.\n# -----------------------------------------------------------------------------\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _gn_stats_kernel(\n    x_ptr,\n    partials_ptr,\n    B,\n    C,\n    H,\n    W,\n    HW,\n    num_tiles,\n    TILE_SIZE: tl.constexpr,\n    stride_b,\n    stride_c,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Per-tile sum/sumsq reduction for each (sample, group).\"\"\"\n    b = tl.program_id(0)\n    g = tl.program_id(1)\n    tile_idx = tl.program_id(2)\n\n    start = tile_idx * TILE_SIZE\n    end = tl.minimum(start + TILE_SIZE, HW)\n    c_base = g * 8\n\n    acc_sum = tl.zeros((BLOCK,), dtype=tl.float32)\n    acc_sumsq = tl.zeros((BLOCK,), dtype=tl.float32)\n    offs = start + tl.arange(0, BLOCK)\n\n    for _ in range(0, tl.cdiv(end - start, BLOCK)):\n        mask = offs < end\n        for co in range(8):\n            c = c_base + co\n            val = tl.load(\n                x_ptr + b * stride_b + c * stride_c + offs,\n                mask=mask,\n                other=0.0,\n            ).to(tl.float32)\n            acc_sum += val\n            acc_sumsq += val * val\n        offs += BLOCK\n\n    s_sum = tl.sum(acc_sum, axis=0)\n    s_sumsq = tl.sum(acc_sumsq, axis=0)\n    base = ((b * 32 + g) * num_tiles + tile_idx) * 2\n    tl.store(partials_ptr + base + 0, s_sum)\n    tl.store(partials_ptr + base + 1, s_sumsq)\n\n\n@triton.jit\ndef _gn_silu_kernel(\n    x_ptr,\n    partials_ptr,\n    w_ptr,\n    b_ptr,\n    y_ptr,\n    B,\n    C,\n    H,\n    W,\n    HW,\n    num_tiles,\n    TILE_SIZE: tl.constexpr,\n    eps,\n    stride_xb,   # FIXED (was stride_b \u2014 undefined name)\n    stride_xc,   # FIXED (was stride_c \u2014 undefined name)\n    stride_yb,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Reduce per-group partials and apply GN + SiLU + NCHW->NHWC cast.\"\"\"\n    b = tl.program_id(0)\n    g = tl.program_id(1)\n    tile_idx = tl.program_id(2)\n\n    start = tile_idx * TILE_SIZE\n    end = tl.minimum(start + TILE_SIZE, HW)\n    c_base = g * 8\n\n    # Reduce partial sums/sumsqs for this (sample, group).\n    total_sum = tl.zeros((), dtype=tl.float32)\n    total_sumsq = tl.zeros((), dtype=tl.float32)\n    tidx = tl.arange(0, BLOCK)\n    pbase = ((b * 32 + g) * num_tiles) * 2\n    for t in range(0, tl.cdiv(num_tiles, BLOCK)):\n        offs_t = t * BLOCK + tidx\n        mask_t = offs_t < num_tiles\n        p0 = tl.load(\n            partials_ptr + pbase + offs_t * 2 + 0,\n            mask=mask_t,\n            other=0.0,\n        )\n        p1 = tl.load(\n            partials_ptr + pbase + offs_t * 2 + 1,\n            mask=mask_t,\n            other=0.0,\n        )\n        total_sum += tl.sum(p0, axis=0)\n        total_sumsq += tl.sum(p1, axis=0)\n\n    n = 8 * HW\n    mean = total_sum / n\n    var = total_sumsq / n - mean * mean\n    inv_std = tl.rsqrt(var + eps)\n\n    offs = start + tl.arange(0, BLOCK)\n    for _ in range(0, tl.cdiv(end - start, BLOCK)):\n        mask = offs < end\n        for co in range(8):\n            c = c_base + co\n            val = tl.load(\n                x_ptr + b * stride_xb + c * stride_xc + offs,  # FIXED\n                mask=mask,\n                other=0.0,\n            ).to(tl.float32)\n            cw = tl.load(w_ptr + c)\n            cb = tl.load(b_ptr + c)\n            val = (val - mean) * inv_std * cw + cb\n            val = val * tl.sigmoid(val)\n            # NHWC: position idx -> b*H*W*C + offs*C + c\n            tl.store(\n                y_ptr + b * stride_yb + offs * C + c,\n                val.to(tl.float16),\n                mask=mask,\n            )\n        offs += BLOCK\n\n\n_TILE_SIZE = 4096\n\n\ndef _gn_silu_nchw_to_nhwc_fp16(x, weight, bias, eps):\n    \"\"\"Fused GN+SiLU with NCHW->NHWC fp16 conversion (C=256, G=32).\"\"\"\n    B, C, H, W = x.shape\n    HW = H * W\n    num_tiles = (HW + _TILE_SIZE - 1) // _TILE_SIZE\n    partials = x.new_empty((B, 32, num_tiles, 2), dtype=torch.float32)\n    # FIXED: logical shape (B, C, H, W) + channels_last, NOT (B, H, W, C).\n    # The store address math (b*stride_yb + offs*C + c) was already correct\n    # for this layout \u2014 only the declared shape was wrong.\n    y = torch.empty(\n        (B, C, H, W),\n        dtype=torch.float16,\n        memory_format=torch.channels_last,\n        device=x.device,\n    )\n    grid = (B, 32, num_tiles)\n    _gn_stats_kernel[grid](\n        x,\n        partials,\n        B,\n        C,\n        H,\n        W,\n        HW,\n        num_tiles,\n        _TILE_SIZE,\n        x.stride(0),\n        x.stride(1),\n        BLOCK=256,\n    )\n    _gn_silu_kernel[grid](\n        x,\n        partials,\n        weight,\n        bias,\n        y,\n        B,\n        C,\n        H,\n        W,\n        HW,\n        num_tiles,\n        _TILE_SIZE,\n        eps,\n        x.stride(0),\n        x.stride(1),\n        y.stride(0),\n        BLOCK=256,\n    )\n    return y\n\n\n# -----------------------------------------------------------------------------\n# Body definitions (pure eager, no compile)\n# -----------------------------------------------------------------------------\n\n\ndef _core_cl(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NHWC body: force channels_last on the fp16 intermediate handed to conv2.\n\n    For B >= 2 cuDNN emits NHWC between convs, so the intermediate cast is a\n    no-op and conv2 gets the fast NHWC tensor-core kernel.\"\"\"\n    x_h = x.to(dtype=_HALF, memory_format=_CL)\n    w1 = conv1_weight.to(dtype=_HALF, memory_format=_CL)\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF, memory_format=_CL)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _core_nchw(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"NCHW body: no memory-format conversions anywhere.\n\n    For B == 1 the conv is a tall-skinny implicit GEMM and cuDNN emits NCHW\n    regardless of input layout.  Matching NCHW weights avoids the expensive\n    full-tensor NCHW->NHWC transpose.\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    w2 = conv2_weight.to(dtype=_HALF)\n\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm1_weight, bias=norm1_bias, eps=eps)\n    out = F.silu(out).to(dtype=_HALF)\n\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\ndef _core_triton_b1(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    \"\"\"B==1 large body: NCHW conv1 + Triton fused GN1/SiLU/NCHW->NHWC + NHWC conv2.\n\n    The Triton kernel replaces the expensive uncoalesced PyTorch NCHW->NHWC\n    transpose with a single bandwidth pass that also performs the first GroupNorm\n    and SiLU, letting conv2 run in the fast NHWC layout.\"\"\"\n    x_h = x.to(dtype=_HALF)\n    w1 = conv1_weight.to(dtype=_HALF)\n    out = F.conv2d(x_h, w1, bias=None, stride=1, padding=1)\n    out = _gn_silu_nchw_to_nhwc_fp16(out, norm1_weight, norm1_bias, eps)\n\n    w2 = conv2_weight.to(dtype=_HALF, memory_format=_CL)\n    out = F.conv2d(out, w2, bias=None, stride=1, padding=1)\n    out = F.group_norm(out.float(), _NUM_GROUPS, weight=norm2_weight, bias=norm2_bias, eps=eps)\n    out = F.silu(out)\n\n    return out + x\n\n\n# -----------------------------------------------------------------------------\n# Lazily-built compiled entry points with graceful degradation\n# -----------------------------------------------------------------------------\n\n_compiled_graph_cl = None      # reduce-overhead NHWC graph  -> small P, B>=2\n_compiled_graph_nchw = None    # reduce-overhead NCHW graph  -> small P, B==1\n_compiled_triton_b1 = None     # plain compile Triton body   -> large P, B==1\n_compiled_default_cl = None    # plain compile NHWC          -> large P, B>=2\n_compiled_default_nchw = None  # plain compile NCHW          -> large P, B==1 fallback\n_graph_cl_disabled = False\n_graph_nchw_disabled = False\n_triton_b1_disabled = False\n_default_cl_disabled = False\n_default_nchw_disabled = False\n\n\ndef _get_graph_cl():\n    global _compiled_graph_cl, _graph_cl_disabled\n    if _compiled_graph_cl is not None or _graph_cl_disabled:\n        return _compiled_graph_cl\n    if not hasattr(torch, \"compile\"):\n        _graph_cl_disabled = True\n        return None\n    try:\n        _compiled_graph_cl = torch.compile(_core_cl, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_cl_disabled = True\n        _compiled_graph_cl = None\n    return _compiled_graph_cl\n\n\ndef _get_graph_nchw():\n    global _compiled_graph_nchw, _graph_nchw_disabled\n    if _compiled_graph_nchw is not None or _graph_nchw_disabled:\n        return _compiled_graph_nchw\n    if not hasattr(torch, \"compile\"):\n        _graph_nchw_disabled = True\n        return None\n    try:\n        _compiled_graph_nchw = torch.compile(_core_nchw, mode=\"reduce-overhead\", dynamic=False)\n    except Exception:\n        _graph_nchw_disabled = True\n        _compiled_graph_nchw = None\n    return _compiled_graph_nchw\n\n\ndef _get_triton_b1():\n    global _compiled_triton_b1, _triton_b1_disabled\n    if _compiled_triton_b1 is not None or _triton_b1_disabled:\n        return _compiled_triton_b1\n    if not hasattr(torch, \"compile\"):\n        _triton_b1_disabled = True\n        return None\n    try:\n        _compiled_triton_b1 = torch.compile(_core_triton_b1, dynamic=False)\n    except Exception:\n        _triton_b1_disabled = True\n        _compiled_triton_b1 = None\n    return _compiled_triton_b1\n\n\ndef _get_default_cl():\n    global _compiled_default_cl, _default_cl_disabled\n    if _compiled_default_cl is not None or _default_cl_disabled:\n        return _compiled_default_cl\n    if not hasattr(torch, \"compile\"):\n        _default_cl_disabled = True\n        return None\n    try:\n        _compiled_default_cl = torch.compile(_core_cl, dynamic=False)\n    except Exception:\n        _default_cl_disabled = True\n        _compiled_default_cl = None\n    return _compiled_default_cl\n\n\ndef _get_default_nchw():\n    global _compiled_default_nchw, _default_nchw_disabled\n    if _compiled_default_nchw is not None or _default_nchw_disabled:\n        return _compiled_default_nchw\n    if not hasattr(torch, \"compile\"):\n        _default_nchw_disabled = True\n        return None\n    try:\n        _compiled_default_nchw = torch.compile(_core_nchw, dynamic=False)\n    except Exception:\n        _default_nchw_disabled = True\n        _compiled_default_nchw = None\n    return _compiled_default_nchw\n\n\n# -----------------------------------------------------------------------------\n# Dispatch (fallback logic isolated from run())\n# -----------------------------------------------------------------------------\n\n\ndef _dispatch(args):\n    global _graph_cl_disabled, _graph_nchw_disabled, _triton_b1_disabled\n    global _default_cl_disabled, _default_nchw_disabled\n\n    x = args[0]\n    b = x.shape[0]\n    p = b * x.shape[2] * x.shape[3]\n\n    # ---- small shapes: CUDA-graph replay collapses per-iteration launch gaps ----\n    if p <= _P_CUDAGRAPH_MAX:\n        if b == 1:\n            fn = _get_graph_nchw()\n            if fn is not None:\n                try:\n                    return fn(*args).clone()\n                except Exception:\n                    _graph_nchw_disabled = True\n        else:\n            fn = _get_graph_cl()\n            if fn is not None:\n                try:\n                    return fn(*args).clone()\n                except Exception:\n                    _graph_cl_disabled = True\n\n        if b == 1:\n            fn = _get_default_nchw()\n            if fn is not None:\n                try:\n                    return fn(*args)\n                except Exception:\n                    _default_nchw_disabled = True\n        else:\n            fn = _get_default_cl()\n            if fn is not None:\n                try:\n                    return fn(*args)\n                except Exception:\n                    _default_cl_disabled = True\n\n        return _core_nchw(*args)\n\n    # ---- large shapes: plain compile with the fastest body per regime ----\n    if b == 1:\n        # Triton-fused first tail: NCHW conv1 -> NHWC conv2 with no separate transpose.\n        fn = _get_triton_b1()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _triton_b1_disabled = True\n        fn = _get_default_nchw()\n        if fn is not None:\n            try:\n                return fn(*args)\n            except Exception:\n                _default_nchw_disabled = True\n        return _core_nchw(*args)\n\n    fn = _get_default_cl()\n    if fn is not None:\n        try:\n            return fn(*args)\n        except Exception:\n            _default_cl_disabled = True\n    return _core_nchw(*args)\n\n\n# -----------------------------------------------------------------------------\n# Entry point\n# -----------------------------------------------------------------------------\n\n\ndef run(\n    x,\n    conv1_weight,\n    norm1_weight,\n    norm1_bias,\n    conv2_weight,\n    norm2_weight,\n    norm2_bias,\n    eps: float,\n):\n    return _dispatch(\n        (x, conv1_weight, norm1_weight, norm1_bias, conv2_weight, norm2_weight, norm2_bias, eps)\n    )"
+      }
+    ]
+  }
+}

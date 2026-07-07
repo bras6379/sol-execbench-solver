@@ -1,0 +1,245 @@
+{
+  "cand_id": "c78740f17509",
+  "task_id": 1,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.703448355240441,
+    0.0,
+    0.0,
+    0.5648054251421976,
+    0.0,
+    0.0,
+    0.23055543639685167,
+    0.6903627159243311,
+    0.20575894981010462,
+    0.0
+  ],
+  "strategy": "Megakernel fusing dS + dV: reconstruct P_drop = bf16(P*mask/0.9) in-register to eliminate the separate P_drop HBM read (",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "7f1d48d81a7c",
+  "trajectory": "runs/1/work/c78740f17509/trajectory.jsonl",
+  "gpu_s": 116.019,
+  "job_id": "1-c78740f17509",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 510.71,
+      "samples": 396,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0201,
+      "baseline_latency_ms": 0.089664,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0942,
+      "baseline_latency_ms": 0.8407990000000001,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.5409,
+      "baseline_latency_ms": 3.2083025,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0923,
+      "baseline_latency_ms": 1.6414235,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0187,
+      "baseline_latency_ms": 0.2110715,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 1.1427,
+      "baseline_latency_ms": 9.2737565,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.11496,
+      "sol_ms": 0.0119,
+      "baseline_latency_ms": 0.256368,
+      "sol_score": 0.703448355240441,
+      "sol_score_cal": 0.661850543519459,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.5781,
+      "baseline_latency_ms": 4.250175499999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0188,
+      "baseline_latency_ms": 0.2667045,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.401359,
+      "sol_ms": 0.0398,
+      "baseline_latency_ms": 0.5090395000000001,
+      "sol_score": 0.5648054251421976,
+      "sol_score_cal": 0.5173210173374938,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0409,
+      "baseline_latency_ms": 0.485216,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0693,
+      "baseline_latency_ms": 0.3547035,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 3.3577174999999997,
+      "sol_ms": 0.147,
+      "baseline_latency_ms": 1.1090555,
+      "sol_score": 0.23055543639685167,
+      "sol_score_cal": 0.1999808002484109,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.402527,
+      "sol_ms": 0.0464,
+      "baseline_latency_ms": 0.8404155,
+      "sol_score": 0.6903627159243311,
+      "sol_score_cal": 0.6473184829469516,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.4617425,
+      "sol_ms": 0.0185,
+      "baseline_latency_ms": 0.133328,
+      "sol_score": 0.20575894981010462,
+      "sol_score_cal": 0.17780693706112438,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 1.0638,
+      "baseline_latency_ms": 4.567888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Megakernel B200 backward for attention softmax + dropout + value matmul.\n\nFuses the dS and dV paths into a single kernel per (batch, head, query-block),\nreconstructing P_drop in-register as round_bf16(P * mask / (1-p)) so the separate\nP_drop read is eliminated.  dV partials are accumulated via f32 atomics into a\ntiny (B, 8, Skv, 128) scratch buffer that fits in the 126 MB L2.\n\nThe op is memory-bound: two cheap batched GEMMs hide under streaming the four\n(B,80,Sq,Skv) attention matrices.  The megakernel reads P and mask once (shared\nacross dS and dV), reads dO once, reads V once (full-row) or twice (two-pass),\nand writes dS + f32-atomics into dV.\n\nImplementation: one megakernel with two shape-specialized variants.\n  - Skv <= 512: single-pass full-row \u2014 one V tile covers the whole softmax row,\n    dS and dV computed in one shot.\n  - Skv > 512:  two-pass \u2014 pass 1 accumulates delta (rowsum) and dV partials;\n    pass 2 recomputes the GEMM and writes dS.\n\nAll matmuls use bf16 tensor-core MMA with f32 accumulate.  The softmax-backward\ndelta is accumulated in f32 from the separate P and mask operands.  P_drop is\nreconstructed per-tile for the dV accumulation.\n\"\"\"\n\nimport torch\nimport triton\nimport triton.language as tl\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\n# --------------------------------------------------------------------------- #\n# Megakernel A: full-row single-pass for Skv <= 512\n# --------------------------------------------------------------------------- #\n# One CTA per (batch, head, query-block).  Loads the entire V row once, computes\n# dO@V^T, applies dropout+softmax-bwd, writes dS, and atomically accumulates the\n# dV outer-product P_drop^T @ dO into the scratch buffer.\n#\n# BLOCK_K is the rounded-up Skv (<=512); BLOCK_Q is tuned.\n_CONFIGS_MEGA_FULLROW = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_MEGA_FULLROW, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _megakernel_fullrow(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr, dV_scratch_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, KVH: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    # -- load dO once for this query block --\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )  # (BLOCK_Q, D) bf16\n\n    # -- load all V for this kv-head --\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )  # (BLOCK_K, D) bf16\n\n    # -- GEMM1: dpd = dO @ V^T  (BLOCK_Q, BLOCK_K) f32 --\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n    # -- load P and mask --\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n\n    # -- dropout: dP = dpd * mask * inv_keep --\n    dP = dpd * M_blk * inv_keep\n\n    # -- softmax bwd: delta = rowsum(dP * P), dS = P * (dP - delta) --\n    delta = tl.sum(dP * P_blk, axis=1)  # (BLOCK_Q,)\n    dS = P_blk * (dP - delta[:, None])\n\n    # -- write dS (bf16) --\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n    # -- reconstruct P_drop = bf16(P * mask * inv_keep) --\n    Pd_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)  # (BLOCK_Q, BLOCK_K)\n\n    # -- dV partial: dv_partial = P_drop^T @ dO  (BLOCK_K, D) f32 --\n    dv_partial = tl.dot(tl.trans(Pd_blk), dO_blk, out_dtype=tl.float32)\n\n    # -- atomic-add dV partial into scratch buffer --\n    # 2D vectorized: each element of dv_partial is atomically added to the\n    # corresponding (skv, d) location in the scratch buffer.\n    dv_base = dV_scratch_ptr + b * s_dvs_b + kv * s_dvs_h\n    offs_j = tl.arange(0, BLOCK_K)[:, None]  # (BLOCK_K, 1)\n    offs_d2 = tl.arange(0, D)[None, :]        # (1, D)\n    valid = (offs_j < Skv)                     # (BLOCK_K, 1), broadcasts\n    tl.atomic_add(\n        dv_base + offs_j * s_dvs_s + offs_d2 * s_dvs_d,\n        dv_partial,\n        mask=valid,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Megakernel B: two-pass for Skv > 512\n# --------------------------------------------------------------------------- #\n# Pass 1 streams over Skv tiles: accumulates delta = rowsum(dP * P) and\n# atomically adds dV partials (P_drop^T @ dO) into the scratch buffer.\n# Pass 2 re-streams: recomputes the GEMM, applies the softmax formula, writes dS.\n#\n# The V, P, and mask reads in pass 2 are mostly L2 hits (pass 1 just traversed\n# the same tiles), so the second pass is cheap.\n_CONFIGS_MEGA_TWOPASS = [\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_MEGA_TWOPASS, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _megakernel_twopass(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr, dV_scratch_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, KVH: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n\n    # -- load dO once for this query block --\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    m_base = M_ptr + b * s_p_b + h * s_p_h\n    v_base = V_ptr + b * s_v_b + kv * s_v_h\n    dv_base = dV_scratch_ptr + b * s_dvs_b + kv * s_dvs_h\n\n    # ---- PASS 1: delta = rowsum(dP * P), dV += P_drop^T @ dO ----\n    delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n\n        dP = dpd * M_blk * inv_keep\n        delta += tl.sum(dP * P_blk, axis=1)\n\n        # -- reconstruct P_drop and accumulate dV partial --\n        Pd_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n        dv_partial = tl.dot(tl.trans(Pd_blk), dO_blk, out_dtype=tl.float32)\n\n        # Atomic-add this tile's dV partial (BLOCK_K, D) into scratch\n        offs_j = tl.arange(0, BLOCK_K)[:, None]   # (BLOCK_K, 1)\n        offs_d2 = tl.arange(0, D)[None, :]          # (1, D)\n        gbl_j = k0 + offs_j                          # global Skv index\n        valid = (gbl_j < Skv)                         # (BLOCK_K, 1), broadcasts\n        tl.atomic_add(\n            dv_base + gbl_j * s_dvs_s + offs_d2 * s_dvs_d,\n            dv_partial,\n            mask=valid,\n        )\n\n    # ---- PASS 2: dS = P * (dP - delta), write dS ----\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n\n        dP = dpd * M_blk * inv_keep\n        dS = P_blk * (dP - delta[:, None])\n\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n\n# --------------------------------------------------------------------------- #\n# Epilogue: convert dV scratch (fp32) -> dV output (bf16)\n# --------------------------------------------------------------------------- #\n@triton.jit\ndef _dv_convert_kernel(\n    dV_scratch_ptr, dV_out_ptr,\n    Skv,\n    KVH: tl.constexpr,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    s_dvo_b, s_dvo_h, s_dvo_s, s_dvo_d,\n    D: tl.constexpr,\n    BLOCK_J: tl.constexpr,\n):\n    pid_flat = tl.program_id(0)  # B * KVH\n    pid_j = tl.program_id(1)      # Skv tile\n    b = pid_flat // KVH\n    kvh = pid_flat % KVH\n\n    offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)\n    offs_d = tl.arange(0, D)\n    j_valid = offs_j < Skv\n\n    val = tl.load(\n        dV_scratch_ptr + b * s_dvs_b + kvh * s_dvs_h\n        + offs_j[:, None] * s_dvs_s + offs_d[None, :] * s_dvs_d,\n        mask=j_valid[:, None], other=0.0,\n    )\n    tl.store(\n        dV_out_ptr + b * s_dvo_b + kvh * s_dvo_h\n        + offs_j[:, None] * s_dvo_s + offs_d[None, :] * s_dvo_d,\n        val.to(tl.bfloat16), mask=j_valid[:, None],\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Fallback torch path (for non-CUDA or unit tests)\n# --------------------------------------------------------------------------- #\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(\n        attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt\n    )\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n# --------------------------------------------------------------------------- #\n# Entry point\n# --------------------------------------------------------------------------- #\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    # Fallback for non-CUDA devices or unit tests without a GPU.\n    if (not grad_attn_output.is_cuda) or (not torch.cuda.is_available()):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    dev = grad_attn_output.device\n\n    # Output tensors\n    dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n    dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n    # dV scratch buffer: fp32 accumulation via atomics (tiny: fits in L2)\n    dV_scratch = torch.zeros((B, KVH, Skv, D), dtype=torch.float32, device=dev)\n\n    # bool mask -> int8 view (1 byte, no copy); loaded as 0/1 and cast to f32.\n    mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n    s_do = grad_attn_output.stride()\n    s_v = value_states.stride()\n    s_p = attn_weights.stride()\n    s_ds = dS.stride()\n    s_dvs = dV_scratch.stride()\n    s_dvo = dV.stride()\n\n    # ---- Dispatch megakernel ----\n    if Skv <= 512:\n        block_k = _next_pow2(Skv)\n        grid = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _megakernel_fullrow[grid](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS, dV_scratch,\n            Sq, Skv, inv_keep,\n            H, KVH, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n            D=D, BLOCK_K=block_k,\n        )\n    else:\n        grid = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _megakernel_twopass[grid](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS, dV_scratch,\n            Sq, Skv, inv_keep,\n            H, KVH, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n            D=D,\n        )\n\n    # ---- Epilogue: convert dV scratch (fp32) -> dV output (bf16) ----\n    BLOCK_J = 128\n    grid_dv = (B * KVH, triton.cdiv(Skv, BLOCK_J))\n    _dv_convert_kernel[grid_dv](\n        dV_scratch, dV,\n        Skv,\n        KVH,\n        s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n        s_dvo[0], s_dvo[1], s_dvo[2], s_dvo[3],\n        D=D, BLOCK_J=BLOCK_J,\n    )\n\n    return dS, dV"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t1_c78740f17509",
+    "definition": "001_attention_softmax_dropout_value_matmul_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"Megakernel B200 backward for attention softmax + dropout + value matmul.\n\nFuses the dS and dV paths into a single kernel per (batch, head, query-block),\nreconstructing P_drop in-register as round_bf16(P * mask / (1-p)) so the separate\nP_drop read is eliminated.  dV partials are accumulated via f32 atomics into a\ntiny (B, 8, Skv, 128) scratch buffer that fits in the 126 MB L2.\n\nThe op is memory-bound: two cheap batched GEMMs hide under streaming the four\n(B,80,Sq,Skv) attention matrices.  The megakernel reads P and mask once (shared\nacross dS and dV), reads dO once, reads V once (full-row) or twice (two-pass),\nand writes dS + f32-atomics into dV.\n\nImplementation: one megakernel with two shape-specialized variants.\n  - Skv <= 512: single-pass full-row \u2014 one V tile covers the whole softmax row,\n    dS and dV computed in one shot.\n  - Skv > 512:  two-pass \u2014 pass 1 accumulates delta (rowsum) and dV partials;\n    pass 2 recomputes the GEMM and writes dS.\n\nAll matmuls use bf16 tensor-core MMA with f32 accumulate.  The softmax-backward\ndelta is accumulated in f32 from the separate P and mask operands.  P_drop is\nreconstructed per-tile for the dV accumulation.\n\"\"\"\n\nimport torch\nimport triton\nimport triton.language as tl\n\nH_HEADS = 80\nKV_HEADS = 8\nGROUPS = H_HEADS // KV_HEADS  # 10\nHEAD_DIM = 128\n\n\ndef _next_pow2(n: int) -> int:\n    p = 1\n    while p < n:\n        p <<= 1\n    return p\n\n\n# --------------------------------------------------------------------------- #\n# Megakernel A: full-row single-pass for Skv <= 512\n# --------------------------------------------------------------------------- #\n# One CTA per (batch, head, query-block).  Loads the entire V row once, computes\n# dO@V^T, applies dropout+softmax-bwd, writes dS, and atomically accumulates the\n# dV outer-product P_drop^T @ dO into the scratch buffer.\n#\n# BLOCK_K is the rounded-up Skv (<=512); BLOCK_Q is tuned.\n_CONFIGS_MEGA_FULLROW = [\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 16}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 32}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_MEGA_FULLROW, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _megakernel_fullrow(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr, dV_scratch_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, KVH: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    D: tl.constexpr, BLOCK_K: tl.constexpr, BLOCK_Q: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n    k_valid = offs_k < Skv\n    both = q_valid[:, None] & k_valid[None, :]\n\n    # -- load dO once for this query block --\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )  # (BLOCK_Q, D) bf16\n\n    # -- load all V for this kv-head --\n    V_blk = tl.load(\n        V_ptr + b * s_v_b + kv * s_v_h\n        + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n        mask=k_valid[:, None], other=0.0,\n    )  # (BLOCK_K, D) bf16\n\n    # -- GEMM1: dpd = dO @ V^T  (BLOCK_Q, BLOCK_K) f32 --\n    dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n    # -- load P and mask --\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n    P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n    M_blk = tl.load(\n        M_ptr + b * s_p_b + h * s_p_h + pk,\n        mask=both, other=0,\n    ).to(tl.float32)\n\n    # -- dropout: dP = dpd * mask * inv_keep --\n    dP = dpd * M_blk * inv_keep\n\n    # -- softmax bwd: delta = rowsum(dP * P), dS = P * (dP - delta) --\n    delta = tl.sum(dP * P_blk, axis=1)  # (BLOCK_Q,)\n    dS = P_blk * (dP - delta[:, None])\n\n    # -- write dS (bf16) --\n    tl.store(\n        dS_ptr + b * s_ds_b + h * s_ds_h\n        + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n        dS.to(tl.bfloat16), mask=both,\n    )\n\n    # -- reconstruct P_drop = bf16(P * mask * inv_keep) --\n    Pd_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)  # (BLOCK_Q, BLOCK_K)\n\n    # -- dV partial: dv_partial = P_drop^T @ dO  (BLOCK_K, D) f32 --\n    dv_partial = tl.dot(tl.trans(Pd_blk), dO_blk, out_dtype=tl.float32)\n\n    # -- atomic-add dV partial into scratch buffer --\n    # 2D vectorized: each element of dv_partial is atomically added to the\n    # corresponding (skv, d) location in the scratch buffer.\n    dv_base = dV_scratch_ptr + b * s_dvs_b + kv * s_dvs_h\n    offs_j = tl.arange(0, BLOCK_K)[:, None]  # (BLOCK_K, 1)\n    offs_d2 = tl.arange(0, D)[None, :]        # (1, D)\n    valid = (offs_j < Skv)                     # (BLOCK_K, 1), broadcasts\n    tl.atomic_add(\n        dv_base + offs_j * s_dvs_s + offs_d2 * s_dvs_d,\n        dv_partial,\n        mask=valid,\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Megakernel B: two-pass for Skv > 512\n# --------------------------------------------------------------------------- #\n# Pass 1 streams over Skv tiles: accumulates delta = rowsum(dP * P) and\n# atomically adds dV partials (P_drop^T @ dO) into the scratch buffer.\n# Pass 2 re-streams: recomputes the GEMM, applies the softmax formula, writes dS.\n#\n# The V, P, and mask reads in pass 2 are mostly L2 hits (pass 1 just traversed\n# the same tiles), so the second pass is cheap.\n_CONFIGS_MEGA_TWOPASS = [\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 16, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=4, num_stages=5),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 32, \"BLOCK_K\": 256}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=4, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 128}, num_warps=8, num_stages=4),\n    triton.Config({\"BLOCK_Q\": 64, \"BLOCK_K\": 256}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 64}, num_warps=8, num_stages=3),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=2),\n    triton.Config({\"BLOCK_Q\": 128, \"BLOCK_K\": 128}, num_warps=8, num_stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS_MEGA_TWOPASS, key=[\"Sq\", \"Skv\"])\n@triton.jit\ndef _megakernel_twopass(\n    dO_ptr, V_ptr, P_ptr, M_ptr, dS_ptr, dV_scratch_ptr,\n    Sq, Skv, inv_keep,\n    H: tl.constexpr, KVH: tl.constexpr, GRP: tl.constexpr,\n    s_do_b, s_do_s, s_do_h, s_do_d,\n    s_v_b, s_v_h, s_v_s, s_v_d,\n    s_p_b, s_p_h, s_p_q, s_p_k,\n    s_ds_b, s_ds_h, s_ds_q, s_ds_k,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    D: tl.constexpr, BLOCK_Q: tl.constexpr, BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_q = tl.program_id(1)\n    b = pid_bh // H\n    h = pid_bh % H\n    kv = h // GRP\n\n    offs_q = pid_q * BLOCK_Q + tl.arange(0, BLOCK_Q)\n    offs_d = tl.arange(0, D)\n    q_valid = offs_q < Sq\n\n    # -- load dO once for this query block --\n    dO_blk = tl.load(\n        dO_ptr + b * s_do_b + h * s_do_h\n        + offs_q[:, None] * s_do_s + offs_d[None, :] * s_do_d,\n        mask=q_valid[:, None], other=0.0,\n    )\n\n    p_base = P_ptr + b * s_p_b + h * s_p_h\n    m_base = M_ptr + b * s_p_b + h * s_p_h\n    v_base = V_ptr + b * s_v_b + kv * s_v_h\n    dv_base = dV_scratch_ptr + b * s_dvs_b + kv * s_dvs_h\n\n    # ---- PASS 1: delta = rowsum(dP * P), dV += P_drop^T @ dO ----\n    delta = tl.zeros((BLOCK_Q,), dtype=tl.float32)\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n\n        dP = dpd * M_blk * inv_keep\n        delta += tl.sum(dP * P_blk, axis=1)\n\n        # -- reconstruct P_drop and accumulate dV partial --\n        Pd_blk = (P_blk * M_blk * inv_keep).to(tl.bfloat16)\n        dv_partial = tl.dot(tl.trans(Pd_blk), dO_blk, out_dtype=tl.float32)\n\n        # Atomic-add this tile's dV partial (BLOCK_K, D) into scratch\n        offs_j = tl.arange(0, BLOCK_K)[:, None]   # (BLOCK_K, 1)\n        offs_d2 = tl.arange(0, D)[None, :]          # (1, D)\n        gbl_j = k0 + offs_j                          # global Skv index\n        valid = (gbl_j < Skv)                         # (BLOCK_K, 1), broadcasts\n        tl.atomic_add(\n            dv_base + gbl_j * s_dvs_s + offs_d2 * s_dvs_d,\n            dv_partial,\n            mask=valid,\n        )\n\n    # ---- PASS 2: dS = P * (dP - delta), write dS ----\n    for k0 in range(0, Skv, BLOCK_K):\n        offs_k = k0 + tl.arange(0, BLOCK_K)\n        k_valid = offs_k < Skv\n        both = q_valid[:, None] & k_valid[None, :]\n\n        V_blk = tl.load(\n            v_base + offs_k[:, None] * s_v_s + offs_d[None, :] * s_v_d,\n            mask=k_valid[:, None], other=0.0,\n        )\n        dpd = tl.dot(dO_blk, tl.trans(V_blk), out_dtype=tl.float32)\n\n        pk = offs_q[:, None] * s_p_q + offs_k[None, :] * s_p_k\n        P_blk = tl.load(p_base + pk, mask=both, other=0.0).to(tl.float32)\n        M_blk = tl.load(m_base + pk, mask=both, other=0).to(tl.float32)\n\n        dP = dpd * M_blk * inv_keep\n        dS = P_blk * (dP - delta[:, None])\n\n        tl.store(\n            dS_ptr + b * s_ds_b + h * s_ds_h\n            + offs_q[:, None] * s_ds_q + offs_k[None, :] * s_ds_k,\n            dS.to(tl.bfloat16), mask=both,\n        )\n\n\n# --------------------------------------------------------------------------- #\n# Epilogue: convert dV scratch (fp32) -> dV output (bf16)\n# --------------------------------------------------------------------------- #\n@triton.jit\ndef _dv_convert_kernel(\n    dV_scratch_ptr, dV_out_ptr,\n    Skv,\n    KVH: tl.constexpr,\n    s_dvs_b, s_dvs_h, s_dvs_s, s_dvs_d,\n    s_dvo_b, s_dvo_h, s_dvo_s, s_dvo_d,\n    D: tl.constexpr,\n    BLOCK_J: tl.constexpr,\n):\n    pid_flat = tl.program_id(0)  # B * KVH\n    pid_j = tl.program_id(1)      # Skv tile\n    b = pid_flat // KVH\n    kvh = pid_flat % KVH\n\n    offs_j = pid_j * BLOCK_J + tl.arange(0, BLOCK_J)\n    offs_d = tl.arange(0, D)\n    j_valid = offs_j < Skv\n\n    val = tl.load(\n        dV_scratch_ptr + b * s_dvs_b + kvh * s_dvs_h\n        + offs_j[:, None] * s_dvs_s + offs_d[None, :] * s_dvs_d,\n        mask=j_valid[:, None], other=0.0,\n    )\n    tl.store(\n        dV_out_ptr + b * s_dvo_b + kvh * s_dvo_h\n        + offs_j[:, None] * s_dvo_s + offs_d[None, :] * s_dvo_d,\n        val.to(tl.bfloat16), mask=j_valid[:, None],\n    )\n\n\n# --------------------------------------------------------------------------- #\n# Fallback torch path (for non-CUDA or unit tests)\n# --------------------------------------------------------------------------- #\ndef _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                value_states, dropout_mask, attention_dropout):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    dOt = grad_attn_output.transpose(1, 2).to(torch.float32)\n    dOt_g = dOt.reshape(B, KVH, G, Sq, D)\n    Vf = value_states.to(torch.float32).unsqueeze(2)\n    dP_drop = torch.matmul(dOt_g, Vf.transpose(-2, -1)).reshape(B, H, Sq, Skv)\n    if attention_dropout > 0.0:\n        dP = dP_drop * dropout_mask / (1.0 - attention_dropout)\n    else:\n        dP = dP_drop\n    P = attn_weights.to(torch.float32)\n    delta = (dP * P).sum(dim=-1, keepdim=True)\n    dS = (P * (dP - delta)).to(torch.bfloat16)\n    dV_exp = torch.matmul(\n        attn_weights_dropped.to(torch.float32).transpose(-2, -1), dOt\n    )\n    dV = dV_exp.reshape(B, KVH, G, Skv, D).sum(dim=2).to(torch.bfloat16)\n    return dS, dV\n\n\n# --------------------------------------------------------------------------- #\n# Entry point\n# --------------------------------------------------------------------------- #\n@torch.no_grad()\ndef run(\n    grad_attn_output: torch.Tensor,\n    attn_weights: torch.Tensor,\n    attn_weights_dropped: torch.Tensor,\n    value_states: torch.Tensor,\n    dropout_mask: torch.Tensor,\n    attention_dropout: float,\n):\n    H, KVH, G, D = H_HEADS, KV_HEADS, GROUPS, HEAD_DIM\n    B, Sq = grad_attn_output.shape[0], grad_attn_output.shape[1]\n    Skv = value_states.shape[2]\n    p = float(attention_dropout)\n    inv_keep = 1.0 / (1.0 - p) if p > 0.0 else 1.0\n\n    # Fallback for non-CUDA devices or unit tests without a GPU.\n    if (not grad_attn_output.is_cuda) or (not torch.cuda.is_available()):\n        return _torch_path(grad_attn_output, attn_weights, attn_weights_dropped,\n                           value_states, dropout_mask, attention_dropout)\n\n    dev = grad_attn_output.device\n\n    # Output tensors\n    dS = torch.empty((B, H, Sq, Skv), dtype=torch.bfloat16, device=dev)\n    dV = torch.empty((B, KVH, Skv, D), dtype=torch.bfloat16, device=dev)\n\n    # dV scratch buffer: fp32 accumulation via atomics (tiny: fits in L2)\n    dV_scratch = torch.zeros((B, KVH, Skv, D), dtype=torch.float32, device=dev)\n\n    # bool mask -> int8 view (1 byte, no copy); loaded as 0/1 and cast to f32.\n    mask_i8 = dropout_mask.contiguous().view(torch.int8)\n\n    s_do = grad_attn_output.stride()\n    s_v = value_states.stride()\n    s_p = attn_weights.stride()\n    s_ds = dS.stride()\n    s_dvs = dV_scratch.stride()\n    s_dvo = dV.stride()\n\n    # ---- Dispatch megakernel ----\n    if Skv <= 512:\n        block_k = _next_pow2(Skv)\n        grid = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _megakernel_fullrow[grid](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS, dV_scratch,\n            Sq, Skv, inv_keep,\n            H, KVH, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n            D=D, BLOCK_K=block_k,\n        )\n    else:\n        grid = lambda meta: (B * H, triton.cdiv(Sq, meta[\"BLOCK_Q\"]))\n        _megakernel_twopass[grid](\n            grad_attn_output, value_states, attn_weights, mask_i8, dS, dV_scratch,\n            Sq, Skv, inv_keep,\n            H, KVH, G,\n            s_do[0], s_do[1], s_do[2], s_do[3],\n            s_v[0], s_v[1], s_v[2], s_v[3],\n            s_p[0], s_p[1], s_p[2], s_p[3],\n            s_ds[0], s_ds[1], s_ds[2], s_ds[3],\n            s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n            D=D,\n        )\n\n    # ---- Epilogue: convert dV scratch (fp32) -> dV output (bf16) ----\n    BLOCK_J = 128\n    grid_dv = (B * KVH, triton.cdiv(Skv, BLOCK_J))\n    _dv_convert_kernel[grid_dv](\n        dV_scratch, dV,\n        Skv,\n        KVH,\n        s_dvs[0], s_dvs[1], s_dvs[2], s_dvs[3],\n        s_dvo[0], s_dvo[1], s_dvo[2], s_dvo[3],\n        D=D, BLOCK_J=BLOCK_J,\n    )\n\n    return dS, dV"
+      }
+    ]
+  }
+}

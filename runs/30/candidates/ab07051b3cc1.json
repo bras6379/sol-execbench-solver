@@ -1,0 +1,245 @@
+{
+  "cand_id": "ab07051b3cc1",
+  "task_id": 30,
+  "verdict": "entered",
+  "sol_score": 0.4620532917835422,
+  "sol_score_calibrated": 0.3704912692886552,
+  "correct": true,
+  "vector": [
+    0.4819704596088776,
+    0.42619766940008635,
+    0.4826445065450802,
+    0.4309410968178741,
+    0.47432362427098484,
+    0.47247071532255347,
+    0.48483784922083384,
+    0.47509289946771116,
+    0.483404317814657,
+    0.4828111940778296,
+    0.4754010695187166,
+    0.4466666666666666,
+    0.46016483516483514,
+    0.4282069970845481,
+    0.4602739726027398,
+    0.4274447949526814
+  ],
+  "strategy": "Reload the best-scoring seed (plain torch.matmul + separate add, 0.363) unchanged in its GEMM structure \u2014 keeping beta=0",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "152b0e6515c8",
+  "trajectory": "runs/30/work/ab07051b3cc1/trajectory.jsonl",
+  "gpu_s": 7.798,
+  "job_id": "30-ab07051b3cc1",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 39.0,
+      "power_w_max": 335.9,
+      "samples": 20,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.087951,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.0859844999999999,
+      "sol_score": 0.4819704596088776,
+      "sol_score_cal": 0.3689249909363565,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.014735999999999999,
+      "sol_ms": 0.0041,
+      "baseline_latency_ms": 0.012,
+      "sol_score": 0.42619766940008635,
+      "sol_score_cal": 0.37026899339327635,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.08784,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085952,
+      "sol_score": 0.4826445065450802,
+      "sol_score_cal": 0.3693220186377346,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.025248,
+      "sol_ms": 0.0118,
+      "baseline_latency_ms": 0.021984,
+      "sol_score": 0.4309410968178741,
+      "sol_score_cal": 0.35822424331108393,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0457285,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044192,
+      "sol_score": 0.47432362427098484,
+      "sol_score_cal": 0.3675834972311448,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.045727,
+      "sol_ms": 0.0301,
+      "baseline_latency_ms": 0.044096,
+      "sol_score": 0.47247071532255347,
+      "sol_score_cal": 0.365324645866619,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.087456,
+      "sol_ms": 0.0581,
+      "baseline_latency_ms": 0.085728,
+      "sol_score": 0.48483784922083384,
+      "sol_score_cal": 0.3753771706332988,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0456795,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.0441915,
+      "sol_score": 0.47509289946771116,
+      "sol_score_cal": 0.3681312930276066,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.08784,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": 0.483404317814657,
+      "sol_score_cal": 0.3700310279701412,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0878555,
+      "sol_ms": 0.0597,
+      "baseline_latency_ms": 0.085984,
+      "sol_score": 0.4828111940778296,
+      "sol_score_cal": 0.3695099726150149,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.045696,
+      "sol_ms": 0.03,
+      "baseline_latency_ms": 0.044224,
+      "sol_score": 0.4754010695187166,
+      "sol_score_cal": 0.3684760262616884,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.01776,
+      "sol_ms": 0.0078,
+      "baseline_latency_ms": 0.01584,
+      "sol_score": 0.4466666666666666,
+      "sol_score_cal": 0.376150909499214,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.027776,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.02592,
+      "sol_score": 0.46016483516483514,
+      "sol_score_cal": 0.37517358777942034,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.017152,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.014,
+      "sol_score": 0.4282069970845481,
+      "sol_score_cal": 0.372854894394801,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.027808,
+      "sol_ms": 0.0152,
+      "baseline_latency_ms": 0.025952,
+      "sol_score": 0.4602739726027398,
+      "sol_score_cal": 0.3753728592016623,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.012464,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.009888,
+      "sol_score": 0.4274447949526814,
+      "sol_score_cal": 0.3771341778594206,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n\n    # beta=0 matmul keeps cuBLAS's normal heuristic algo (addmm beta=1.0\n    # regressed every shape in this problem \u2014 likely disables split-K).\n    \"\"\"\n    projected = torch.matmul(attn_output, o_proj_weight.t())\n    projected.add_(residual)\n    return projected\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t30_ab07051b3cc1",
+    "definition": "030_attention_output_projection_with_residual",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n\n@torch.no_grad()\ndef run(\n    attn_output: torch.Tensor,\n    residual: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n) -> torch.Tensor:\n    \"\"\"\n    Fused attention output projection with residual addition.\n\n    # beta=0 matmul keeps cuBLAS's normal heuristic algo (addmm beta=1.0\n    # regressed every shape in this problem \u2014 likely disables split-K).\n    \"\"\"\n    projected = torch.matmul(attn_output, o_proj_weight.t())\n    projected.add_(residual)\n    return projected\n"
+      }
+    ]
+  }
+}

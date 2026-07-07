@@ -1,0 +1,212 @@
+{
+  "cand_id": "bd3b96903081",
+  "task_id": 18,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Fused RMSNorm+RoPE+KV-cache Triton kernel that tiles over the contiguous sequence dimension (SEQ_TILE up to 16) and loop",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "b2a6470d77ba",
+  "trajectory": "runs/18/work/bd3b96903081/trajectory.jsonl",
+  "gpu_s": 6.072,
+  "job_id": "18-bd3b96903081",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 269.46,
+      "samples": 15,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.179504,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.031056,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.182448,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0013,
+      "baseline_latency_ms": 0.028288,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.057792,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.030528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.057728,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0288,
+      "baseline_latency_ms": 0.1685114999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0146,
+      "baseline_latency_ms": 0.092176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.031184,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.0659195,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0146,
+      "baseline_latency_ms": 0.104975,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0042,
+      "baseline_latency_ms": 0.038272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# One launch fuses RMSNorm(Q), RMSNorm(K), RoPE on both, and KV-cache updates.\n#\n# Grid: (NUM_Q_HEADS//HEAD_BLOCK + 1, ceil(seq_len/SEQ_TILE), batch_size).\n# Each program handles HEAD_BLOCK heads x SEQ_TILE consecutive sequence positions,\n# so every Q/K/V load and Q_rot/K_rot store is a contiguous [SEQ_TILE, HEAD_DIM]\n# block (up to 4 KB per vector op on large tiles).  The prior 0.865 kernel kept\n# SEQ_TILE=1 and tiled over heads, which made the head-tile accesses strided by\n# S*HEAD_DIM bytes; this layout instead tiles over the contiguous seq dimension\n# and loops over the strided head dimension, raising effective HBM bandwidth on\n# prefill shapes.  Cos/sin and norm weights are computed/loaded once per seq tile\n# and reused across all heads in the loop.\n@triton.autotune(\n    configs=[\n        # HEAD_BLOCK=8: tile the contiguous seq dimension.\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=4, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=8, num_stages=2),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=8, num_stages=2),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=16, num_stages=2),\n        # HEAD_BLOCK=16: coarser head packing, helps tiny decode shapes.\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=4, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=8, num_stages=2),\n    ],\n    key=[\"batch_size\", \"seq_len\"],\n)\n@triton.jit\ndef _fused_qk_rope_cache_kernel(\n    query,\n    key,\n    value,\n    position_ids,\n    key_cache,\n    value_cache,\n    cache_position,\n    q_norm_weight,\n    k_norm_weight,\n    inv_freq,\n    query_out,\n    key_out,\n    batch_size,\n    seq_len,\n    q_s0,\n    q_s1,\n    k_s0,\n    k_s1,\n    v_s0,\n    v_s1,\n    pos_s0,\n    pos_s1,\n    kc_s0,\n    kc_s1,\n    vc_s0,\n    vc_s1,\n    cp_s0,\n    qo_s0,\n    qo_s1,\n    ko_s0,\n    ko_s1,\n    rms_norm_eps: tl.constexpr,\n    HEAD_BLOCK: tl.constexpr,\n    SEQ_TILE: tl.constexpr,\n    HALF: tl.constexpr,\n    HEAD_DIM: tl.constexpr,\n    NUM_Q_HEADS: tl.constexpr,\n    NUM_KV_HEADS: tl.constexpr,\n):\n    pid_b = tl.program_id(2)\n    pid_st = tl.program_id(1)\n    pid_hb = tl.program_id(0)\n    Q_BLOCKS = NUM_Q_HEADS // HEAD_BLOCK\n    is_kv = pid_hb >= Q_BLOCKS\n\n    s_start = pid_st * SEQ_TILE\n    s_offs = tl.arange(0, SEQ_TILE)\n    s_idx = s_start + s_offs\n    row_mask = s_idx < seq_len\n    mask_2d = row_mask[:, None]\n\n    # RoPE cos/sin for this seq tile, matching reference:\n    #   freqs = position_ids[B,S] * inv_freq[64]\n    #   emb = cat([freqs, freqs]); cos = emb.cos(); sin = emb.sin()\n    pos = tl.load(position_ids + pid_b * pos_s0 + s_idx * pos_s1, mask=row_mask, other=0).to(tl.float32)\n    inv = tl.load(inv_freq + tl.arange(0, HALF))\n    freqs = pos[:, None] * inv[None, :]\n    c = tl.cos(freqs).to(tl.bfloat16)\n    sin = tl.sin(freqs).to(tl.bfloat16)\n\n    d_offs = tl.arange(0, HEAD_DIM)\n    if not is_kv:\n        w = tl.load(q_norm_weight + d_offs).to(tl.float32)\n    else:\n        w = tl.load(k_norm_weight + d_offs).to(tl.float32)\n    w0 = w[:HALF]\n    w1 = w[HALF:]\n\n    if not is_kv:\n        h_start = pid_hb * HEAD_BLOCK\n        for hi in range(HEAD_BLOCK):\n            h = h_start + hi\n            # HEAD_BLOCK always divides NUM_Q_HEADS, but keep guard for safety.\n            if h >= NUM_Q_HEADS:\n                continue\n\n            # Contiguous [SEQ_TILE, HEAD_DIM] block for this head.\n            base_q = query + pid_b * q_s0 + h * q_s1 + s_start * HEAD_DIM\n            x = tl.load(base_q + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.float32)\n            x0 = x[:, :HALF]\n            x1 = x[:, HALF:]\n\n            sum_sq = tl.sum(x0 * x0 + x1 * x1, axis=1)\n            scale = tl.rsqrt(sum_sq * (1.0 / HEAD_DIM) + rms_norm_eps)\n\n            n0 = (x0 * scale[:, None] * w0[None, :]).to(tl.bfloat16)\n            n1 = (x1 * scale[:, None] * w1[None, :]).to(tl.bfloat16)\n\n            o0 = (n0 * c - n1 * sin).to(tl.bfloat16)\n            o1 = (n1 * c + n0 * sin).to(tl.bfloat16)\n            o = tl.cat([o0, o1], axis=1)\n\n            base_qo = query_out + pid_b * qo_s0 + h * qo_s1 + s_start * HEAD_DIM\n            tl.store(base_qo + s_offs[:, None] * HEAD_DIM + d_offs[None, :], o, mask=mask_2d)\n    else:\n        # Single KV head-tile covers all 8 KV heads (HEAD_BLOCK >= 8 in configs).\n        cache_pos = tl.load(cache_position + s_idx * cp_s0, mask=row_mask, other=0)\n        for hi in range(HEAD_BLOCK):\n            h = hi\n            if h >= NUM_KV_HEADS:\n                continue\n\n            base_k = key + pid_b * k_s0 + h * k_s1 + s_start * HEAD_DIM\n            x = tl.load(base_k + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.float32)\n            x0 = x[:, :HALF]\n            x1 = x[:, HALF:]\n\n            sum_sq = tl.sum(x0 * x0 + x1 * x1, axis=1)\n            scale = tl.rsqrt(sum_sq * (1.0 / HEAD_DIM) + rms_norm_eps)\n\n            n0 = (x0 * scale[:, None] * w0[None, :]).to(tl.bfloat16)\n            n1 = (x1 * scale[:, None] * w1[None, :]).to(tl.bfloat16)\n\n            o0 = (n0 * c - n1 * sin).to(tl.bfloat16)\n            o1 = (n1 * c + n0 * sin).to(tl.bfloat16)\n            o = tl.cat([o0, o1], axis=1)\n\n            base_ko = key_out + pid_b * ko_s0 + h * ko_s1 + s_start * HEAD_DIM\n            tl.store(base_ko + s_offs[:, None] * HEAD_DIM + d_offs[None, :], o, mask=mask_2d)\n\n            base_v = value + pid_b * v_s0 + h * v_s1 + s_start * HEAD_DIM\n            v = tl.load(base_v + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.bfloat16)\n\n            for si in range(SEQ_TILE):\n                if s_start + si >= seq_len:\n                    continue\n                cp = cache_pos[si]\n                o_row = o[si, :]\n\n                base_kc = key_cache + pid_b * kc_s0 + h * kc_s1 + cp * HEAD_DIM\n                tl.store(base_kc + d_offs, o_row)\n\n                v_row = v[si, :]\n                base_vc = value_cache + pid_b * vc_s0 + h * vc_s1 + cp * HEAD_DIM\n                tl.store(base_vc + d_offs, v_row)\n\n\n@torch.no_grad()\ndef run(\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    position_ids: torch.Tensor,\n    key_cache: torch.Tensor,\n    value_cache: torch.Tensor,\n    cache_position: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    rms_norm_eps: float,\n):\n    batch_size = query.shape[0]\n    seq_len = query.shape[2]\n\n    query_rotated = torch.empty_like(query)\n    key_rotated = torch.empty_like(key)\n    if seq_len == 0:\n        return query_rotated, key_rotated, key_cache, value_cache\n\n    NUM_Q_HEADS = 96\n    NUM_KV_HEADS = 8\n    HEAD_DIM = 128\n    HALF = 64\n\n    # Inputs are contiguous from get_inputs(); pin the standard layout so the\n    # kernel can treat the seq-dim stride as HEAD_DIM (enables contiguous 2D\n    # vector loads across SEQ_TILE positions).\n    assert query.stride(-1) == 1\n    assert key.stride(-1) == 1\n    assert value.stride(-1) == 1\n    assert key_cache.stride(-1) == 1\n    assert value_cache.stride(-1) == 1\n    assert query_rotated.stride(-1) == 1\n    assert key_rotated.stride(-1) == 1\n    assert query.stride(2) == HEAD_DIM\n    assert key.stride(2) == HEAD_DIM\n    assert value.stride(2) == HEAD_DIM\n    assert key_cache.stride(2) == HEAD_DIM\n    assert value_cache.stride(2) == HEAD_DIM\n\n    grid = lambda meta: (\n        NUM_Q_HEADS // meta[\"HEAD_BLOCK\"] + 1,\n        triton.cdiv(seq_len, meta[\"SEQ_TILE\"]),\n        batch_size,\n    )\n    _fused_qk_rope_cache_kernel[grid](\n        query,\n        key,\n        value,\n        position_ids,\n        key_cache,\n        value_cache,\n        cache_position,\n        q_norm_weight,\n        k_norm_weight,\n        inv_freq,\n        query_rotated,\n        key_rotated,\n        batch_size,\n        seq_len,\n        query.stride(0),\n        query.stride(1),\n        key.stride(0),\n        key.stride(1),\n        value.stride(0),\n        value.stride(1),\n        position_ids.stride(0),\n        position_ids.stride(1),\n        key_cache.stride(0),\n        key_cache.stride(1),\n        value_cache.stride(0),\n        value_cache.stride(1),\n        cache_position.stride(0),\n        query_rotated.stride(0),\n        query_rotated.stride(1),\n        key_rotated.stride(0),\n        key_rotated.stride(1),\n        rms_norm_eps,\n        NUM_Q_HEADS=NUM_Q_HEADS,\n        NUM_KV_HEADS=NUM_KV_HEADS,\n        HEAD_DIM=HEAD_DIM,\n        HALF=HALF,\n    )\n    return query_rotated, key_rotated, key_cache, value_cache\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t18_bd3b96903081",
+    "definition": "018_fused_rope_with_qk_norm_and_kv_cache_update",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# One launch fuses RMSNorm(Q), RMSNorm(K), RoPE on both, and KV-cache updates.\n#\n# Grid: (NUM_Q_HEADS//HEAD_BLOCK + 1, ceil(seq_len/SEQ_TILE), batch_size).\n# Each program handles HEAD_BLOCK heads x SEQ_TILE consecutive sequence positions,\n# so every Q/K/V load and Q_rot/K_rot store is a contiguous [SEQ_TILE, HEAD_DIM]\n# block (up to 4 KB per vector op on large tiles).  The prior 0.865 kernel kept\n# SEQ_TILE=1 and tiled over heads, which made the head-tile accesses strided by\n# S*HEAD_DIM bytes; this layout instead tiles over the contiguous seq dimension\n# and loops over the strided head dimension, raising effective HBM bandwidth on\n# prefill shapes.  Cos/sin and norm weights are computed/loaded once per seq tile\n# and reused across all heads in the loop.\n@triton.autotune(\n    configs=[\n        # HEAD_BLOCK=8: tile the contiguous seq dimension.\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=4, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 1}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 4}, num_warps=8, num_stages=2),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 8}, num_warps=8, num_stages=2),\n        triton.Config({\"HEAD_BLOCK\": 8, \"SEQ_TILE\": 16}, num_warps=16, num_stages=2),\n        # HEAD_BLOCK=16: coarser head packing, helps tiny decode shapes.\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=4, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 1}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=8, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=16, num_stages=1),\n        triton.Config({\"HEAD_BLOCK\": 16, \"SEQ_TILE\": 8}, num_warps=8, num_stages=2),\n    ],\n    key=[\"batch_size\", \"seq_len\"],\n)\n@triton.jit\ndef _fused_qk_rope_cache_kernel(\n    query,\n    key,\n    value,\n    position_ids,\n    key_cache,\n    value_cache,\n    cache_position,\n    q_norm_weight,\n    k_norm_weight,\n    inv_freq,\n    query_out,\n    key_out,\n    batch_size,\n    seq_len,\n    q_s0,\n    q_s1,\n    k_s0,\n    k_s1,\n    v_s0,\n    v_s1,\n    pos_s0,\n    pos_s1,\n    kc_s0,\n    kc_s1,\n    vc_s0,\n    vc_s1,\n    cp_s0,\n    qo_s0,\n    qo_s1,\n    ko_s0,\n    ko_s1,\n    rms_norm_eps: tl.constexpr,\n    HEAD_BLOCK: tl.constexpr,\n    SEQ_TILE: tl.constexpr,\n    HALF: tl.constexpr,\n    HEAD_DIM: tl.constexpr,\n    NUM_Q_HEADS: tl.constexpr,\n    NUM_KV_HEADS: tl.constexpr,\n):\n    pid_b = tl.program_id(2)\n    pid_st = tl.program_id(1)\n    pid_hb = tl.program_id(0)\n    Q_BLOCKS = NUM_Q_HEADS // HEAD_BLOCK\n    is_kv = pid_hb >= Q_BLOCKS\n\n    s_start = pid_st * SEQ_TILE\n    s_offs = tl.arange(0, SEQ_TILE)\n    s_idx = s_start + s_offs\n    row_mask = s_idx < seq_len\n    mask_2d = row_mask[:, None]\n\n    # RoPE cos/sin for this seq tile, matching reference:\n    #   freqs = position_ids[B,S] * inv_freq[64]\n    #   emb = cat([freqs, freqs]); cos = emb.cos(); sin = emb.sin()\n    pos = tl.load(position_ids + pid_b * pos_s0 + s_idx * pos_s1, mask=row_mask, other=0).to(tl.float32)\n    inv = tl.load(inv_freq + tl.arange(0, HALF))\n    freqs = pos[:, None] * inv[None, :]\n    c = tl.cos(freqs).to(tl.bfloat16)\n    sin = tl.sin(freqs).to(tl.bfloat16)\n\n    d_offs = tl.arange(0, HEAD_DIM)\n    if not is_kv:\n        w = tl.load(q_norm_weight + d_offs).to(tl.float32)\n    else:\n        w = tl.load(k_norm_weight + d_offs).to(tl.float32)\n    w0 = w[:HALF]\n    w1 = w[HALF:]\n\n    if not is_kv:\n        h_start = pid_hb * HEAD_BLOCK\n        for hi in range(HEAD_BLOCK):\n            h = h_start + hi\n            # HEAD_BLOCK always divides NUM_Q_HEADS, but keep guard for safety.\n            if h >= NUM_Q_HEADS:\n                continue\n\n            # Contiguous [SEQ_TILE, HEAD_DIM] block for this head.\n            base_q = query + pid_b * q_s0 + h * q_s1 + s_start * HEAD_DIM\n            x = tl.load(base_q + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.float32)\n            x0 = x[:, :HALF]\n            x1 = x[:, HALF:]\n\n            sum_sq = tl.sum(x0 * x0 + x1 * x1, axis=1)\n            scale = tl.rsqrt(sum_sq * (1.0 / HEAD_DIM) + rms_norm_eps)\n\n            n0 = (x0 * scale[:, None] * w0[None, :]).to(tl.bfloat16)\n            n1 = (x1 * scale[:, None] * w1[None, :]).to(tl.bfloat16)\n\n            o0 = (n0 * c - n1 * sin).to(tl.bfloat16)\n            o1 = (n1 * c + n0 * sin).to(tl.bfloat16)\n            o = tl.cat([o0, o1], axis=1)\n\n            base_qo = query_out + pid_b * qo_s0 + h * qo_s1 + s_start * HEAD_DIM\n            tl.store(base_qo + s_offs[:, None] * HEAD_DIM + d_offs[None, :], o, mask=mask_2d)\n    else:\n        # Single KV head-tile covers all 8 KV heads (HEAD_BLOCK >= 8 in configs).\n        cache_pos = tl.load(cache_position + s_idx * cp_s0, mask=row_mask, other=0)\n        for hi in range(HEAD_BLOCK):\n            h = hi\n            if h >= NUM_KV_HEADS:\n                continue\n\n            base_k = key + pid_b * k_s0 + h * k_s1 + s_start * HEAD_DIM\n            x = tl.load(base_k + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.float32)\n            x0 = x[:, :HALF]\n            x1 = x[:, HALF:]\n\n            sum_sq = tl.sum(x0 * x0 + x1 * x1, axis=1)\n            scale = tl.rsqrt(sum_sq * (1.0 / HEAD_DIM) + rms_norm_eps)\n\n            n0 = (x0 * scale[:, None] * w0[None, :]).to(tl.bfloat16)\n            n1 = (x1 * scale[:, None] * w1[None, :]).to(tl.bfloat16)\n\n            o0 = (n0 * c - n1 * sin).to(tl.bfloat16)\n            o1 = (n1 * c + n0 * sin).to(tl.bfloat16)\n            o = tl.cat([o0, o1], axis=1)\n\n            base_ko = key_out + pid_b * ko_s0 + h * ko_s1 + s_start * HEAD_DIM\n            tl.store(base_ko + s_offs[:, None] * HEAD_DIM + d_offs[None, :], o, mask=mask_2d)\n\n            base_v = value + pid_b * v_s0 + h * v_s1 + s_start * HEAD_DIM\n            v = tl.load(base_v + s_offs[:, None] * HEAD_DIM + d_offs[None, :], mask=mask_2d, other=0.0, eviction_policy=\"evict_first\").to(tl.bfloat16)\n\n            for si in range(SEQ_TILE):\n                if s_start + si >= seq_len:\n                    continue\n                cp = cache_pos[si]\n                o_row = o[si, :]\n\n                base_kc = key_cache + pid_b * kc_s0 + h * kc_s1 + cp * HEAD_DIM\n                tl.store(base_kc + d_offs, o_row)\n\n                v_row = v[si, :]\n                base_vc = value_cache + pid_b * vc_s0 + h * vc_s1 + cp * HEAD_DIM\n                tl.store(base_vc + d_offs, v_row)\n\n\n@torch.no_grad()\ndef run(\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    position_ids: torch.Tensor,\n    key_cache: torch.Tensor,\n    value_cache: torch.Tensor,\n    cache_position: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    rms_norm_eps: float,\n):\n    batch_size = query.shape[0]\n    seq_len = query.shape[2]\n\n    query_rotated = torch.empty_like(query)\n    key_rotated = torch.empty_like(key)\n    if seq_len == 0:\n        return query_rotated, key_rotated, key_cache, value_cache\n\n    NUM_Q_HEADS = 96\n    NUM_KV_HEADS = 8\n    HEAD_DIM = 128\n    HALF = 64\n\n    # Inputs are contiguous from get_inputs(); pin the standard layout so the\n    # kernel can treat the seq-dim stride as HEAD_DIM (enables contiguous 2D\n    # vector loads across SEQ_TILE positions).\n    assert query.stride(-1) == 1\n    assert key.stride(-1) == 1\n    assert value.stride(-1) == 1\n    assert key_cache.stride(-1) == 1\n    assert value_cache.stride(-1) == 1\n    assert query_rotated.stride(-1) == 1\n    assert key_rotated.stride(-1) == 1\n    assert query.stride(2) == HEAD_DIM\n    assert key.stride(2) == HEAD_DIM\n    assert value.stride(2) == HEAD_DIM\n    assert key_cache.stride(2) == HEAD_DIM\n    assert value_cache.stride(2) == HEAD_DIM\n\n    grid = lambda meta: (\n        NUM_Q_HEADS // meta[\"HEAD_BLOCK\"] + 1,\n        triton.cdiv(seq_len, meta[\"SEQ_TILE\"]),\n        batch_size,\n    )\n    _fused_qk_rope_cache_kernel[grid](\n        query,\n        key,\n        value,\n        position_ids,\n        key_cache,\n        value_cache,\n        cache_position,\n        q_norm_weight,\n        k_norm_weight,\n        inv_freq,\n        query_rotated,\n        key_rotated,\n        batch_size,\n        seq_len,\n        query.stride(0),\n        query.stride(1),\n        key.stride(0),\n        key.stride(1),\n        value.stride(0),\n        value.stride(1),\n        position_ids.stride(0),\n        position_ids.stride(1),\n        key_cache.stride(0),\n        key_cache.stride(1),\n        value_cache.stride(0),\n        value_cache.stride(1),\n        cache_position.stride(0),\n        query_rotated.stride(0),\n        query_rotated.stride(1),\n        key_rotated.stride(0),\n        key_rotated.stride(1),\n        rms_norm_eps,\n        NUM_Q_HEADS=NUM_Q_HEADS,\n        NUM_KV_HEADS=NUM_KV_HEADS,\n        HEAD_DIM=HEAD_DIM,\n        HALF=HALF,\n    )\n    return query_rotated, key_rotated, key_cache, value_cache\n"
+      }
+    ]
+  }
+}

@@ -1,0 +1,258 @@
+{
+  "cand_id": "24f6a9da6380",
+  "task_id": 14,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "cli agent",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "a8f3f0376b72",
+  "trajectory": "runs/14/work/24f6a9da6380/trajectory.jsonl",
+  "gpu_s": 1.337,
+  "job_id": "14-24f6a9da6380",
+  "asi": {
+    "stage": "harness",
+    "error": "Traceback (most recent call last):\n  File \"/root/SOL-ExecBench/.venv/bin/sol-execbench\", line 10, in <module>\n    sys.exit(cli())\n             ^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1485, in __call__\n    return self.main(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1406, in main\n    rv = self.invoke(ctx)\n         ^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 1269, in invoke\n    return ctx.invoke(self.callback, **ctx.params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/click/core.py\", line 824, in invoke\n    return callback(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 272, in cli\n    solution = _load_solution(solution_file)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/src/sol_execbench/cli/main.py\", line 74, in _load_solution\n    return Solution(**sol_dict)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/pydantic/main.py\", line 250, in __init__\n    validated_self = self.__pydantic_validator__.validate_python(data, self_instance=self)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npydantic_core._pydantic_core.ValidationError: 1 validation error for Solution\nspec\n  Value error, C++ and Python cannot be mixed, but got [<SupportedLanguages.CUDA_CPP: 'cuda_cpp'>] and [<SupportedLanguages.PYTORCH: 'pytorch'>] [type=value_error, input_value={'languages': ['cuda_cpp'...lse, 'binding': 'torch'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/value_error\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 41.0,
+      "power_w_max": 258.87,
+      "samples": 1,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05712,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.057248,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048639,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.05744,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.048416,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.063617,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.050496,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057312,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0165,
+      "baseline_latency_ms": 0.050224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.049984,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0031,
+      "baseline_latency_ms": 0.104768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0011,
+      "baseline_latency_ms": 0.057408,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0017,
+      "baseline_latency_ms": 0.078528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.051008,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0443,
+      "baseline_latency_ms": 0.133792,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.050912,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// RoPE embedding backward with attention scaling \u2014 CUDA kernel.\n//\n// grad_position_ids[b,s] = sum_{d=0}^{63} inv_freq[b,d] * (\n//     (gc[b,s,d] + gc[b,s,d+64]) * (-sin(emb[b,s,d])) * scale +\n//     (gs[b,s,d] + gs[b,s,d+64]) * ( cos(emb[b,s,d])) * scale )\n//\n// head_dim=128 const, half_dim=64 const. Strictly memory-bound\n// (AI ~0.56 FLOP/byte): the whole op is one read-256B*3-write-4B streaming\n// reduction per output row. The Triton frontier (0.885) plateaued after\n// exhausting BLOCK_M/BLOCK_D/eviction/num_stages autotune; the remaining\n// lever is achieved HBM bandwidth%, which needs a memory access pattern\n// Triton's codegen doesn't reach.\n//\n// Design: one WARP per output row (b,s). Each of the 32 lanes owns 2 of the\n// 64 half_dim elements (lane, lane+32) so every load across the warp is a\n// single contiguous 32-lane transaction (64B for bf16, 128B for fp32) \u2014\n// fully coalesced, no wasted sectors. Partial sums reduce via\n// __shfl_down_sync (5 steps), lane 0 writes the row's scalar output. This\n// avoids the previous attempt's one-thread-per-row layout, whose per-thread\n// row stride (256B) serialized every warp into 32 separate transactions.\n//\n// sin/cos are computed in double and rounded down to float: nvcc's\n// --use_fast_math (if applied by the harness's default compile_options)\n// only swaps single-precision transcendentals for the fast SFU intrinsics\n// (__sinf/__cosf) \u2014 there is no fast-math double path, so this keeps the\n// reference-matching accuracy regardless of compile flags, at negligible\n// cost (compute is ~200x cheaper than the memory traffic here).\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <c10/cuda/CUDAException.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <math.h>\n\n#define HEAD_DIM 128\n#define HALF_DIM 64\n#define WARPS_PER_BLOCK 8\n#define THREADS_PER_BLOCK (WARPS_PER_BLOCK * 32)\n\n__global__ void __launch_bounds__(THREADS_PER_BLOCK)\nrope_bwd_kernel(\n    const __nv_bfloat16* __restrict__ grad_cos,   // (B, S, 128)\n    const __nv_bfloat16* __restrict__ grad_sin,   // (B, S, 128)\n    const float* __restrict__ emb,                // (B, S, 128); only [..., :64] read\n    const float* __restrict__ inv_freq,           // (B, 64)\n    float* __restrict__ out,                      // (B, S) flattened\n    long long total_rows,\n    long long S,\n    float scale)\n{\n    const long long global_warp =\n        (long long)blockIdx.x * WARPS_PER_BLOCK + (threadIdx.x >> 5);\n    if (global_warp >= total_rows) return;\n    const int lane = threadIdx.x & 31;\n\n    const long long b = global_warp / S;\n\n    const long long row_off = global_warp * (long long)HEAD_DIM;\n    const __nv_bfloat16* gc_row = grad_cos + row_off;\n    const __nv_bfloat16* gs_row = grad_sin + row_off;\n    const float* emb_row = emb + row_off;\n    const float* inv_row = inv_freq + b * HALF_DIM;\n\n    float acc = 0.0f;\n    #pragma unroll\n    for (int k = 0; k < 2; k++) {\n        const int d = lane + k * 32;  // lanes 0..31 -> d in {0..31} then {32..63}\n\n        const float gc = __bfloat162float(gc_row[d]) +\n                          __bfloat162float(gc_row[d + HALF_DIM]);\n        const float gs = __bfloat162float(gs_row[d]) +\n                          __bfloat162float(gs_row[d + HALF_DIM]);\n\n        const double e = (double)emb_row[d];\n        const float sin_v = (float)sin(e);\n        const float cos_v = (float)cos(e);\n\n        // Same left-to-right op order as the reference: (gc*(-sin))*scale + (gs*cos)*scale\n        const float grad_emb = gc * (-sin_v) * scale + gs * cos_v * scale;\n        acc += grad_emb * inv_row[d];\n    }\n\n    #pragma unroll\n    for (int offset = 16; offset > 0; offset >>= 1) {\n        acc += __shfl_down_sync(0xFFFFFFFFu, acc, offset);\n    }\n\n    if (lane == 0) {\n        out[global_warp] = acc;\n    }\n}\n\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    double attention_scaling)\n{\n    grad_cos = grad_cos.contiguous();\n    grad_sin = grad_sin.contiguous();\n    emb = emb.contiguous();\n    inv_freq_expanded = inv_freq_expanded.contiguous();\n\n    TORCH_CHECK(grad_cos.is_cuda(), \"grad_cos must be CUDA\");\n    TORCH_CHECK(grad_cos.scalar_type() == torch::kBFloat16, \"grad_cos must be bf16\");\n    TORCH_CHECK(grad_sin.scalar_type() == torch::kBFloat16, \"grad_sin must be bf16\");\n    TORCH_CHECK(emb.scalar_type() == torch::kFloat32, \"emb must be float32\");\n    TORCH_CHECK(inv_freq_expanded.scalar_type() == torch::kFloat32,\n                \"inv_freq_expanded must be float32\");\n\n    const long long B = grad_cos.size(0);\n    const long long S = grad_cos.size(1);\n    const long long total_rows = B * S;\n\n    auto out = torch::empty({B, S}, emb.options());\n\n    if (total_rows == 0) {\n        return out;\n    }\n\n    const float scale = static_cast<float>(attention_scaling);\n\n    const __nv_bfloat16* gc_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_cos.data_ptr());\n    const __nv_bfloat16* gs_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_sin.data_ptr());\n    const float* emb_ptr = emb.data_ptr<float>();\n    const float* inv_ptr = inv_freq_expanded.data_ptr<float>();\n    float* out_ptr = out.data_ptr<float>();\n\n    cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n\n    const long long blocks = (total_rows + WARPS_PER_BLOCK - 1) / WARPS_PER_BLOCK;\n\n    rope_bwd_kernel<<<(unsigned int)blocks, THREADS_PER_BLOCK, 0, stream>>>(\n        gc_ptr, gs_ptr, emb_ptr, inv_ptr, out_ptr,\n        total_rows, S, scale);\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n\n    return out;\n}\n\n// Insurance overload: some harness paths may pass attention_scaling as a 0-d tensor.\ntorch::Tensor run_tensor_scale(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    torch::Tensor attention_scaling)\n{\n    return run(grad_cos, grad_sin, emb, inv_freq_expanded,\n               attention_scaling.item<double>());\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"RoPE embedding backward with attention scaling (scalar scale)\");\n    m.def(\"run\", &run_tensor_scale, \"RoPE embedding backward with attention scaling (tensor scale)\");\n}\n"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# RoPE-backward (grad_position_ids) \u2014 strictly memory-bound.\n#\n# Per output element (b, s):\n#   grad_position_ids[b,s] = sum_d  inv_freq[b,d] * (\n#         (gc[:,d]+gc[:,d+64]) * (-sin(emb[:,d])) * scale\n#       + (gs[:,d]+gs[:,d+64]) * ( cos(emb[:,d])) * scale )\n#\n# Byte floor per (b,s): read gc(256B) + gs(256B) + emb_half(256B), write 4B.\n# We read only emb[..., :64] (the second half is a duplicate the reference never\n# touches) \u2014 halving emb traffic vs the naive contiguous read, which is the\n# difference between a ~0.91 and ~0.77 ceiling on the huge shapes.\n#\n# The ONLY remaining lever is achieved-HBM-BW% on the two big cold-L2 streaming\n# shapes (#8, #14).  Two extra levers vs the plain fused kernel, both added as a\n# strict autotune SUPERSET (EVICT=\"\" + default stages == the prior frontier):\n#   * EVICT  \u2014 \"evict_first\" streaming hint on the single-use big loads so the\n#              cold-L2-flushed data streams through L2 without write-allocate\n#              thrash (each byte is read exactly once, zero reuse).\n#   * num_stages \u2014 software-pipeline the short half_dim loop to raise\n#              memory-level parallelism (prefetch next d-chunk while reducing).\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _ld(ptr, mask, EVICT: tl.constexpr):\n    # Literal-string eviction policy chosen by a compile-time constexpr branch\n    # (bulletproof across Triton versions \u2014 no computed policy strings).\n    if EVICT == 1:\n        x = tl.load(ptr, mask=mask, other=0.0, eviction_policy=\"evict_first\")\n    else:\n        x = tl.load(ptr, mask=mask, other=0.0)\n    return x\n\n\ndef _cfg(bm, bd, warps, evict=0, stages=None):\n    kw = {} if stages is None else {\"num_stages\": stages}\n    return triton.Config({\"BLOCK_M\": bm, \"BLOCK_D\": bd, \"EVICT\": evict},\n                         num_warps=warps, **kw)\n\n\n_CONFIGS = [\n    # --- tiny / launch-bound (small B\u00b7S): few chunks, low overhead, many blocks\n    _cfg(16, 64, 4), _cfg(16, 32, 4),\n    _cfg(32, 64, 4), _cfg(32, 32, 4), _cfg(32, 16, 4),\n    _cfg(64, 64, 4), _cfg(64, 32, 4), _cfg(64, 16, 4),\n    # --- medium\n    _cfg(128, 8, 8), _cfg(128, 16, 8), _cfg(128, 32, 8), _cfg(128, 64, 8),\n    _cfg(256, 8, 8), _cfg(256, 16, 8), _cfg(256, 32, 8),\n    _cfg(256, 8, 16), _cfg(256, 16, 16),\n    # --- big / memory-bound: low BLOCK_D (registers\u2192occupancy), large BLOCK_M,\n    #     streaming eviction + pipelining to push achieved HBM BW.\n    _cfg(256, 8, 8, evict=1), _cfg(256, 8, 16, evict=1),\n    _cfg(256, 16, 8, evict=1),\n    _cfg(512, 8, 16), _cfg(512, 16, 16),\n    _cfg(512, 8, 16, evict=1), _cfg(512, 16, 16, evict=1),\n    _cfg(512, 8, 8, evict=1),\n    _cfg(1024, 8, 16), _cfg(1024, 8, 16, evict=1),\n    # pipelining variants (raise MLP on the streaming shapes)\n    _cfg(256, 8, 8, evict=1, stages=3),\n    _cfg(512, 8, 16, evict=1, stages=3),\n    _cfg(256, 16, 8, evict=1, stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS, key=[\"B\", \"S\"])\n@triton.jit\ndef _rope_bwd_kernel(\n    grad_cos_ptr,\n    grad_sin_ptr,\n    emb_ptr,\n    inv_freq_ptr,\n    out_ptr,\n    B,\n    S,\n    stride_gcos_b,\n    stride_gcos_s,\n    stride_gcos_h,\n    stride_gsin_b,\n    stride_gsin_s,\n    stride_gsin_h,\n    stride_emb_b,\n    stride_emb_s,\n    stride_emb_h,\n    stride_inv_b,\n    stride_inv_d,\n    stride_out_b,\n    stride_out_s,\n    scale: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n    HALF_DIM: tl.constexpr = 64,\n    HEAD_DIM: tl.constexpr = 128,\n):\n    pid_b = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    mask_m = offs_m < S\n\n    # Base pointers for this batch + tile rows (row-major: contiguous along head_dim)\n    base_gcos = grad_cos_ptr + pid_b * stride_gcos_b + offs_m[:, None] * stride_gcos_s\n    base_gsin = grad_sin_ptr + pid_b * stride_gsin_b + offs_m[:, None] * stride_gsin_s\n    base_emb = emb_ptr + pid_b * stride_emb_b + offs_m[:, None] * stride_emb_s\n\n    # Accumulator for the dot product over half_dim\n    acc = tl.zeros([BLOCK_M], dtype=tl.float32)\n\n    # Chunk half_dim (64) into BLOCK_D-sized tiles to keep peak live registers\n    # proportional to BLOCK_M \u00d7 BLOCK_D (not BLOCK_M \u00d7 64) \u2192 larger BLOCK_M\n    # without spilling \u2192 better bandwidth amortization.  All BLOCK_D \u2208 {8,16,32,64}\n    # divide 64, so the d-tiles are always full (no partial-d masking needed).\n    for d_start in tl.range(0, HALF_DIM, BLOCK_D):\n        offs_d = d_start + tl.arange(0, BLOCK_D)\n        mask = mask_m[:, None]  # d is always in-range (BLOCK_D | 64)\n\n        # bf16 gradient halves (single-use \u2192 streaming eviction hint).\n        gc_first = _ld(base_gcos + offs_d[None, :] * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gc_second = _ld(base_gcos + (offs_d[None, :] + HALF_DIM) * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gs_first = _ld(base_gsin + offs_d[None, :] * stride_gsin_h, mask, EVICT).to(tl.float32)\n        gs_second = _ld(base_gsin + (offs_d[None, :] + HALF_DIM) * stride_gsin_h, mask, EVICT).to(tl.float32)\n\n        # Sum the two halves (forward concatenated freqs \u2192 both contribute)\n        gc = gc_first + gc_second\n        gs = gs_first + gs_second\n\n        # emb (fp32) \u2014 only the first half; second half is a duplicate.\n        emb_half = _ld(base_emb + offs_d[None, :] * stride_emb_h, mask, EVICT)\n\n        # inv_freq chunk for this batch (tiny, reused \u2192 keep default/L2-resident)\n        inv_chunk = tl.load(\n            inv_freq_ptr + pid_b * stride_inv_b + offs_d * stride_inv_d\n        )\n\n        # Chain rule: d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        sin_half = tl.sin(emb_half)\n        cos_half = tl.cos(emb_half)\n\n        # grad_emb = gc * (-sin) * scale + gs * cos * scale  (scale kept per-element\n        # to bit-match the reference's arithmetic order under the 1e-5 tolerance).\n        grad_emb = gc * (-sin_half) * scale + gs * cos_half * scale\n\n        # Collapse the tiny (1 \u00d7 HALF_DIM) @ (HALF_DIM \u00d7 S) bmm into a fused\n        # pointwise-multiply + reduce over the d-tile.\n        acc += tl.sum(grad_emb * inv_chunk[None, :], axis=1)\n\n    tl.store(\n        out_ptr + pid_b * stride_out_b + offs_m * stride_out_s,\n        acc,\n        mask=mask_m,\n    )\n\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    emb: torch.Tensor,\n    inv_freq_expanded: torch.Tensor,\n    attention_scaling: float,\n) -> torch.Tensor:\n    B, S, _ = emb.shape\n    out = torch.empty(B, S, dtype=torch.float32, device=grad_cos.device)\n\n    grid = lambda meta: (B, triton.cdiv(S, meta[\"BLOCK_M\"]))\n    _rope_bwd_kernel[grid](\n        grad_cos,\n        grad_sin,\n        emb,\n        inv_freq_expanded,\n        out,\n        B,\n        S,\n        grad_cos.stride(0),\n        grad_cos.stride(1),\n        grad_cos.stride(2),\n        grad_sin.stride(0),\n        grad_sin.stride(1),\n        grad_sin.stride(2),\n        emb.stride(0),\n        emb.stride(1),\n        emb.stride(2),\n        inv_freq_expanded.stride(0),\n        inv_freq_expanded.stride(1),\n        out.stride(0),\n        out.stride(1),\n        scale=float(attention_scaling),\n    )\n    return out\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t14_24f6a9da6380",
+    "definition": "014_rotary_embedding_with_attention_scaling_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "cuda_cpp",
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.cu::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false,
+      "binding": "torch"
+    },
+    "sources": [
+      {
+        "path": "kernel.cu",
+        "content": "// RoPE embedding backward with attention scaling \u2014 CUDA kernel.\n//\n// grad_position_ids[b,s] = sum_{d=0}^{63} inv_freq[b,d] * (\n//     (gc[b,s,d] + gc[b,s,d+64]) * (-sin(emb[b,s,d])) * scale +\n//     (gs[b,s,d] + gs[b,s,d+64]) * ( cos(emb[b,s,d])) * scale )\n//\n// head_dim=128 const, half_dim=64 const. Strictly memory-bound\n// (AI ~0.56 FLOP/byte): the whole op is one read-256B*3-write-4B streaming\n// reduction per output row. The Triton frontier (0.885) plateaued after\n// exhausting BLOCK_M/BLOCK_D/eviction/num_stages autotune; the remaining\n// lever is achieved HBM bandwidth%, which needs a memory access pattern\n// Triton's codegen doesn't reach.\n//\n// Design: one WARP per output row (b,s). Each of the 32 lanes owns 2 of the\n// 64 half_dim elements (lane, lane+32) so every load across the warp is a\n// single contiguous 32-lane transaction (64B for bf16, 128B for fp32) \u2014\n// fully coalesced, no wasted sectors. Partial sums reduce via\n// __shfl_down_sync (5 steps), lane 0 writes the row's scalar output. This\n// avoids the previous attempt's one-thread-per-row layout, whose per-thread\n// row stride (256B) serialized every warp into 32 separate transactions.\n//\n// sin/cos are computed in double and rounded down to float: nvcc's\n// --use_fast_math (if applied by the harness's default compile_options)\n// only swaps single-precision transcendentals for the fast SFU intrinsics\n// (__sinf/__cosf) \u2014 there is no fast-math double path, so this keeps the\n// reference-matching accuracy regardless of compile flags, at negligible\n// cost (compute is ~200x cheaper than the memory traffic here).\n\n#include <torch/extension.h>\n#include <ATen/cuda/CUDAContext.h>\n#include <c10/cuda/CUDAException.h>\n#include <cuda_runtime.h>\n#include <cuda_bf16.h>\n#include <math.h>\n\n#define HEAD_DIM 128\n#define HALF_DIM 64\n#define WARPS_PER_BLOCK 8\n#define THREADS_PER_BLOCK (WARPS_PER_BLOCK * 32)\n\n__global__ void __launch_bounds__(THREADS_PER_BLOCK)\nrope_bwd_kernel(\n    const __nv_bfloat16* __restrict__ grad_cos,   // (B, S, 128)\n    const __nv_bfloat16* __restrict__ grad_sin,   // (B, S, 128)\n    const float* __restrict__ emb,                // (B, S, 128); only [..., :64] read\n    const float* __restrict__ inv_freq,           // (B, 64)\n    float* __restrict__ out,                      // (B, S) flattened\n    long long total_rows,\n    long long S,\n    float scale)\n{\n    const long long global_warp =\n        (long long)blockIdx.x * WARPS_PER_BLOCK + (threadIdx.x >> 5);\n    if (global_warp >= total_rows) return;\n    const int lane = threadIdx.x & 31;\n\n    const long long b = global_warp / S;\n\n    const long long row_off = global_warp * (long long)HEAD_DIM;\n    const __nv_bfloat16* gc_row = grad_cos + row_off;\n    const __nv_bfloat16* gs_row = grad_sin + row_off;\n    const float* emb_row = emb + row_off;\n    const float* inv_row = inv_freq + b * HALF_DIM;\n\n    float acc = 0.0f;\n    #pragma unroll\n    for (int k = 0; k < 2; k++) {\n        const int d = lane + k * 32;  // lanes 0..31 -> d in {0..31} then {32..63}\n\n        const float gc = __bfloat162float(gc_row[d]) +\n                          __bfloat162float(gc_row[d + HALF_DIM]);\n        const float gs = __bfloat162float(gs_row[d]) +\n                          __bfloat162float(gs_row[d + HALF_DIM]);\n\n        const double e = (double)emb_row[d];\n        const float sin_v = (float)sin(e);\n        const float cos_v = (float)cos(e);\n\n        // Same left-to-right op order as the reference: (gc*(-sin))*scale + (gs*cos)*scale\n        const float grad_emb = gc * (-sin_v) * scale + gs * cos_v * scale;\n        acc += grad_emb * inv_row[d];\n    }\n\n    #pragma unroll\n    for (int offset = 16; offset > 0; offset >>= 1) {\n        acc += __shfl_down_sync(0xFFFFFFFFu, acc, offset);\n    }\n\n    if (lane == 0) {\n        out[global_warp] = acc;\n    }\n}\n\ntorch::Tensor run(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    double attention_scaling)\n{\n    grad_cos = grad_cos.contiguous();\n    grad_sin = grad_sin.contiguous();\n    emb = emb.contiguous();\n    inv_freq_expanded = inv_freq_expanded.contiguous();\n\n    TORCH_CHECK(grad_cos.is_cuda(), \"grad_cos must be CUDA\");\n    TORCH_CHECK(grad_cos.scalar_type() == torch::kBFloat16, \"grad_cos must be bf16\");\n    TORCH_CHECK(grad_sin.scalar_type() == torch::kBFloat16, \"grad_sin must be bf16\");\n    TORCH_CHECK(emb.scalar_type() == torch::kFloat32, \"emb must be float32\");\n    TORCH_CHECK(inv_freq_expanded.scalar_type() == torch::kFloat32,\n                \"inv_freq_expanded must be float32\");\n\n    const long long B = grad_cos.size(0);\n    const long long S = grad_cos.size(1);\n    const long long total_rows = B * S;\n\n    auto out = torch::empty({B, S}, emb.options());\n\n    if (total_rows == 0) {\n        return out;\n    }\n\n    const float scale = static_cast<float>(attention_scaling);\n\n    const __nv_bfloat16* gc_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_cos.data_ptr());\n    const __nv_bfloat16* gs_ptr =\n        reinterpret_cast<const __nv_bfloat16*>(grad_sin.data_ptr());\n    const float* emb_ptr = emb.data_ptr<float>();\n    const float* inv_ptr = inv_freq_expanded.data_ptr<float>();\n    float* out_ptr = out.data_ptr<float>();\n\n    cudaStream_t stream = at::cuda::getCurrentCUDAStream().stream();\n\n    const long long blocks = (total_rows + WARPS_PER_BLOCK - 1) / WARPS_PER_BLOCK;\n\n    rope_bwd_kernel<<<(unsigned int)blocks, THREADS_PER_BLOCK, 0, stream>>>(\n        gc_ptr, gs_ptr, emb_ptr, inv_ptr, out_ptr,\n        total_rows, S, scale);\n    C10_CUDA_KERNEL_LAUNCH_CHECK();\n\n    return out;\n}\n\n// Insurance overload: some harness paths may pass attention_scaling as a 0-d tensor.\ntorch::Tensor run_tensor_scale(\n    torch::Tensor grad_cos,\n    torch::Tensor grad_sin,\n    torch::Tensor emb,\n    torch::Tensor inv_freq_expanded,\n    torch::Tensor attention_scaling)\n{\n    return run(grad_cos, grad_sin, emb, inv_freq_expanded,\n               attention_scaling.item<double>());\n}\n\nPYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {\n    m.def(\"run\", &run, \"RoPE embedding backward with attention scaling (scalar scale)\");\n    m.def(\"run\", &run_tensor_scale, \"RoPE embedding backward with attention scaling (tensor scale)\");\n}\n"
+      },
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# RoPE-backward (grad_position_ids) \u2014 strictly memory-bound.\n#\n# Per output element (b, s):\n#   grad_position_ids[b,s] = sum_d  inv_freq[b,d] * (\n#         (gc[:,d]+gc[:,d+64]) * (-sin(emb[:,d])) * scale\n#       + (gs[:,d]+gs[:,d+64]) * ( cos(emb[:,d])) * scale )\n#\n# Byte floor per (b,s): read gc(256B) + gs(256B) + emb_half(256B), write 4B.\n# We read only emb[..., :64] (the second half is a duplicate the reference never\n# touches) \u2014 halving emb traffic vs the naive contiguous read, which is the\n# difference between a ~0.91 and ~0.77 ceiling on the huge shapes.\n#\n# The ONLY remaining lever is achieved-HBM-BW% on the two big cold-L2 streaming\n# shapes (#8, #14).  Two extra levers vs the plain fused kernel, both added as a\n# strict autotune SUPERSET (EVICT=\"\" + default stages == the prior frontier):\n#   * EVICT  \u2014 \"evict_first\" streaming hint on the single-use big loads so the\n#              cold-L2-flushed data streams through L2 without write-allocate\n#              thrash (each byte is read exactly once, zero reuse).\n#   * num_stages \u2014 software-pipeline the short half_dim loop to raise\n#              memory-level parallelism (prefetch next d-chunk while reducing).\n# ---------------------------------------------------------------------------\n\n\n@triton.jit\ndef _ld(ptr, mask, EVICT: tl.constexpr):\n    # Literal-string eviction policy chosen by a compile-time constexpr branch\n    # (bulletproof across Triton versions \u2014 no computed policy strings).\n    if EVICT == 1:\n        x = tl.load(ptr, mask=mask, other=0.0, eviction_policy=\"evict_first\")\n    else:\n        x = tl.load(ptr, mask=mask, other=0.0)\n    return x\n\n\ndef _cfg(bm, bd, warps, evict=0, stages=None):\n    kw = {} if stages is None else {\"num_stages\": stages}\n    return triton.Config({\"BLOCK_M\": bm, \"BLOCK_D\": bd, \"EVICT\": evict},\n                         num_warps=warps, **kw)\n\n\n_CONFIGS = [\n    # --- tiny / launch-bound (small B\u00b7S): few chunks, low overhead, many blocks\n    _cfg(16, 64, 4), _cfg(16, 32, 4),\n    _cfg(32, 64, 4), _cfg(32, 32, 4), _cfg(32, 16, 4),\n    _cfg(64, 64, 4), _cfg(64, 32, 4), _cfg(64, 16, 4),\n    # --- medium\n    _cfg(128, 8, 8), _cfg(128, 16, 8), _cfg(128, 32, 8), _cfg(128, 64, 8),\n    _cfg(256, 8, 8), _cfg(256, 16, 8), _cfg(256, 32, 8),\n    _cfg(256, 8, 16), _cfg(256, 16, 16),\n    # --- big / memory-bound: low BLOCK_D (registers\u2192occupancy), large BLOCK_M,\n    #     streaming eviction + pipelining to push achieved HBM BW.\n    _cfg(256, 8, 8, evict=1), _cfg(256, 8, 16, evict=1),\n    _cfg(256, 16, 8, evict=1),\n    _cfg(512, 8, 16), _cfg(512, 16, 16),\n    _cfg(512, 8, 16, evict=1), _cfg(512, 16, 16, evict=1),\n    _cfg(512, 8, 8, evict=1),\n    _cfg(1024, 8, 16), _cfg(1024, 8, 16, evict=1),\n    # pipelining variants (raise MLP on the streaming shapes)\n    _cfg(256, 8, 8, evict=1, stages=3),\n    _cfg(512, 8, 16, evict=1, stages=3),\n    _cfg(256, 16, 8, evict=1, stages=3),\n]\n\n\n@triton.autotune(configs=_CONFIGS, key=[\"B\", \"S\"])\n@triton.jit\ndef _rope_bwd_kernel(\n    grad_cos_ptr,\n    grad_sin_ptr,\n    emb_ptr,\n    inv_freq_ptr,\n    out_ptr,\n    B,\n    S,\n    stride_gcos_b,\n    stride_gcos_s,\n    stride_gcos_h,\n    stride_gsin_b,\n    stride_gsin_s,\n    stride_gsin_h,\n    stride_emb_b,\n    stride_emb_s,\n    stride_emb_h,\n    stride_inv_b,\n    stride_inv_d,\n    stride_out_b,\n    stride_out_s,\n    scale: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n    HALF_DIM: tl.constexpr = 64,\n    HEAD_DIM: tl.constexpr = 128,\n):\n    pid_b = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    mask_m = offs_m < S\n\n    # Base pointers for this batch + tile rows (row-major: contiguous along head_dim)\n    base_gcos = grad_cos_ptr + pid_b * stride_gcos_b + offs_m[:, None] * stride_gcos_s\n    base_gsin = grad_sin_ptr + pid_b * stride_gsin_b + offs_m[:, None] * stride_gsin_s\n    base_emb = emb_ptr + pid_b * stride_emb_b + offs_m[:, None] * stride_emb_s\n\n    # Accumulator for the dot product over half_dim\n    acc = tl.zeros([BLOCK_M], dtype=tl.float32)\n\n    # Chunk half_dim (64) into BLOCK_D-sized tiles to keep peak live registers\n    # proportional to BLOCK_M \u00d7 BLOCK_D (not BLOCK_M \u00d7 64) \u2192 larger BLOCK_M\n    # without spilling \u2192 better bandwidth amortization.  All BLOCK_D \u2208 {8,16,32,64}\n    # divide 64, so the d-tiles are always full (no partial-d masking needed).\n    for d_start in tl.range(0, HALF_DIM, BLOCK_D):\n        offs_d = d_start + tl.arange(0, BLOCK_D)\n        mask = mask_m[:, None]  # d is always in-range (BLOCK_D | 64)\n\n        # bf16 gradient halves (single-use \u2192 streaming eviction hint).\n        gc_first = _ld(base_gcos + offs_d[None, :] * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gc_second = _ld(base_gcos + (offs_d[None, :] + HALF_DIM) * stride_gcos_h, mask, EVICT).to(tl.float32)\n        gs_first = _ld(base_gsin + offs_d[None, :] * stride_gsin_h, mask, EVICT).to(tl.float32)\n        gs_second = _ld(base_gsin + (offs_d[None, :] + HALF_DIM) * stride_gsin_h, mask, EVICT).to(tl.float32)\n\n        # Sum the two halves (forward concatenated freqs \u2192 both contribute)\n        gc = gc_first + gc_second\n        gs = gs_first + gs_second\n\n        # emb (fp32) \u2014 only the first half; second half is a duplicate.\n        emb_half = _ld(base_emb + offs_d[None, :] * stride_emb_h, mask, EVICT)\n\n        # inv_freq chunk for this batch (tiny, reused \u2192 keep default/L2-resident)\n        inv_chunk = tl.load(\n            inv_freq_ptr + pid_b * stride_inv_b + offs_d * stride_inv_d\n        )\n\n        # Chain rule: d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        sin_half = tl.sin(emb_half)\n        cos_half = tl.cos(emb_half)\n\n        # grad_emb = gc * (-sin) * scale + gs * cos * scale  (scale kept per-element\n        # to bit-match the reference's arithmetic order under the 1e-5 tolerance).\n        grad_emb = gc * (-sin_half) * scale + gs * cos_half * scale\n\n        # Collapse the tiny (1 \u00d7 HALF_DIM) @ (HALF_DIM \u00d7 S) bmm into a fused\n        # pointwise-multiply + reduce over the d-tile.\n        acc += tl.sum(grad_emb * inv_chunk[None, :], axis=1)\n\n    tl.store(\n        out_ptr + pid_b * stride_out_b + offs_m * stride_out_s,\n        acc,\n        mask=mask_m,\n    )\n\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    emb: torch.Tensor,\n    inv_freq_expanded: torch.Tensor,\n    attention_scaling: float,\n) -> torch.Tensor:\n    B, S, _ = emb.shape\n    out = torch.empty(B, S, dtype=torch.float32, device=grad_cos.device)\n\n    grid = lambda meta: (B, triton.cdiv(S, meta[\"BLOCK_M\"]))\n    _rope_bwd_kernel[grid](\n        grad_cos,\n        grad_sin,\n        emb,\n        inv_freq_expanded,\n        out,\n        B,\n        S,\n        grad_cos.stride(0),\n        grad_cos.stride(1),\n        grad_cos.stride(2),\n        grad_sin.stride(0),\n        grad_sin.stride(1),\n        grad_sin.stride(2),\n        emb.stride(0),\n        emb.stride(1),\n        emb.stride(2),\n        inv_freq_expanded.stride(0),\n        inv_freq_expanded.stride(1),\n        out.stride(0),\n        out.stride(1),\n        scale=float(attention_scaling),\n    )\n    return out\n"
+      }
+    ]
+  }
+}

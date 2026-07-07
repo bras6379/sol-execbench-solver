@@ -1,0 +1,245 @@
+{
+  "cand_id": "c02be6d9adf3",
+  "task_id": 4,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.8604583362781824,
+    0.0,
+    0.8597247722618458,
+    0.0,
+    0.8178037608486017,
+    0.8188495474583414,
+    0.861262973703962,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.7944116180809245,
+    0.0,
+    0.0,
+    0.0,
+    0.8200759732820593
+  ],
+  "strategy": "CUDA-graph the M<=2048 path: capture the bf16 wgrad+dgrad pair as one graph to remove kernel-launch overhead on small sh",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "e0b86351e99b",
+  "trajectory": "runs/4/work/c02be6d9adf3/trajectory.jsonl",
+  "gpu_s": 7.244,
+  "job_id": "4-c02be6d9adf3",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 335.89,
+      "samples": 19,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.092095,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173697,
+      "sol_score": 0.8604583362781824,
+      "sol_score_cal": 0.7452518382233383,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059616,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0921915,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.1736964999999999,
+      "sol_score": 0.8597247722618458,
+      "sol_score_cal": 0.7445965974305829,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0519035,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0993605,
+      "sol_score": 0.8178037608486017,
+      "sol_score_cal": 0.7223900575050194,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.05184,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995045,
+      "sol_score": 0.8188495474583414,
+      "sol_score_cal": 0.7235079042155422,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0919195,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173264,
+      "sol_score": 0.861262973703962,
+      "sol_score_cal": 0.7456004486951588,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039456,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.003,
+      "baseline_latency_ms": 0.024352,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.038464,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.039488,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.101456,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.173505,
+      "sol_score": 0.7944116180809245,
+      "sol_score_cal": 0.6862935586896252,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0595845,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0051,
+      "baseline_latency_ms": 0.0303355,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.059584,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.051727999999999996,
+      "sol_ms": 0.0383,
+      "baseline_latency_ms": 0.0995035,
+      "sol_score": 0.8200759732820593,
+      "sol_score_cal": 0.7246463466296756,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Reference does naive fp32 matmuls on already-bf16 operands.  bf16 tensor-core\n# matmuls with fp32 accumulation reproduce the same rounding envelope and are\n# ~2x faster.  Force full fp32 reduction (the default \"reduced precision\" path can\n# drift from the reference on the 0.99 matched-ratio gate).\ntorch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\ntorch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n_HIDDEN = 2048\n_NUM_HEADS = 32\n_HEAD_DIM = 64\n\n# Cache of CUDA graphs for the launch-bound shapes.  Keyed by (M, device) because\n# the 2-D GEMM view removes dependence on how B and S factor.\n_GRAPHS = {}\n\n\ndef _capture_graph(M: int, device: torch.device, dtype: torch.dtype):\n    \"\"\"Capture one CUDA graph for the two bf16 GEMMs at a fixed (M, 2048).\"\"\"\n    # Static inputs/outputs that the graph will replay into.\n    go_s = torch.empty(M, _HIDDEN, dtype=dtype, device=device)\n    rs_s = torch.empty(M, _HIDDEN, dtype=dtype, device=device)\n    w_s = torch.empty(_HIDDEN, _HIDDEN, dtype=dtype, device=device)\n\n    # Warm-up the cuBLAS heuristic cache before capturing so the recorded graph\n    # uses the same algorithms as steady-state eager execution.\n    for _ in range(3):\n        _ = go_s.t().mm(rs_s)\n        _ = go_s.mm(w_s)\n    torch.cuda.synchronize()\n\n    graph = torch.cuda.Graph()\n    with torch.cuda.graph(graph):\n        # GEMM1: wgrad  (M,2048)^T @ (M,2048) -> (2048,2048)\n        grad_weight_s = go_s.t().mm(rs_s)\n        # GEMM2: dgrad  (M,2048) @ (2048,2048) -> (M,2048)\n        grad_dgrad_s = go_s.mm(w_s)\n\n    return graph, go_s, rs_s, w_s, grad_weight_s, grad_dgrad_s\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward of attention output projection with reshape.\n\n    Reference computes two fp32 GEMMs and an explicit contiguous transpose back\n    to (B,H,S,D).  We keep the same bf16-in/fp32-accum math for the GEMMs and\n    remove the extra launch + cast traffic by CUDA-graphing the small-M path.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    # Reshape is free: data stays in (B,S,H) physical order and the GEMMs\n    # operate on a 2-D view of the same storage.\n    grad_output_2d = grad_output.reshape(M, hidden_size)\n    reshaped_2d = reshaped.reshape(M, hidden_size)\n\n    # For small M the actual work is dwarfed by kernel-launch overhead.  Capture\n    # both GEMMs in one graph; for large M the GEMMs are tensor-core bound and\n    # individual launches are a tiny fraction, so we keep the zero-copy view\n    # path (avoiding an extra clone of the Mx2048 dgrad buffer).\n    if grad_output.is_cuda and M <= 2048:\n        key = (M, str(grad_output.device))\n        cached = _GRAPHS.get(key)\n        if cached is None:\n            cached = _capture_graph(M, grad_output.device, grad_output.dtype)\n            _GRAPHS[key] = cached\n\n        graph, go_s, rs_s, w_s, grad_weight_s, grad_dgrad_s = cached\n\n        # Copy the dynamic inputs into the graph's static slots, then replay.\n        go_s.copy_(grad_output_2d)\n        rs_s.copy_(reshaped_2d)\n        w_s.copy_(weight)\n        graph.replay()\n\n        # Never return CUDA-graph static buffers (they would be overwritten on\n        # the next replay); clone first.\n        grad_weight = grad_weight_s.clone()\n        grad_dgrad_clone = grad_dgrad_s.clone()\n\n        # Back through the reshape and transpose, writing (B,H,S,D) layout.\n        grad_attn_output = grad_dgrad_clone.reshape(\n            batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n        ).transpose(1, 2)\n        return grad_attn_output, grad_weight\n\n    # Large-M / fallback path: plain cuBLAS bf16 GEMMs and a zero-copy view.\n    grad_weight = grad_output_2d.t().mm(reshaped_2d)\n    grad_dgrad_2d = grad_output_2d.mm(weight)\n\n    grad_attn_output = grad_dgrad_2d.reshape(\n        batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t4_c02be6d9adf3",
+    "definition": "004_attention_output_projection_with_reshape_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Reference does naive fp32 matmuls on already-bf16 operands.  bf16 tensor-core\n# matmuls with fp32 accumulation reproduce the same rounding envelope and are\n# ~2x faster.  Force full fp32 reduction (the default \"reduced precision\" path can\n# drift from the reference on the 0.99 matched-ratio gate).\ntorch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\ntorch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False\n\n_HIDDEN = 2048\n_NUM_HEADS = 32\n_HEAD_DIM = 64\n\n# Cache of CUDA graphs for the launch-bound shapes.  Keyed by (M, device) because\n# the 2-D GEMM view removes dependence on how B and S factor.\n_GRAPHS = {}\n\n\ndef _capture_graph(M: int, device: torch.device, dtype: torch.dtype):\n    \"\"\"Capture one CUDA graph for the two bf16 GEMMs at a fixed (M, 2048).\"\"\"\n    # Static inputs/outputs that the graph will replay into.\n    go_s = torch.empty(M, _HIDDEN, dtype=dtype, device=device)\n    rs_s = torch.empty(M, _HIDDEN, dtype=dtype, device=device)\n    w_s = torch.empty(_HIDDEN, _HIDDEN, dtype=dtype, device=device)\n\n    # Warm-up the cuBLAS heuristic cache before capturing so the recorded graph\n    # uses the same algorithms as steady-state eager execution.\n    for _ in range(3):\n        _ = go_s.t().mm(rs_s)\n        _ = go_s.mm(w_s)\n    torch.cuda.synchronize()\n\n    graph = torch.cuda.Graph()\n    with torch.cuda.graph(graph):\n        # GEMM1: wgrad  (M,2048)^T @ (M,2048) -> (2048,2048)\n        grad_weight_s = go_s.t().mm(rs_s)\n        # GEMM2: dgrad  (M,2048) @ (2048,2048) -> (M,2048)\n        grad_dgrad_s = go_s.mm(w_s)\n\n    return graph, go_s, rs_s, w_s, grad_weight_s, grad_dgrad_s\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    reshaped: torch.Tensor,\n    weight: torch.Tensor,\n) -> tuple[torch.Tensor, torch.Tensor]:\n    \"\"\"\n    Backward of attention output projection with reshape.\n\n    Reference computes two fp32 GEMMs and an explicit contiguous transpose back\n    to (B,H,S,D).  We keep the same bf16-in/fp32-accum math for the GEMMs and\n    remove the extra launch + cast traffic by CUDA-graphing the small-M path.\n    \"\"\"\n    batch_size, seq_len, hidden_size = grad_output.shape\n    M = batch_size * seq_len\n\n    # Reshape is free: data stays in (B,S,H) physical order and the GEMMs\n    # operate on a 2-D view of the same storage.\n    grad_output_2d = grad_output.reshape(M, hidden_size)\n    reshaped_2d = reshaped.reshape(M, hidden_size)\n\n    # For small M the actual work is dwarfed by kernel-launch overhead.  Capture\n    # both GEMMs in one graph; for large M the GEMMs are tensor-core bound and\n    # individual launches are a tiny fraction, so we keep the zero-copy view\n    # path (avoiding an extra clone of the Mx2048 dgrad buffer).\n    if grad_output.is_cuda and M <= 2048:\n        key = (M, str(grad_output.device))\n        cached = _GRAPHS.get(key)\n        if cached is None:\n            cached = _capture_graph(M, grad_output.device, grad_output.dtype)\n            _GRAPHS[key] = cached\n\n        graph, go_s, rs_s, w_s, grad_weight_s, grad_dgrad_s = cached\n\n        # Copy the dynamic inputs into the graph's static slots, then replay.\n        go_s.copy_(grad_output_2d)\n        rs_s.copy_(reshaped_2d)\n        w_s.copy_(weight)\n        graph.replay()\n\n        # Never return CUDA-graph static buffers (they would be overwritten on\n        # the next replay); clone first.\n        grad_weight = grad_weight_s.clone()\n        grad_dgrad_clone = grad_dgrad_s.clone()\n\n        # Back through the reshape and transpose, writing (B,H,S,D) layout.\n        grad_attn_output = grad_dgrad_clone.reshape(\n            batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n        ).transpose(1, 2)\n        return grad_attn_output, grad_weight\n\n    # Large-M / fallback path: plain cuBLAS bf16 GEMMs and a zero-copy view.\n    grad_weight = grad_output_2d.t().mm(reshaped_2d)\n    grad_dgrad_2d = grad_output_2d.mm(weight)\n\n    grad_attn_output = grad_dgrad_2d.reshape(\n        batch_size, seq_len, _NUM_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    return grad_attn_output, grad_weight\n"
+      }
+    ]
+  }
+}

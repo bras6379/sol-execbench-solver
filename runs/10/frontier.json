@@ -3,7 +3,7 @@
   "family": "rmsnorm",
   "name": "rmsnorm_10",
   "epsilon": 0.02,
-  "size": 2,
+  "size": 3,
   "best_cand": "94b0d20ca4fd",
   "best_score": 0.6327305369014892,
   "best_score_cal": 0.5260886305890926,
@@ -13,7 +13,7 @@
       "sol_score": 0.6327305369014892,
       "sol_score_cal": 0.5260886305890926,
       "all_passed": true,
-      "shapes_won": 11,
+      "shapes_won": 8,
       "vector": [
         0.5649293286219081,
         0.5835984074487582,
@@ -42,7 +42,7 @@
       "sol_score": 0.6307870063782497,
       "sol_score_cal": 0.5243733519564039,
       "all_passed": true,
-      "shapes_won": 6,
+      "shapes_won": 3,
       "vector": [
         0.5575566030024793,
         0.5847810026385225,
@@ -65,6 +65,35 @@
       "agent": "claude",
       "model": "opus",
       "candidate": "candidates/f5cd7a1257be.json"
+    },
+    {
+      "cand_id": "55dfafb559d3",
+      "sol_score": 0.6296370260958742,
+      "sol_score_cal": 0.5236117326420682,
+      "all_passed": true,
+      "shapes_won": 6,
+      "vector": [
+        0.5609802900298801,
+        0.5883452259599049,
+        0.6167300380228138,
+        0.6166442350829968,
+        0.5705585888282234,
+        0.6997961264016309,
+        0.5681794278502315,
+        0.5625550660792952,
+        0.7580559045226132,
+        0.7582125716415824,
+        0.5772163965681576,
+        0.5497981157469718,
+        0.6956828532939894,
+        0.5775004176311959,
+        0.7627097361523129,
+        0.6112274237221875
+      ],
+      "strategy": "FP8 weight quantization (e4m3, per-row fp32 scales, cached) halves the cold 10.5 MB weight traffic for the memory-bound ",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/55dfafb559d3.json"
     }
   ]
 }

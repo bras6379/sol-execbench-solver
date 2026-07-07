@@ -1,0 +1,25 @@
+{
+  "name": "t29_856d94362e49",
+  "definition": "029_mamba_conv1d_with_gating",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "reference.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "reference.py",
+      "content": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    attention_mask: torch.Tensor,\n    in_proj_weight: torch.Tensor,\n    in_proj_bias: torch.Tensor,\n    conv1d_weight: torch.Tensor,\n    conv1d_bias: torch.Tensor,\n):\n    \"\"\"\n    Fused Mamba conv1d with gating.\n    \n    Args:\n        hidden_states: (batch_size, seq_len, 8192)\n        attention_mask: (batch_size, seq_len)\n        in_proj_weight: (32768, 8192)\n        in_proj_bias: (32768,)\n        conv1d_weight: (16384, 1, 4) - depthwise conv\n        conv1d_bias: (16384,)\n    \n    Returns:\n        output_hidden_states: (batch_size, 16384, seq_len)\n        gate: (batch_size, 16384, seq_len)\n    \"\"\"\n    batch_size, seq_len, _ = hidden_states.shape\n    intermediate_size = 16384\n    conv_kernel_size = 4\n    \n    # 1. Gated linear projection: (B, L, 8192) -> (B, L, 32768)\n    projected_states = F.linear(hidden_states, in_proj_weight, in_proj_bias)\n    \n    # 2. Transpose for conv1d: (B, L, 32768) -> (B, 32768, L)\n    projected_states = projected_states.transpose(1, 2)\n    \n    # 3. Split into hidden states and gate: (B, 32768, L) -> 2x (B, 16384, L)\n    hidden_states_conv, gate = projected_states.chunk(2, dim=1)\n    \n    # 4. Apply attention mask before convolution\n    hidden_states_conv = hidden_states_conv * attention_mask.unsqueeze(1)\n    \n    # 5. Causal 1D convolution with grouped convolution (depthwise)\n    # Pad on the left for causal convolution\n    hidden_states_padded = F.pad(hidden_states_conv, (conv_kernel_size - 1, 0))\n    \n    # Depthwise conv1d: groups=intermediate_size\n    hidden_states_conv = F.conv1d(\n        hidden_states_padded,\n        conv1d_weight,\n        conv1d_bias,\n        groups=intermediate_size\n    )\n    \n    # 6. Apply SiLU activation: silu(x) = x * sigmoid(x)\n    hidden_states_conv = hidden_states_conv * torch.sigmoid(hidden_states_conv)\n    \n    # 7. Apply attention mask after convolution\n    hidden_states_conv = hidden_states_conv * attention_mask.unsqueeze(1)\n    \n    return hidden_states_conv, gate\n"
+    }
+  ]
+}
