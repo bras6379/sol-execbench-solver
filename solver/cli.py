@@ -398,8 +398,13 @@ def _cmd_poll(args) -> None:
             try:
                 b = lb.board(t)
                 if b.get("top_sol") is not None:
+                    # cache the full sol_score distribution (desc) so the dashboard can
+                    # project what rank a given expected SOL would take on this board.
+                    scores = sorted((e["sol_score"] for e in b.get("rankings") or []
+                                     if e.get("sol_score") is not None), reverse=True)
                     boards[str(t)] = {"top_sol": b["top_sol"], "top_user": b["top_user"],
-                                      "n": b["n"], "sol_bound": b.get("sol_bound")}
+                                      "n": b["n"], "sol_bound": b.get("sol_bound"),
+                                      "scores": scores}
             except Exception:
                 continue
         if boards:

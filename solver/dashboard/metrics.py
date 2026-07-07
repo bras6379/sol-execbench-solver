@@ -341,7 +341,7 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
                 board = {}
         for p in per_problem:
             p["lb"] = submission_summary(runs_dir, p["task"])
-            p["board"] = board.get(str(p["task"]))   # {top_sol, top_user, n, sol_bound} = the #1 to beat
+            p["board"] = board.get(str(p["task"]))   # {top_sol, top_user, n, sol_bound, scores} = the #1 to beat + full distribution for rank projection
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,

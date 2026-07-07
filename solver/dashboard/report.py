@@ -309,7 +309,8 @@ padding:5px 9px;border-radius:6px;font-size:12px;opacity:0;transition:opacity .0
 .chip{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;font-weight:600;color:#fff}
 td.strat{white-space:normal;max-width:380px;color:var(--ink2)}
 td.real b{color:var(--o-accepted)}  /* the real, submitted leaderboard SOL (ground truth) */
-.up{color:var(--o-accepted);font-weight:700;cursor:help}  /* resubmit ↑ / at-or-above-#1 ◆ signals */
+.up{color:var(--o-accepted);font-weight:700;cursor:help}  /* ↑ = worth (re)submitting: beats our last submission, or never submitted */
+td.proj{color:var(--ink2);font-style:italic}  /* projected board SOL + projected rank (a data-grounded estimate) */
 pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
 pre.traj{font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:70vh;overflow:auto}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
@@ -500,11 +501,16 @@ function render(){
     const rows=[...sub].sort((a,b)=>((b.bc??-1)-(a.bc??-1))).map(r=>{const i=idx[r.t];const bar=r.bc==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.bc,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
       const lb=r.lb||{};const rank=lb.rank?`#${lb.rank} of ${lb.n??'?'}`:'';
       const b1=r.b1,b1s=(b1==null?'':b1.toFixed(3));const subE=lb.submitted_expected;
-      const resub=(subE!=null&&r.bc!=null&&lb.sol!=null&&r.bc>subE+0.01)?` <span class="up" title="current best expected (${r.bc.toFixed(3)}) beats what we submitted (~${subE.toFixed(3)}) — re-submit">↑</span>`:'';
-      const lead=(b1!=null&&r.bc!=null&&r.bc>=b1-0.001)?` <span class="up" title="our expected is at/above the #1">◆</span>`:'';
+      const neverSub=(subE==null&&lb.sol==null);
+      const prk=r.prk;const projRank=prk?`<span class="muted"> → #${prk.rank} of ${prk.n}</span>`:'';
+      const resub=(subE!=null&&r.bc!=null&&lb.sol!=null&&r.bc>subE+0.01)
+        ?` <span class="up" title="current best expected (${r.bc.toFixed(3)}) beats what we submitted (~${subE.toFixed(3)}) — re-submit">↑</span>`
+        :(neverSub&&r.bc!=null)
+          ?` <span class="up" title="never submitted — projected board SOL ${r.pr==null?'?':'~'+r.pr.toFixed(3)}${prk?', proj. rank #'+prk.rank+' of '+prk.n:''} — worth a first submit">↑</span>`
+          :'';
       const subCell=(lb.sol==null&&subE==null)?'':`${subE==null?'–':subE.toFixed(3)}<span class="muted"> → </span><b class="real">${lb.sol==null?'–':lb.sol.toFixed(4)}</b>`;
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${resub}${bar}</td><td data-v="${lb.sol??-1}">${subCell}</td><td data-v="${r.b1??-1}">${b1s}${lead}</td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
-    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>best expected SOL ▼</th><th>submitted (est→real)</th><th>#1 SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b>${resub}${bar}</td><td data-v="${prk?prk.rank:9999}" class="proj" title="projected board SOL = best expected × observed est→real ratio; projected rank = where that SOL would place on the live board">${r.pr==null?'':'~'+r.pr.toFixed(3)+projRank}</td><td data-v="${lb.sol??-1}">${subCell}</td><td data-v="${r.b1??-1}">${b1s}</td><td data-v="${lb.rank||9999}">${rank}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>best expected SOL ▼</th><th>proj. board</th><th>submitted (est→real)</th><th>#1 SOL</th><th>leaderboard</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
 function bindSort(){
@@ -560,12 +566,41 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     order = {p["task"]: i for i, p in enumerate(problems)}
     gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # Projected board SOL: our "expected SOL" vs the real board result differs a bit
+    # per problem (calibration isn't uniform). Where we've submitted we KNOW that
+    # ratio (real / expected@submit); apply it to the current best to project what a
+    # (re)submission would score. Unsubmitted problems use the mean ratio across all
+    # completed submissions. Simple first-order estimate, but grounded in real data.
+    _ratios = [((p.get("lb") or {})["sol"] / (p.get("lb") or {})["submitted_expected"])
+               for p in problems
+               if (p.get("lb") or {}).get("sol") and (p.get("lb") or {}).get("submitted_expected")]
+    _gr = (sum(_ratios) / len(_ratios)) if _ratios else 1.0
+
+    def _proj(p):
+        lb = p.get("lb") or {}
+        r = (lb["sol"] / lb["submitted_expected"]) if (lb.get("sol") and lb.get("submitted_expected")) else _gr
+        return round(p["best_cal"] * r, 4) if p.get("best_cal") is not None else None
+
+    def _proj_rank(p, proj):
+        """1-based rank the projected board SOL would take (higher SOL = better).
+        A never-submitted entry JOINS the board (field grows by one); a resubmission
+        just moves our existing slot (field size unchanged). None if uncached."""
+        board = p.get("board") or {}
+        scores = board.get("scores")
+        if proj is None or not scores:
+            return None
+        beat = sum(1 for s in scores if s > proj)          # entries strictly better than us
+        submitted = bool((p.get("lb") or {}).get("sol"))
+        n = (board.get("n") or len(scores)) + (0 if submitted else 1)
+        return {"rank": beat + 1, "n": n}
+
     # compact per-problem records for the client-side filter/renderer
     recs = [{
         "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
         "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
         "it": p["iters"], "fr": p["frontier"], "lb": p.get("lb"),
-        "b1": (p.get("board") or {}).get("top_sol"),
+        "b1": (p.get("board") or {}).get("top_sol"), "pr": _proj(p),
+        "prk": _proj_rank(p, _proj(p)),
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
         "ac": [[round(ts, 1), round(y, 4)] for ts, y in p["accept_times"]],
