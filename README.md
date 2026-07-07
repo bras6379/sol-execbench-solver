@@ -98,6 +98,10 @@ solver solve --gpu 1-10 \
   **circuit-broken** after `--agent-fail-limit` (default 3) consecutive failures and
   skipped — the run downgrades to the healthy models automatically; if a whole tier dies
   it routes to a live one, or ends cleanly (`agents-unavailable`).
+- **`--max-concurrency N`** — how many problems run at once (each holds ≤1 agent call in
+  flight, so this bounds concurrent CLIs + provider streams; the single-flight GPU is the
+  real throughput bottleneck, not this). `0` = unbounded. A big range like `1-235
+  --max-concurrency 12` rolls through in waves of ~12 without spawning a CLI per problem.
 - **`--verify-runs N`** (default 1 = off) — the harness checks correctness for 10 rounds,
   but a rare non-deterministic (racy) kernel can pass locally yet fail the leaderboard's
   single run. With `N>1`, a candidate that would *enter the frontier* is re-run `N−1` more

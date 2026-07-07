@@ -209,7 +209,8 @@ def _cmd_solve(args) -> None:
               f"{args.gpu_type} via RunPod (auto-provision → bootstrap → run → terminate) -> {runs_dir}/")
         asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
                                  knowledge=knowledge, families=families, names=names,
-                                 provider=RunPodProvider(api), spec=spec, config=hcfg))
+                                 provider=RunPodProvider(api), spec=spec, config=hcfg,
+                                 max_concurrency=args.max_concurrency))
     else:
         if args.agent != "sim":
             print(f"  (StubExecutor — no GPU scoring; add --gpu for real B200 evaluation)")
@@ -219,7 +220,8 @@ def _cmd_solve(args) -> None:
         executor = StubExecutor(outcome, delay=args.delay)   # delay → a real timeline
         asyncio.run(run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir,
                               seeds_fn=seeds_fn, knowledge=knowledge,
-                              families=families, names=names))
+                              families=families, names=names,
+                              max_concurrency=args.max_concurrency))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -484,6 +486,11 @@ def main(argv: list[str] | None = None) -> None:
                          help="consecutive plan failures before a perspective is circuit-broken and "
                               "skipped — a dead agent (e.g. Claude/GPT out of credits) stops being used "
                               "and the run downgrades to the healthy models in the pool")
+    p_solve.add_argument("--max-concurrency", type=int, default=0,
+                         help="cap how many problems run at once (each holds <=1 agent call in flight, "
+                              "so this bounds concurrent CLIs + provider streams — the real limit is the "
+                              "laptop/rate-limit, NOT the single-flight GPU). 0=unbounded. Excess ids queue "
+                              "and start as slots free, so a big range like 1-100 rolls through safely")
     p_solve.add_argument("--timeout", type=float, default=1800.0,
                          help="per agent-call timeout (s); a timeout now skips the iteration, "
                               "not the whole problem")

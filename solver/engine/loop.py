@@ -288,16 +288,31 @@ async def run_fleet(
     problems_dir: str | Path = "problems",
     families: dict[int, str] | None = None,
     names: dict[int, str] | None = None,
+    max_concurrency: int = 0,
 ) -> None:
     families = families or {}
     names = names or {}
+    # Cap how many problems are ACTIVE at once. Each active problem holds ≤1 agent
+    # call in flight (its loop is sequential), so this bounds concurrent agent CLIs
+    # + provider streams — the real limit is the laptop and the provider's rate
+    # limit, NOT the single-flight GPU. 0 = unbounded (the old behaviour). Excess
+    # problems queue and start as slots free (a resumable rolling window over huge
+    # id ranges), so `solve 1-100 --max-concurrency 10` never spawns 100 CLIs.
+    sem = asyncio.Semaphore(max_concurrency) if max_concurrency and max_concurrency > 0 else None
 
     async def guarded(t: int) -> None:
         try:
-            await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
-                                seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
-                                problems_dir=problems_dir,
-                                family=families.get(t, ""), name=names.get(t, f"task-{t}"))
+            if sem is not None:
+                async with sem:
+                    await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
+                                        seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
+                                        problems_dir=problems_dir,
+                                        family=families.get(t, ""), name=names.get(t, f"task-{t}"))
+            else:
+                await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
+                                    seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
+                                    problems_dir=problems_dir,
+                                    family=families.get(t, ""), name=names.get(t, f"task-{t}"))
         except Exception as exc:  # crash isolation: one problem's failure is journaled, not fatal
             journal_mod.Journal(Path(runs_dir) / str(t) / "journal.jsonl", t).append(
                 "solver_error", error=repr(exc))

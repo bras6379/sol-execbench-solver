@@ -112,7 +112,7 @@ async def bootstrap(conn: PodConn, *, problems_dir: str | Path, ids: list[int],
 async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, families, names,
                        provider: PodProvider, spec: PodSpec | None = None,
                        problems_dir: str | Path = "problems", config: dict | None = None,
-                       key: str = "~/.ssh/id_ed25519", log=print) -> None:
+                       key: str = "~/.ssh/id_ed25519", max_concurrency: int = 0, log=print) -> None:
     """Provision → bootstrap → run the fleet on the pod → guaranteed teardown."""
     spec = spec or PodSpec()
     async with PodSession(provider, spec) as pod:            # reap → create → (finally) terminate
@@ -125,7 +125,8 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
         executor = SshExecutor(conn, problems_dir=problems_dir)
         log(f"[gpu] running fleet over {len(ids)} problem(s) on the B200 ...")
         await run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
-                        knowledge=knowledge, families=families, names=names)
+                        knowledge=knowledge, families=families, names=names,
+                        max_concurrency=max_concurrency)
         log("[gpu] fleet done — terminating pod")
 
 

@@ -342,6 +342,38 @@ def test_circuit_breaker_disables_dead_agent_and_downgrades(tmp_path):
     assert ctx.terminated_reason != "agents-unavailable"
 
 
+def test_max_concurrency_caps_active_problems(tmp_path):
+    # --max-concurrency bounds how many problems run at once (each holds <=1 agent
+    # call in flight), so a big id range doesn't spawn a CLI per problem all at once.
+    from solver.engine.agent import Candidate, solution_hash
+
+    class CountingAgent:                       # tracks peak concurrent design() calls
+        def __init__(self, persp, tracker):
+            self.perspective = persp
+            self._t = tracker
+        async def design(self, task_id):
+            self._t["n"] += 1
+            self._t["peak"] = max(self._t["peak"], self._t["n"])
+            await asyncio.sleep(0.02)
+            self._t["n"] -= 1
+            return "d"
+        async def plan(self, parent, ctx):
+            sol = {"__eval__": {"scores": [0.6]}, "__uid__": f"{self.perspective}:{getattr(ctx, 'iters', 0)}"}
+            return Candidate(cand_id=solution_hash(sol)[:12], solution=sol, parent=None,
+                             agent=self.perspective.agent, model=self.perspective.model, strategy="s")
+
+    persp = Perspective("x", "1")
+    c = cfg([Tier("t", [persp])], max_iterations=2, plateau_cycles=999, escalate_ceiling=1.1)
+    capped = {"n": 0, "peak": 0}
+    run(run_fleet([1, 2, 3, 4], StubExecutor(delay=0.003), {persp: CountingAgent(persp, capped)},
+                  c, runs_dir=tmp_path / "cap", max_concurrency=1))
+    assert capped["peak"] == 1                 # cap=1 ⇒ strictly serial, never two agents at once
+    unbounded = {"n": 0, "peak": 0}
+    run(run_fleet([1, 2, 3, 4], StubExecutor(delay=0.003), {persp: CountingAgent(persp, unbounded)},
+                  c, runs_dir=tmp_path / "unb", max_concurrency=0))
+    assert unbounded["peak"] >= 2              # unbounded ⇒ problems overlap
+
+
 def test_all_agents_dead_terminates_cleanly(tmp_path):
     from solver.engine.agent import StubAgent
     dead = Perspective("dead", "x")
