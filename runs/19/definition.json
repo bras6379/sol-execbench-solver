@@ -1,0 +1,97 @@
+{
+    "name": "019_vision_3d_rotary_embedding_with_spatial_merge_indexing_backward",
+    "hf_id": "Qwen/Qwen3-Omni-30B-A3B-Instruct",
+    "description": "Backward pass for Vision 3D Rotary Embedding with Spatial Merge Indexing. Computes gradients for query (q), key (k), and rotary embeddings tensors. The forward pass applies rotary position embeddings using cos/sin rotation pattern: q_embed = q * cos + rotate_half(q) * sin.",
+    "axes": {
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length (number of tokens)"
+        },
+        "num_heads": {
+            "type": "const",
+            "value": 16,
+            "description": "Number of attention heads"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension of each attention head"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_q_embed": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. rotated query output"
+        },
+        "grad_k_embed": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. rotated key output"
+        },
+        "q": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Original query tensor from forward pass"
+        },
+        "k": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Original key tensor from forward pass"
+        },
+        "embeddings": {
+            "shape": [
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Rotary embeddings from forward pass"
+        }
+    },
+    "outputs": {
+        "grad_q": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. query input"
+        },
+        "grad_k": {
+            "shape": [
+                "seq_len",
+                "num_heads",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. key input"
+        },
+        "grad_embeddings": {
+            "shape": [
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. rotary embeddings"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    embeddings: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for rotary embedding application.\n    \n    Forward was:\n        emb = cat(embeddings, embeddings, dim=-1)\n        cos = emb.cos().unsqueeze(-2)\n        sin = emb.sin().unsqueeze(-2)\n        q_rotated = rotate_half(q)  # [x1, x2] -> [-x2, x1]\n        k_rotated = rotate_half(k)\n        q_embed = q * cos + q_rotated * sin\n        k_embed = k * cos + k_rotated * sin\n    \n    Backward computes gradients w.r.t. q, k, and embeddings.\n    \"\"\"\n    seq_len, num_heads, head_dim = q.shape\n    \n    # Recompute forward intermediates\n    emb = torch.cat((embeddings, embeddings), dim=-1)  # (seq_len, head_dim * 2)\n    cos_full = emb.cos()  # (seq_len, head_dim * 2)\n    sin_full = emb.sin()  # (seq_len, head_dim * 2)\n    \n    # Slice to head_dim and add head dimension\n    cos = cos_full[..., :head_dim].unsqueeze(-2)  # (seq_len, 1, head_dim)\n    sin = sin_full[..., :head_dim].unsqueeze(-2)  # (seq_len, 1, head_dim)\n    \n    # rotate_half helper\n    def rotate_half(x):\n        x1 = x[..., :x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2:]\n        return torch.cat((-x2, x1), dim=-1)\n    \n    # rotate_half_backward: adjoint of rotate_half\n    # rotate_half: [x1, x2] -> [-x2, x1]\n    # backward: [g1, g2] -> [g2, -g1]\n    def rotate_half_backward(grad_output):\n        half_dim = grad_output.shape[-1] // 2\n        g1 = grad_output[..., :half_dim]\n        g2 = grad_output[..., half_dim:]\n        return torch.cat((g2, -g1), dim=-1)\n    \n    # Recompute rotated versions\n    q_rotated = rotate_half(q)  # (seq_len, num_heads, head_dim)\n    k_rotated = rotate_half(k)  # (seq_len, num_heads, head_dim)\n    \n    # Gradient w.r.t. q\n    # q_embed = q * cos + rotate_half(q) * sin\n    # d(q_embed)/d(q) involves both direct term and rotate_half term\n    # grad_q = grad_q_embed * cos + rotate_half_backward(grad_q_embed * sin)\n    grad_q = grad_q_embed * cos + rotate_half_backward(grad_q_embed * sin)\n    \n    # Gradient w.r.t. k (same pattern)\n    grad_k = grad_k_embed * cos + rotate_half_backward(grad_k_embed * sin)\n    \n    # Gradient w.r.t. embeddings\n    # q_embed = q * cos(emb) + q_rotated * sin(emb)\n    # d(q_embed)/d(cos) = q\n    # d(q_embed)/d(sin) = q_rotated\n    # d(cos(emb))/d(emb) = -sin(emb)\n    # d(sin(emb))/d(emb) = cos(emb)\n    \n    # Gradient w.r.t. cos and sin (before trig backward)\n    grad_cos_q = grad_q_embed * q  # (seq_len, num_heads, head_dim)\n    grad_sin_q = grad_q_embed * q_rotated\n    \n    grad_cos_k = grad_k_embed * k\n    grad_sin_k = grad_k_embed * k_rotated\n    \n    # Sum contributions from q and k\n    grad_cos = grad_cos_q + grad_cos_k  # (seq_len, num_heads, head_dim)\n    grad_sin = grad_sin_q + grad_sin_k\n    \n    # Sum over num_heads dimension\n    grad_cos = grad_cos.sum(dim=-2)  # (seq_len, head_dim)\n    grad_sin = grad_sin.sum(dim=-2)\n    \n    # Backprop through cos and sin functions\n    # d(cos(emb))/d(emb) = -sin(emb)\n    # d(sin(emb))/d(emb) = cos(emb)\n    emb_sin = sin_full[..., :head_dim]  # (seq_len, head_dim)\n    emb_cos = cos_full[..., :head_dim]  # (seq_len, head_dim)\n    \n    grad_emb_from_cos = grad_cos * (-emb_sin)\n    grad_emb_from_sin = grad_sin * emb_cos\n    \n    grad_embeddings = grad_emb_from_cos + grad_emb_from_sin  # (seq_len, head_dim)\n    \n    return grad_q, grad_k, grad_embeddings\n"
+}

@@ -1,0 +1,80 @@
+{
+    "name": "014_rotary_embedding_with_attention_scaling_backward",
+    "hf_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "description": "Backward pass for rotary position embedding with attention scaling. Computes gradients with respect to position_ids through the RoPE embedding generation pipeline including inverse frequency expansion, frequency computation, and cos/sin with attention scaling.",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 128,
+            "description": "Dimension of each attention head"
+        },
+        "half_dim": {
+            "type": "expr",
+            "expression": "head_dim // 2",
+            "description": "Half of head dimension for frequency computation"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "grad_cos": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. cos output from forward pass"
+        },
+        "grad_sin": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Gradient w.r.t. sin output from forward pass"
+        },
+        "emb": {
+            "shape": [
+                "batch_size",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "float32",
+            "description": "Saved embedding tensor from forward pass (freqs concatenated)"
+        },
+        "inv_freq_expanded": {
+            "shape": [
+                "batch_size",
+                "half_dim",
+                "1"
+            ],
+            "dtype": "float32",
+            "description": "Expanded inverse frequencies from forward pass"
+        },
+        "attention_scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Attention scaling factor (constant hyperparameter)"
+        }
+    },
+    "outputs": {
+        "grad_position_ids": {
+            "shape": [
+                "batch_size",
+                "seq_len"
+            ],
+            "dtype": "float32",
+            "description": "Gradient w.r.t. position_ids"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(\n    grad_cos: torch.Tensor,\n    grad_sin: torch.Tensor,\n    emb: torch.Tensor,\n    inv_freq_expanded: torch.Tensor,\n    attention_scaling: float,\n) -> torch.Tensor:\n    \"\"\"\n    Backward pass for RoPE embedding with attention scaling.\n    \n    Computes gradient w.r.t. position_ids through the chain rule:\n    - Forward: emb = inv_freq @ position_ids, cos_out = cos(emb) * scaling, sin_out = sin(emb) * scaling\n    - Backward: grad_position_ids = inv_freq.T @ (grad_cos * (-sin(emb) * scaling) + grad_sin * (cos(emb) * scaling))\n    \n    Args:\n        grad_cos: Gradient w.r.t. cos output, shape (batch, seq_len, head_dim)\n        grad_sin: Gradient w.r.t. sin output, shape (batch, seq_len, head_dim)\n        emb: Saved embedding tensor from forward, shape (batch, seq_len, head_dim)\n        inv_freq_expanded: Expanded inverse frequencies, shape (batch, head_dim/2, 1)\n        attention_scaling: Scaling factor applied in forward pass\n    \n    Returns:\n        grad_position_ids: Gradient w.r.t. position_ids, shape (batch, seq_len)\n    \"\"\"\n    # Convert gradients to float32 for numerical stability\n    grad_cos = grad_cos.float()\n    grad_sin = grad_sin.float()\n    \n    # Get dimensions\n    head_dim = emb.shape[-1]\n    half_dim = head_dim // 2\n    \n    # Split gradients into two halves (corresponding to the concatenation in forward)\n    # emb was created as cat(freqs, freqs), so gradients from both halves contribute\n    grad_cos_first_half = grad_cos[..., :half_dim]\n    grad_cos_second_half = grad_cos[..., half_dim:]\n    grad_sin_first_half = grad_sin[..., :half_dim]\n    grad_sin_second_half = grad_sin[..., half_dim:]\n    \n    # Sum gradients from both halves (since freqs was duplicated in forward)\n    grad_cos_freqs = grad_cos_first_half + grad_cos_second_half\n    grad_sin_freqs = grad_sin_first_half + grad_sin_second_half\n    \n    # Compute gradient w.r.t. emb (freqs)\n    # d(cos(emb))/d(emb) = -sin(emb)\n    # d(sin(emb))/d(emb) = cos(emb)\n    # Both are scaled by attention_scaling\n    emb_half = emb[..., :half_dim]\n    grad_emb = (\n        grad_cos_freqs * (-emb_half.sin()) * attention_scaling +\n        grad_sin_freqs * emb_half.cos() * attention_scaling\n    )\n    \n    # Compute gradient w.r.t. position_ids\n    # Forward: freqs = inv_freq_expanded @ position_ids_expanded, then transpose(1, 2)\n    # So: emb (after transpose) has shape (batch, seq_len, half_dim)\n    # We need to transpose grad_emb back: (batch, seq_len, half_dim) -> (batch, half_dim, seq_len)\n    grad_freqs = grad_emb.transpose(1, 2)\n    \n    # Gradient through matmul: freqs = inv_freq_expanded @ position_ids_expanded\n    # grad_position_ids_expanded = inv_freq_expanded.T @ grad_freqs\n    # Shape: (batch, 1, half_dim) @ (batch, half_dim, seq_len) -> (batch, 1, seq_len)\n    grad_position_ids_expanded = inv_freq_expanded.transpose(-2, -1) @ grad_freqs\n    \n    # Squeeze to get final shape: (batch, seq_len)\n    grad_position_ids = grad_position_ids_expanded.squeeze(1)\n    \n    return grad_position_ids\n"
+}
