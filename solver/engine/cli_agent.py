@@ -57,13 +57,16 @@ class CliSpec:
     lang: str | None = None
     base_url: str | None = None     # Anthropic-compatible endpoint (routes the claude CLI elsewhere)
     api_key_env: str | None = None  # env var holding the provider key → ANTHROPIC_AUTH_TOKEN
+    prompt_via_stdin: bool = False  # feed the prompt on stdin instead of as an argv (codex)
 
 
 CODEX = CliSpec(
-    "codex",   # from `codex exec --help`: --json stream, -m model, -s sandbox, positional prompt
+    "codex",   # `codex exec [PROMPT]`: prompt as an argv makes codex ALSO read stdin and
+    # intermittently die with "Reading additional input from stdin" (exit 1) before the
+    # model runs. Feed the prompt on stdin with `-` — the canonical programmatic form.
     cmd=["codex", "exec", "--json", "-m", "{model}", "-s", "workspace-write",
-         "--skip-git-repo-check", "{prompt}"],
-    stream="codex",
+         "--skip-git-repo-check", "-"],
+    stream="codex", prompt_via_stdin=True,
 )
 # The Claude Code CLI in print mode + stream-json events. The same command, pointed
 # at an Anthropic-compatible endpoint via base_url, drives cheap third-party models.
@@ -315,12 +318,16 @@ class CliAgent:
 
     async def _run(self, wd: Path, prompt: str) -> _Run:
         cmd = [t.replace("{model}", self.model).replace("{prompt}", prompt) for t in self.spec.cmd]
+        # Feed the prompt on stdin (codex) or as an argv with stdin closed (claude).
+        # codex with an argv prompt + DEVNULL stdin flakily dies "Reading additional
+        # input from stdin"; giving it the prompt ON stdin (cmd ends with `-`) fixes it.
+        stdin_data = prompt.encode() if self.spec.prompt_via_stdin else None
         proc = await asyncio.create_subprocess_exec(
             *cmd, cwd=str(wd), env=self.env,
-            stdin=asyncio.subprocess.DEVNULL,      # non-interactive: the CLI must not read stdin
+            stdin=(asyncio.subprocess.PIPE if stdin_data is not None else asyncio.subprocess.DEVNULL),
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         try:
-            out, err = await asyncio.wait_for(proc.communicate(), timeout=self.timeout)
+            out, err = await asyncio.wait_for(proc.communicate(input=stdin_data), timeout=self.timeout)
         except asyncio.TimeoutError:
             proc.kill()
             await proc.wait()
