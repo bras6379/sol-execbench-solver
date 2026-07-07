@@ -18,6 +18,7 @@ markdown. `from_runs_dir()` is the thin IO loader.
 
 from __future__ import annotations
 
+import datetime
 import json
 import re
 import statistics
@@ -330,6 +331,7 @@ def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
             if cur is None or r.best > cur["best"]:
                 fam_best[r.family] = {"task": r.task_id, "best": r.best,
                                       "strategy": r.best_strategy or "?"}
+    now_iso = datetime.datetime.now(datetime.timezone.utc).isoformat()
     for t, r in refls.items():
         card = render_card(r)
         if card:
@@ -337,11 +339,30 @@ def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
             if tl:
                 card = card.rstrip() + "\n\n" + tl + "\n"
             (runs_dir / str(t) / "reflection.md").write_text(card)
+            _append_snapshot(runs_dir / str(t), r, card, now_iso)
         if dump_prior:
             _dump_prior(runs_dir, t, dump_prior)
     log(f"[reflect] wrote {sum(1 for r in refls.values() if r.status not in ('thin',))} "
         f"coach card(s) across {len(refls)} problem(s)")
     return refls
+
+
+def _append_snapshot(pdir: Path, r: ProblemReflection, card: str, ts: str) -> None:
+    """Append a timestamped coach-card snapshot to `<task>/reflections.jsonl`, but
+    only when the card actually changed — so the dashboard timeline shows how the
+    diagnosis evolved (not one row per 20-min tick that said the same thing)."""
+    log = pdir / "reflections.jsonl"
+    if log.is_file():
+        lines = log.read_text().splitlines()
+        if lines:
+            try:
+                if json.loads(lines[-1]).get("card", "").strip() == card.strip():
+                    return
+            except Exception:
+                pass
+    with log.open("a") as f:
+        f.write(json.dumps({"ts": ts, "task": r.task_id, "status": r.status,
+                            "headline": r.headline, "card": card}) + "\n")
 
 
 def _dump_prior(runs_dir: Path, task_id: int, top_n: int) -> None:

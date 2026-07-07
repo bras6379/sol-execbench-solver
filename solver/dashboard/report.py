@@ -314,6 +314,11 @@ td.proj{color:var(--ink2);font-style:italic}  /* projected board SOL + projected
 pre{margin:0 0 12px;overflow-x:auto;background:var(--surface);border:1px solid var(--grid);border-radius:8px;padding:12px 14px}
 pre.traj{font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:70vh;overflow:auto}
 pre code{font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--ink)}
+pre.coach-card{white-space:pre-wrap;word-break:break-word;font-size:12px;line-height:1.55;
+  background:var(--bg);border:1px solid var(--grid);border-left:3px solid var(--s1);
+  border-radius:8px;padding:12px 14px;max-height:44vh;overflow:auto;margin:0}
+h3.coach-h{font-size:13px;color:var(--ink2);margin:16px 0 8px}
+td.views{white-space:nowrap}
 button.link{background:none;border:none;color:var(--s1);cursor:pointer;font:inherit;padding:0}
 button.link:hover{text-decoration:underline}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:20;display:flex;
@@ -689,12 +694,19 @@ def _code_blocks(p: dict) -> str:
     return "".join(out)
 
 
-def _progression_table(p: dict, has_traj: set | None = None) -> str:
-    """Every candidate in order: strategy · agent · LB-est & raw score · kernel &
-    trajectory links. This is the per-problem 'what each agent did + how it scored'."""
+_ART_LABEL = {"ctx": "context", "design": "design", "strat": "strategy", "handoff": "handoff"}
+
+
+def _progression_table(p: dict, has_traj: set | None = None,
+                       avail: dict | None = None) -> str:
+    """The per-problem timeline: every candidate in chronological order, each with
+    drill-downs into EVERYTHING it saw and produced — the exact context passed to
+    the agent (CONTEXT.md, incl. the coach card), its design, strategy, the kernel,
+    the trajectory, and any handoff. Open a row's links to inspect that artifact."""
     if not p["candidates"]:
         return '<p class="muted">no candidates yet</p>'
     has_traj = has_traj or set()
+    avail = avail or {}
     rows = []
     for c in p["candidates"]:
         t = _localtime(c["ts"])
@@ -702,11 +714,17 @@ def _progression_table(p: dict, has_traj: set | None = None) -> str:
                 f'{_esc(c["status"])}</span>')
         cal = "–" if c.get("sol_score_cal") is None else f"{c['sol_score_cal']:.3f}"
         best = "" if c.get("best_after") is None else f"{c['best_after']:.3f}"
+        have = avail.get(c["cand"], set())
         links = []
+        if "ctx" in have:   # lead with context — "what was this agent actually told?"
+            links.append(f'<button class="link" data-code="ctx:{_esc(c["cand"])}">context</button>')
         if c.get("solution"):
-            links.append(f'<button class="link" data-code="{_esc(c["cand"])}">code</button>')
+            links.append(f'<button class="link" data-code="{_esc(c["cand"])}">kernel</button>')
         if c["cand"] in has_traj:
             links.append(f'<button class="link" data-code="traj:{_esc(c["cand"])}">trajectory</button>')
+        for key in ("design", "strat", "handoff"):
+            if key in have:
+                links.append(f'<button class="link" data-code="{key}:{_esc(c["cand"])}">{_ART_LABEL[key]}</button>')
         links_html = " · ".join(links) or '<span class="muted">–</span>'
         rows.append(
             "<tr>"
@@ -714,11 +732,11 @@ def _progression_table(p: dict, has_traj: set | None = None) -> str:
             f'<td class="strat">{_esc(c.get("strategy") or "")}</td>'
             f'<td>{chip}</td>'
             f'<td data-v="{c.get("sol_score_cal") or -1}"><b>{cal}</b></td>'
-            f'<td data-v="{c.get("best_after") or -1}">{best}</td><td>{links_html}</td>'
+            f'<td data-v="{c.get("best_after") or -1}">{best}</td><td class="views">{links_html}</td>'
             "</tr>")
     return ('<table class="sortable"><thead><tr><th>time</th><th>cand</th>'
             "<th>agent</th><th>strategy</th><th>status</th><th>expected SOL</th>"
-            "<th>best after</th><th>view</th></tr></thead><tbody>"
+            "<th>best after</th><th>inspect</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
 
 
@@ -740,6 +758,76 @@ def _traj_blocks(p: dict, runs_dir: Path) -> tuple[str, set]:
             f'data-title="{_esc(c["cand"])} — trajectory · {_esc(c.get("model") or "")}">'
             f'<pre class="traj"><code>{_esc(txt)}</code></pre></template>')
     return "".join(out), have
+
+
+# Per-candidate artifacts we surface in the timeline: the EXACT context the agent
+# saw (CONTEXT.md = coach card + frontier + playbook + failures) and what it did.
+_ARTIFACTS = [("ctx", "CONTEXT.md", "context"), ("design", "DESIGN.md", "design"),
+              ("strat", "strategy.txt", "strategy"), ("handoff", "handoff.md", "handoff")]
+
+
+def _artifact_blocks(p: dict, runs_dir: Path) -> tuple[str, dict]:
+    """Templates for each candidate's context artifacts, revealed in the modal.
+    Returns (html, {cand -> set of artifact keys present})."""
+    out: list[str] = []
+    avail: dict[str, set] = {}
+    wroot = Path(runs_dir) / str(p["task"]) / "work"
+    for c in p["candidates"]:
+        wd = wroot / str(c["cand"])
+        if not wd.is_dir():
+            continue
+        for key, fname, label in _ARTIFACTS:
+            f = wd / fname
+            if not f.is_file():
+                continue
+            txt = f.read_text(errors="replace")
+            if not txt.strip():
+                continue
+            if len(txt) > 80000:
+                txt = "…(truncated to last 80k chars)…\n" + txt[-80000:]
+            avail.setdefault(c["cand"], set()).add(key)
+            out.append(
+                f'<template data-code="{key}:{_esc(c["cand"])}" '
+                f'data-title="{_esc(c["cand"])} — {label} · {_esc(c.get("model") or "")}">'
+                f'<pre class="traj"><code>{_esc(txt)}</code></pre></template>')
+    return "".join(out), avail
+
+
+def _coach_panel(p: dict, runs_dir: Path) -> tuple[str, str]:
+    """The cross-run reflection for this problem: the CURRENT coach card + a timeline
+    of how the diagnosis evolved (from reflections.jsonl). Returns (panel, templates)."""
+    pdir = Path(runs_dir) / str(p["task"])
+    rf = pdir / "reflection.md"
+    if not rf.is_file():
+        return "", ""
+    card = rf.read_text(errors="replace")
+    snaps = []
+    hf = pdir / "reflections.jsonl"
+    if hf.is_file():
+        for line in hf.read_text().splitlines():
+            try:
+                snaps.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    hist, tmpls = "", ""
+    if len(snaps) > 1:
+        rows = []
+        for i, s in enumerate(snaps):
+            rows.append(
+                f'<tr><td>{_localtime(s.get("ts",""))}</td>'
+                f'<td>{_esc(s.get("status",""))}</td>'
+                f'<td class="strat">{_esc((s.get("headline") or "")[:110])}</td>'
+                f'<td><button class="link" data-code="reflect:{i}">view card</button></td></tr>')
+            tmpls += (f'<template data-code="reflect:{i}" '
+                      f'data-title="coach card @ {_localtime(s.get("ts",""))}">'
+                      f'<pre class="traj"><code>{_esc(s.get("card",""))}</code></pre></template>')
+        hist = ('<h3 class="coach-h">how the diagnosis evolved</h3>'
+                '<table class="sortable"><thead><tr><th>time</th><th>status</th>'
+                '<th>headline</th><th>card</th></tr></thead><tbody>'
+                + "".join(rows) + "</tbody></table>")
+    panel = (f'<div class="panel"><h2>Coach — cross-run reflection (fed to every agent as context)</h2>'
+             f'<pre class="coach-card"><code>{_esc(card)}</code></pre>{hist}</div>')
+    return panel, tmpls
 
 
 def _submissions_panel(p: dict, runs_dir: Path) -> str:
@@ -810,6 +898,8 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
         _tile("agent", p["model"] or "–"),
     ])
     traj_html, has_traj = _traj_blocks(p, runs_dir) if runs_dir else ("", set())
+    art_html, avail = _artifact_blocks(p, runs_dir) if runs_dir else ("", {})
+    coach_panel, coach_tmpls = _coach_panel(p, runs_dir) if runs_dir else ("", "")
     subs = _submissions_panel(p, runs_dir) if runs_dir else ""
     modal = ('<div id="modal" class="modal" hidden><div class="modal-card">'
              '<div class="modal-bar"><b id="modal-title"></b>'
@@ -817,12 +907,13 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
              '<div id="modal-body"></div></div></div>')
     body = f"""
 <div class="tiles">{stats}</div>
-<div class="panel"><h2>Convergence</h2>{conv}</div>
-<div class="panel"><h2>Solution progression — every candidate: agent · score · kernel · trajectory</h2>
-{_progression_table(p, has_traj)}</div>
+{coach_panel}
+<div class="panel"><h2>Solution progression — timeline · inspect any candidate's context · kernel · trajectory</h2>
+{_progression_table(p, has_traj, avail)}</div>
 {subs}
+<div class="panel"><h2>Convergence</h2>{conv}</div>
 <div class="panel"><h2>Iteration outcomes</h2>{_outcomes_svg([p], order)}</div>
-{_code_blocks(p)}{traj_html}{modal}
+{_code_blocks(p)}{traj_html}{art_html}{coach_tmpls}{modal}
 """
     sub = f'{_esc(p["family"])} · <a href="../index.html">← back to fleet dashboard</a>'
     return _shell(f"#{p['task']} {p['name']}", sub, body, None)
