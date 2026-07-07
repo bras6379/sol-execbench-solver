@@ -1,0 +1,245 @@
+{
+  "cand_id": "cbfaa8f19884",
+  "task_id": 3,
+  "verdict": "dominated",
+  "sol_score": 0.6130535071918504,
+  "sol_score_calibrated": 0.3649515270745671,
+  "correct": true,
+  "vector": [
+    0.5586576988390048,
+    0.5390571601538853,
+    0.42336198883630044,
+    0.5161686155622925,
+    0.7174402192207981,
+    0.7739862658216674,
+    0.5989460503775629,
+    0.7569000008660179,
+    0.6275939526354121,
+    0.7056015184242855,
+    0.5165784017534498,
+    0.4990227362616685,
+    0.5334734547719134,
+    0.603735605892271,
+    0.6584801100006547,
+    0.7798523356524206
+  ],
+  "strategy": "Slice to only graded rows \u2192 cuBLASLt GEMM.\n\nThe reference computes ALL seq_len rows but only grades logits_to_keep trail",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "7d12b2e7b23e",
+  "trajectory": "runs/3/work/cbfaa8f19884/trajectory.jsonl",
+  "gpu_s": 13.646,
+  "job_id": "3-cbfaa8f19884",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1946.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 46.0,
+      "power_w_max": 636.28,
+      "samples": 40,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.034926,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.057793,
+      "sol_score": 0.5586576988390048,
+      "sol_score_cal": 0.27810401268337975,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0855035,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.0895035,
+      "sol_score": 0.5390571601538853,
+      "sol_score_cal": 0.40922771546535647,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 2.1942494999999997,
+      "sol_ms": 1.8974,
+      "baseline_latency_ms": 2.115344,
+      "sol_score": 0.42336198883630044,
+      "sol_score_cal": 0.23392056273681522,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.085312,
+      "sol_ms": 0.0585,
+      "baseline_latency_ms": 0.087104,
+      "sol_score": 0.5161686155622925,
+      "sol_score_cal": 0.3993562049600365,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.49862249999999997,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.5354410000000001,
+      "sol_score": 0.7174402192207981,
+      "sol_score_cal": 0.3385752454232967,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.250303,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.281344,
+      "sol_score": 0.7739862658216674,
+      "sol_score_cal": 0.4207493011103064,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.094304,
+      "sol_ms": 0.0682,
+      "baseline_latency_ms": 0.1071845,
+      "sol_score": 0.5989460503775629,
+      "sol_score_cal": 0.4696573487349027,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.2515355,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.2812,
+      "sol_score": 0.7569000008660179,
+      "sol_score_cal": 0.414111066767639,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.896605,
+      "sol_ms": 0.7905,
+      "baseline_latency_ms": 0.9693125,
+      "sol_score": 0.6275939526354121,
+      "sol_score_cal": 0.39275932466372615,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.4999825,
+      "sol_ms": 0.4747,
+      "baseline_latency_ms": 0.535296,
+      "sol_score": 0.7056015184242855,
+      "sol_score_cal": 0.3350155708211478,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.0509080000000002,
+      "sol_ms": 0.9489,
+      "baseline_latency_ms": 1.0579044999999998,
+      "sol_score": 0.5165784017534498,
+      "sol_score_cal": 0.26542117362839246,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.054365,
+      "sol_ms": 0.9239,
+      "baseline_latency_ms": 1.053856,
+      "sol_score": 0.4990227362616685,
+      "sol_score_cal": 0.2820529599163624,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.085872,
+      "sol_ms": 0.0619,
+      "baseline_latency_ms": 0.089312,
+      "sol_score": 0.5334734547719134,
+      "sol_score_cal": 0.4049059020663023,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.7583340000000001,
+      "sol_ms": 0.6977,
+      "baseline_latency_ms": 0.79008,
+      "sol_score": 0.603735605892271,
+      "sol_score_cal": 0.31094173608889153,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.1890875,
+      "sol_ms": 0.1604,
+      "baseline_latency_ms": 0.215712,
+      "sol_score": 0.6584801100006547,
+      "sol_score_cal": 0.46121727021530967,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.24990400000000002,
+      "sol_ms": 0.2375,
+      "baseline_latency_ms": 0.28144,
+      "sol_score": 0.7798523356524206,
+      "sol_score_cal": 0.42320903791120834,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Optimized LM-head projection with logit slicing.\n\n    This kernel:\n    1. Slices hidden_states to only the last `logits_to_keep` rows (autoregressive decode)\n    2. Projects via GEMM: (B*keep, H) @ (H, V) \u2192 (B*keep, V)\n    3. Reshapes to [batch_size, logits_to_keep, vocab_size]\n\n    Args:\n        hidden_states: [batch_size, seq_len, hidden_size] bf16\n        weight: [vocab_size, hidden_size] bf16 (H, V)\n\n    Returns:\n        logits: [batch_size, logits_to_keep, vocab_size] bf16\n    \"\"\"\n    batch_size, seq_len, H = hidden_states.shape\n    V = weight.shape[0]\n    keep = logits_to_keep = seq_len  # Final slice always takes the last keep rows\n\n    # Slice to only the graded positions (last keep rows)\n    hidden_keep = hidden_states[:, -keep:, :]  # [B, keep, H]\n\n    # Collapse batch and keep dimensions for GEMM\n    M = batch_size * keep\n    hidden_flat = hidden_keep.reshape(M, H)  # [M, H]\n\n    # GEMM: [M, H] @ [H, V] \u2192 [M, V]\n    # Using torch.matmul which dispatches to cuBLASLt on B200 (optimized for TN)\n    logits_flat = torch.matmul(hidden_flat, weight.t())  # [M, V]\n\n    # Reshape to final output\n    logits = logits_flat.reshape(batch_size, keep, V)  # [B, keep, V]\n\n    return logits\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t3_cbfaa8f19884",
+    "definition": "003_lm_head_projection_with_logit_slicing",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n@torch.no_grad()\ndef run(hidden_states: torch.Tensor, weight: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Optimized LM-head projection with logit slicing.\n\n    This kernel:\n    1. Slices hidden_states to only the last `logits_to_keep` rows (autoregressive decode)\n    2. Projects via GEMM: (B*keep, H) @ (H, V) \u2192 (B*keep, V)\n    3. Reshapes to [batch_size, logits_to_keep, vocab_size]\n\n    Args:\n        hidden_states: [batch_size, seq_len, hidden_size] bf16\n        weight: [vocab_size, hidden_size] bf16 (H, V)\n\n    Returns:\n        logits: [batch_size, logits_to_keep, vocab_size] bf16\n    \"\"\"\n    batch_size, seq_len, H = hidden_states.shape\n    V = weight.shape[0]\n    keep = logits_to_keep = seq_len  # Final slice always takes the last keep rows\n\n    # Slice to only the graded positions (last keep rows)\n    hidden_keep = hidden_states[:, -keep:, :]  # [B, keep, H]\n\n    # Collapse batch and keep dimensions for GEMM\n    M = batch_size * keep\n    hidden_flat = hidden_keep.reshape(M, H)  # [M, H]\n\n    # GEMM: [M, H] @ [H, V] \u2192 [M, V]\n    # Using torch.matmul which dispatches to cuBLASLt on B200 (optimized for TN)\n    logits_flat = torch.matmul(hidden_flat, weight.t())  # [M, V]\n\n    # Reshape to final output\n    logits = logits_flat.reshape(batch_size, keep, V)  # [B, keep, V]\n\n    return logits\n"
+      }
+    ]
+  }
+}

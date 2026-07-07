@@ -353,6 +353,45 @@ def _cmd_submit(args) -> None:
 def _cmd_poll(args) -> None:
     from .bench import leaderboard as lb
 
+    runs_dir = Path(args.runs_dir)
+    if getattr(args, "all", False):
+        # Refresh EVERY recorded submission against the leaderboard (dashboard's real
+        # SOL / rank columns read the recorded poll results). Keeps queued submissions
+        # up to date as NVIDIA's worker processes them.
+        seen: dict[int, int] = {}                    # submission_id -> task
+        for sf in sorted(runs_dir.glob("*/submissions.jsonl")):
+            try:
+                task = int(sf.parent.name)
+            except ValueError:
+                continue
+            for line in sf.read_text().splitlines():
+                try:
+                    e = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                sid = e.get("submission_id") or e.get("id")
+                if sid:
+                    seen[int(sid)] = task
+        if not seen:
+            print("no recorded submissions found"); return
+        done = queued = failed = 0
+        print(f"refreshing {len(seen)} submission(s) against the leaderboard ...")
+        for sid, task in sorted(seen.items()):
+            try:
+                row = lb.poll(int(sid))
+                if row.get("kernel_id") is not None:
+                    row = _board_enrich(row, row["kernel_id"])
+                _record_submission(runs_dir, task, {"event": "poll", **row})
+                st = row.get("status", "?")
+                done += st == "COMPLETED"; queued += st in ("QUEUED", "PENDING_RESULT", "RUNNING")
+                rank = f"  → rank #{row['board_rank']}/{row['board_n']}" if row.get("board_rank") else ""
+                print(f"  task {task:>3}  " + lb.format_result(row) + rank)
+            except Exception as exc:                 # a dead/foreign-account submission must not abort the sweep
+                failed += 1
+                print(f"  task {task:>3}  #{sid}  poll failed: {repr(exc)[:80]}")
+        print(f"done: {done} completed, {queued} still queued, {failed} unreachable")
+        return
+
     sids = args.ids
     if args.task and not sids:                       # latest submission for a task
         evs = [json.loads(l) for l in _submissions_log(Path(args.runs_dir), args.task).read_text().splitlines()] \
@@ -578,6 +617,9 @@ def main(argv: list[str] | None = None) -> None:
     p_poll = sub.add_parser("poll", help="poll leaderboard submission status/score")
     p_poll.add_argument("ids", nargs="*", type=int, help="submission id(s)")
     p_poll.add_argument("--task", type=int, default=None, help="poll the latest submission for this task")
+    p_poll.add_argument("--all", action="store_true",
+                        help="refresh EVERY recorded submission (all runs/*/submissions.jsonl) against the "
+                             "leaderboard and update the dashboard's real-SOL/rank columns")
     p_poll.add_argument("--runs-dir", default="runs")
     p_poll.set_defaults(func=_cmd_poll)
 
