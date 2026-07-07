@@ -65,6 +65,7 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
              "design": {"n": 0, "dur": 0.0, "tok": 0}}
     iters = evals = 0
     best = None
+    best_cal = None            # leaderboard-estimate score of the best candidate
     frontier = 0
     terminated = None
     last_improve_ts = None
@@ -133,6 +134,7 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                     c["status"] = "incorrect"
             if c:
                 c["sol_score"] = e.get("sol_score")
+                c["sol_score_cal"] = e.get("sol_score_cal")
         elif ev == "accept":
             c = candidates.get(e.get("cand"))
             if e.get("verdict") == "entered":
@@ -150,6 +152,8 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                     c["status"] = "dominated"
             if e.get("best") is not None:
                 best = e["best"]
+                if e.get("best_cal") is not None:
+                    best_cal = e["best_cal"]
                 convergence.append((evals, best))
                 if ts:
                     accept_times.append((_t(ts), best))
@@ -165,7 +169,7 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     waits = [j["start"] - j["enq"] for j in jobs.values() if "start" in j and "enq" in j]
     return {
         "task": task_id, "name": name, "family": family, "model": best_model or model,
-        "iters": iters, "evals": evals, "best": best, "frontier": frontier,
+        "iters": iters, "evals": evals, "best": best, "best_cal": best_cal, "frontier": frontier,
         "terminated": terminated, "convergence": convergence,
         "accept_times": accept_times, "last_improve_ts": last_improve_ts,
         "outcomes": outcomes, "agent": agent, "jobs": list(jobs.values()),
@@ -210,6 +214,8 @@ def fleet_metrics(per_problem: list[dict], rentals: list[dict] | None = None) ->
         "active": sum(1 for p in per_problem if not p["terminated"]),
         "mean_best": (statistics.mean([p["best"] for p in per_problem if p["best"] is not None])
                       if any(p["best"] is not None for p in per_problem) else None),
+        "mean_best_cal": (statistics.mean([p["best_cal"] for p in per_problem if p.get("best_cal") is not None])
+                          if any(p.get("best_cal") is not None for p in per_problem) else None),
     }
 
 

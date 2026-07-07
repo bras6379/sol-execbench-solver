@@ -122,7 +122,8 @@ async def solve_problem(
             ctx.record("exec_started", job=cid, ts=result.raw.get("started"))
             ctx.record("exec_done", job=cid, cand=cid, ts=result.raw.get("ended"),
                        gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
-                       sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
+                       sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
+                       scores=result.vector(), statuses=_statuses(result))
             verdict = ctx.accept_candidate(cid)
             _persist(ctx, task_id, cid, sol, result, runs_dir=runs_dir, problems_dir=problems_dir,
                      family=family, name=name, strategy="seed", verdict=verdict)
@@ -165,7 +166,8 @@ async def solve_problem(
         ctx.record("exec_started", job=cand.cand_id, ts=result.raw.get("started"))
         ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, ts=result.raw.get("ended"),
                    gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
-                   sol_score=result.sol_score, scores=result.vector(), statuses=_statuses(result))
+                   sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
+                   scores=result.vector(), statuses=_statuses(result))
         verdict = ctx.accept_candidate(cand.cand_id)
         _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
                  problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,

@@ -88,10 +88,13 @@ _DESIGN = (
 
 
 def _reflect_prompt(cand: Candidate, result, verdict: str) -> str:
-    return (f"A GPU kernel (strategy: '{cand.strategy}') scored "
-            f"{getattr(result, 'sol_score', None)} (frontier verdict: {verdict}). Write a "
-            f"2-3 sentence diagnosis of the single most promising next optimization to a "
-            f"file named reflection.txt.")
+    cal = result.calibrated_sol_score() if hasattr(result, "calibrated_sol_score") else None
+    score = cal if cal is not None else getattr(result, "sol_score", None)
+    score_s = f"{score:.3f}" if isinstance(score, (int, float)) else str(score)
+    return (f"A GPU kernel (strategy: '{cand.strategy}') scored ~{score_s} on the leaderboard "
+            f"scale (0.5 = optimized-PyTorch baseline, 1.0 = speed-of-light; frontier verdict: "
+            f"{verdict}). Write a 2-3 sentence diagnosis of the single most promising next "
+            f"optimization to a file named reflection.txt.")
 
 
 def _judge_prompt(cand: Candidate, parent) -> str:
@@ -260,8 +263,17 @@ class CliAgent:
             pass
 
 
+def _score_note(m) -> str:
+    """`leaderboard-est · raw` for a frontier member (est is the number that ranks
+    you on the board; 0.5 = the optimized-PyTorch baseline, 1.0 = speed-of-light)."""
+    cal = getattr(m, "sol_score_cal", None)
+    return f"{cal:.3f}" if cal is not None else f"{m.mean:.3f}(raw)"
+
+
 def _context_md(parent, ctx) -> str:
-    lines = ["# Context", ""]
+    lines = ["# Context", "",
+             "Scores below are the **leaderboard estimate** (0.5 = optimized-PyTorch",
+             "baseline, 1.0 = speed-of-light). Beat 0.5 to score on the board.", ""]
     if parent is not None and getattr(parent, "solution", None):
         lines.append("The current best kernel is in this directory's kernel file(s).")
         if getattr(parent, "reflection", None):
@@ -269,8 +281,8 @@ def _context_md(parent, ctx) -> str:
     fr = getattr(ctx, "frontier", None)
     members = getattr(fr, "members", None) if fr else None
     if members:
-        lines += ["", "## Frontier (score · strategy)"]
-        lines += [f"- {m.cand_id[:8]}  {m.mean:.3f}  {m.strategy}" for m in members[:8]]
+        lines += ["", "## Frontier (leaderboard-est score · strategy)"]
+        lines += [f"- {m.cand_id[:8]}  {_score_note(m)}  {m.strategy}" for m in members[:8]]
     return "\n".join(lines) + "\n"
 
 

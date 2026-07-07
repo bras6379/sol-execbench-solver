@@ -139,11 +139,13 @@ class RunContext:
             if p is not None:
                 p["scores"] = list(e.get("scores") or [])
                 p["all_passed"] = bool(e.get("all_passed"))
+                p["sol_score_cal"] = e.get("sol_score_cal")
             elif cid:                                 # a seed (no plan_done precedes it)
                 self._pending[cid] = {
                     "solution": None, "scores": list(e.get("scores") or []),
                     "all_passed": bool(e.get("all_passed")), "strategy": "seed",
                     "agent": "", "model": "", "parent": None,
+                    "sol_score_cal": e.get("sol_score_cal"),
                 }
         elif ev == "accept":
             cid = e.get("cand")
@@ -169,7 +171,8 @@ class RunContext:
     def _member(self, cand_id: str, p: dict) -> Member:
         return Member(cand_id=cand_id, vector=tuple(p["scores"]), all_passed=p["all_passed"],
                       solution=p.get("solution"), strategy=p.get("strategy", ""),
-                      agent=p.get("agent", ""), model=p.get("model", ""))
+                      agent=p.get("agent", ""), model=p.get("model", ""),
+                      sol_score_cal=p.get("sol_score_cal"))
 
     def reopen_if_capped(self) -> bool:
         """A `budget:*`-terminated run continues when the caps now allow more
@@ -186,8 +189,11 @@ class RunContext:
         """Live-accept a candidate whose scores are already recorded (exec_done)."""
         p = self._pending[cand_id]
         verdict = self.frontier.accept(self._member(cand_id, p))   # live mutation
+        best = self.frontier.best()
         self.record("accept", cand=cand_id, verdict=verdict,
-                    best=self.frontier.best_score(), frontier=len(self.frontier.members))
+                    best=self.frontier.best_score(),
+                    best_cal=(best.sol_score_cal if best else None),
+                    frontier=len(self.frontier.members))
         return verdict
 
     # ---- load / resume ----

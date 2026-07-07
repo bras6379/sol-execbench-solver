@@ -23,6 +23,7 @@ class Member:
     agent: str = ""
     model: str = ""
     reflection: str | None = None
+    sol_score_cal: float | None = None   # leaderboard-estimate mean (latency × factor)
 
     @property
     def mean(self) -> float:

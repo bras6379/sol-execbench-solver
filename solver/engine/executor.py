@@ -46,6 +46,15 @@ class WorkloadResult:
             return None
         return scoring.sol_score(self.latency_ms, self.baseline_latency_ms, self.sol_ms)
 
+    def calibrated_sol_score(self, factor: float | None = None) -> float | None:
+        """Leaderboard-estimate score: re-score with latency × the calibration
+        factor (we measure unlocked, the leaderboard locks clocks). No latency
+        (a stub) → falls back to the raw score."""
+        factor = scoring.LEADERBOARD_LATENCY_FACTOR if factor is None else factor
+        if self.latency_ms is None or self.sol_ms is None or self.baseline_latency_ms is None:
+            return self.sol_score
+        return scoring.sol_score(self.latency_ms * factor, self.baseline_latency_ms, self.sol_ms)
+
 
 @dataclass
 class EvalResult:
@@ -65,6 +74,14 @@ class EvalResult:
         """Per-shape score vector for the frontier; non-PASSED shape → 0.0."""
         return [(w.sol_score if (w.correct and w.sol_score is not None) else 0.0)
                 for w in self.per_workload]
+
+    def calibrated_sol_score(self, factor: float | None = None) -> float | None:
+        """Mean leaderboard-estimate score over passed workloads (None if failed)."""
+        if not self.correct:
+            return None
+        vals = [w.calibrated_sol_score(factor) for w in self.per_workload if w.correct]
+        vals = [v for v in vals if v is not None]
+        return sum(vals) / len(vals) if vals else None
 
 
 class Executor(Protocol):

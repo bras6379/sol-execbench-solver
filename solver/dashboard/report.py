@@ -452,10 +452,13 @@ function render(){
   document.getElementById('fcount').textContent=`${sub.length} / ${RECS.length} problems`;
   const bs=sub.filter(r=>r.b!=null).map(r=>r.b);
   const mb=bs.length?(bs.reduce((a,b)=>a+b)/bs.length):null;
+  const bcs=sub.filter(r=>r.bc!=null).map(r=>r.bc);
+  const mbc=bcs.length?(bcs.reduce((a,b)=>a+b)/bcs.length):null;
   const w5=pct(sub.filter(r=>r.w5!=null).map(r=>r.w5),.5), w9=pct(sub.filter(r=>r.w9!=null).map(r=>r.w9),.95);
   const scoped = sub.length!==RECS.length;
   document.getElementById('tiles').innerHTML=[
-    tile('SOL score (mean of best)', mb==null?'–':mb.toFixed(3),'0.5 baseline · 1.0 SOL'),
+    tile('Leaderboard est (mean of best)', mbc==null?'–':mbc.toFixed(3),'clock-calibrated → board'),
+    tile('SOL score, our measure', mb==null?'–':mb.toFixed(3),'unlocked · 0.5 baseline · 1.0 SOL'),
     tile('GPU utilization (of '+D.util_basis+')',(D.gpu_util*100).toFixed(0)+'%','busy '+fs(D.busy_s)+(D.rented_s?' of rented '+fs(D.rented_s):'')+'  (fleet)'),
     tile('queue wait p50 / p95', fs(w5)+' / '+fs(w9)+(scoped?'  (selected)':'')),
     tile('GPU evals'+(scoped?' (selected)':''), String(sub.reduce((a,r)=>a+r.e,0))),
@@ -481,8 +484,8 @@ function render(){
   // problems table
   document.getElementById('t-prob').innerHTML=(()=>{
     const rows=sub.map(r=>{const i=idx[r.t];const bar=r.b==null?'':`<div class="bar"><i style="width:${(Math.max(0,Math.min(r.b,1))*100).toFixed(1)}%;background:${SL(i)}"></i><b></b></div>`;
-      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}${bar}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
-    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>best SOL score</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
+      return `<tr><td data-v="${r.t}"><span class="dot" style="background:${SL(i)}"></span>#${r.t}</td><td><a href="${DETAIL}/${r.t}.html">${esc(r.n)}</a></td><td>${esc(r.f)}</td><td>${esc(r.a)}</td><td class="${r.s==='running'?'run':'done'}">${esc(r.s)}</td><td>${r.it}</td><td>${r.e}</td><td>${r.fr}</td><td data-v="${r.bc??-1}"><b>${r.bc==null?'':r.bc.toFixed(3)}</b></td><td data-v="${r.b??-1}">${r.b==null?'':r.b.toFixed(3)}${bar}</td><td data-v="${r.w5??-1}">${fs(r.w5)}</td></tr>`;}).join('');
+    return '<table class="sortable"><thead><tr><th>task</th><th>name</th><th>family</th><th>agent</th><th>status</th><th>iters</th><th>evals</th><th>frontier</th><th>LB est</th><th>our SOL</th><th>wait p50</th></tr></thead><tbody>'+rows+'</tbody></table>';})();
   bindSort();
 }
 function bindSort(){
@@ -571,7 +574,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
     # compact per-problem records for the client-side filter/renderer
     recs = [{
         "t": p["task"], "n": p["name"], "f": p["family"] or "?", "a": p["model"],
-        "b": p["best"], "s": p["terminated"] or "running", "e": p["evals"],
+        "b": p["best"], "bc": p.get("best_cal"), "s": p["terminated"] or "running", "e": p["evals"],
         "it": p["iters"], "fr": p["frontier"],
         "w5": p["wait_p50"], "w9": p["wait_p95"], "li": p["last_improve_ts"] or 0,
         "c": [[x, round(y, 4)] for x, y in p["convergence"]],
@@ -693,7 +696,9 @@ def build_detail(p: dict, slot_i: int) -> str:
         x_label="GPU evals", right=120) if p["convergence"] else '<p class="muted">no evals yet</p>'
     order = {p["task"]: slot_i}
     stats = "".join([
-        _tile("best SOL score", "–" if p["best"] is None else f"{p['best']:.3f}"),
+        _tile("leaderboard est (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
+              "clock-calibrated"),
+        _tile("SOL score, our measure", "–" if p["best"] is None else f"{p['best']:.3f}", "unlocked"),
         _tile("status", p["terminated"] or "running"),
         _tile("iterations / evals", f"{p['iters']} / {p['evals']}"),
         _tile("frontier size", str(p["frontier"])),

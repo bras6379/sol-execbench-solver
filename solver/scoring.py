@@ -14,6 +14,16 @@ License: Apache-2.0. If the pinned harness changes this formula, re-vendor.
 
 from __future__ import annotations
 
+import os
+
+# We measure UNLOCKED on RunPod (containers can't lock GPU clocks); the leaderboard
+# scores at locked 1500MHz. Empirically the leaderboard latency ≈ our latency ×
+# this factor — measured 1.219× (rmsnorm_h128) and 1.210× (fused_add_rmsnorm_h2048),
+# i.e. a ~constant multiplier across ops (see docs/gpu-execution.md §8). A constant
+# factor preserves ranking; it only shifts the absolute number. Override per-machine
+# via SOLBENCH_CALIBRATION_FACTOR as more submissions refine it.
+LEADERBOARD_LATENCY_FACTOR = float(os.environ.get("SOLBENCH_CALIBRATION_FACTOR", "1.21"))
+
 
 def sol_score(t_k: float, t_b: float, t_sol: float) -> float:
     """Anchored score S(T_k) = 1 / (1 + (T_k - T_SOL) / (T_b - T_SOL)).

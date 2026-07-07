@@ -59,10 +59,12 @@ def record_candidate(runs_dir, task_id: int, cid: str, solution: dict | None,
     is_new = not cfile.exists()
     per = [{"index": w.index, "correct": w.correct, "latency_ms": w.latency_ms,
             "sol_ms": w.sol_ms, "baseline_latency_ms": w.baseline_latency_ms,
-            "sol_score": w.sol_score, "error": w.error} for w in result.per_workload]
+            "sol_score": w.sol_score, "sol_score_cal": w.calibrated_sol_score(),
+            "error": w.error} for w in result.per_workload]
     rec = {
         "cand_id": cid, "task_id": task_id, "verdict": verdict,
-        "sol_score": result.sol_score, "correct": result.correct, "vector": result.vector(),
+        "sol_score": result.sol_score, "sol_score_calibrated": result.calibrated_sol_score(),
+        "correct": result.correct, "vector": result.vector(),
         "strategy": strategy, "agent": agent, "model": model, "parent": parent,
         "trajectory": str(trajectory) if trajectory else None,
         "gpu_s": result.raw.get("gpu_s"), "job_id": result.raw.get("job_id"),
@@ -74,6 +76,7 @@ def record_candidate(runs_dir, task_id: int, cid: str, solution: dict | None,
     if is_new:
         with (cdir / "index.jsonl").open("a", encoding="utf-8") as f:
             f.write(json.dumps({"cand_id": cid, "sol_score": result.sol_score,
+                                "sol_score_cal": result.calibrated_sol_score(),
                                 "correct": result.correct, "verdict": verdict,
                                 "agent": agent, "model": model, "strategy": strategy}) + "\n")
 
@@ -90,10 +93,11 @@ def record_frontier(runs_dir, task_id: int, frontier: Frontier, *,
         "epsilon": frontier.epsilon, "size": len(frontier.members),
         "best_cand": best.cand_id if best else None,
         "best_score": best.mean if best else None,
+        "best_score_cal": best.sol_score_cal if best else None,   # leaderboard estimate
         "members": [{
-            "cand_id": m.cand_id, "sol_score": m.mean, "all_passed": m.all_passed,
-            "shapes_won": _shapes_won(m, members), "vector": list(m.vector),
-            "strategy": m.strategy, "agent": m.agent, "model": m.model,
+            "cand_id": m.cand_id, "sol_score": m.mean, "sol_score_cal": m.sol_score_cal,
+            "all_passed": m.all_passed, "shapes_won": _shapes_won(m, members),
+            "vector": list(m.vector), "strategy": m.strategy, "agent": m.agent, "model": m.model,
             "candidate": f"candidates/{m.cand_id}.json",
         } for m in members],
     })
