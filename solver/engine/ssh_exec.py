@@ -151,6 +151,12 @@ class SshExecutor:
                 else:
                     rows = traces_from_jsonl(text)
                     r = map_traces_to_result(task_id, rows, problems_dir=self.problems_dir)
+                env_text = await self.conn.read_text(f"{jobdir}/env.json")   # GPU conditions
+                if env_text:
+                    try:
+                        r.asi = {**(r.asi or {}), "gpu": __import__("json").loads(env_text)}
+                    except Exception:
+                        pass
                 r.raw = {**(r.raw or {}), "job_id": job_id, "started": _iso(started),
                          "ended": _iso(dt.datetime.now(dt.timezone.utc)),
                          "gpu_s": round(time.monotonic() - t0, 3)}
@@ -160,15 +166,38 @@ class SshExecutor:
 
 
 # The pod-side driver the executor invokes. Written by bootstrap (§3b); kept here
-# so the exact validated invocation lives next to the code that calls it.
+# so the exact validated invocation lives next to the code that calls it. It also
+# samples the GPU's clocks/temp/power *while the eval runs* → env.json, so every
+# measurement records the conditions it was taken under (the clock the kernel
+# actually ran at is what makes us optimistic vs the leaderboard's locked 1500MHz).
 RUN_EVAL_SH = r"""#!/bin/bash
 # run_eval.sh <problem_dir> <solution_json> <config_json> <out_trace>
-# Runs the SOL-ExecBench CLI for one candidate. Exit 1 == not all workloads
-# passed (normal); the caller reads the trace file, not the exit code.
+# Exit 1 == not all workloads passed (normal); the caller reads the trace, not $?.
 export PATH=$HOME/.local/bin:/usr/local/cuda/bin:$PATH
 export CUDA_HOME=/usr/local/cuda
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 cd /root/SOL-ExecBench
-exec uv run sol-execbench "$1" --solution "$2" --config "$3" --output "$4" \
-     --compile-timeout 180 --timeout 600
+JOBDIR=$(dirname "$4")
+( while true; do nvidia-smi --query-gpu=clocks.sm,clocks.mem,temperature.gpu,power.draw \
+    --format=csv,noheader,nounits; sleep 0.25; done ) >"$JOBDIR/clocks.csv" 2>/dev/null &
+SAMPLER=$!
+uv run sol-execbench "$1" --solution "$2" --config "$3" --output "$4" \
+    --compile-timeout 180 --timeout 600
+RC=$?
+kill "$SAMPLER" 2>/dev/null
+python3 - "$JOBDIR/clocks.csv" "$JOBDIR/env.json" <<'PY'
+import sys, json, statistics
+rows = []
+for line in open(sys.argv[1]).read().splitlines():
+    p = [x.strip() for x in line.split(",")]
+    try: rows.append([float(p[0]), float(p[1]), float(p[2]), float(p[3])])
+    except (ValueError, IndexError): continue
+col = lambda i: [r[i] for r in rows]
+med = lambda i: statistics.median(col(i)) if rows else None
+json.dump({"sm_mhz_median": med(0), "sm_mhz_max": max(col(0)) if rows else None,
+           "mem_mhz_median": med(1), "temp_c_max": max(col(2)) if rows else None,
+           "power_w_max": max(col(3)) if rows else None, "samples": len(rows),
+           "harness_lock_preset_mhz": 1500}, open(sys.argv[2], "w"))
+PY
+exit $RC
 """

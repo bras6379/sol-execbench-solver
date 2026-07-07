@@ -172,7 +172,7 @@ def _cmd_solve(args) -> None:
             raise SystemExit("RUNPOD_API_KEY not set (add it to .env)")
         spec = PodSpec(gpu_type=args.gpu_type, cloud_type=args.gpu_cloud)
         hcfg = {"warmup_runs": 10, "iterations": args.gpu_iterations,
-                "lock_clocks": args.gpu_lock_clocks, "seed": 200}
+                "lock_clocks": False, "seed": 200}   # containers can't lock; we measure unlocked
         print(f"solving {len(ids)} problem(s) with `{args.agent}`/{args.model} on a rented "
               f"{args.gpu_type} via RunPod (auto-provision → bootstrap → run → terminate) -> {runs_dir}/")
         asyncio.run(solve_on_gpu(ids, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
@@ -355,9 +355,7 @@ def main(argv: list[str] | None = None) -> None:
     p_solve.add_argument("--gpu-cloud", default="SECURE", choices=["SECURE", "COMMUNITY", "ALL"],
                          help="RunPod cloud type (SECURE supports the public IP we SSH over)")
     p_solve.add_argument("--gpu-iterations", type=int, default=50,
-                         help="harness timed iterations per workload (lower = cheaper/faster, noisier)")
-    p_solve.add_argument("--gpu-lock-clocks", action="store_true",
-                         help="ask the harness to lock GPU clocks (steadier timing; needs nvidia-smi perms)")
+                         help="harness timed iterations per workload (leaderboard uses 50; lower = noisier)")
     p_solve.set_defaults(func=_cmd_solve)
 
     p_stat = sub.add_parser("status", help="per-problem summary over a runs dir")

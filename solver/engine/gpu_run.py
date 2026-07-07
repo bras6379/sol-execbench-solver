@@ -24,6 +24,14 @@ from .pod import PodHandle, PodProvider, PodSession, PodSpec
 from .ssh_exec import RUN_EVAL_SH, PodConn, SshExecutor
 
 HARNESS_REPO = "https://github.com/NVIDIA/SOL-ExecBench.git"
+# cold-L2 + median (the scored conditions) are baked into the pinned eval_driver,
+# so those already match the leaderboard. Clock-locking is the one thing we can't
+# match: the leaderboard pins the B200 to 1500/3996 MHz, but a RunPod *container*
+# has no privilege to set GPU clocks — and the harness rejects every workload if
+# lock_clocks=True without real locking (eval_driver §356). So we always run
+# UNLOCKED (boost) → a roughly constant ~10-20% optimistic offset vs the
+# leaderboard, which we record per-eval (run_eval.sh samples the real clocks) and
+# calibrate against submissions. Ranking is unaffected by a constant offset.
 DEFAULT_CONFIG = {"warmup_runs": 10, "iterations": 50, "lock_clocks": False, "seed": 200}
 
 

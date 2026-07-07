@@ -260,14 +260,34 @@ The eval worker runs LLM-generated code (orchestration.md §11):
 - The pod is already an isolated container; per-job sandboxing is defence in
   depth for the injection chain *web/agent → kernel → our GPU*.
 
-## 8. Calibration & env honesty
+## 8. Calibration & env honesty (measured against the real leaderboard)
 
-- **First real eval**: measure the **seed (reference)**, journal
-  local-measured vs the website `T_b`; report raw + calibrated scores (search
-  uses local relative numbers). The reference-as-seed (now built) makes this a
-  natural, always-present calibration probe.
-- **`env` fingerprint** (GPU / driver / clock / harness commit) on **every**
-  result; cross-pod comparisons flagged; automated re-baselining deferred.
+**Confirmed root cause of the score gap = GPU clock state.** Submitting the
+task-230 fused Triton kernel scored **0.481** on the leaderboard vs **~0.53** in
+our CLI. cold-L2, median, warmup, iterations, and the harness commit already
+match (it's the *same pinned `eval_driver`*), so none of those is the gap. The
+harness pins the B200 to **1500/3996 MHz** while scoring (`device_config.py`
+preset); we measured **unlocked** (boost ~1830 MHz) → latency ratio
+`0.00695 / 0.008469 ≈ 1.22×`, exactly the boost/1500 clock ratio. So we run
+~10-20% optimistic — a **roughly constant offset** that does not change kernel
+ranking (the frontier stays correct).
+
+**Why we can't just lock clocks:** a RunPod *container* has no privilege to set
+GPU clocks, and the harness **rejects every workload** when `lock_clocks=True`
+without real locking (`eval_driver.py:356`). So locking is not a knob we have on
+RunPod — we removed the flag rather than keep a fallback that always fires.
+Leaderboard-exact timing needs a privileged / bare-metal GPU.
+
+What we do instead, to stay honest and calibratable:
+- **Record the real conditions per eval.** `run_eval.sh` samples
+  `clocks.sm / clocks.mem / temperature / power` *while the eval runs* and folds
+  the summary into the result `asi.gpu` (median/max SM clock, etc.) — so every
+  stored candidate carries the clock it was actually measured at. Cross-pod or
+  anomalous-clock measurements are then visible, not silent.
+- **Calibrate empirically against submissions.** The offset is measured, not
+  guessed: our score vs the leaderboard's, per submission. The engine optimizes
+  on the (consistent) local number; the **leaderboard is the authoritative gate**.
+- **Reference-as-seed** is the always-present local probe (measure it every run).
 
 ## 8b. GPU observability & profiling — what we capture, and when
 
