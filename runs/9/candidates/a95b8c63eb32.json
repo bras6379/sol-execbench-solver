@@ -1,0 +1,245 @@
+{
+  "cand_id": "a95b8c63eb32",
+  "task_id": 9,
+  "verdict": "dominated",
+  "sol_score": 0.6224364548864841,
+  "sol_score_calibrated": 0.5797063255091887,
+  "correct": true,
+  "vector": [
+    0.4368440625624858,
+    0.549740571210578,
+    0.6482684248791309,
+    0.6140178403726775,
+    0.5488905136159162,
+    0.6849792591338976,
+    0.6491689832455001,
+    0.8699556874400602,
+    0.4362369576080442,
+    0.6486987523716207,
+    0.7475523642710658,
+    0.626338063836063,
+    0.6492086257990726,
+    0.7421473324545815,
+    0.43508877147640573,
+    0.6718470679066468
+  ],
+  "strategy": "fp16 tensor-core GEMMs (2.25 PFLOPS, 10-bit mantissa = TF32 precision) + fp32 SiLU' backward; all 6 GEMMs via torch.matm",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "9591f97804ff",
+  "trajectory": "runs/9/work/a95b8c63eb32/trajectory.jsonl",
+  "gpu_s": 23.88,
+  "job_id": "9-a95b8c63eb32",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 42.0,
+      "power_w_max": 573.36,
+      "samples": 81,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 1.280813,
+      "sol_ms": 0.0951,
+      "baseline_latency_ms": 1.014866,
+      "sol_score": 0.4368440625624858,
+      "sol_score_cal": 0.3915841679486967,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 1.3264605,
+      "sol_ms": 0.0978,
+      "baseline_latency_ms": 1.5979230000000002,
+      "sol_score": 0.549740571210578,
+      "sol_score_cal": 0.503260019677967,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 1.4088915000000002,
+      "sol_ms": 0.1,
+      "baseline_latency_ms": 2.512388,
+      "sol_score": 0.6482684248791309,
+      "sol_score_cal": 0.6047648075349678,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 1.4089065,
+      "sol_ms": 0.1009,
+      "baseline_latency_ms": 2.181668,
+      "sol_score": 0.6140178403726775,
+      "sol_score_cal": 0.5690652071527734,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 1.33006,
+      "sol_ms": 0.0979,
+      "baseline_latency_ms": 1.597139,
+      "sol_score": 0.5488905136159162,
+      "sol_score_cal": 0.5024073506127655,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 1.502955,
+      "sol_ms": 0.1311,
+      "baseline_latency_ms": 3.1140535,
+      "sol_score": 0.6849792591338976,
+      "sol_score_cal": 0.6428266565255212,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 1.417563,
+      "sol_ms": 0.1101,
+      "baseline_latency_ms": 2.529397,
+      "sol_score": 0.6491689832455001,
+      "sol_score_cal": 0.6054149882153635,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 2.9725824999999997,
+      "sol_ms": 0.7971,
+      "baseline_latency_ms": 15.350396,
+      "sol_score": 0.8699556874400602,
+      "sol_score_cal": 0.8415438046784811,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.283197,
+      "sol_ms": 0.0952,
+      "baseline_latency_ms": 1.014466,
+      "sol_score": 0.4362369576080442,
+      "sol_score_cal": 0.3909989204364244,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 1.413036,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5216365,
+      "sol_score": 0.6486987523716207,
+      "sol_score_cal": 0.6051166496195061,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.605003,
+      "sol_ms": 0.1996,
+      "baseline_latency_ms": 4.3613040000000005,
+      "sol_score": 0.7475523642710658,
+      "sol_score_cal": 0.7087301087206473,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.4090354999999999,
+      "sol_ms": 0.1017,
+      "baseline_latency_ms": 2.2930765,
+      "sol_score": 0.626338063836063,
+      "sol_score_cal": 0.581818122248852,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 1.4112755,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5237965,
+      "sol_score": 0.6492086257990726,
+      "sol_score_cal": 0.6056473179493579,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.607931,
+      "sol_ms": 0.1934,
+      "baseline_latency_ms": 4.26468,
+      "sol_score": 0.7421473324545815,
+      "sol_score_cal": 0.7029971549360071,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 1.2848925,
+      "sol_ms": 0.0943,
+      "baseline_latency_ms": 1.011282,
+      "sol_score": 0.43508877147640573,
+      "sol_score_cal": 0.38992235874745423,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 1.4442525000000002,
+      "sol_ms": 0.1156,
+      "baseline_latency_ms": 2.8358295,
+      "sol_score": 0.6718470679066468,
+      "sol_score_cal": 0.6292035731422341,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nfp16 tensor-core GEMMs + fp32 elementwise glue.\n\nThe coach diagnosis: the frontier (0.721) is TF32-capped at 1.1 PFLOPS on the\nprecision-critical GEMMs (G2/G3/G5) while bf16 GEMMs fail correctness at N>=215\ndue to 7-bit mantissa rounding in wgrad. fp16 fixes both: 10-bit mantissa\n(matches TF32, proven sufficient) at 2.25 PFLOPS (matches bf16, 2x TF32).\n\nAll 6 GEMMs run in fp16 via torch.matmul (cuBLAS fp16 tensor cores, fp32 accum).\nSiLU' backward stays in fp32 for numerical stability. Outputs are bf16.\n\"\"\"\n\nimport torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # --- Prologue: gather, row-dot, row-scale ---\n    gwo = grad_output[token_indices]  # (N, H) bf16\n\n    # grad_routing_weights: row-dot(gwo, expert_output) scattered to full (B,)\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)  # (N,) fp32\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights[token_indices] = grad_sel_w.to(torch.bfloat16)\n\n    # grad_expert_output = gwo * selected_weights (bf16, feeds GEMMs)\n    geo = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # --- Cast GEMM inputs to fp16 (once each) ---\n    geo_f16 = geo.to(torch.float16)\n    gated_f16 = gated_output.to(torch.float16)\n    w2_f16 = w2_weight.to(torch.float16)\n    sel_f16 = selected_tokens.to(torch.float16)\n    w3_f16 = w3_weight.to(torch.float16)\n    w1_f16 = w1_weight.to(torch.float16)\n\n    # --- w2 branch: G1 (wgrad, K=N), G2 (dgrad, K=H) ---\n    grad_w2_weight = (geo_f16.t() @ gated_f16).to(torch.bfloat16)  # (H, F)\n    grad_gated_f16 = geo_f16 @ w2_f16  # (N, F)\n\n    # --- Gating + SiLU' backward (fp32 for numerical stability) ---\n    gg_f = grad_gated_f16.to(torch.float32)\n    up_f = up_output.to(torch.float32)\n    gate_f = gate_output.to(torch.float32)\n    w1o_f = w1_output.to(torch.float32)\n\n    grad_gate_f = gg_f * up_f  # (N, F)\n    grad_up_f = gg_f * gate_f  # (N, F)\n\n    sig = torch.sigmoid(w1o_f)\n    silu_grad = sig * (1.0 + w1o_f * (1.0 - sig))\n    grad_w1o_f = grad_gate_f * silu_grad  # (N, F)\n\n    grad_up_f16 = grad_up_f.to(torch.float16)\n    grad_w1o_f16 = grad_w1o_f.to(torch.float16)\n\n    # --- w3 branch: G3 (wgrad, K=N), G4 (dgrad, K=F) ---\n    grad_w3_weight = (grad_up_f16.t() @ sel_f16).to(torch.bfloat16)  # (F, H)\n    gst_w3_f16 = grad_up_f16 @ w3_f16  # (N, H)\n\n    # --- w1 branch: G5 (wgrad, K=N), G6 (dgrad, K=F) ---\n    grad_w1_weight = (grad_w1o_f16.t() @ sel_f16).to(torch.bfloat16)  # (F, H)\n    gst_w1_f16 = grad_w1o_f16 @ w1_f16  # (N, H)\n\n    # --- Epilogue: add + scatter ---\n    grad_selected_tokens_f = (\n        gst_w1_f16.to(torch.float32) + gst_w3_f16.to(torch.float32)\n    )  # (N, H)\n\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states[token_indices] = grad_selected_tokens_f.to(torch.bfloat16)\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t9_a95b8c63eb32",
+    "definition": "009_expert_token_scatter_with_weighted_forward_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nfp16 tensor-core GEMMs + fp32 elementwise glue.\n\nThe coach diagnosis: the frontier (0.721) is TF32-capped at 1.1 PFLOPS on the\nprecision-critical GEMMs (G2/G3/G5) while bf16 GEMMs fail correctness at N>=215\ndue to 7-bit mantissa rounding in wgrad. fp16 fixes both: 10-bit mantissa\n(matches TF32, proven sufficient) at 2.25 PFLOPS (matches bf16, 2x TF32).\n\nAll 6 GEMMs run in fp16 via torch.matmul (cuBLAS fp16 tensor cores, fp32 accum).\nSiLU' backward stays in fp32 for numerical stability. Outputs are bf16.\n\"\"\"\n\nimport torch\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # --- Prologue: gather, row-dot, row-scale ---\n    gwo = grad_output[token_indices]  # (N, H) bf16\n\n    # grad_routing_weights: row-dot(gwo, expert_output) scattered to full (B,)\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)  # (N,) fp32\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights[token_indices] = grad_sel_w.to(torch.bfloat16)\n\n    # grad_expert_output = gwo * selected_weights (bf16, feeds GEMMs)\n    geo = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # --- Cast GEMM inputs to fp16 (once each) ---\n    geo_f16 = geo.to(torch.float16)\n    gated_f16 = gated_output.to(torch.float16)\n    w2_f16 = w2_weight.to(torch.float16)\n    sel_f16 = selected_tokens.to(torch.float16)\n    w3_f16 = w3_weight.to(torch.float16)\n    w1_f16 = w1_weight.to(torch.float16)\n\n    # --- w2 branch: G1 (wgrad, K=N), G2 (dgrad, K=H) ---\n    grad_w2_weight = (geo_f16.t() @ gated_f16).to(torch.bfloat16)  # (H, F)\n    grad_gated_f16 = geo_f16 @ w2_f16  # (N, F)\n\n    # --- Gating + SiLU' backward (fp32 for numerical stability) ---\n    gg_f = grad_gated_f16.to(torch.float32)\n    up_f = up_output.to(torch.float32)\n    gate_f = gate_output.to(torch.float32)\n    w1o_f = w1_output.to(torch.float32)\n\n    grad_gate_f = gg_f * up_f  # (N, F)\n    grad_up_f = gg_f * gate_f  # (N, F)\n\n    sig = torch.sigmoid(w1o_f)\n    silu_grad = sig * (1.0 + w1o_f * (1.0 - sig))\n    grad_w1o_f = grad_gate_f * silu_grad  # (N, F)\n\n    grad_up_f16 = grad_up_f.to(torch.float16)\n    grad_w1o_f16 = grad_w1o_f.to(torch.float16)\n\n    # --- w3 branch: G3 (wgrad, K=N), G4 (dgrad, K=F) ---\n    grad_w3_weight = (grad_up_f16.t() @ sel_f16).to(torch.bfloat16)  # (F, H)\n    gst_w3_f16 = grad_up_f16 @ w3_f16  # (N, H)\n\n    # --- w1 branch: G5 (wgrad, K=N), G6 (dgrad, K=F) ---\n    grad_w1_weight = (grad_w1o_f16.t() @ sel_f16).to(torch.bfloat16)  # (F, H)\n    gst_w1_f16 = grad_w1o_f16 @ w1_f16  # (N, H)\n\n    # --- Epilogue: add + scatter ---\n    grad_selected_tokens_f = (\n        gst_w1_f16.to(torch.float32) + gst_w3_f16.to(torch.float32)\n    )  # (N, H)\n\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states[token_indices] = grad_selected_tokens_f.to(torch.bfloat16)\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )"
+      }
+    ]
+  }
+}

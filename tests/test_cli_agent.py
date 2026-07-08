@@ -16,6 +16,7 @@ import pytest
 
 from solver import journal as journal_mod
 from solver.engine import (
+    Candidate,
     CliAgent,
     CliSpec,
     Config,
@@ -305,3 +306,153 @@ def test_extract_context_read_empty_when_nothing_consulted():
     from solver.engine.cli_agent import _extract_context_read
     assert _extract_context_read("claude", "") == []
     assert _extract_context_read("codex", "") == []
+
+
+# --------------------------------------------------------------------------- #
+# session resume — repair() continues the writer's OWN CLI session (real model
+# memory) instead of cold-starting, so it can actually act on a critique instead
+# of reinterpreting a stranger's code from a text file (see CliAgent.repair).
+# --------------------------------------------------------------------------- #
+def test_extract_session_id_claude_schema():
+    from solver.engine.cli_agent import _extract_session_id
+    import json as _json
+
+    raw = "\n".join(_json.dumps(e) for e in [
+        {"type": "system", "subtype": "init", "session_id": "abc-123"},
+        {"type": "assistant", "session_id": "abc-123", "message": {"content": []}},
+    ])
+    assert _extract_session_id("claude", raw) == "abc-123"
+
+
+def test_extract_session_id_codex_schema():
+    from solver.engine.cli_agent import _extract_session_id
+    import json as _json
+
+    raw = "\n".join(_json.dumps(e) for e in [
+        {"type": "thread.started", "thread_id": "thread-xyz"},
+        {"type": "turn.started"},
+    ])
+    assert _extract_session_id("codex", raw) == "thread-xyz"
+
+
+def test_extract_session_id_none_when_absent():
+    from solver.engine.cli_agent import _extract_session_id
+    assert _extract_session_id("claude", "") is None
+    assert _extract_session_id("codex", '{"type": "turn.started"}') is None
+
+
+def test_plan_captures_session_id_for_later_resume(tmp_path):
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
+    cand = run(agent.plan(parent=None, ctx=_fake_ctx()))
+    assert cand.session_id == "t1"        # the fake CLI's thread.started id, from _extract_session_id
+
+
+# A fake CLI that behaves differently when invoked via a resume-style extra argv
+# (the session id) — writes a REAL, distinguishable fix and records which session
+# id it was actually resumed with, so tests can verify the writer's own session
+# (not a fresh one) is what gets continued.
+_FAKE_RESUMABLE = '''\
+import sys, pathlib, json
+model, prompt = sys.argv[1], sys.argv[2]
+session_id = sys.argv[3] if len(sys.argv) > 3 else ""
+def ev(o): print(json.dumps(o))
+ev({"type": "thread.started", "thread_id": "sess-fixed-1"})
+if session_id:
+    pathlib.Path("seen_resume_session_id.txt").write_text(session_id)
+    pathlib.Path("kernel.py").write_text("def run(*t): return t[-1]  # v2 fixed\\n")
+    pathlib.Path("strategy.txt").write_text("fused elementwise path (bounds-checked)")
+elif "kernel.py" in prompt:
+    pathlib.Path("kernel.py").write_text("def run(*t): return t[-1]  # v1\\n")
+    pathlib.Path("strategy.txt").write_text("fused elementwise path")
+    pathlib.Path("handoff.md").write_text("reserve play: radix-sort segmented reduction")
+ev({"type": "turn.completed", "usage": {"input_tokens": 10, "output_tokens": 5,
+     "reasoning_output_tokens": 0, "cached_input_tokens": 0}})
+'''
+
+
+def _fake_resumable_spec(tmp_path):
+    fake = tmp_path / "fake_resumable_cli.py"
+    fake.write_text(_FAKE_RESUMABLE)
+    return CliSpec("fake", cmd=[sys.executable, str(fake), "{model}", "{prompt}"],
+                   resume_cmd=[sys.executable, str(fake), "{model}", "{prompt}", "{session_id}"],
+                   stream="codex")
+
+
+def test_repair_resumes_the_writers_own_session_and_fixes_the_bug(tmp_path):
+    agent = _agent(_fake_resumable_spec(tmp_path), tmp_path)
+    ctx = _fake_ctx()
+    cand = run(agent.plan(parent=None, ctx=ctx))
+    assert cand.session_id == "sess-fixed-1"
+    wd = tmp_path / "runs" / "7" / "work" / cand.cand_id
+
+    repaired = run(agent.repair(cand, "fix the off-by-one", ctx))
+    assert repaired.cand_id != cand.cand_id            # a real change -> new content hash
+    assert "v2 fixed" in repaired.solution["sources"][0]["content"]
+    assert repaired.parent == cand.cand_id
+    # resumed IN PLACE — same directory, never renamed/recreated (needed so a
+    # LATER repair round in the same lineage can resume the same session again)
+    assert repaired.trajectory == str(wd / "trajectory.repair-1.jsonl")
+    assert (wd / "trajectory.jsonl").exists()          # original round's trajectory untouched
+    # the fake CLI actually received the ORIGINAL session id on the resume call
+    assert (wd / "seen_resume_session_id.txt").read_text() == cand.session_id
+
+
+def test_repair_without_a_resume_cmd_falls_back_to_cold_start(tmp_path):
+    """A spec with no resume_cmd (or a candidate with no captured session id, e.g.
+    replayed from a journal that predates this feature) must still get repaired —
+    via the old cold-start plan() call — never hard-fail."""
+    agent = _agent(_fake_spec(tmp_path), tmp_path)   # plain fake spec: no resume_cmd
+    ctx = _fake_ctx()
+    cand = run(agent.plan(parent=None, ctx=ctx))
+    assert cand.session_id == "t1"                   # captured, but this spec can't resume
+    repaired = run(agent.repair(cand, "fix it", ctx))
+    assert repaired.solution["sources"][0]["path"] == "kernel.py"
+
+
+def test_repair_falls_back_to_cold_start_for_a_candidate_with_no_session_id(tmp_path):
+    agent = _agent(_fake_resumable_spec(tmp_path), tmp_path)
+    ctx = _fake_ctx()
+    cand = Candidate(cand_id="deadbeef0000", solution={"sources": []}, parent=None,
+                     agent="fake", model="gpt-5.5", session_id=None)
+    repaired = run(agent.repair(cand, "fix it", ctx))
+    assert "v1" in repaired.solution["sources"][0]["content"]   # cold-start plan(), not resume
+
+
+def test_repair_falls_back_to_cold_start_when_workdir_is_missing(tmp_path):
+    import shutil
+
+    agent = _agent(_fake_resumable_spec(tmp_path), tmp_path)
+    ctx = _fake_ctx()
+    cand = run(agent.plan(parent=None, ctx=ctx))
+    shutil.rmtree(tmp_path / "runs" / "7" / "work" / cand.cand_id)
+    repaired = run(agent.repair(cand, "fix it", ctx))
+    assert "v1" in repaired.solution["sources"][0]["content"]   # fell back, didn't crash
+
+
+def test_collect_default_keeps_mixed_language_files(tmp_path):
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
+    wd = tmp_path / "wd"
+    wd.mkdir()
+    (wd / "kernel.py").write_text("old")
+    (wd / "kernel.cu").write_text("new")
+    sol = agent._collect(wd)
+    assert {s["path"] for s in sol["sources"]} == {"kernel.py", "kernel.cu"}
+
+
+def test_collect_resolve_conflict_keeps_only_the_freshest_language(tmp_path):
+    """repair() reuses an existing directory across rounds (needed for session
+    resume) instead of starting clean — if the model switches language without
+    deleting the old file, keep only the freshest one rather than shipping a
+    mixed-language 'solution' (mirrors the _workdir() staleness fix)."""
+    import os
+
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
+    wd = tmp_path / "wd"
+    wd.mkdir()
+    (wd / "kernel.py").write_text("stale")
+    (wd / "kernel.cu").write_text("fresh")
+    os.utime(wd / "kernel.py", (1000, 1000))
+    os.utime(wd / "kernel.cu", (2000, 2000))
+    sol = agent._collect(wd, resolve_conflict=True)
+    assert [s["path"] for s in sol["sources"]] == ["kernel.cu"]
+    assert sol["sources"][0]["content"] == "fresh"

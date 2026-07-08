@@ -496,3 +496,45 @@ def test_kill_resume_is_identical(tmp_path):
         (d / "1" / "journal.jsonl").write_text("\n".join(lines[:L]) + "\n")
         ctx = run(solve_problem(1, StubExecutor(), build_agents(), c, runs_dir=d))
         assert state(ctx) == final, f"resume after {L} lines diverged"
+
+
+# --------------------------------------------------------------------------- #
+# on_phase — live "what is this agent doing right now" for the dashboard
+# (runs/_active.json's task_phase). Purely informational: never read back by
+# the engine, so it can't affect replay/resume — verified separately by the
+# kill/resume test above still passing unmodified.
+# --------------------------------------------------------------------------- #
+def test_on_phase_reports_design_then_plan_and_always_clears(tmp_path):
+    seen = []
+
+    def on_phase(name, info):
+        seen.append((name, info.get("agent") if info else None, info.get("model") if info else None))
+
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    run(solve_problem(1, StubExecutor(), agents, c, runs_dir=tmp_path, on_phase=on_phase))
+
+    assert seen == [("design", "claude", "haiku"), (None, None, None),
+                    ("plan", "claude", "haiku"), (None, None, None)]
+
+
+def test_on_phase_is_optional_and_defaults_to_no_reporting(tmp_path):
+    """Every existing caller (nothing passes on_phase) must keep working exactly
+    as before — this is an opt-in side channel, not a required parameter."""
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    ctx = run(solve_problem(1, StubExecutor(), agents, c, runs_dir=tmp_path))
+    assert ctx.iters >= 1
+
+
+def test_run_fleet_publishes_task_phase_to_the_active_file(tmp_path):
+    """run_fleet threads on_phase through to _active.json's task_phase, keyed by
+    task id, and removes the entry once the problem finishes (whether it ends
+    mid-phase or between rounds)."""
+    import json as _json
+
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    run(run_fleet([1], StubExecutor(), agents, c, runs_dir=tmp_path))
+    active = _json.loads((tmp_path / "_active.json").read_text())
+    assert active.get("task_phase") == {}          # problem finished -> no call in flight

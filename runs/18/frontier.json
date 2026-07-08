@@ -3,7 +3,7 @@
   "family": "reduction",
   "name": "reduction_18",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 3,
   "best_cand": "b2a6470d77ba",
   "best_score": 0.8972319226722276,
   "best_score_cal": 0.8653910473699644,
@@ -13,7 +13,7 @@
       "sol_score": 0.8972319226722276,
       "sol_score_cal": 0.8653910473699644,
       "all_passed": true,
-      "shapes_won": 13,
+      "shapes_won": 10,
       "vector": [
         0.9821882951653943,
         0.8720986460348163,
@@ -33,6 +33,58 @@
       "agent": "claude",
       "model": "sonnet",
       "candidate": "candidates/b2a6470d77ba.json"
+    },
+    {
+      "cand_id": "13461becbc82",
+      "sol_score": 0.8959627798531993,
+      "sol_score_cal": 0.8639726492344698,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.9810692375109554,
+        0.8704150579150579,
+        0.9822168508287293,
+        0.8674327038971474,
+        0.8808322824716267,
+        0.8683178028445316,
+        0.8807062763560488,
+        0.9029023627339468,
+        0.8873535871156661,
+        0.8628297362110313,
+        0.898768452065016,
+        0.9084192750738799,
+        0.8562525130679534
+      ],
+      "strategy": "Expanded autotune space (1\u201332 warps, num_stages 1\u20133) to find optimal config per workload; current 0.865 vectorized Trito",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/13461becbc82.json"
+    },
+    {
+      "cand_id": "4847a63aa925",
+      "sol_score": 0.8957826763035825,
+      "sol_score_cal": 0.8637457067588947,
+      "all_passed": true,
+      "shapes_won": 3,
+      "vector": [
+        0.9775565452798882,
+        0.8695756991321119,
+        0.980777519179381,
+        0.8714802376646862,
+        0.8815734118636938,
+        0.8666177190406266,
+        0.8816879651734307,
+        0.9031854545454544,
+        0.8875210937276549,
+        0.8636581853096497,
+        0.897222456862459,
+        0.9084101440389196,
+        0.8559083601286174
+      ],
+      "strategy": "Single-launch vectorized Triton fusion for RMSNorm+RoPE+KV-cache update, with stable prefill tiling and a 32-head S=1 di",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/4847a63aa925.json"
     }
   ]
 }

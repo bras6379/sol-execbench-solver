@@ -51,10 +51,14 @@ class Config:
     review_enabled: bool = True                   # pre-GPU code review gate (a DIFFERENT model than the
                                                   # writer reads the kernel + reference + workloads and
                                                   # judges ship/revise BEFORE it spends a GPU eval)
-    review_max_rounds: int = 6                    # repair-loop safety valve: "revise" sends the SAME
-                                                  # writer back with the critique for another attempt, up
-                                                  # to this many rounds, then ships as-is (never blocks
-                                                  # forever on one stubborn candidate)
+    review_max_rounds: int = 2                    # repair-loop safety valve: "revise" sends the SAME
+                                                  # writer back (via a resumed session, not a cold start)
+                                                  # with the critique for another attempt, up to this many
+                                                  # rounds, then ships as-is (never blocks forever on one
+                                                  # stubborn candidate). 2 real attempts with full context
+                                                  # is plenty — if the writer can't fix it by then, more
+                                                  # rounds mostly burn reviewer-model cost and wall clock
+                                                  # rather than actually converging.
     ceiling_consensus: int = 2                    # N consecutive iterations where the agent left the
                                                   # kernel byte-identical to its parent (a "no-op") is a
                                                   # real signal the problem is at ceiling — auto-terminate

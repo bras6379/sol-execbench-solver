@@ -209,6 +209,68 @@ def test_review_error_fails_open_ships_as_is(tmp_path):
     assert len(errs) == 1
 
 
+def test_repair_no_op_ships_without_a_further_review_round(tmp_path):
+    """If a repair round leaves the content byte-identical to what it was asked to
+    fix (the writer's own prompt forbids this, but a model can still do it — this
+    is exactly the failure confirmed live, 2026-07-08 problem #18: a cold-start
+    repair produced identical bytes, and the reviewer flip-flopped from 'revise'
+    to 'ship' reviewing the SAME content seconds later), stop immediately and ship
+    as-is rather than looping for another (non-deterministic) review pass."""
+    fixed_solution = {"solution": {"__fixed__": True, "__eval__": {"scores": [0.6]}}}
+    reviews_seen = {"n": 0}
+
+    def reviewer(persp, cand, ctx):
+        reviews_seen["n"] += 1
+        return ReviewVerdict(verdict="revise" if reviews_seen["n"] == 1 else "ship",
+                             issues=["still wrong"])
+
+    # both the original plan and the "repair" (StubAgent.repair delegates to
+    # plan()) return the SAME fixed solution dict -> identical content hash
+    script = {"claude:haiku": [fixed_solution, fixed_solution],
+              "claude:opus": [fixed_solution, fixed_solution]}
+    agents = stub_agents([A, B], lambda persp, parent, ctx: script[str(persp)].pop(0))
+    agents[A]._reviewer = reviewer
+    agents[B]._reviewer = reviewer
+    ex = StubExecutor()
+    c = two_persp(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_max_rounds=6)
+    ctx = run(solve_problem(1, ex, agents, c, runs_dir=tmp_path))
+
+    assert reviews_seen["n"] == 1                    # no second review on the identical repair
+    revs = reviews(ctx.path)
+    assert len(revs) == 1 and revs[0]["verdict"] == "revise"
+    noops = [e for e in events(ctx.path) if e["ev"] == "iter" and e.get("outcome") == "repair_no_op"]
+    assert len(noops) == 1
+    assert ex.calls == 1 + 1                          # seed + exactly one GPU eval (shipped as-is)
+
+
+def test_on_phase_reports_review_then_repair_around_a_revise_cycle(tmp_path):
+    """The live 'what's happening now' side channel (runs/_active.json's
+    task_phase) must show review/repair distinctly, each cleared immediately
+    after — dashboard visibility into a phase that used to be invisible until
+    the whole review-repair cycle finished and journaled its result."""
+    seen = []
+
+    def on_phase(name, info):
+        seen.append(name)
+
+    calls = {"n": 0}
+
+    def reviewer(persp, cand, ctx):
+        calls["n"] += 1
+        return ReviewVerdict(verdict="revise", issues=["x"]) if calls["n"] == 1 \
+               else ReviewVerdict(verdict="ship")
+
+    agents = stub_agents([A, B], _planner())
+    agents[A]._reviewer = reviewer
+    agents[B]._reviewer = reviewer
+    ex = StubExecutor()
+    c = two_persp(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1)
+    run(solve_problem(1, ex, agents, c, runs_dir=tmp_path, on_phase=on_phase))
+
+    assert seen == ["design", None, "plan", None, "review", None,
+                    "repair", None, "review", None]
+
+
 def test_repair_that_breaks_schema_ships_the_pre_repair_candidate(tmp_path):
     """If the repair round produces an invalid solution (fails check_fn), the
     ORIGINAL (pre-repair) candidate is shipped rather than the broken repair."""

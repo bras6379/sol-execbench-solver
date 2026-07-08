@@ -313,17 +313,17 @@ _CSS = """
 :root{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;
 --grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;--o-revised:#2a78d6;}
+--o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;--o-revised:#2a78d6;--o-running:#0e9488;}
 @media (prefers-color-scheme: dark){:root{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;
 --grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;}}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;--o-running:#14b8a6;}}
 :root[data-theme=light]{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;--grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-revised:#2a78d6;}
+--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-revised:#2a78d6;--o-running:#0e9488;}
 :root[data-theme=dark]{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;--grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;--o-running:#14b8a6;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--surface);color:var(--ink);
 font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
@@ -680,6 +680,48 @@ def _live_banner(live: dict | None, problems: list[dict] | None = None) -> str:
     return '<div class="livebar live">' + ' &nbsp;·&nbsp; '.join(parts) + '</div>'
 
 
+_PHASE_LABEL = {"design": "🧭 design", "plan": "✍️ plan", "review": "🔎 review", "repair": "🛠 repair"}
+
+
+def _agents_now_panel(problems: list[dict]) -> str:
+    """Exactly what each active agent is doing RIGHT NOW — design/plan/review/repair,
+    which model, on which candidate, and for how long — sourced from runs/_active.json's
+    per-task phase (published live by loop.py's on_phase hook, not derived from the
+    journal, so it's visible for calls still IN FLIGHT that haven't written any event
+    yet). Without this, "is it running?" could only be answered by process-list/journal
+    archaeology — a plan/review call legitimately takes 5-11+ min, indistinguishable
+    from a stall without seeing which phase it's actually in and since when."""
+    rows = [(p, p["current_phase"]) for p in problems if p.get("current_phase")]
+    if not rows:
+        return ('<div class="panel"><h2>Agents right now</h2>'
+                '<p class="muted">no agent calls currently in flight (idle between rounds, '
+                'or the fleet isn\'t running)</p></div>')
+    rows.sort(key=lambda pr: pr[1].get("elapsed_s") or 0, reverse=True)   # longest-running first
+    out = []
+    for p, ph in rows:
+        elapsed = ph.get("elapsed_s")
+        # sonnet/haiku/gpt-5.5 calls routinely run 5-11+ min — only the label past
+        # ~12 min hints "this MIGHT be stuck", it never asserts it (a review round on
+        # a big kernel can legitimately run long).
+        slow = elapsed is not None and elapsed > 720
+        label = _PHASE_LABEL.get(ph.get("phase"), _esc(ph.get("phase") or "?"))
+        who = " ".join(x for x in (ph.get("agent"), ph.get("model")) if x) or "–"
+        cand = ph.get("cand")
+        elapsed_style = ' style="color:var(--o-duplicate);font-weight:600"' if slow else ""
+        out.append(
+            '<tr>'
+            f'<td><a href="p/{p["task"]}.html">#{p["task"]}</a></td>'
+            f'<td>{label}</td><td>{_esc(who)}</td>'
+            f'<td>{_esc(cand[:8]) if cand else "–"}</td>'
+            f'<td data-v="{elapsed or 0}"{elapsed_style}>{_fmt_s(elapsed)}{" ⏳" if slow else ""}</td>'
+            '</tr>')
+    return ('<div class="panel"><h2>Agents right now '
+            f'<span class="fcount">({len(rows)} call{"s" if len(rows) != 1 else ""} in flight)</span></h2>'
+            '<table class="sortable"><thead><tr><th>problem</th><th>phase</th><th>agent</th>'
+            '<th>candidate</th><th>elapsed</th></tr></thead><tbody>'
+            + "".join(out) + '</tbody></table></div>')
+
+
 def _cost_panel(fleet: dict, problems: list[dict], top_n: int = 8) -> str:
     """Real $ spend, broken down by call-type and model, plus the two numbers
     that answer 'where is the waste': no-op cost (paid calls that changed
@@ -786,7 +828,9 @@ def _recent_attempts_panel(problems: list[dict], limit: int = 25) -> str:
     rows = []
     for ts, task, c in atts[:limit]:
         chip = (f'<span class="chip" style="background:var(--{_STATUS_CHIP.get(c.get("status"),"o-dominated")})">'
-                f'{_esc(c.get("status") or "?")}</span>')
+                f'{_esc(_STATUS_LABEL.get(c.get("status"), c.get("status") or "?"))}</span>')
+        if c.get("repairs"):   # this row is a whole review→repair lineage collapsed to its
+            chip += f' <span class="muted" title="revised and repaired {c["repairs"]}x before this outcome">repaired {c["repairs"]}×</span>'
         exp, best = c.get("sol_score_cal"), c.get("best_after")
         gain = (best is not None and exp is not None and exp >= best - 1e-9)  # this one set/tied the best
         rows.append(
@@ -876,6 +920,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 
     body = f"""
 {_live_banner(data.get("live"), problems)}
+{_agents_now_panel(problems)}
 {filterbar}
 <h2 class="section-h">System diagnostics</h2>
 <div id="tiles" class="tiles"></div>
@@ -907,6 +952,19 @@ _STATUS_CHIP = {
     "accepted": "o-accepted", "dominated": "o-dominated", "rejected": "o-rejected",
     "duplicate": "o-duplicate", "no_op": "o-no_op", "incorrect": "o-incorrect", "flaky": "o-flaky",
     "error": "o-error", "planned": "o-dominated", "revised": "o-revised",
+    # sub-states of "planned" — what's ACTUALLY happening to this candidate right
+    # now, instead of one catch-all label that looks identical whether it's
+    # progressing normally or genuinely stuck (see metrics.py's exec_enqueued/
+    # exec_started/current_phase handling).
+    "gpu_queued": "o-duplicate", "gpu_running": "o-running",
+    "reviewing": "o-revised", "repairing": "o-revised",
+    # the owning problem isn't live anymore — nothing will ever finish this one
+    "interrupted": "o-dominated",
+}
+_STATUS_LABEL = {
+    "gpu_queued": "gpu: queued", "gpu_running": "gpu: running",
+    "reviewing": "under review", "repairing": "repairing",
+    "interrupted": "interrupted (fleet stopped)",
 }
 
 
@@ -922,7 +980,8 @@ def _code_blocks(p: dict) -> str:
         score = "–" if c.get("sol_score") is None else f"{c['sol_score']:.3f}"
         chip = _STATUS_CHIP.get(c["status"], "o-dominated")
         meta = (f'<div class="modal-meta">'
-                f'<span class="chip" style="background:var(--{chip})">{_esc(c["status"])}</span>'
+                f'<span class="chip" style="background:var(--{chip})">'
+                f'{_esc(_STATUS_LABEL.get(c["status"], c["status"]))}</span>'
                 f'<span>score <b>{score}</b></span>'
                 f'<span>{_esc(", ".join(spec.get("languages", ["?"])))}</span>'
                 f'<span>{_esc(c.get("model") or "")}</span></div>')
@@ -968,7 +1027,9 @@ def _progression_table(p: dict, has_traj: set | None = None,
     for c in p["candidates"]:
         t = _localtime(c["ts"])
         chip = (f'<span class="chip" style="background:var(--{_STATUS_CHIP.get(c["status"], "o-dominated")})">'
-                f'{_esc(c["status"])}</span>')
+                f'{_esc(_STATUS_LABEL.get(c["status"], c["status"]))}</span>')
+        if c.get("repairs"):   # this row is a whole review→repair lineage collapsed to its outcome
+            chip += f' <span class="muted" title="revised and repaired {c["repairs"]}x before this outcome">repaired {c["repairs"]}×</span>'
         cal = "–" if c.get("sol_score_cal") is None else f"{c['sol_score_cal']:.3f}"
         best = "" if c.get("best_after") is None else f"{c['best_after']:.3f}"
         have = avail.get(c["cand"], set())
@@ -1148,10 +1209,18 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
         [{"label": f"#{p['task']}", "color": _slot(slot_i), "points": p["convergence"]}],
         x_label="GPU evals", right=120) if p["convergence"] else '<p class="muted">no evals yet</p>'
     order = {p["task"]: slot_i}
+    ph = p.get("current_phase")
+    if ph:
+        who = " ".join(x for x in (ph.get("agent"), ph.get("model")) if x) or "?"
+        status_val = _PHASE_LABEL.get(ph.get("phase"), ph.get("phase") or "?")
+        status_sub = f'{who} · {_fmt_s(ph.get("elapsed_s"))} so far'
+    else:
+        status_val = p.get("live_state") or p["terminated"] or "running"
+        status_sub = ""
     stats = "".join([
         _tile("expected SOL (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
               "leaderboard estimate"),
-        _tile("status", p.get("live_state") or p["terminated"] or "running"),
+        _tile("status", status_val, status_sub),
         _tile("iterations / evals", f"{p['iters']} / {p['evals']}"),
         _tile("frontier size", str(p["frontier"])),
         _tile("wait p50 / p95", f"{_fmt_s(p['wait_p50'])} / {_fmt_s(p['wait_p95'])}"),

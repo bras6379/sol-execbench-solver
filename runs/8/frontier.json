@@ -3,7 +3,7 @@
   "family": "reduction",
   "name": "reduction_8",
   "epsilon": 0.02,
-  "size": 6,
+  "size": 9,
   "best_cand": "80ebc1048ff4",
   "best_score": 0.8682554803504545,
   "best_score_cal": 0.8448271719421553,
@@ -13,7 +13,7 @@
       "sol_score": 0.8682554803504545,
       "sol_score_cal": 0.8448271719421553,
       "all_passed": true,
-      "shapes_won": 8,
+      "shapes_won": 7,
       "vector": [
         0.8862689515955847,
         0.8885098250619357,
@@ -36,6 +36,35 @@
       "agent": "claude",
       "model": "sonnet",
       "candidate": "candidates/80ebc1048ff4.json"
+    },
+    {
+      "cand_id": "7d88088d3991",
+      "sol_score": 0.8680239647860188,
+      "sol_score_cal": 0.8445726563527982,
+      "all_passed": true,
+      "shapes_won": 2,
+      "vector": [
+        0.8862109514801371,
+        0.8877358362159651,
+        0.8284543017816786,
+        0.899718077306682,
+        0.8873134705341538,
+        0.833865135077643,
+        0.8953979887506391,
+        0.8709638261714009,
+        0.8732685297691373,
+        0.81284677763551,
+        0.8704797047970481,
+        0.8906289230313541,
+        0.8338993639632335,
+        0.8185355500530599,
+        0.8997240030941018,
+        0.8993409969145568
+      ],
+      "strategy": "Keep the proven fused Triton bf16 atomic scatter-add (clone-seed, grid=N, BLOCK=1024, evict_first, relaxed, num_warps=8)",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/7d88088d3991.json"
     },
     {
       "cand_id": "57d9f4b68eb8",
@@ -154,6 +183,35 @@
       "candidate": "candidates/29623a03e534.json"
     },
     {
+      "cand_id": "109b3fcc8735",
+      "sol_score": 0.8573389871081798,
+      "sol_score_cal": 0.8325701934178006,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.8704879601934083,
+        0.8722143363410063,
+        0.8196320677211701,
+        0.8960310533673252,
+        0.8719775059124422,
+        0.8212864026817515,
+        0.8913274238685397,
+        0.8556978819986657,
+        0.8580468003820441,
+        0.8080186677980484,
+        0.8553299492385787,
+        0.8748543820628251,
+        0.8213226678536594,
+        0.809365060280471,
+        0.8958096409215693,
+        0.8960219931093718
+      ],
+      "strategy": "Shape-gated row-coarsening: proven R=1,num_warps=4 for T<4096; R=4 coarsening for T>=4096 to reduce atomic contention on",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/109b3fcc8735.json"
+    },
+    {
       "cand_id": "8c234180a4aa",
       "sol_score": 0.8549948127719762,
       "sol_score_cal": 0.8298906429907822,
@@ -181,6 +239,35 @@
       "agent": "claude",
       "model": "opus",
       "candidate": "candidates/8c234180a4aa.json"
+    },
+    {
+      "cand_id": "75679f18f29a",
+      "sol_score": 0.853919919002522,
+      "sol_score_cal": 0.8286905410230263,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.8705998878939533,
+        0.8723209935514687,
+        0.8196320677211701,
+        0.8822233936314775,
+        0.8718113143866824,
+        0.8212864026817515,
+        0.8778030277712796,
+        0.8557999455806655,
+        0.8580468003820441,
+        0.8076759966072943,
+        0.8553331797391669,
+        0.874918021793416,
+        0.8211560360737705,
+        0.8096571028691393,
+        0.8823046774920968,
+        0.8821498558649746
+      ],
+      "strategy": "Fused Triton bf16 atomic scatter-add (H=3072): clone-seed output=fhs, then grid=(N,3) with one 1024-wide coalesced load+",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/75679f18f29a.json"
     }
   ]
 }

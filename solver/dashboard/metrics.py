@@ -22,6 +22,14 @@ from typing import Any
 
 OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "no_op", "flaky", "error")
 
+# Non-terminal "something is supposed to still be happening to this candidate"
+# statuses. If the owning problem isn't actually live anymore (see collect()),
+# nothing will ever resolve these — an abrupt stop (SIGTERM/SIGKILL) can land
+# in the gap between a GPU eval finishing and its accept/frontier decision
+# being journaled, permanently orphaning the candidate at whatever it was
+# mid-transition to. Left alone, it looks identical to a live, healthy call.
+_INFLIGHT_STATUSES = {"planned", "gpu_queued", "gpu_running", "reviewing", "repairing", "revised"}
+
 
 def _t(ts: str) -> float:
     return dt.datetime.fromisoformat(ts.replace("Z", "+00:00")).timestamp()
@@ -114,7 +122,17 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
     best_model = ""            # producer of the best candidate (who actually won)
     best_model_score = -1.0
     first_ts = last_ts = None
-    candidates: dict[str, dict] = {}   # cand id -> progression record
+    candidates: dict[str, dict] = {}   # cand id -> progression record (a repair round's id is an
+                                        # ALIAS onto its lineage's shared row — see plan_done/check
+                                        # below — so every id ever seen in one review-repair chain
+                                        # resolves here without touching the other handlers)
+    pending_repairs: dict[str, dict] = {}   # repair cand id -> staged row content, applied only
+                                             # once `check` confirms it's actually valid — a repair
+                                             # that fails check never ships, so its content must
+                                             # never overwrite what the row is about to show
+    candidate_roots: dict[str, str] = {}    # any cand id -> the lineage's root id (== itself for
+                                             # a non-repair candidate; a repair round's id maps to
+                                             # its chain's original root)
     cost = {"plan": 0.0, "review": 0.0, "diagnose": 0.0, "design": 0.0}   # $ by call-type
     cost_by_model: dict[str, dict] = {}    # model -> {cost, in, out, cached} — pricing (and
                                             # in/out/cache ratios) differ per provider, so raw
@@ -159,20 +177,68 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                    e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
             if e.get("no_op"):
                 noop_cost += e.get("cost_usd", 0.0)
-            # Two agents can produce the SAME kernel (same content hash = same cand
-            # id). Keep the FIRST occurrence — the one that got evaluated/accepted —
-            # so a later exact-duplicate plan_done doesn't clobber the winner's row.
-            candidates.setdefault(e["cand"], {
-                "cand": e["cand"], "ts": ts, "model": e.get("model", model),
-                "parent": e.get("parent"), "strategy": e.get("strategy", ""),
-                "solution": e.get("solution"), "status": "planned",
-                # None (key absent — journal predates this feature) is kept distinct
-                # from [] (tracked, and the model genuinely read no kb/ files) —
-                # collapsing them would make every pre-2026-07-08 candidate falsely
-                # look like it read nothing.
-                "sol_score": None, "context_read": e.get("context_read"),
-                "reviewer_context_read": None,
-            })
+            cid = e["cand"]
+            if e.get("repair"):
+                # A repair round is the SAME logical attempt as its pre-repair parent,
+                # continuing (via a resumed CLI session) toward one eventual GPU
+                # submission or abandonment — it must not appear as a separate
+                # "recent attempt" row. Stage its content; `check` below adopts it
+                # into the lineage's ONE shared row only if it's actually valid (a
+                # repair that fails check never ships, so its content must never be
+                # what the row shows — see the `check` handler).
+                root_id = candidate_roots.get(e.get("parent"), e.get("parent"))
+                if root_id in candidates:
+                    candidate_roots[cid] = root_id
+                    pending_repairs[cid] = {
+                        "model": e.get("model", model), "strategy": e.get("strategy", ""),
+                        "solution": e.get("solution"), "context_read": e.get("context_read"),
+                    }
+                else:
+                    # parent's own row is missing (shouldn't normally happen — e.g. a
+                    # truncated journal) — fail safe as its own root rather than lose
+                    # the row entirely.
+                    candidate_roots[cid] = cid
+                    candidates[cid] = {
+                        "cand": cid, "ts": ts, "model": e.get("model", model),
+                        "parent": e.get("parent"), "strategy": e.get("strategy", ""),
+                        "solution": e.get("solution"), "status": "planned",
+                        "sol_score": None, "context_read": e.get("context_read"),
+                        "reviewer_context_read": None, "repairs": 0,
+                    }
+            else:
+                candidate_roots[cid] = cid
+                # Two agents can produce the SAME kernel (same content hash = same cand
+                # id). Keep the FIRST occurrence — the one that got evaluated/accepted —
+                # so a later exact-duplicate plan_done doesn't clobber the winner's row.
+                candidates.setdefault(cid, {
+                    "cand": cid, "ts": ts, "model": e.get("model", model),
+                    "parent": e.get("parent"), "strategy": e.get("strategy", ""),
+                    "solution": e.get("solution"), "status": "planned",
+                    # None (key absent — journal predates this feature) is kept distinct
+                    # from [] (tracked, and the model genuinely read no kb/ files) —
+                    # collapsing them would make every pre-2026-07-08 candidate falsely
+                    # look like it read nothing.
+                    "sol_score": None, "context_read": e.get("context_read"),
+                    "reviewer_context_read": None, "repairs": 0,
+                })
+        elif ev == "check":
+            cid = e.get("cand")
+            if not e.get("ok", True):
+                outcomes["rejected"] += 1
+                if cid in candidates:
+                    candidates[cid]["status"] = "rejected"
+                pending_repairs.pop(cid, None)   # this repair's content never ships
+            else:
+                staged = pending_repairs.pop(cid, None)
+                if staged is not None:
+                    row = candidates.get(candidate_roots.get(cid, cid))
+                    if row is not None:
+                        row.update(staged)
+                        row["cand"], row["ts"] = cid, ts
+                        row["status"] = "planned"          # a fresh, not-yet-(re)reviewed attempt
+                        row["reviewer_context_read"] = None
+                        row["repairs"] = row.get("repairs", 0) + 1
+                        candidates[cid] = row               # alias: later events keyed by cid resolve here
         elif ev == "review":
             _spend("review", e.get("reviewer", "?"), e.get("cost_usd", 0.0),
                    e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
@@ -189,10 +255,6 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             _spend("diagnose", e.get("model", "?"), e.get("cost_usd", 0.0),
                    e.get("tok_in", 0) or 0, e.get("tok_out", 0) or 0, e.get("tok_cached", 0) or 0)
             reflect_health["success" if e.get("success") else "fail"] += 1
-        elif ev == "check" and not e.get("ok", True):
-            outcomes["rejected"] += 1
-            if e.get("cand") in candidates:
-                candidates[e["cand"]]["status"] = "rejected"
         elif ev == "novelty" and e.get("verdict") == "no_op":
             # the agent's output hashed EXACTLY to its own parent — it changed
             # nothing. Distinct from a generic duplicate: this is the dominant
@@ -209,8 +271,19 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 c["status"] = "duplicate"        # downgrade the accepted/scored winner
         elif ev == "exec_enqueued":
             jobs[e["job"]] = {"task": task_id, "enq": _t(ts)}
+            # queued for the single-flight GPU — may sit here a while if another
+            # problem currently holds it. Distinct from "gpu_running" below so a
+            # long queue wait isn't mistaken for a stuck/hung eval.
+            c = candidates.get(e.get("cand"))
+            if c and c["status"] == "planned":
+                c["status"] = "gpu_queued"
         elif ev == "exec_started":
             jobs.setdefault(e["job"], {"task": task_id})["start"] = _t(ts)
+            # exec_started carries `job` only (== the cand id at both call sites),
+            # not `cand` — look it up by job.
+            c = candidates.get(e.get("job"))
+            if c and c["status"] in ("planned", "gpu_queued"):
+                c["status"] = "gpu_running"
         elif ev == "exec_done":
             j = jobs.setdefault(e["job"], {"task": task_id})
             j["done"] = _t(ts)
@@ -248,7 +321,12 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                     best_model = c.get("model") or model
             elif e.get("verdict") == "dominated":
                 outcomes["dominated"] += 1
-                if c and c["status"] == "planned":
+                # Same permissive guard as "entered" above: by the time accept fires,
+                # a correct candidate's status is "gpu_running" (set at exec_started),
+                # not "planned" — a strict == "planned" check here (the original bug)
+                # left every dominated-but-correct candidate stuck showing "gpu:
+                # running" forever, alongside its real (final) score.
+                if c and c["status"] not in ("incorrect", "error"):
                     c["status"] = "dominated"
             if e.get("best") is not None:
                 best = e["best"]
@@ -282,13 +360,22 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             terminated = None            # a reopened run is running again, not "budget:*"
 
     waits = [j["start"] - j["enq"] for j in jobs.values() if "start" in j and "enq" in j]
+    # A repair round's id is an ALIAS onto its lineage's shared row (see plan_done/
+    # check above), so candidates.values() yields that same row once per alias —
+    # dedupe by object identity so a review-repair chain surfaces as ONE row.
+    seen_rows: set[int] = set()
+    uniq_candidates = []
+    for c in candidates.values():
+        if id(c) not in seen_rows:
+            seen_rows.add(id(c))
+            uniq_candidates.append(c)
     return {
         "task": task_id, "name": name, "family": family, "model": best_model or model,
         "iters": iters, "evals": evals, "best": best, "best_cal": best_cal, "frontier": frontier,
         "terminated": terminated, "convergence": convergence,
         "accept_times": accept_times, "last_improve_ts": last_improve_ts,
         "outcomes": outcomes, "agent": agent, "jobs": list(jobs.values()),
-        "candidates": sorted(candidates.values(), key=lambda c: c["ts"] or ""),
+        "candidates": sorted(uniq_candidates, key=lambda c: c["ts"] or ""),
         "wait_p50": _pct(waits, 0.5), "wait_p95": _pct(waits, 0.95),
         "first_ts": first_ts, "last_ts": last_ts,
         "cost": cost, "cost_by_model": cost_by_model, "noop_cost": noop_cost,
@@ -453,6 +540,7 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
     # live working-set: which problems currently hold a concurrency slot (from the
     # engine's runs/_active.json) so status shows running vs waiting vs pending.
     active_set, active_fresh, live = set(), False, None
+    task_phase: dict[str, dict] = {}
     if runs_dir:
         af = Path(runs_dir) / "_active.json"
         if af.exists():
@@ -464,10 +552,36 @@ def collect(journals: dict[int, list[dict]], runs_dir: Path | None = None) -> di
                 live = {"phase": a.get("phase"), "reflect": a.get("reflect"),
                         "cap": a.get("cap"), "n_active": len(active_set),
                         "fresh": active_fresh, "age_s": None if age is None else round(age)}
+                if active_fresh:      # a stale file's phase snapshot is almost certainly wrong
+                    task_phase = a.get("task_phase") or {}
             except (json.JSONDecodeError, OSError):
                 pass
+    _PHASE_TO_STATUS = {"review": "reviewing", "repair": "repairing"}
     for p in per_problem:
         p["live_state"] = _live_state(p, active_set, active_fresh)
+        # "what is this problem's agent doing RIGHT NOW" — design/plan/review/repair,
+        # which model, since when — so the dashboard can show real-time activity
+        # instead of forcing a guess from process list / journal recency.
+        tp = task_phase.get(str(p["task"]))
+        p["current_phase"] = {**tp, "elapsed_s": _age_s(tp.get("started"))} if tp else None
+        # A review/repair call in flight is happening TO a specific existing
+        # candidate (tp["cand"]) — surface that on its row too, so "planned"
+        # doesn't look identical to "actively being re-reviewed right now".
+        # (A "plan" phase has no row yet — its candidate doesn't exist until the
+        # call finishes — so only review/repair correlate to an existing row.)
+        new_status = _PHASE_TO_STATUS.get((tp or {}).get("phase"))
+        if new_status and tp.get("cand"):
+            for c in p["candidates"]:
+                if c["cand"] == tp["cand"] and c["status"] in ("planned", "gpu_queued", "revised"):
+                    c["status"] = new_status
+                    break
+        # This problem isn't currently live — nothing is going to advance an
+        # in-flight status further. Say so honestly instead of leaving a stale
+        # "gpu: running"/"under review"/etc that looks like live activity.
+        if p["live_state"] != "running":
+            for c in p["candidates"]:
+                if c["status"] in _INFLIGHT_STATUSES:
+                    c["status"] = "interrupted"
     rentals = load_rentals(runs_dir) if runs_dir else []
     return {
         "problems": per_problem,

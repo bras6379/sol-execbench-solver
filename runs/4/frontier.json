@@ -3,7 +3,7 @@
   "family": "gemm",
   "name": "gemm_4",
   "epsilon": 0.02,
-  "size": 2,
+  "size": 3,
   "best_cand": "e0b86351e99b",
   "best_score": 0.8121552507399347,
   "best_score_cal": 0.7253613140873915,
@@ -65,6 +65,35 @@
       "agent": "claude",
       "model": "opus",
       "candidate": "candidates/d2275cdaace9.json"
+    },
+    {
+      "cand_id": "cf1515e11470",
+      "sol_score": 0.7389238048536044,
+      "sol_score_cal": 0.654859978867302,
+      "all_passed": true,
+      "shapes_won": 0,
+      "vector": [
+        0.9325552225658506,
+        0.7552584134615385,
+        0.932559364228265,
+        0.758074252942952,
+        0.8810466852801766,
+        0.8798806785508912,
+        0.9327048864948059,
+        0.7217229927720257,
+        0.5045368620037807,
+        0.5844715222573483,
+        0.6865682031766659,
+        0.605380258269835,
+        0.6847082477827854,
+        0.4505735838950141,
+        0.6576436508845721,
+        0.8550960530911632
+      ],
+      "strategy": "bf16 cuBLASLt-backed torch.mm for both gradients, co-issued on two CUDA streams for all CUDA workloads, with grad_attn_o",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/cf1515e11470.json"
     }
   ]
 }

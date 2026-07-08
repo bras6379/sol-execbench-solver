@@ -16,3 +16,6 @@ per-M CUDA-graph cache -- prime the cuBLAS workspace once, capture
 {wgrad-on-side-stream + dgrad-on-current-stream} into one graph, replay it, and
 CLONE the two static output buffers before returning (never ali
 
+## 3. from `cf1515e1` — bf16 cuBLASLt-backed torch.mm for both gradients, co-issued on two CUDA streams for all CUDA workloads, with grad_attn_o
+Higher-ceiling idea not shipped: implement a C++ cuBLASLt dgrad path that explicitly selects split-K for M<=1024, then run wgrad sequentially to avoid side-stream L2 contention. Trigger this if the restored two-stream cuBLAS path passes but only matches the previous ~0.725 frontier.
+

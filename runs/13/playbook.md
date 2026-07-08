@@ -20,3 +20,6 @@ If this fused 2-launch kernel only ties 0.653, the next lever is raising MAX_BLO
 ## 5. from `ca52c317` — Single-CTA exact 5x512 fast path for ≤512 rows eliminates the second launch and partial buffer, while the large path use
 Higher ceiling: replace the large path with a single-pass exact 5×512 CTA (buffer grad_norm and normalized in registers, no padded reductions), raise MAX_BLOCK_M to 128, and capture the whole two-kernel sequence in a persistent per-shape CUDA graph if the timed reps use stable input pointers.
 
+## 6. from `24f62c4d` — Lower SMALL_ROWS_MAX 512→64 (single-CTA path is bandwidth-starved; multi-CTA large path is faster down to ~20 rows), rai
+Higher-ceiling reserve: rewrite as a single-kernel CUDA persistent grid with cooperative-groups grid.sync() — each CTA computes dx + gw partial for its rows, then the last block reduces all partials into grad_weight in a single launch. Eliminates the second kernel launch entirely. Trigger: if this kernel only ties 0.716 or the reduce-kernel launch overhead is still the measured bottleneck on small shapes (B×S < 4096).
+

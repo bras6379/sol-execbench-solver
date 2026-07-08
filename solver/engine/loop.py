@@ -11,6 +11,7 @@ executor is the single serialized GPU.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime
 import json
 import random
@@ -211,6 +212,7 @@ async def solve_problem(
     problems_dir: str | Path = "problems",
     family: str = "",
     name: str = "",
+    on_phase: Callable[[str | None, dict | None], None] | None = None,
 ) -> RunContext:
     ctx = RunContext.load(task_id, cfg, runs_dir, seed=seed)
     ctx.reopen_if_capped()             # a cap-terminated run continues if the caps now allow it
@@ -219,13 +221,30 @@ async def solve_problem(
     seeds_fn = seeds_fn or _default_seeds
     check_fn = check_fn or default_check_fn(problems_dir)
 
+    @contextlib.contextmanager
+    def _phase(phase_name: str, persp=None, cand_id: str | None = None):
+        """Publish 'what is this problem's agent doing RIGHT NOW' (design / plan /
+        review / repair) to run_fleet's live status — purely informational for the
+        dashboard (see runs/_active.json's task_phase), never read back by the
+        engine itself, so it can't affect replay/resume determinism."""
+        if on_phase is not None:
+            on_phase(phase_name, {"agent": getattr(persp, "agent", None),
+                                  "model": getattr(persp, "model", None), "cand": cand_id,
+                                  "started": datetime.datetime.now(datetime.timezone.utc).isoformat()})
+        try:
+            yield
+        finally:
+            if on_phase is not None:
+                on_phase(None, None)
+
     # ---- bootstrap (consumes GPU evals; committed by the `bootstrapped` marker) ----
     if ctx.fresh():
         ctx.record("run_started", agent=str(cfg.design_model), name=name, family=family)
         _persist_reference(runs_dir, task_id, problems_dir)   # ground truth beside the frontier
         dtok: dict = {}
         try:
-            design, dtok = await agents[cfg.design_model].design(task_id)
+            with _phase("design", cfg.design_model):
+                design, dtok = await agents[cfg.design_model].design(task_id)
         except Exception as exc:                              # a slow/failed design must not abort
             design = ""
             ctx.record("design_error", error=repr(exc)[:200])
@@ -266,7 +285,8 @@ async def solve_problem(
         agent = agents[persp]
         parent = ctx.frontier.select(ctx.rng)
         try:
-            cand = await agent.plan(parent, ctx)
+            with _phase("plan", persp, getattr(parent, "cand_id", None)):
+                cand = await agent.plan(parent, ctx)
         except Exception as exc:
             # agent timed out / wrote no kernel: skip THIS iteration, keep the
             # problem's frontier, advance to the next perspective. Never abort.
@@ -333,7 +353,8 @@ async def solve_problem(
                 review_persp = pick_reviewer(cfg.perspectives, persp,
                                              f"{seed}:{task_id}:{cand.cand_id}:{round_n}")
                 try:
-                    verdict = await agents[review_persp].review(cand, ctx)
+                    with _phase("review", review_persp, cand.cand_id):
+                        verdict = await agents[review_persp].review(cand, ctx)
                 except Exception as exc:
                     ctx.record("review_error", cand=cand.cand_id, reviewer=str(review_persp),
                               error=repr(exc)[:200])
@@ -349,7 +370,11 @@ async def solve_problem(
                 round_n += 1
                 ctx.review_critique = verdict.issues_text()
                 try:
-                    repaired = await agents[persp].plan(cand, ctx)
+                    # repair() RESUMES the writer's own CLI session in place (same
+                    # model memory) instead of cold-starting a fresh plan() call —
+                    # falls back to plan() itself when resume isn't available.
+                    with _phase("repair", persp, cand.cand_id):
+                        repaired = await agents[persp].repair(cand, ctx.review_critique, ctx)
                 except Exception as exc:
                     ctx.record("plan_error", agent=persp.agent, model=persp.model,
                               error=repr(exc)[:200])
@@ -368,6 +393,15 @@ async def solve_problem(
                 ctx.record("check", cand=repaired.cand_id, ok=rok)
                 if not rok:
                     break                          # repair broke the schema → ship the pre-repair cand
+                if repaired.cand_id == cand.cand_id:
+                    # the repair changed nothing (the prompt explicitly forbids this,
+                    # but a model can still no-op it) — another review pass would just
+                    # re-judge identical bytes and risk a non-deterministic flip-flop
+                    # (confirmed live: same reviewer, same bytes, revise then ship
+                    # seconds apart). Stop here and ship as-is — the same fallback
+                    # guarantee as hitting review_max_rounds.
+                    ctx.record("iter", n=ctx.iters, outcome="repair_no_op")
+                    break
                 cand = repaired
 
         ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
@@ -476,13 +510,19 @@ async def run_fleet(
     active: set[int] = set()
     active_path = Path(runs_dir) / "_active.json"
     status = {"phase": "starting", "reflect": None}   # live fleet status for the dashboard
+    # Per-task "what is the agent doing right now" (design/plan/review/repair, who,
+    # since when) — fed by solve_problem's on_phase hook (see there). None once a
+    # task has no call in flight (between rounds, or queued/done). This answers
+    # "is it healthy or just slow?" without guessing from process list/journal age.
+    task_phase: dict[int, dict | None] = {}
 
     def _write_active() -> None:
         try:
             active_path.write_text(json.dumps({
                 "ts": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "active": sorted(active), "cap": max_concurrency,
-                "phase": status["phase"], "reflect": status["reflect"]}))
+                "phase": status["phase"], "reflect": status["reflect"],
+                "task_phase": {str(t): v for t, v in task_phase.items() if v is not None}}))
         except OSError:
             pass
 
@@ -513,6 +553,10 @@ async def run_fleet(
             _write_active()
 
     async def guarded(t: int) -> None:
+        def _on_phase(phase_name: str | None, info: dict | None) -> None:
+            task_phase[t] = {"phase": phase_name, **info} if phase_name else None
+            _write_active()
+
         async def _do() -> None:
             active.add(t)
             _write_active()
@@ -520,9 +564,11 @@ async def run_fleet(
                 await solve_problem(t, executor, agents, cfg, runs_dir=runs_dir, seed=seed,
                                     seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
                                     problems_dir=problems_dir,
-                                    family=families.get(t, ""), name=names.get(t, f"task-{t}"))
+                                    family=families.get(t, ""), name=names.get(t, f"task-{t}"),
+                                    on_phase=_on_phase)
             finally:
                 active.discard(t)
+                task_phase.pop(t, None)
                 _write_active()
         try:
             if sem is not None:

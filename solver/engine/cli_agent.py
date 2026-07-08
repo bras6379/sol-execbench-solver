@@ -60,6 +60,11 @@ class CliSpec:
     base_url: str | None = None     # Anthropic-compatible endpoint (routes the claude CLI elsewhere)
     api_key_env: str | None = None  # env var holding the provider key → ANTHROPIC_AUTH_TOKEN
     prompt_via_stdin: bool = False  # feed the prompt on stdin instead of as an argv (codex)
+    resume_cmd: list[str] | None = None   # {session_id}/{model}/{prompt} template that CONTINUES
+    # an existing session in place, instead of a cold start — used for review-repair turns so the
+    # writer keeps its own reasoning about what it wrote and why (see CliAgent.repair). MUST run
+    # in the exact cwd the session started in — both CLIs key session storage off it (verified
+    # empirically: resuming from a different directory fails with "No conversation found").
 
 
 CODEX = CliSpec(
@@ -69,22 +74,27 @@ CODEX = CliSpec(
     cmd=["codex", "exec", "--json", "-m", "{model}", "-s", "workspace-write",
          "--skip-git-repo-check", "-"],
     stream="codex", prompt_via_stdin=True,
+    resume_cmd=["codex", "exec", "resume", "{session_id}", "-", "--json",
+                "-m", "{model}", "--skip-git-repo-check"],
 )
 # The Claude Code CLI in print mode + stream-json events. The same command, pointed
 # at an Anthropic-compatible endpoint via base_url, drives cheap third-party models.
 _CLAUDE_CMD = ["claude", "-p", "{prompt}", "--model", "{model}",
                "--output-format", "stream-json", "--verbose", "--dangerously-skip-permissions"]
-CLAUDE = CliSpec("claude", cmd=_CLAUDE_CMD, stream="claude")   # your real Claude subscription auth
+_CLAUDE_RESUME_CMD = ["claude", "-p", "{prompt}", "--resume", "{session_id}", "--model", "{model}",
+                      "--output-format", "stream-json", "--verbose", "--dangerously-skip-permissions"]
+CLAUDE = CliSpec("claude", cmd=_CLAUDE_CMD, stream="claude",
+                 resume_cmd=_CLAUDE_RESUME_CMD)   # your real Claude subscription auth
 
 # Cheap providers over the SAME claude CLI (Anthropic-compatible endpoints). The
 # model string comes from `--tier` (e.g. openrouter/z-ai/glm-5.2, deepseek/deepseek-chat).
-OPENROUTER = CliSpec("openrouter", cmd=_CLAUDE_CMD, stream="claude",
+OPENROUTER = CliSpec("openrouter", cmd=_CLAUDE_CMD, stream="claude", resume_cmd=_CLAUDE_RESUME_CMD,
                      base_url="https://openrouter.ai/api", api_key_env="OPENROUTER_API_KEY")
-GLM = CliSpec("glm", cmd=_CLAUDE_CMD, stream="claude",
+GLM = CliSpec("glm", cmd=_CLAUDE_CMD, stream="claude", resume_cmd=_CLAUDE_RESUME_CMD,
               base_url="https://api.z.ai/api/anthropic", api_key_env="ZAI_API_KEY")
-DEEPSEEK = CliSpec("deepseek", cmd=_CLAUDE_CMD, stream="claude",
+DEEPSEEK = CliSpec("deepseek", cmd=_CLAUDE_CMD, stream="claude", resume_cmd=_CLAUDE_RESUME_CMD,
                    base_url="https://api.deepseek.com/anthropic", api_key_env="DEEPSEEK_API_KEY")
-KIMI = CliSpec("kimi", cmd=_CLAUDE_CMD, stream="claude",
+KIMI = CliSpec("kimi", cmd=_CLAUDE_CMD, stream="claude", resume_cmd=_CLAUDE_RESUME_CMD,
                base_url="https://api.moonshot.ai/anthropic", api_key_env="MOONSHOT_API_KEY")
 SPECS: dict[str, CliSpec] = {"codex": CODEX, "claude": CLAUDE, "openrouter": OPENROUTER,
                              "glm": GLM, "deepseek": DEEPSEEK, "kimi": KIMI}
@@ -207,6 +217,25 @@ _REVIEW = (
     "line/shape/variable — 'looks risky' is not actionable). Write nothing else; only the\n"
     "review.md file."
 )
+_REPAIR = (
+    "An independent reviewer read the kernel you just wrote (still in this directory) and\n"
+    "found issues before it ships to a real B200 GPU — a rented, single-flight GPU, so a bad\n"
+    "kernel wastes real time for the whole fleet. Fix EVERY issue below; don't dismiss one\n"
+    "because you're focused on speed:\n"
+    "\n"
+    "{critique}\n"
+    "\n"
+    "Edit the kernel file(s) IN PLACE in this directory (do not start over from reference.py)\n"
+    "unless the review shows your whole approach is broken, in which case say so and rewrite.\n"
+    "Update strategy.txt if your approach changed, and handoff.md if your reserve idea changed.\n"
+    "NEVER leave the kernel byte-identical to what's already in this directory, and a\n"
+    "comment-only or cosmetic edit does not count as a fix — if you think an issue is a false\n"
+    "positive, still make a REAL defensive code change addressing it (e.g. an explicit bounds\n"
+    "check or an extra guard condition): a no-op or cosmetic change is indistinguishable from\n"
+    "not having read the review at all, and wastes this turn for no signal.\n"
+    "Do NOT try to run or benchmark the kernel yourself — there is still no GPU/torch/triton in\n"
+    "your environment. Only write the files; do not print the code."
+)
 
 
 @dataclass
@@ -217,6 +246,8 @@ class _Run:
     trajectory: Path       # persisted raw event stream (trajectory.jsonl)
     error_hint: str = ""   # best-effort failure message pulled from STDOUT (see _extract_error_hint)
     context_read: list | None = None   # kb/*.md files actually consulted (see _extract_context_read)
+    session_id: str | None = None      # this call's session/thread id (see _extract_session_id) —
+                                        # lets a LATER call resume the exact same conversation
 
 
 def _extract_error_hint(schema: str, raw: str) -> str:
@@ -287,6 +318,31 @@ def _extract_context_read(schema: str, raw: str) -> list[str]:
                 for m in _KB_PATH_RE.finditer(item.get("command", "")):
                     _add(m.group(1))
     return seen
+
+
+def _extract_session_id(schema: str, raw: str) -> str | None:
+    """The session/thread id this call ran under, so a LATER call can `--resume`/
+    `resume` the exact same conversation instead of cold-starting (see
+    CliAgent.repair). claude schema: every event carries `session_id` once the
+    session is established. codex schema: `{"type": "thread.started",
+    "thread_id": ...}` is the first line of the stream."""
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if schema == "codex" and e.get("type") == "thread.started":
+            tid = e.get("thread_id")
+            if tid:
+                return str(tid)
+        elif schema == "claude":
+            sid = e.get("session_id")
+            if sid:
+                return str(sid)
+    return None
 
 
 def _parse_tokens(schema: str, raw: str) -> dict:
@@ -376,7 +432,8 @@ class CliAgent:
                          parent=getattr(parent, "cand_id", None),
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
-                         trajectory=str(traj_path), context_read=res.context_read or [])
+                         trajectory=str(traj_path), context_read=res.context_read or [],
+                         session_id=res.session_id)
 
     async def review(self, cand: Candidate, ctx) -> ReviewVerdict:
         """Pre-GPU code review: an INDEPENDENT (agent,model) — never the one that
@@ -396,6 +453,50 @@ class CliAgent:
         verdict.tokens = res.tokens or {}
         verdict.context_read = res.context_read or []
         return verdict
+
+    async def repair(self, cand: Candidate, critique: str, ctx) -> Candidate:
+        """Fix a reviewer-flagged candidate by RESUMING the writer's OWN CLI session,
+        in its own persisted directory, instead of cold-starting a fresh plan() call.
+        A fresh process given only a critique text file has no memory of why the
+        original kernel looks the way it does — confirmed live (2026-07-08, problem
+        #18): a cold-start repair produced a BYTE-IDENTICAL kernel to the one just
+        flagged, and the reviewer, re-reviewing the same bytes seconds later,
+        flip-flopped from 'revise' to 'ship'. Resuming gives the model its own
+        reasoning back instead of asking it to reinterpret a stranger's code from a
+        critique alone.
+        `--resume`/`resume` are scoped to the EXACT working directory the session
+        started in (verified empirically: resuming from a different cwd fails with
+        "No conversation found"), so this reuses cand's own workdir UNCHANGED —
+        never rename it, or a later repair round in the same lineage can't resume
+        it either.
+        Falls back to a cold-start plan() when resume isn't available (no captured
+        session id, no resume_cmd for this spec, or the workdir is gone) — repair
+        must never hard-fail just because the fast path isn't available."""
+        wd = self.runs_dir / str(getattr(ctx, "task_id", "")) / "work" / cand.cand_id
+        if not cand.session_id or not self.spec.resume_cmd or not wd.is_dir():
+            return await self.plan(cand, ctx)
+        n = sum(1 for _ in wd.glob("trajectory.repair-*.jsonl")) + 1
+        res = await self._run(wd, _REPAIR.format(critique=critique.strip()),
+                              session_id=cand.session_id, traj_name=f"trajectory.repair-{n}")
+        # the resumed session edits kernel.py/kernel.cu IN PLACE in a directory we
+        # deliberately never clear between rounds (needed for resume) — if it
+        # switches language without deleting the old file, keep only the freshest
+        # one rather than shipping a mixed-language "solution" (see _collect).
+        solution = self._collect(wd, resolve_conflict=True)
+        if not solution["sources"]:
+            detail = res.error_hint or res.stderr[:400]
+            raise RuntimeError(f"{self.spec.name}/{self.model} repair wrote no kernel "
+                               f"(exit {res.rc}): {detail}")
+        strat = wd / F_STRATEGY
+        strategy = (strat.read_text().strip()[:120] if strat.exists() else "") or cand.strategy
+        hf = wd / F_HANDOFF
+        handoff = (hf.read_text().strip()[:600] if hf.exists() else "") or cand.handoff
+        new_id = solution_hash(solution)[:12]
+        return Candidate(cand_id=new_id, solution=solution, parent=cand.cand_id,
+                         agent=self.spec.name, model=self.model, strategy=strategy,
+                         handoff=handoff, tokens=res.tokens or None,
+                         trajectory=str(res.trajectory), context_read=res.context_read or [],
+                         session_id=cand.session_id)
 
     # ---- helpers ----
     def _workdir(self, key, sub: str) -> Path:
@@ -514,15 +615,30 @@ class CliAgent:
             shutil.copytree(self.kb_dir, wd / "kb",
                             ignore=shutil.ignore_patterns("__pycache__", ".*"))
 
-    def _collect(self, wd: Path) -> dict:
+    def _collect(self, wd: Path, *, resolve_conflict: bool = False) -> dict:
+        """Gather the kernel file(s) a call wrote. `resolve_conflict` is for
+        repair(), which deliberately reuses an existing directory across rounds
+        (needed for session resume) instead of starting from a clean one: if the
+        model switched language (e.g. kernel.py → kernel.cu) without deleting the
+        old file, keep only the MOST RECENTLY WRITTEN language rather than
+        shipping a mixed-language "solution" — the same one-language rule the
+        writer/reviewer prompts enforce, resolved by recency instead of a reject."""
         files = [f for f in sorted(wd.glob(self.spec.kernels)) if f.is_file()]
+        if resolve_conflict and len({f.suffix for f in files}) > 1:
+            newest_ext = max(files, key=lambda f: f.stat().st_mtime).suffix
+            files = [f for f in files if f.suffix == newest_ext]
         sources = [{"path": f.name, "content": f.read_text(errors="replace")} for f in files]
         langs = sorted({self.spec.lang or _EXT_LANG.get(f.suffix.lstrip("."), "cuda_cpp")
                         for f in files}) or ["cuda_cpp"]
         return {"spec": {"languages": langs}, "sources": sources}
 
-    async def _run(self, wd: Path, prompt: str) -> _Run:
-        cmd = [t.replace("{model}", self.model).replace("{prompt}", prompt) for t in self.spec.cmd]
+    async def _run(self, wd: Path, prompt: str, *, session_id: str | None = None,
+                   traj_name: str = "trajectory") -> _Run:
+        template = self.spec.resume_cmd if session_id else self.spec.cmd
+        if session_id and not template:
+            raise RuntimeError(f"{self.spec.name} has no resume_cmd configured")
+        cmd = [t.replace("{model}", self.model).replace("{prompt}", prompt)
+                .replace("{session_id}", session_id or "") for t in template]
         # Feed the prompt on stdin (codex) or as an argv with stdin closed (claude).
         # codex with an argv prompt + DEVNULL stdin flakily dies "Reading additional
         # input from stdin"; giving it the prompt ON stdin (cmd ends with `-`) fixes it.
@@ -538,13 +654,14 @@ class CliAgent:
             await proc.wait()
             raise RuntimeError(f"{self.spec.name} timed out after {self.timeout}s")
         raw = out.decode("utf-8", "replace")
-        traj = wd / "trajectory.jsonl"
+        traj = wd / f"{traj_name}.jsonl"
         traj.write_text(raw)                        # the trajectory: the raw agent event stream
-        await asyncio.to_thread(self._render, raw, wd / "trajectory.txt")   # readable render (best-effort)
+        await asyncio.to_thread(self._render, raw, wd / f"{traj_name}.txt")   # readable render (best-effort)
         return _Run(err.decode("utf-8", "replace"), proc.returncode or 0,
                     _parse_tokens(self.spec.stream, raw), traj,
                     _extract_error_hint(self.spec.stream, raw),
-                    _extract_context_read(self.spec.stream, raw))
+                    _extract_context_read(self.spec.stream, raw),
+                    _extract_session_id(self.spec.stream, raw))
 
     def _render(self, raw: str, out_path: Path) -> None:
         """Render the raw stream to readable text via the vendored jq wrapper."""

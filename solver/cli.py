@@ -594,10 +594,12 @@ def main(argv: list[str] | None = None) -> None:
                               "for free instead of burning a GPU eval (up to the full timeout on a hang)")
     p_solve.add_argument("--no-review", dest="review", action="store_false",
                          help="skip the pre-GPU review gate — every candidate goes straight to the GPU")
-    p_solve.add_argument("--review-max-rounds", type=int, default=6,
+    p_solve.add_argument("--review-max-rounds", type=int, default=2,
                          help="safety valve on the review/repair cycle: after this many 'revise' rounds on "
                               "one candidate, ship it as-is rather than looping forever (never worse than "
-                              "--no-review)")
+                              "--no-review). Repair resumes the writer's own CLI session (real memory of "
+                              "what it wrote), so 2 focused attempts is plenty — more rounds mostly burn "
+                              "reviewer-model cost without converging")
     p_solve.add_argument("--ceiling-consensus", type=int, default=2,
                          help="N consecutive no-op iterations (agent left the kernel byte-identical to its "
                               "parent) before a problem auto-terminates as at-ceiling, rather than keep "

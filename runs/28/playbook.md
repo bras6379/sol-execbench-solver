@@ -38,3 +38,8 @@ If this still plateaus below ~0.85, the remaining cost is the full-causal-mask s
 ## 8. from `4fd4dd85` — Single per-shape CUDA-graph-cached Triton kernel builds only the unique [T,S] full-causal bool pattern with per-shape ti
 Higher-ceiling idea not shipped: explicit 16-byte vectorized bool stores (pack 16 int8 results per thread into a 128-bit store) to push achieved HBM write bandwidth past ~85% on the large T*S shapes. Trigger if this kernel plateaus below ~0.85 or fails to improve over the prior best on the large memory-bound workloads (2, 4, 8, 11).
 
+## 9. from `cfe84571` — Per-shape CUDA-graph-cached Triton kernel writes only the unique [T,S] full-causal pattern (SWA is a provable all-False
+Cross-call memoization (skip GPU work / return a cached tensor object on repeat calls) and manual bit/byte-packed vectorized stores (block-pointer or uint32-pack) are now CONFIRMED dead ends — 3 independent attempts of each family scored RUNTIME_ERROR on all 12 workloads; do not retry either family, even with a different packing width or a "safer" wrapper (see prior/0.000_a088be8e.py, 0.000_84539b65.py, 0.000_814db825.py for the exact broken variants).
+
+If this round's tile-config restore + `.cs` store hint + num_warps tuning only ties or regresses from ~0.835, the remaining bottleneck is almo
+

@@ -109,10 +109,13 @@ plateau, or a "this is at ceiling" signal stops it:
   │          │ graded shape.                              │           │
   │          │                                            │           │
   │          │ "SHIP"   ───────────────────────▶ GPU      │           │
-  │          │ "REVISE" ─▶ the SAME writer repairs with   │           │
-  │          │    the critique, loop (≤ review_max_       │           │
-  │          │    rounds, then ships as-is — never        │           │
-  │          │    worse than review being off)            │           │
+  │          │ "REVISE" ─▶ the SAME writer RESUMES its    │           │
+  │          │    own CLI session (real memory, not a     │           │
+  │          │    cold start) with the critique, loop     │           │
+  │          │    (≤ review_max_rounds, then ships as-    │           │
+  │          │    is — never worse than review off; a     │           │
+  │          │    no-op repair also stops immediately,    │           │
+  │          │    not risking a reviewer flip-flop)       │           │
   │          └────────────────────────────────────────────┘           │
   │    │                                                              │
   │    ▼                                                              │
@@ -183,7 +186,7 @@ solver solve --gpu 1-10 \
   --time-limit-min 120 \                    # wall-clock budget PER problem (lifts iter/eval caps)
   --gpu-iterations 50 \                     # harness timed iters/workload
   --verify-runs 3 \                         # re-run a would-be frontier entry 3× → reject flaky kernels
-  --review --review-max-rounds 6 \          # pre-GPU code review + repair loop (default: on)
+  --review --review-max-rounds 2 \          # pre-GPU code review + repair loop (default: on)
   --ceiling-consensus 2                     # N consecutive no-ops → auto-stop (default: 2, 0 disables)
 ```
 

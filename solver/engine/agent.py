@@ -31,6 +31,8 @@ class Candidate:
     trajectory: str | None = None       # path to the persisted agent trajectory (jsonl)
     context_read: list | None = None    # kb/*.md files this call actually consulted — auditable,
                                          # not assumed (see cli_agent._extract_context_read)
+    session_id: str | None = None       # this call's CLI session/thread id, so a repair() can
+                                         # RESUME it (same model memory) instead of cold-starting
 
 
 @dataclass
@@ -67,6 +69,7 @@ class Agent(Protocol):
     async def design(self, task_id: int) -> tuple[str, dict]: ...
     async def plan(self, parent: Any, ctx: Any) -> Candidate: ...
     async def review(self, cand: Candidate, ctx: Any) -> ReviewVerdict: ...
+    async def repair(self, cand: Candidate, critique: str, ctx: Any) -> Candidate: ...
 
 
 # A planner turns (perspective, parent, ctx) into a *spec* dict the StubAgent
@@ -117,6 +120,11 @@ class StubAgent:
         if self._reviewer is None:
             return ReviewVerdict(verdict="ship", reviewer=str(self.perspective))
         return self._reviewer(self.perspective, cand, ctx)
+
+    async def repair(self, cand: Candidate, critique: str, ctx: Any) -> Candidate:
+        """Stub has no CLI session to resume, so just re-run the planner script —
+        mirrors CliAgent.repair's cold-start fallback when resume isn't available."""
+        return await self.plan(cand, ctx)
 
     async def plan(self, parent: Any, ctx: Any) -> Candidate:
         self.calls += 1
