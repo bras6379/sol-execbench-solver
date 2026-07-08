@@ -1,0 +1,41 @@
+{
+  "task_id": 44,
+  "family": "gemm",
+  "name": "gemm_44",
+  "epsilon": 0.02,
+  "size": 1,
+  "best_cand": "0a6c1b78155d",
+  "best_score": 0.5667687888239741,
+  "best_score_cal": 0.49261113496413034,
+  "members": [
+    {
+      "cand_id": "0a6c1b78155d",
+      "sol_score": 0.5667687888239741,
+      "sol_score_cal": 0.49261113496413034,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.5929098608596212,
+        0.5875802743917004,
+        0.5828875731591914,
+        0.5817539842786934,
+        0.5687650952968164,
+        0.5707439175013482,
+        0.5413276399743933,
+        0.5559362643844932,
+        0.5470903403356192,
+        0.562769228143808,
+        0.5537176362524638,
+        0.5504512939558843,
+        0.5588032982164147,
+        0.5857360665719388,
+        0.555467312972506,
+        0.5723608348886922
+      ],
+      "strategy": "Counting-sort routing (argsort+scatter_add+cumsum+searchsorted, no host sync) into a BLOCK_M=64-padded expert-major layo",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/0a6c1b78155d.json"
+    }
+  ]
+}

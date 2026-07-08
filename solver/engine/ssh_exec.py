@@ -175,6 +175,27 @@ class SshExecutor:
 # samples the GPU's clocks/temp/power *while the eval runs* → env.json, so every
 # measurement records the conditions it was taken under (the clock the kernel
 # actually ran at is what makes us optimistic vs the leaderboard's locked 1500MHz).
+#
+# --compile-timeout / --timeout (below) bound how long ONE candidate can hold the
+# single-flight GPU. Lowered 180/600 -> 90/300 after a live incident (2026-07-08,
+# problem 44): an ambitious custom Triton megakernel burned the full 600s just to
+# fail COMPILE_ERROR on every shape, blocking 7 other queued problems the whole
+# time — see docs/oncall-runbook.md "GPU executor stalled". Tradeoff: a genuinely
+# complex-but-correct kernel that needs >300s to JIT+autotune across many graded
+# shapes could now get killed early and misreported as COMPILE_ERROR; revisit if
+# that starts showing up on legitimately-correct candidates.
+#
+# TODO(compile-off-the-lock): the real fix isn't a tighter timeout, it's not
+# compiling on the single-flight benchmarking GPU at all. A second, CHEAP GPU pod
+# (e.g. an L4/A10 — Triton/nvcc compilation targets an SM version, so it doesn't
+# need physical Blackwell hardware, only a live CUDA device to compile against)
+# could smoke-test compile+correctness for the next candidate WHILE the current
+# one is being timed on the B200 — since it's a different GPU, this doesn't touch
+# the single-flight benchmarking-accuracy constraint at all. Only candidates that
+# pass the cheap-GPU gate would ever reach the B200. Deferred: real infra work
+# (a second always-on rental, a two-tier pipeline) — do this only if compile
+# failures/hangs turn out to be a recurring, expensive pattern rather than a
+# one-off; see docs/oncall-runbook.md.
 RUN_EVAL_SH = r"""#!/bin/bash
 # run_eval.sh <problem_dir> <solution_json> <config_json> <out_trace>
 # Exit 1 == not all workloads passed (normal); the caller reads the trace, not $?.
@@ -187,7 +208,7 @@ JOBDIR=$(dirname "$4")
     --format=csv,noheader,nounits; sleep 0.25; done ) >"$JOBDIR/clocks.csv" 2>/dev/null &
 SAMPLER=$!
 uv run sol-execbench "$1" --solution "$2" --config "$3" --output "$4" \
-    --compile-timeout 180 --timeout 600
+    --compile-timeout 90 --timeout 300
 RC=$?
 kill "$SAMPLER" 2>/dev/null
 python3 - "$JOBDIR/clocks.csv" "$JOBDIR/env.json" <<'PY'

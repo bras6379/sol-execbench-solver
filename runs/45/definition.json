@@ -1,0 +1,105 @@
+{
+    "name": "045_fused_linear_gelu_grn_linear",
+    "hf_id": "facebook/convnextv2-base-22k-224",
+    "description": "Fused MLP pathway for ConvNextV2: expansion linear (dim -> 4*dim), GELU activation, Global Response Normalization (GRN) with L2 norm and channel-wise normalization, and projection linear (4*dim -> dim). Input/output in NHWC format.",
+    "axes": {
+        "batch_size": {
+            "type": "var"
+        },
+        "height": {
+            "type": "var"
+        },
+        "width": {
+            "type": "var"
+        },
+        "dim": {
+            "type": "const",
+            "value": 128
+        },
+        "hidden_dim": {
+            "type": "const",
+            "value": 512
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "hidden_states": {
+            "shape": [
+                "batch_size",
+                "height",
+                "width",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Input tensor in NHWC format"
+        },
+        "pwconv1_weight": {
+            "shape": [
+                "hidden_dim",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Expansion linear weight matrix"
+        },
+        "pwconv1_bias": {
+            "shape": [
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Expansion linear bias"
+        },
+        "grn_weight": {
+            "shape": [
+                "1",
+                "1",
+                "1",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "GRN learnable weight"
+        },
+        "grn_bias": {
+            "shape": [
+                "1",
+                "1",
+                "1",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "GRN learnable bias"
+        },
+        "pwconv2_weight": {
+            "shape": [
+                "dim",
+                "hidden_dim"
+            ],
+            "dtype": "float32",
+            "description": "Projection linear weight matrix"
+        },
+        "pwconv2_bias": {
+            "shape": [
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Projection linear bias"
+        },
+        "eps": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Epsilon for numerical stability in GRN"
+        }
+    },
+    "outputs": {
+        "output": {
+            "shape": [
+                "batch_size",
+                "height",
+                "width",
+                "dim"
+            ],
+            "dtype": "float32",
+            "description": "Output tensor in NHWC format"
+        }
+    },
+    "reference": "import torch\nimport torch.nn.functional as F\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    # Expansion linear: (B, H, W, dim) -> (B, H, W, hidden_dim)\n    # F.linear computes x @ weight.T + bias\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    \n    # GELU activation\n    x = F.gelu(x)\n    \n    # Global Response Normalization (GRN)\n    # Compute L2 norm across spatial dimensions (H, W)\n    # Shape: (B, H, W, hidden_dim) -> (B, 1, 1, hidden_dim)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    \n    # Normalize by channel-wise mean: (B, 1, 1, hidden_dim) -> (B, 1, 1, hidden_dim)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    \n    # Apply learnable affine transformation with residual connection\n    # weight * (input * norm_features) + bias + input\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    \n    # Projection linear: (B, H, W, hidden_dim) -> (B, H, W, dim)\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    \n    return output\n"
+}

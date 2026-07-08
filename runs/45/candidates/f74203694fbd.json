@@ -1,0 +1,223 @@
+{
+  "cand_id": "f74203694fbd",
+  "task_id": 45,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "3-kernel fused Triton (recompute-GEMM1 two-pass GRN, FP16 tensor cores, FP32 accumulate, per-shape autotuned tiles) repl",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "715e117b2031",
+  "trajectory": "runs/45/work/f74203694fbd/trajectory.jsonl",
+  "gpu_s": 57.556,
+  "job_id": "45-f74203694fbd",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 560.21,
+      "samples": 195,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.064608,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.067888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.104208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.104192,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0674,
+      "baseline_latency_ms": 0.573457,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.144432,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.176352,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.1221599999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.0599839999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.078064,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.10152,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0339,
+      "baseline_latency_ms": 0.3117919999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.0575525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.180176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover\n    _HAVE_TRITON = False\n\nif _HAVE_TRITON:\n    try:\n        from triton.language.extra import libdevice as _libdevice\n    except ImportError:  # pragma: no cover\n        from triton.language.extra.cuda import libdevice as _libdevice\n\n# ---------------------------------------------------------------------------\n# Problem 045 -- fused_linear_gelu_grn_linear (ConvNeXtV2 MLP block), B200.\n#\n# Op graph (dim=128, hidden_dim=512, N = B*H*W spatial positions):\n#   1. x   = linear(hidden_states, W1[512,128], b1[512])     GEMM1  M=N,K=128,N=512\n#   2. x   = gelu_exact(x)\n#   3. g   = ||x||_2 over (H,W) per (batch,channel)          global reduction\n#   4. nf  = g / (mean_c(g) + eps)\n#   5. x   = grn_w*(x*nf) + grn_b + x                         affine + residual\n#   6. out = linear(x, W2[128,512], b2[128])                  GEMM2  M=N,K=512,N=128\n#\n# GELU's nonlinearity blocks reordering steps 1-2 across the GRN barrier at\n# step 3, so this is inherently two-pass. Materializing the (N,512) fp32\n# intermediate would cost ~5.6KB/row of HBM traffic; instead we RECOMPUTE\n# GEMM1+GELU in the second pass (kernel C) and only ever write ~1.5KB/row\n# (recompute buys ~3.7x less traffic for ~1.5x more, effectively-free,\n# tensor-core FLOPs -- see DESIGN.md Sec 3).\n#\n# Three Triton kernels, FP16 tensor-core operands / FP32 accumulate:\n#   A. _sumsq_kernel : recompute GEMM1+GELU per row/channel tile, atomic-add\n#      sum-of-squares into a (B,HIDDEN) fp32 buffer (contention is low: a\n#      handful of row-tiles per batch touch each of the 512 channel slots).\n#   B. _finalize_norm_kernel : sqrt + channel-mean + eps-divide -> (B,HIDDEN)\n#      norm_features, one CTA per batch.\n#   C. _main_kernel : recompute GEMM1+GELU again, apply affine+residual using\n#      norm_features, immediately feed the fp16-cast result into GEMM2's\n#      K-loop (accumulating in registers, never materializing the full\n#      (BLOCK_M,512) intermediate) -> fp32 output tile.\n#\n# hidden_dim=512 and dim=128 are compile-time constants for every graded\n# shape (definition.json declares them \"const\"), so BLOCK_N choices that\n# divide 512 exactly need no masking on the channel axis anywhere -- only\n# the row (spatial) axis needs a boundary mask, since H*W varies by shape.\n# ---------------------------------------------------------------------------\n\nif _HAVE_TRITON:\n\n    @triton.jit\n    def _gelu_exact(x):\n        # exact erf-based GELU (matches bare F.gelu, not the tanh approx),\n        # computed in fp32 regardless of the tensor-core operand precision.\n        return 0.5 * x * (1.0 + _libdevice.erf(x * 0.7071067811865476))\n\n    def _a_configs():\n        cfgs = []\n        for bm, bn, w, st in [\n            (32, 128, 4, 2),\n            (32, 256, 4, 2),\n            (64, 128, 4, 2),\n            (64, 256, 8, 2),\n            (128, 128, 8, 3),\n            (128, 256, 8, 3),\n            (256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config({\"BLOCK_M\": bm, \"BLOCK_N\": bn}, num_warps=w, num_stages=st))\n        return cfgs\n\n    # reset_to_zero is required here: autotune's search phase calls the\n    # kernel many times (once per candidate config, plus repeats for stable\n    # timing) against the *same* SUMSQ_ptr buffer. Since this kernel\n    # accumulates via atomic_add rather than overwriting, without\n    # reset_to_zero those repeated trial launches would each add their own\n    # full sum-of-squares into SUMSQ_ptr, corrupting the value used by the\n    # rest of *this* call (kernel B/C) the very first time a new shape is\n    # seen. reset_to_zero makes the autotuner zero the buffer before every\n    # trial launch, so only the winning config's single real launch counts.\n    @triton.autotune(configs=_a_configs(), key=[\"HW\", \"NBATCH\"], reset_to_zero=[\"SUMSQ_ptr\"])\n    @triton.jit\n    def _sumsq_kernel(\n        X_ptr, W1_ptr, B1_ptr, SUMSQ_ptr,\n        HW, NBATCH,\n        DIM: tl.constexpr, HIDDEN: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n        pid_n = tl.program_id(2)\n\n        m0 = pid_m * BLOCK_M\n        n0 = pid_n * BLOCK_N\n        m_idx = m0 + tl.arange(0, BLOCK_M)\n        n_idx = n0 + tl.arange(0, BLOCK_N)\n        k_idx = tl.arange(0, DIM)\n        m_mask = m_idx < HW\n\n        x_ptrs = X_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0).to(tl.float16)\n\n        w1_ptrs = W1_ptr + n_idx[:, None] * DIM + k_idx[None, :]\n        w1 = tl.load(w1_ptrs).to(tl.float16)  # (BLOCK_N, DIM)\n\n        acc = tl.dot(x, tl.trans(w1))  # (BLOCK_M, BLOCK_N) fp32\n        b1 = tl.load(B1_ptr + n_idx).to(tl.float32)\n        acc = acc + b1[None, :]\n\n        g = _gelu_exact(acc)\n        sq = tl.where(m_mask[:, None], g * g, 0.0)\n        partial = tl.sum(sq, axis=0)  # (BLOCK_N,)\n\n        sumsq_ptrs = SUMSQ_ptr + pid_b * HIDDEN + n_idx\n        tl.atomic_add(sumsq_ptrs, partial)\n\n    @triton.jit\n    def _finalize_norm_kernel(\n        SUMSQ_ptr, NORM_ptr, eps,\n        HIDDEN: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        c_idx = tl.arange(0, HIDDEN)\n        s = tl.load(SUMSQ_ptr + pid_b * HIDDEN + c_idx)\n        gfeat = tl.sqrt(s)\n        mean_c = tl.sum(gfeat, axis=0) / HIDDEN\n        nfeat = gfeat / (mean_c + eps)\n        tl.store(NORM_ptr + pid_b * HIDDEN + c_idx, nfeat)\n\n    def _c_configs():\n        cfgs = []\n        for bm, bn, w, st in [\n            (32, 64, 4, 2),\n            (32, 128, 4, 2),\n            (64, 64, 4, 2),\n            (64, 128, 8, 3),\n            (128, 64, 8, 3),\n            (128, 128, 8, 3),\n            (256, 64, 8, 3),\n            (256, 128, 8, 4),\n        ]:\n            cfgs.append(triton.Config({\"BLOCK_M\": bm, \"BLOCK_N\": bn}, num_warps=w, num_stages=st))\n        return cfgs\n\n    @triton.autotune(configs=_c_configs(), key=[\"HW\", \"NBATCH\"])\n    @triton.jit\n    def _main_kernel(\n        X_ptr, W1_ptr, B1_ptr, GW_ptr, GB_ptr, NORM_ptr, W2_ptr, B2_ptr, OUT_ptr,\n        HW, NBATCH,\n        DIM: tl.constexpr, HIDDEN: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n\n        m0 = pid_m * BLOCK_M\n        m_idx = m0 + tl.arange(0, BLOCK_M)\n        m_mask = m_idx < HW\n        k_idx = tl.arange(0, DIM)\n\n        x_ptrs = X_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0).to(tl.float16)\n\n        acc2 = tl.zeros((BLOCK_M, DIM), dtype=tl.float32)\n\n        for j in range(0, HIDDEN, BLOCK_N):\n            n_idx = j + tl.arange(0, BLOCK_N)\n\n            w1_ptrs = W1_ptr + n_idx[:, None] * DIM + k_idx[None, :]\n            w1 = tl.load(w1_ptrs).to(tl.float16)  # (BLOCK_N, DIM)\n            acc1 = tl.dot(x, tl.trans(w1))  # (BLOCK_M, BLOCK_N) fp32\n            b1 = tl.load(B1_ptr + n_idx).to(tl.float32)\n            acc1 = acc1 + b1[None, :]\n\n            g = _gelu_exact(acc1)\n\n            nfeat = tl.load(NORM_ptr + pid_b * HIDDEN + n_idx).to(tl.float32)\n            gw = tl.load(GW_ptr + n_idx).to(tl.float32)\n            gb = tl.load(GB_ptr + n_idx).to(tl.float32)\n\n            xa = gw[None, :] * (g * nfeat[None, :]) + gb[None, :] + g\n            xa16 = xa.to(tl.float16)\n\n            w2_ptrs = W2_ptr + k_idx[:, None] * HIDDEN + n_idx[None, :]\n            w2 = tl.load(w2_ptrs).to(tl.float16)  # (DIM, BLOCK_N)\n            acc2 += tl.dot(xa16, tl.trans(w2))  # (BLOCK_M, DIM)\n\n        b2 = tl.load(B2_ptr + k_idx).to(tl.float32)\n        acc2 = acc2 + b2[None, :]\n\n        out_ptrs = OUT_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        tl.store(out_ptrs, acc2, mask=m_mask[:, None])\n\n\ndef _run_triton(\n    hidden_states,\n    pwconv1_weight,\n    pwconv1_bias,\n    grn_weight,\n    grn_bias,\n    pwconv2_weight,\n    pwconv2_bias,\n    eps,\n):\n    B, H, W, DIM = hidden_states.shape\n    HW = H * W\n    HIDDEN = pwconv1_weight.shape[0]\n\n    x = hidden_states.contiguous()\n    w1 = pwconv1_weight.contiguous()\n    b1 = pwconv1_bias.contiguous()\n    w2 = pwconv2_weight.contiguous()\n    b2 = pwconv2_bias.contiguous()\n    gw = grn_weight.reshape(-1).contiguous()\n    gb = grn_bias.reshape(-1).contiguous()\n\n    device = x.device\n    sumsq = torch.zeros((B, HIDDEN), dtype=torch.float32, device=device)\n    norm = torch.empty((B, HIDDEN), dtype=torch.float32, device=device)\n    out = torch.empty((B, H, W, DIM), dtype=torch.float32, device=device)\n\n    grid_a = lambda META: (B, triton.cdiv(HW, META[\"BLOCK_M\"]), HIDDEN // META[\"BLOCK_N\"])\n    _sumsq_kernel[grid_a](\n        x, w1, b1, sumsq,\n        HW, B,\n        DIM=DIM, HIDDEN=HIDDEN,\n    )\n\n    _finalize_norm_kernel[(B,)](\n        sumsq, norm, float(eps),\n        HIDDEN=HIDDEN,\n    )\n\n    grid_c = lambda META: (B, triton.cdiv(HW, META[\"BLOCK_M\"]))\n    _main_kernel[grid_c](\n        x, w1, b1, gw, gb, norm, w2, b2, out,\n        HW, B,\n        DIM=DIM, HIDDEN=HIDDEN,\n    )\n\n    return out\n\n\ndef _run_torch(\n    hidden_states,\n    pwconv1_weight,\n    pwconv1_bias,\n    grn_weight,\n    grn_bias,\n    pwconv2_weight,\n    pwconv2_bias,\n    eps,\n):\n    import torch.nn.functional as F\n\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    x = F.gelu(x)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    if _HAVE_TRITON and hidden_states.is_cuda:\n        return _run_triton(\n            hidden_states,\n            pwconv1_weight,\n            pwconv1_bias,\n            grn_weight,\n            grn_bias,\n            pwconv2_weight,\n            pwconv2_bias,\n            eps,\n        )\n    return _run_torch(\n        hidden_states,\n        pwconv1_weight,\n        pwconv1_bias,\n        grn_weight,\n        grn_bias,\n        pwconv2_weight,\n        pwconv2_bias,\n        eps,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t45_f74203694fbd",
+    "definition": "045_fused_linear_gelu_grn_linear",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\ntry:\n    import triton\n    import triton.language as tl\n    _HAVE_TRITON = True\nexcept Exception:  # pragma: no cover\n    _HAVE_TRITON = False\n\nif _HAVE_TRITON:\n    try:\n        from triton.language.extra import libdevice as _libdevice\n    except ImportError:  # pragma: no cover\n        from triton.language.extra.cuda import libdevice as _libdevice\n\n# ---------------------------------------------------------------------------\n# Problem 045 -- fused_linear_gelu_grn_linear (ConvNeXtV2 MLP block), B200.\n#\n# Op graph (dim=128, hidden_dim=512, N = B*H*W spatial positions):\n#   1. x   = linear(hidden_states, W1[512,128], b1[512])     GEMM1  M=N,K=128,N=512\n#   2. x   = gelu_exact(x)\n#   3. g   = ||x||_2 over (H,W) per (batch,channel)          global reduction\n#   4. nf  = g / (mean_c(g) + eps)\n#   5. x   = grn_w*(x*nf) + grn_b + x                         affine + residual\n#   6. out = linear(x, W2[128,512], b2[128])                  GEMM2  M=N,K=512,N=128\n#\n# GELU's nonlinearity blocks reordering steps 1-2 across the GRN barrier at\n# step 3, so this is inherently two-pass. Materializing the (N,512) fp32\n# intermediate would cost ~5.6KB/row of HBM traffic; instead we RECOMPUTE\n# GEMM1+GELU in the second pass (kernel C) and only ever write ~1.5KB/row\n# (recompute buys ~3.7x less traffic for ~1.5x more, effectively-free,\n# tensor-core FLOPs -- see DESIGN.md Sec 3).\n#\n# Three Triton kernels, FP16 tensor-core operands / FP32 accumulate:\n#   A. _sumsq_kernel : recompute GEMM1+GELU per row/channel tile, atomic-add\n#      sum-of-squares into a (B,HIDDEN) fp32 buffer (contention is low: a\n#      handful of row-tiles per batch touch each of the 512 channel slots).\n#   B. _finalize_norm_kernel : sqrt + channel-mean + eps-divide -> (B,HIDDEN)\n#      norm_features, one CTA per batch.\n#   C. _main_kernel : recompute GEMM1+GELU again, apply affine+residual using\n#      norm_features, immediately feed the fp16-cast result into GEMM2's\n#      K-loop (accumulating in registers, never materializing the full\n#      (BLOCK_M,512) intermediate) -> fp32 output tile.\n#\n# hidden_dim=512 and dim=128 are compile-time constants for every graded\n# shape (definition.json declares them \"const\"), so BLOCK_N choices that\n# divide 512 exactly need no masking on the channel axis anywhere -- only\n# the row (spatial) axis needs a boundary mask, since H*W varies by shape.\n# ---------------------------------------------------------------------------\n\nif _HAVE_TRITON:\n\n    @triton.jit\n    def _gelu_exact(x):\n        # exact erf-based GELU (matches bare F.gelu, not the tanh approx),\n        # computed in fp32 regardless of the tensor-core operand precision.\n        return 0.5 * x * (1.0 + _libdevice.erf(x * 0.7071067811865476))\n\n    def _a_configs():\n        cfgs = []\n        for bm, bn, w, st in [\n            (32, 128, 4, 2),\n            (32, 256, 4, 2),\n            (64, 128, 4, 2),\n            (64, 256, 8, 2),\n            (128, 128, 8, 3),\n            (128, 256, 8, 3),\n            (256, 128, 8, 3),\n        ]:\n            cfgs.append(triton.Config({\"BLOCK_M\": bm, \"BLOCK_N\": bn}, num_warps=w, num_stages=st))\n        return cfgs\n\n    # reset_to_zero is required here: autotune's search phase calls the\n    # kernel many times (once per candidate config, plus repeats for stable\n    # timing) against the *same* SUMSQ_ptr buffer. Since this kernel\n    # accumulates via atomic_add rather than overwriting, without\n    # reset_to_zero those repeated trial launches would each add their own\n    # full sum-of-squares into SUMSQ_ptr, corrupting the value used by the\n    # rest of *this* call (kernel B/C) the very first time a new shape is\n    # seen. reset_to_zero makes the autotuner zero the buffer before every\n    # trial launch, so only the winning config's single real launch counts.\n    @triton.autotune(configs=_a_configs(), key=[\"HW\", \"NBATCH\"], reset_to_zero=[\"SUMSQ_ptr\"])\n    @triton.jit\n    def _sumsq_kernel(\n        X_ptr, W1_ptr, B1_ptr, SUMSQ_ptr,\n        HW, NBATCH,\n        DIM: tl.constexpr, HIDDEN: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n        pid_n = tl.program_id(2)\n\n        m0 = pid_m * BLOCK_M\n        n0 = pid_n * BLOCK_N\n        m_idx = m0 + tl.arange(0, BLOCK_M)\n        n_idx = n0 + tl.arange(0, BLOCK_N)\n        k_idx = tl.arange(0, DIM)\n        m_mask = m_idx < HW\n\n        x_ptrs = X_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0).to(tl.float16)\n\n        w1_ptrs = W1_ptr + n_idx[:, None] * DIM + k_idx[None, :]\n        w1 = tl.load(w1_ptrs).to(tl.float16)  # (BLOCK_N, DIM)\n\n        acc = tl.dot(x, tl.trans(w1))  # (BLOCK_M, BLOCK_N) fp32\n        b1 = tl.load(B1_ptr + n_idx).to(tl.float32)\n        acc = acc + b1[None, :]\n\n        g = _gelu_exact(acc)\n        sq = tl.where(m_mask[:, None], g * g, 0.0)\n        partial = tl.sum(sq, axis=0)  # (BLOCK_N,)\n\n        sumsq_ptrs = SUMSQ_ptr + pid_b * HIDDEN + n_idx\n        tl.atomic_add(sumsq_ptrs, partial)\n\n    @triton.jit\n    def _finalize_norm_kernel(\n        SUMSQ_ptr, NORM_ptr, eps,\n        HIDDEN: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        c_idx = tl.arange(0, HIDDEN)\n        s = tl.load(SUMSQ_ptr + pid_b * HIDDEN + c_idx)\n        gfeat = tl.sqrt(s)\n        mean_c = tl.sum(gfeat, axis=0) / HIDDEN\n        nfeat = gfeat / (mean_c + eps)\n        tl.store(NORM_ptr + pid_b * HIDDEN + c_idx, nfeat)\n\n    def _c_configs():\n        cfgs = []\n        for bm, bn, w, st in [\n            (32, 64, 4, 2),\n            (32, 128, 4, 2),\n            (64, 64, 4, 2),\n            (64, 128, 8, 3),\n            (128, 64, 8, 3),\n            (128, 128, 8, 3),\n            (256, 64, 8, 3),\n            (256, 128, 8, 4),\n        ]:\n            cfgs.append(triton.Config({\"BLOCK_M\": bm, \"BLOCK_N\": bn}, num_warps=w, num_stages=st))\n        return cfgs\n\n    @triton.autotune(configs=_c_configs(), key=[\"HW\", \"NBATCH\"])\n    @triton.jit\n    def _main_kernel(\n        X_ptr, W1_ptr, B1_ptr, GW_ptr, GB_ptr, NORM_ptr, W2_ptr, B2_ptr, OUT_ptr,\n        HW, NBATCH,\n        DIM: tl.constexpr, HIDDEN: tl.constexpr,\n        BLOCK_M: tl.constexpr, BLOCK_N: tl.constexpr,\n    ):\n        pid_b = tl.program_id(0)\n        pid_m = tl.program_id(1)\n\n        m0 = pid_m * BLOCK_M\n        m_idx = m0 + tl.arange(0, BLOCK_M)\n        m_mask = m_idx < HW\n        k_idx = tl.arange(0, DIM)\n\n        x_ptrs = X_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        x = tl.load(x_ptrs, mask=m_mask[:, None], other=0.0).to(tl.float16)\n\n        acc2 = tl.zeros((BLOCK_M, DIM), dtype=tl.float32)\n\n        for j in range(0, HIDDEN, BLOCK_N):\n            n_idx = j + tl.arange(0, BLOCK_N)\n\n            w1_ptrs = W1_ptr + n_idx[:, None] * DIM + k_idx[None, :]\n            w1 = tl.load(w1_ptrs).to(tl.float16)  # (BLOCK_N, DIM)\n            acc1 = tl.dot(x, tl.trans(w1))  # (BLOCK_M, BLOCK_N) fp32\n            b1 = tl.load(B1_ptr + n_idx).to(tl.float32)\n            acc1 = acc1 + b1[None, :]\n\n            g = _gelu_exact(acc1)\n\n            nfeat = tl.load(NORM_ptr + pid_b * HIDDEN + n_idx).to(tl.float32)\n            gw = tl.load(GW_ptr + n_idx).to(tl.float32)\n            gb = tl.load(GB_ptr + n_idx).to(tl.float32)\n\n            xa = gw[None, :] * (g * nfeat[None, :]) + gb[None, :] + g\n            xa16 = xa.to(tl.float16)\n\n            w2_ptrs = W2_ptr + k_idx[:, None] * HIDDEN + n_idx[None, :]\n            w2 = tl.load(w2_ptrs).to(tl.float16)  # (DIM, BLOCK_N)\n            acc2 += tl.dot(xa16, tl.trans(w2))  # (BLOCK_M, DIM)\n\n        b2 = tl.load(B2_ptr + k_idx).to(tl.float32)\n        acc2 = acc2 + b2[None, :]\n\n        out_ptrs = OUT_ptr + pid_b * HW * DIM + m_idx[:, None] * DIM + k_idx[None, :]\n        tl.store(out_ptrs, acc2, mask=m_mask[:, None])\n\n\ndef _run_triton(\n    hidden_states,\n    pwconv1_weight,\n    pwconv1_bias,\n    grn_weight,\n    grn_bias,\n    pwconv2_weight,\n    pwconv2_bias,\n    eps,\n):\n    B, H, W, DIM = hidden_states.shape\n    HW = H * W\n    HIDDEN = pwconv1_weight.shape[0]\n\n    x = hidden_states.contiguous()\n    w1 = pwconv1_weight.contiguous()\n    b1 = pwconv1_bias.contiguous()\n    w2 = pwconv2_weight.contiguous()\n    b2 = pwconv2_bias.contiguous()\n    gw = grn_weight.reshape(-1).contiguous()\n    gb = grn_bias.reshape(-1).contiguous()\n\n    device = x.device\n    sumsq = torch.zeros((B, HIDDEN), dtype=torch.float32, device=device)\n    norm = torch.empty((B, HIDDEN), dtype=torch.float32, device=device)\n    out = torch.empty((B, H, W, DIM), dtype=torch.float32, device=device)\n\n    grid_a = lambda META: (B, triton.cdiv(HW, META[\"BLOCK_M\"]), HIDDEN // META[\"BLOCK_N\"])\n    _sumsq_kernel[grid_a](\n        x, w1, b1, sumsq,\n        HW, B,\n        DIM=DIM, HIDDEN=HIDDEN,\n    )\n\n    _finalize_norm_kernel[(B,)](\n        sumsq, norm, float(eps),\n        HIDDEN=HIDDEN,\n    )\n\n    grid_c = lambda META: (B, triton.cdiv(HW, META[\"BLOCK_M\"]))\n    _main_kernel[grid_c](\n        x, w1, b1, gw, gb, norm, w2, b2, out,\n        HW, B,\n        DIM=DIM, HIDDEN=HIDDEN,\n    )\n\n    return out\n\n\ndef _run_torch(\n    hidden_states,\n    pwconv1_weight,\n    pwconv1_bias,\n    grn_weight,\n    grn_bias,\n    pwconv2_weight,\n    pwconv2_bias,\n    eps,\n):\n    import torch.nn.functional as F\n\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    x = F.gelu(x)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    if _HAVE_TRITON and hidden_states.is_cuda:\n        return _run_triton(\n            hidden_states,\n            pwconv1_weight,\n            pwconv1_bias,\n            grn_weight,\n            grn_bias,\n            pwconv2_weight,\n            pwconv2_bias,\n            eps,\n        )\n    return _run_torch(\n        hidden_states,\n        pwconv1_weight,\n        pwconv1_bias,\n        grn_weight,\n        grn_bias,\n        pwconv2_weight,\n        pwconv2_bias,\n        eps,\n    )\n"
+      }
+    ]
+  }
+}

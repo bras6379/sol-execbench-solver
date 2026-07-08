@@ -1,0 +1,41 @@
+{
+  "task_id": 43,
+  "family": "layernorm",
+  "name": "layernorm_43",
+  "epsilon": 0.02,
+  "size": 1,
+  "best_cand": "a1d0cda7f839",
+  "best_score": 0.5927413224385244,
+  "best_score_cal": 0.5020503764483303,
+  "members": [
+    {
+      "cand_id": "a1d0cda7f839",
+      "sol_score": 0.5927413224385244,
+      "sol_score_cal": 0.5020503764483303,
+      "all_passed": true,
+      "shapes_won": 16,
+      "vector": [
+        0.6289960215305406,
+        0.628451026754561,
+        0.5866735113377393,
+        0.6253933913876779,
+        0.6252559243770691,
+        0.5772096408452779,
+        0.6365323435843053,
+        0.6289445637649248,
+        0.6296160359897442,
+        0.5456526422026401,
+        0.5779382611158312,
+        0.5847608737183978,
+        0.6175963488843813,
+        0.6295124708523826,
+        0.40043336582881217,
+        0.5608947368421052
+      ],
+      "strategy": "Keep the 3 dense GEMMs on cuBLAS (F.linear) but replace the reference's ~7 elementwise/copy ops (5-op RMSNorm, 2x .conti",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/a1d0cda7f839.json"
+    }
+  ]
+}

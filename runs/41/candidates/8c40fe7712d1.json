@@ -1,0 +1,245 @@
+{
+  "cand_id": "8c40fe7712d1",
+  "task_id": 41,
+  "verdict": "dominated",
+  "sol_score": 0.49197165191865605,
+  "sol_score_calibrated": 0.4468126597222569,
+  "correct": true,
+  "vector": [
+    0.5289231298958423,
+    0.48464783382314724,
+    0.4500240495916064,
+    0.4628231492361927,
+    0.5605742630926261,
+    0.4597999999999997,
+    0.46197757447050836,
+    0.4581048431428808,
+    0.4954664453100057,
+    0.45832389319781136,
+    0.5313679891295592,
+    0.45527051142313696,
+    0.5322745901639345,
+    0.6199778704825132,
+    0.4585791720291872,
+    0.4534111157095453
+  ],
+  "strategy": "Keep F.conv2d (cuDNN) on the untouched NCHW input, but force cudnn.benchmark/TF32 algorithm autotuning instead of the de",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "bc0133379100",
+  "trajectory": "runs/41/work/8c40fe7712d1/trajectory.jsonl",
+  "gpu_s": 9.583,
+  "job_id": "41-8c40fe7712d1",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 36.0,
+      "power_w_max": 313.26,
+      "samples": 28,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.04608,
+      "sol_ms": 0.0023,
+      "baseline_latency_ms": 0.051456,
+      "sol_score": 0.5289231298958423,
+      "sol_score_cal": 0.483384992998411,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0681435,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.064304,
+      "sol_score": 0.48464783382314724,
+      "sol_score_cal": 0.43917608033898964,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.458111,
+      "sol_ms": 0.0299,
+      "baseline_latency_ms": 0.3802885,
+      "sol_score": 0.4500240495916064,
+      "sol_score_cal": 0.4047736486109091,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0969275,
+      "sol_ms": 0.0055,
+      "baseline_latency_ms": 0.0842725,
+      "sol_score": 0.4628231492361927,
+      "sol_score_cal": 0.41763374280234905,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.038352,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.048512,
+      "sol_score": 0.5605742630926261,
+      "sol_score_cal": 0.5157602427974365,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.11504,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.0989599999999999,
+      "sol_score": 0.4597999999999997,
+      "sol_score_cal": 0.4145001117834139,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.2071835,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.179808,
+      "sol_score": 0.46197757447050836,
+      "sol_score_cal": 0.4164400885409702,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.215583,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.184336,
+      "sol_score": 0.4581048431428808,
+      "sol_score_cal": 0.4127672149812976,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.066912,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.065776,
+      "sol_score": 0.4954664453100057,
+      "sol_score_cal": 0.449821914695284,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.21313500000000002,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.1824155,
+      "sol_score": 0.45832389319781136,
+      "sol_score_cal": 0.4129497368450968,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.045728,
+      "sol_ms": 0.0021,
+      "baseline_latency_ms": 0.0515685,
+      "sol_score": 0.5313679891295592,
+      "sol_score_cal": 0.4860105858614281,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.21740749999999998,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.1839205,
+      "sol_score": 0.45527051142313696,
+      "sol_score_cal": 0.41002400120249616,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.045824,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.051872,
+      "sol_score": 0.5322745901639345,
+      "sol_score_cal": 0.487019074523137,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0260155,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0420635,
+      "sol_score": 0.6199778704825132,
+      "sol_score_cal": 0.5773096231242415,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.409311,
+      "sol_ms": 0.0267,
+      "baseline_latency_ms": 0.3507685,
+      "sol_score": 0.4585791720291872,
+      "sol_score_cal": 0.4131163012224931,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.1172795,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.09848,
+      "sol_score": 0.4534111157095453,
+      "sol_score_cal": 0.4083151952281576,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# This op (F.conv2d, Cin=32/Cout=64/K=3/stride=2/pad=1, fp32 in/out, no norm/act\n# tail) is structurally memory-bound at full TF32 tensor-core rate for every one\n# of the 16 graded shapes (~48 FLOP/byte vs a ~143 FLOP/byte TF32 ridge point on\n# B200) -- see DESIGN.md. cuDNN already owns this op; the only safe, unambiguous\n# lever available without on-GPU profiling is letting it search its algorithm\n# table instead of using the (potentially TF32-unaware / heuristic-only) default\n# picked once per shape.\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.deterministic = False\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> torch.Tensor:\n    \"\"\"Strided 2D convolution for spatial downsampling.\n\n    Args:\n        x: Input tensor of shape (batch_size, in_channels, height, width)\n        weight: Convolution weights of shape (out_channels, in_channels, kernel_size, kernel_size)\n        bias: Bias tensor of shape (out_channels,)\n\n    Returns:\n        Output tensor of shape (batch_size, out_channels, out_height, out_width)\n    \"\"\"\n    return F.conv2d(x, weight, bias, stride=2, padding=1)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t41_8c40fe7712d1",
+    "definition": "041_strided_conv2d_downsampling",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# This op (F.conv2d, Cin=32/Cout=64/K=3/stride=2/pad=1, fp32 in/out, no norm/act\n# tail) is structurally memory-bound at full TF32 tensor-core rate for every one\n# of the 16 graded shapes (~48 FLOP/byte vs a ~143 FLOP/byte TF32 ridge point on\n# B200) -- see DESIGN.md. cuDNN already owns this op; the only safe, unambiguous\n# lever available without on-GPU profiling is letting it search its algorithm\n# table instead of using the (potentially TF32-unaware / heuristic-only) default\n# picked once per shape.\ntorch.backends.cudnn.benchmark = True\ntorch.backends.cudnn.allow_tf32 = True\ntorch.backends.cuda.matmul.allow_tf32 = True\ntorch.backends.cudnn.deterministic = False\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor, weight: torch.Tensor, bias: torch.Tensor) -> torch.Tensor:\n    \"\"\"Strided 2D convolution for spatial downsampling.\n\n    Args:\n        x: Input tensor of shape (batch_size, in_channels, height, width)\n        weight: Convolution weights of shape (out_channels, in_channels, kernel_size, kernel_size)\n        bias: Bias tensor of shape (out_channels,)\n\n    Returns:\n        Output tensor of shape (batch_size, out_channels, out_height, out_width)\n    \"\"\"\n    return F.conv2d(x, weight, bias, stride=2, padding=1)\n"
+      }
+    ]
+  }
+}

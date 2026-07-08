@@ -94,3 +94,7 @@
 - [attention_output_projection_with_residual] task 30: best=0.4624 tier=0
 - [flux_ada_layer_norm_zero_modulation_extraction] task 35: best=0.473 tier=0
 - [adaptive_instance_normalization_2d_backward] task 39: best=0.4197 tier=0
+- [moe_expert_computation] task 44: best=0.5668 tier=0
+- [mla_fused_qkv_rope_split] task 43: best=0.5927 tier=0
+- [moe_expert_load_balancing_and_token_capacity_backward] task 42: best=0.717 tier=0
+- [attention_with_qk_norm_and_rope] task 47: best=0.365 tier=0

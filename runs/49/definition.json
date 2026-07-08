@@ -1,0 +1,76 @@
+{
+    "name": "049_attention_qk_matmul_with_gqa_repeat_and_scaling",
+    "hf_id": "google/gemma-3-270m",
+    "description": "Fused attention Q@K^T computation with GQA key repetition and scaling. Takes query (batch, num_heads=4, seq_len, head_dim=256) and key (batch, num_kv_heads=1, seq_len, head_dim=256), repeats KV heads 4x to match query heads, computes Q@K^T, and applies scaling (1/sqrt(256)=0.0625).",
+    "axes": {
+        "batch_size": {
+            "type": "var",
+            "description": "Batch size"
+        },
+        "seq_len": {
+            "type": "var",
+            "description": "Sequence length"
+        },
+        "num_attention_heads": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of query attention heads"
+        },
+        "num_key_value_heads": {
+            "type": "const",
+            "value": 1,
+            "description": "Number of key/value heads for GQA"
+        },
+        "head_dim": {
+            "type": "const",
+            "value": 256,
+            "description": "Dimension of each attention head"
+        },
+        "num_key_value_groups": {
+            "type": "const",
+            "value": 4,
+            "description": "Number of times to repeat KV heads"
+        }
+    },
+    "custom_inputs_entrypoint": null,
+    "inputs": {
+        "query": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Query tensor"
+        },
+        "key": {
+            "shape": [
+                "batch_size",
+                "num_key_value_heads",
+                "seq_len",
+                "head_dim"
+            ],
+            "dtype": "bfloat16",
+            "description": "Key tensor"
+        },
+        "scaling": {
+            "shape": null,
+            "dtype": "float32",
+            "description": "Scaling factor (1/sqrt(query_pre_attn_scalar))"
+        }
+    },
+    "outputs": {
+        "attn_scores": {
+            "shape": [
+                "batch_size",
+                "num_attention_heads",
+                "seq_len",
+                "seq_len"
+            ],
+            "dtype": "bfloat16",
+            "description": "Scaled attention scores"
+        }
+    },
+    "reference": "import torch\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n    \n    Args:\n        query: Query tensor of shape (batch, num_attention_heads, seq_len, head_dim)\n        key: Key tensor of shape (batch, num_key_value_heads, seq_len, head_dim)\n        scaling: Scaling factor (1/sqrt(query_pre_attn_scalar))\n    \n    Returns:\n        attn_scores: Attention scores of shape (batch, num_attention_heads, seq_len, seq_len)\n    \"\"\"\n    batch, num_key_value_heads, slen, head_dim = key.shape\n    num_attention_heads = query.shape[1]\n    n_rep = num_attention_heads // num_key_value_heads  # 8\n    \n    # Step 1: Repeat key heads to match query heads (GQA)\n    # Expand: (batch, num_kv_heads, 1, seq_len, head_dim) -> (batch, num_kv_heads, n_rep, seq_len, head_dim)\n    key_expanded = key[:, :, None, :, :].expand(\n        batch, num_key_value_heads, n_rep, slen, head_dim\n    )\n    # Reshape: (batch, num_kv_heads * n_rep, seq_len, head_dim)\n    key_states = key_expanded.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n    \n    # Step 2: Compute attention scores Q@K^T\n    # query: (batch, num_attention_heads, seq_len, head_dim)\n    # key_states.transpose(2, 3): (batch, num_attention_heads, head_dim, seq_len)\n    # Result: (batch, num_attention_heads, seq_len, seq_len)\n    attn_weights = torch.matmul(query.to(torch.float32), key_states.transpose(2, 3).to(torch.float32))\n    \n    # Step 3: Apply scaling\n    attn_weights = attn_weights * scaling\n    \n    return attn_weights.to(query.dtype)\n"
+}

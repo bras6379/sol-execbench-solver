@@ -1,0 +1,25 @@
+{
+  "name": "t49_956507868f53",
+  "definition": "049_attention_qk_matmul_with_gqa_repeat_and_scaling",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\n\n# Correctness fix (proven necessary by a prior on-hardware review): PyTorch's\n# bf16 GEMM path may combine partial K-reduction sums in reduced precision\n# instead of fp32 (\"reduced precision reduction\") -- head_dim=256 is exactly\n# the regime where this causes measurable drift vs the reference's\n# fp32-upcast matmul (~1.95e-3 max abs error observed, enough to breach\n# tolerance near zero-crossing elements). Disabling it forces the same fp32\n# accumulation the reference gets from its .to(float32) path, while still\n# keeping bf16 tensor-core operands/throughput (no upcast, no extra bytes).\nif hasattr(torch.backends.cuda.matmul, \"allow_bf16_reduced_precision_reduction\"):\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n\n    Approach: single-launch bf16 GEMM. KVH=1 and n_rep=num_heads means every\n    query head shares the one K matrix, so both the key-head \"repeat\" and\n    the head-stacking are free reshapes (no real 4x copy like the\n    reference's expand+reshape). Heads are stacked into M=4*S for one\n    tensor-core-friendly batched GEMM per batch instead of 4 undersized\n    (S,256,S) GEMMs, and `scaling` is fused into the GEMM epilogue via\n    baddbmm's alpha (cuBLAS applies alpha to the fp32 accumulator before the\n    bf16 downcast -- same order as the reference's fp32-scale-then-downcast)\n    instead of a separate elementwise pass over the (B,4,S,S) output, which\n    for the largest graded shape is ~512MB -- a standalone scale kernel over\n    that roughly doubles the bytes moved for what should be a pure-bandwidth\n    GEMM. This collapses the whole op to one kernel launch, which matters\n    most for the 12 of 16 graded shapes that are launch/dispatch-bound\n    (t_SOL < 10us, see DESIGN.md) rather than bandwidth-bound.\n    No CUDA graph: an earlier on-hardware run wrapped this same small-shape\n    path in a CUDA graph and it scored *worse* across every one of those 12\n    shapes (measured: sol_score_cal ~0.15-0.2 vs ~0.28-0.35 direct) -- graph\n    replay still costs copy_(Q) + copy_(K) + replay() + clone(-out) = 4\n    launches, more than the 1-2 launches of the direct path it was meant to\n    replace, so it's a pure loss here and is intentionally not used.\n\n    Args:\n        query: (batch, num_attention_heads=4, seq_len, head_dim=256) bf16\n        key: (batch, num_key_value_heads=1, seq_len, head_dim=256) bf16\n        scaling: Scaling factor (1/sqrt(256)=0.0625)\n\n    Returns:\n        attn_scores: (batch, num_attention_heads, seq_len, seq_len) bf16\n    \"\"\"\n    batch, num_heads, seq_len, head_dim = query.shape\n\n    query_flat = query.reshape(batch, num_heads * seq_len, head_dim)\n    key_flat = key.reshape(batch, seq_len, head_dim)\n\n    # beta=0 placeholder: torch.baddbmm documents that when beta=0, `input`\n    # is never read (its nan/inf are not propagated), so this allocation's\n    # contents are irrelevant -- only its shape/dtype/device matter, and the\n    # CUDA caching allocator makes the alloc itself effectively free. Same\n    # beta=0/alpha=scale pattern HF's GPT-2 attention uses for this exact\n    # QK^T-with-scaling fusion.\n    placeholder = torch.empty(\n        batch, num_heads * seq_len, seq_len, dtype=query.dtype, device=query.device\n    )\n    attn_scores_flat = torch.baddbmm(\n        placeholder, query_flat, key_flat.transpose(-2, -1), beta=0.0, alpha=scaling\n    )\n\n    return attn_scores_flat.reshape(batch, num_heads, seq_len, seq_len).to(query.dtype)\n"
+    }
+  ]
+}

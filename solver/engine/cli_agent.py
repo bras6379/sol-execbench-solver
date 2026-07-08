@@ -202,6 +202,34 @@ class _Run:
     rc: int
     tokens: dict           # {in, out, reasoning, cached, cost_usd} where the stream provides them
     trajectory: Path       # persisted raw event stream (trajectory.jsonl)
+    error_hint: str = ""   # best-effort failure message pulled from STDOUT (see _extract_error_hint)
+
+
+def _extract_error_hint(schema: str, raw: str) -> str:
+    """Best-effort short error message pulled from the agent's STDOUT event stream.
+    Both codex and claude report real failures (quota exceeded, auth, rate limits)
+    as JSON events on stdout, not stderr — a call that dies this way leaves
+    `res.stderr` completely empty even though the actual cause is sitting right
+    there in the trajectory. Confirmed live (2026-07-07): a codex 'wrote no kernel'
+    error with an empty stderr turned out to be a plain 'Quota exceeded' event —
+    invisible until someone reads trajectory.jsonl by hand."""
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if schema == "codex" and e.get("type") in ("error", "turn.failed"):
+            msg = e.get("message") or (e.get("error") or {}).get("message")
+            if msg:
+                return str(msg)
+        elif schema == "claude" and e.get("type") == "result" and e.get("is_error"):
+            msg = e.get("result")
+            if msg:
+                return str(msg)
+    return ""
 
 
 def _parse_tokens(schema: str, raw: str) -> dict:
@@ -275,8 +303,9 @@ class CliAgent:
         res = await self._run(wd, _PLAN)
         solution = self._collect(wd)
         if not solution["sources"]:                    # loud, not a silent baseline candidate
+            detail = res.error_hint or res.stderr[:400]
             raise RuntimeError(f"{self.spec.name}/{self.model} wrote no kernel "
-                               f"(exit {res.rc}): {res.stderr[:400]}")
+                               f"(exit {res.rc}): {detail}")
         strat = wd / F_STRATEGY
         strategy = (strat.read_text().strip()[:120] if strat.exists() else "") or "cli agent"
         hf = wd / F_HANDOFF
@@ -440,7 +469,8 @@ class CliAgent:
         traj.write_text(raw)                        # the trajectory: the raw agent event stream
         await asyncio.to_thread(self._render, raw, wd / "trajectory.txt")   # readable render (best-effort)
         return _Run(err.decode("utf-8", "replace"), proc.returncode or 0,
-                    _parse_tokens(self.spec.stream, raw), traj)
+                    _parse_tokens(self.spec.stream, raw), traj,
+                    _extract_error_hint(self.spec.stream, raw))
 
     def _render(self, raw: str, out_path: Path) -> None:
         """Render the raw stream to readable text via the vendored jq wrapper."""

@@ -1,0 +1,245 @@
+{
+  "cand_id": "2140585c718d",
+  "task_id": 49,
+  "verdict": "entered",
+  "sol_score": 0.3529462760513314,
+  "sol_score_calibrated": 0.30890316784538796,
+  "correct": true,
+  "vector": [
+    0.5260695187165775,
+    0.3324903793293018,
+    0.3025802432707124,
+    0.2910166256031451,
+    0.35890602195570787,
+    0.3218966846569006,
+    0.3366899163933669,
+    0.5244319241701366,
+    0.3525033829499324,
+    0.33354037267080744,
+    0.29823165340406643,
+    0.3515850144092219,
+    0.3266221329471668,
+    0.3536062573641856,
+    0.2935828179823932,
+    0.3433874709976798
+  ],
+  "strategy": "Head-stacking reshape: (B,4,S,D)\u2192(B,4S,D) and (B,1,S,D)\u2192(B,S,D) for one efficient M=4S GEMM per batch; bf16-native (no f",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "7814abf3c83d",
+  "trajectory": "runs/49/work/2140585c718d/trajectory.jsonl",
+  "gpu_s": 7.789,
+  "job_id": "49-2140585c718d",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 39.0,
+      "power_w_max": 354.98,
+      "samples": 22,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.053248,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.058864,
+      "sol_score": 0.5260695187165775,
+      "sol_score_cal": 0.4808997979446846,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0279195,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.014208,
+      "sol_score": 0.3324903793293018,
+      "sol_score_cal": 0.2943402764371719,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.043808,
+      "sol_ms": 0.0119,
+      "baseline_latency_ms": 0.0257435,
+      "sol_score": 0.3025802432707124,
+      "sol_score_cal": 0.2560054531648809,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.3011835,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.168608,
+      "sol_score": 0.2910166256031451,
+      "sol_score_cal": 0.24653836912283475,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.011903,
+      "sol_ms": 0.0018,
+      "baseline_latency_ms": 0.007456,
+      "sol_score": 0.35890602195570787,
+      "sol_score_cal": 0.3138635459366712,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.007535999999999999,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.00384,
+      "sol_score": 0.3218966846569006,
+      "sol_score_cal": 0.282862911421564,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.00768,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0041445,
+      "sol_score": 0.3366899163933669,
+      "sol_score_cal": 0.29669399285231646,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.079008,
+      "sol_ms": 0.0038,
+      "baseline_latency_ms": 0.0867355,
+      "sol_score": 0.5244319241701366,
+      "sol_score_cal": 0.47896676631148205,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.02464,
+      "sol_ms": 0.0055,
+      "baseline_latency_ms": 0.01592,
+      "sol_score": 0.3525033829499324,
+      "sol_score_cal": 0.30430820989673385,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.018176,
+      "sol_ms": 0.0053,
+      "baseline_latency_ms": 0.011744,
+      "sol_score": 0.33354037267080744,
+      "sol_score_cal": 0.2829612039287872,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.082896,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0463839999999999,
+      "sol_score": 0.29823165340406643,
+      "sol_score_cal": 0.25401429950642984,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.008,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.004704,
+      "sol_score": 0.3515850144092219,
+      "sol_score_cal": 0.30925221799746516,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.0078075,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.004096,
+      "sol_score": 0.3266221329471668,
+      "sol_score_cal": 0.2868648161861996,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.016192,
+      "sol_ms": 0.0033,
+      "baseline_latency_ms": 0.0103525,
+      "sol_score": 0.3536062573641856,
+      "sol_score_cal": 0.3063509894018413,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.082912,
+      "sol_ms": 0.0206,
+      "baseline_latency_ms": 0.0464964999999999,
+      "sol_score": 0.2935828179823932,
+      "sol_score_cal": 0.2490963506011529,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.010656,
+      "sol_ms": 0.0016,
+      "baseline_latency_ms": 0.006336,
+      "sol_score": 0.3433874709976798,
+      "sol_score_cal": 0.29943148481599124,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n\n    Approach: bf16-native batched GEMM (skip fp32 upcast), shape-specialized\n    for launch-bound vs bandwidth-bound regimes.\n\n    Args:\n        query: (batch, num_attention_heads=4, seq_len, head_dim=256) bf16\n        key: (batch, num_key_value_heads=1, seq_len, head_dim=256) bf16\n        scaling: Scaling factor (1/sqrt(256)=0.0625)\n\n    Returns:\n        attn_scores: (batch, num_attention_heads=4, seq_len, seq_len) bf16\n    \"\"\"\n    batch, num_heads, seq_len, head_dim = query.shape\n    num_kv_heads = key.shape[1]\n    n_rep = num_heads // num_kv_heads  # 4\n\n    # Key optimization: avoid materializing the 4x key expansion by using\n    # broadcasting carefully. Instead of key_expand = key.expand(B,4,S,D)\n    # which forces a real copy, reshape to combine dims and use a single GEMM:\n    #\n    # Reshape query (B, 4, S, D) -> (B, 4*S, D) to stack heads into batch\n    # Reshape key (B, 1, S, D) -> (B, S, D) to remove empty head dim\n    # Then matmul: (B, 4*S, D) @ (B, D, S) -> (B, 4*S, S)\n    # Reshape back to (B, 4, S, S)\n    #\n    # This uses one GEMM per batch with M=4*S (tensor-core friendly) instead\n    # of 4 separate smaller matmuls, reducing launch overhead for small shapes.\n\n    query_flat = query.reshape(batch, num_heads * seq_len, head_dim)\n    key_flat = key.reshape(batch, seq_len, head_dim)\n\n    # Compute flattened matmul: (B, 4*S, D) @ (B, D, S) -> (B, 4*S, S)\n    # bf16-native matmul with fp32 accumulation (hardware default)\n    attn_scores_flat = torch.matmul(query_flat, key_flat.transpose(-2, -1))\n\n    # Reshape result back to (B, 4, S, S)\n    attn_scores = attn_scores_flat.reshape(batch, num_heads, seq_len, seq_len)\n\n    # Apply scaling\n    attn_scores = attn_scores * scaling\n\n    # Cast back to bf16\n    return attn_scores.to(query.dtype)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t49_2140585c718d",
+    "definition": "049_attention_qk_matmul_with_gqa_repeat_and_scaling",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n\n    Approach: bf16-native batched GEMM (skip fp32 upcast), shape-specialized\n    for launch-bound vs bandwidth-bound regimes.\n\n    Args:\n        query: (batch, num_attention_heads=4, seq_len, head_dim=256) bf16\n        key: (batch, num_key_value_heads=1, seq_len, head_dim=256) bf16\n        scaling: Scaling factor (1/sqrt(256)=0.0625)\n\n    Returns:\n        attn_scores: (batch, num_attention_heads=4, seq_len, seq_len) bf16\n    \"\"\"\n    batch, num_heads, seq_len, head_dim = query.shape\n    num_kv_heads = key.shape[1]\n    n_rep = num_heads // num_kv_heads  # 4\n\n    # Key optimization: avoid materializing the 4x key expansion by using\n    # broadcasting carefully. Instead of key_expand = key.expand(B,4,S,D)\n    # which forces a real copy, reshape to combine dims and use a single GEMM:\n    #\n    # Reshape query (B, 4, S, D) -> (B, 4*S, D) to stack heads into batch\n    # Reshape key (B, 1, S, D) -> (B, S, D) to remove empty head dim\n    # Then matmul: (B, 4*S, D) @ (B, D, S) -> (B, 4*S, S)\n    # Reshape back to (B, 4, S, S)\n    #\n    # This uses one GEMM per batch with M=4*S (tensor-core friendly) instead\n    # of 4 separate smaller matmuls, reducing launch overhead for small shapes.\n\n    query_flat = query.reshape(batch, num_heads * seq_len, head_dim)\n    key_flat = key.reshape(batch, seq_len, head_dim)\n\n    # Compute flattened matmul: (B, 4*S, D) @ (B, D, S) -> (B, 4*S, S)\n    # bf16-native matmul with fp32 accumulation (hardware default)\n    attn_scores_flat = torch.matmul(query_flat, key_flat.transpose(-2, -1))\n\n    # Reshape result back to (B, 4, S, S)\n    attn_scores = attn_scores_flat.reshape(batch, num_heads, seq_len, seq_len)\n\n    # Apply scaling\n    attn_scores = attn_scores * scaling\n\n    # Cast back to bf16\n    return attn_scores.to(query.dtype)\n"
+      }
+    ]
+  }
+}

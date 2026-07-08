@@ -1,0 +1,223 @@
+{
+  "cand_id": "b2917e633fc1",
+  "task_id": 45,
+  "verdict": "entered",
+  "sol_score": 0.39565919464013477,
+  "sol_score_calibrated": 0.35524560272233485,
+  "correct": true,
+  "vector": [
+    0.4617767387492695,
+    0.47269935160960075,
+    0.4126126723223754,
+    0.5032874630980103,
+    0.24733019774167994,
+    0.36504177073464816,
+    0.2716201086808116,
+    0.446413144808966,
+    0.485600631205207,
+    0.43698946619669843,
+    0.4046434632670827,
+    0.2603295197723573,
+    0.4967865397302528,
+    0.2740976570449267
+  ],
+  "strategy": "Fixed critical correctness bug in torch.compile approach: added .clone() to return (CUDA graph buffers are static and ge",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "ad3722e57bf6",
+  "trajectory": "runs/45/work/b2917e633fc1/trajectory.jsonl",
+  "gpu_s": 27.927,
+  "job_id": "45-b2917e633fc1",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 461.91,
+      "samples": 92,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.075072,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.064608,
+      "sol_score": 0.4617767387492695,
+      "sol_score_cal": 0.41819810130334256,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.075568,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.067888,
+      "sol_score": 0.47269935160960075,
+      "sol_score_cal": 0.42891631925700613,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.14639999999999997,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.104208,
+      "sol_score": 0.4126126723223754,
+      "sol_score_cal": 0.36998187382997066,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.1028635,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.104192,
+      "sol_score": 0.5032874630980103,
+      "sol_score_cal": 0.4588998177861947,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 1.6074215,
+      "sol_ms": 0.0674,
+      "baseline_latency_ms": 0.573457,
+      "sol_score": 0.24733019774167994,
+      "sol_score_cal": 0.21520708338883981,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.24472,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.144432,
+      "sol_score": 0.36504177073464816,
+      "sol_score_cal": 0.32444059162470984,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.443984,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.176352,
+      "sol_score": 0.2716201086808116,
+      "sol_score_cal": 0.23743647852127225,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.1503835,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.1221599999999999,
+      "sol_score": 0.446413144808966,
+      "sol_score_cal": 0.4027180867369321,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.06348799999999999,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.0599839999999999,
+      "sol_score": 0.485600631205207,
+      "sol_score_cal": 0.4418000052641524,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.0998555,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.078064,
+      "sol_score": 0.43698946619669843,
+      "sol_score_cal": 0.3937839111569216,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.14719949999999998,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.10152,
+      "sol_score": 0.4046434632670827,
+      "sol_score_cal": 0.3623348172225156,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.8234705,
+      "sol_ms": 0.0339,
+      "baseline_latency_ms": 0.3117919999999999,
+      "sol_score": 0.2603295197723573,
+      "sol_score_cal": 0.22705043609012318,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.058288,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.0575525,
+      "sol_score": 0.4967865397302528,
+      "sol_score_cal": 0.4529530362931285,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.44881499999999996,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.180176,
+      "sol_score": 0.2740976570449267,
+      "sol_score_cal": 0.2397178796375785,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\nimport torch._dynamo\n\ntorch._dynamo.config.recompile_limit = 32\n\n@torch.compile(mode=\"reduce-overhead\", dynamic=False)\ndef _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps):\n    \"\"\"Compiled forward with launch overhead reduction.\"\"\"\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    x = F.gelu(x)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    return output\n\n\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"Launch-overhead optimized fused forward via torch.compile reduce-overhead mode.\"\"\"\n    output = _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps)\n    return output.clone()\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t45_b2917e633fc1",
+    "definition": "045_fused_linear_gelu_grn_linear",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\nimport torch._dynamo\n\ntorch._dynamo.config.recompile_limit = 32\n\n@torch.compile(mode=\"reduce-overhead\", dynamic=False)\ndef _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps):\n    \"\"\"Compiled forward with launch overhead reduction.\"\"\"\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    x = F.gelu(x)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    return output\n\n\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"Launch-overhead optimized fused forward via torch.compile reduce-overhead mode.\"\"\"\n    output = _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps)\n    return output.clone()\n"
+      }
+    ]
+  }
+}

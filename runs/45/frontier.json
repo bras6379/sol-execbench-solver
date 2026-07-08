@@ -1,0 +1,66 @@
+{
+  "task_id": 45,
+  "family": "attention",
+  "name": "attention_45",
+  "epsilon": 0.02,
+  "size": 2,
+  "best_cand": "b2917e633fc1",
+  "best_score": 0.39565919464013477,
+  "best_score_cal": 0.35524560272233485,
+  "members": [
+    {
+      "cand_id": "b2917e633fc1",
+      "sol_score": 0.39565919464013477,
+      "sol_score_cal": 0.35524560272233485,
+      "all_passed": true,
+      "shapes_won": 11,
+      "vector": [
+        0.4617767387492695,
+        0.47269935160960075,
+        0.4126126723223754,
+        0.5032874630980103,
+        0.24733019774167994,
+        0.36504177073464816,
+        0.2716201086808116,
+        0.446413144808966,
+        0.485600631205207,
+        0.43698946619669843,
+        0.4046434632670827,
+        0.2603295197723573,
+        0.4967865397302528,
+        0.2740976570449267
+      ],
+      "strategy": "Fixed critical correctness bug in torch.compile approach: added .clone() to return (CUDA graph buffers are static and ge",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/b2917e633fc1.json"
+    },
+    {
+      "cand_id": "62b668e716db",
+      "sol_score": 0.11557682268307327,
+      "sol_score_cal": null,
+      "all_passed": false,
+      "shapes_won": 3,
+      "vector": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5030150166865879,
+        0.5940850795430653,
+        0.5209754213333726,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "strategy": "Shape-specialized torch.compile with TF32 precision and per-shape caching: max-autotune for launch-bound shapes (N<25k),",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/62b668e716db.json"
+    }
+  ]
+}

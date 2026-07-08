@@ -1,0 +1,245 @@
+{
+  "cand_id": "65daaff6d372",
+  "task_id": 47,
+  "verdict": "entered",
+  "sol_score": 0.2692866786794055,
+  "sol_score_calibrated": 0.23461036555383394,
+  "correct": true,
+  "vector": [
+    0.26198270073676966,
+    0.2805437050930462,
+    0.21860142501974936,
+    0.24347563505400835,
+    0.2543541310508899,
+    0.24903797514091633,
+    0.3098441659550957,
+    0.24361563601550834,
+    0.27227262087792076,
+    0.2620689365708837,
+    0.3197628174546158,
+    0.28765073304835165,
+    0.2960113687423395,
+    0.24650087427412606,
+    0.2508888922227557,
+    0.31197524161351053
+  ],
+  "strategy": "Packed QKV GEMM (single hidden_states read) + fp32-matched norm/softmax + avoid 3\u00d7 repeat_kv materialization where possi",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "8e86cfc87f53",
+  "trajectory": "runs/47/work/65daaff6d372/trajectory.jsonl",
+  "gpu_s": 24.968,
+  "job_id": "47-65daaff6d372",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 779.61,
+      "samples": 81,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 9.058033,
+      "sol_ms": 0.343,
+      "baseline_latency_ms": 3.436678,
+      "sol_score": 0.26198270073676966,
+      "sol_score_cal": 0.22865765522732875,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 5.908568,
+      "sol_ms": 0.1851,
+      "baseline_latency_ms": 2.4169005,
+      "sol_score": 0.2805437050930462,
+      "sol_score_cal": 0.24584996311293014,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.5157905,
+      "sol_ms": 0.0049,
+      "baseline_latency_ms": 0.1478249999999999,
+      "sol_score": 0.21860142501974936,
+      "sol_score_cal": 0.19010643293367255,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 2.1551015,
+      "sol_ms": 0.2423,
+      "baseline_latency_ms": 0.8579055,
+      "sol_score": 0.24347563505400835,
+      "sol_score_cal": 0.20954098821080894,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 1.2027665,
+      "sol_ms": 0.1213,
+      "baseline_latency_ms": 0.490209,
+      "sol_score": 0.2543541310508899,
+      "sol_score_cal": 0.21973241444023445,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.529407,
+      "sol_ms": 0.0306,
+      "baseline_latency_ms": 0.196017,
+      "sol_score": 0.24903797514091633,
+      "sol_score_cal": 0.21628471429679264,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.695535,
+      "sol_ms": 0.036,
+      "baseline_latency_ms": 0.332097,
+      "sol_score": 0.3098441659550957,
+      "sol_score_cal": 0.27220210563010394,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.533327,
+      "sol_ms": 0.0178,
+      "baseline_latency_ms": 0.1838405,
+      "sol_score": 0.24361563601550834,
+      "sol_score_cal": 0.2120840189948742,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 2.202845,
+      "sol_ms": 0.1571,
+      "baseline_latency_ms": 0.922497,
+      "sol_score": 0.27227262087792076,
+      "sol_score_cal": 0.23698830710157565,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.5865425,
+      "sol_ms": 0.0591,
+      "baseline_latency_ms": 0.246416,
+      "sol_score": 0.2620689365708837,
+      "sol_score_cal": 0.22671949033745187,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 22.9633955,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 11.1566265,
+      "sol_score": 0.3197628174546158,
+      "sol_score_cal": 0.2821746600797073,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.6480634999999999,
+      "sol_ms": 0.0609,
+      "baseline_latency_ms": 0.298,
+      "sol_score": 0.28765073304835165,
+      "sol_score_cal": 0.2502650516418662,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.561967,
+      "sol_ms": 0.0324,
+      "baseline_latency_ms": 0.255071,
+      "sol_score": 0.2960113687423395,
+      "sol_score_cal": 0.2592176477031344,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.999695,
+      "sol_ms": 0.1178,
+      "baseline_latency_ms": 0.4063045,
+      "sol_score": 0.24650087427412606,
+      "sol_score_cal": 0.21208239945328433,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.5157274999999999,
+      "sol_ms": 0.0164,
+      "baseline_latency_ms": 0.1836325,
+      "sol_score": 0.2508888922227557,
+      "sol_score_cal": 0.21873374959440922,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.795599,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3959519999999999,
+      "sol_score": 0.31197524161351053,
+      "sol_score_cal": 0.27312625010316827,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 24\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n\n    # Packed QKV projection: avoid 3\u00d7 reads of hidden_states by doing one GEMM\n    # Stack Q, K, V weights: [3072 + 1024 + 1024, 3072] = [5120, 3072]\n    packed_qkv_weight = torch.cat([\n        q_proj_weight,  # [3072, 3072]\n        k_proj_weight,  # [1024, 3072]\n        v_proj_weight,  # [1024, 3072]\n    ], dim=0)  # [5120, 3072]\n\n    # Single GEMM: hidden_states @ packed_qkv_weight^T \u2192 [B, T, 5120]\n    packed_qkv = F.linear(hidden_states, packed_qkv_weight)\n\n    # Unpack and reshape to (B, num_heads, T, head_dim)\n    query_states = packed_qkv[..., :3072].view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = packed_qkv[..., 3072:4096].view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = packed_qkv[..., 4096:5120].view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n\n    # RMSNorm(Q) and RMSNorm(K) - fp32 accumulation as per reference\n    def rms_norm(x, weight, eps):\n        x_float = x.float()\n        variance = x_float.pow(2).mean(-1, keepdim=True)\n        x_normed = x_float * torch.rsqrt(variance + eps)\n        output = x_normed * (1.0 + weight.float())\n        return output.type_as(x)\n\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n\n    # RoPE application\n    def rotate_half(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((-x2, x1), dim=-1)\n\n    cos_expanded = cos.unsqueeze(1)  # [B, 1, T, 128]\n    sin_expanded = sin.unsqueeze(1)  # [B, 1, T, 128]\n\n    query_states = (query_states * cos_expanded) + (rotate_half(query_states) * sin_expanded)\n    key_states = (key_states * cos_expanded) + (rotate_half(key_states) * sin_expanded)\n\n    # GQA: repeat K and V heads from 8 to 24\n    def repeat_kv(hidden_states, n_rep):\n        batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n        if n_rep == 1:\n            return hidden_states\n        hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n        return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n    key_states = repeat_kv(key_states, num_key_value_groups)\n    value_states = repeat_kv(value_states, num_key_value_groups)\n\n    # Compute attention scores\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n\n    # Apply softcapping (tanh-based)\n    attn_weights = (attn_weights / attn_logit_softcapping).tanh() * attn_logit_softcapping\n\n    # Apply causal mask\n    causal_mask = attention_mask[:, :, :, :key_states.shape[-2]]\n    attn_weights = attn_weights + causal_mask\n\n    # Softmax in fp32 (per reference)\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n\n    # Attention output\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n\n    # Output projection\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t47_65daaff6d372",
+    "definition": "047_attention_with_qk_norm_and_rope",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 24\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n\n    # Packed QKV projection: avoid 3\u00d7 reads of hidden_states by doing one GEMM\n    # Stack Q, K, V weights: [3072 + 1024 + 1024, 3072] = [5120, 3072]\n    packed_qkv_weight = torch.cat([\n        q_proj_weight,  # [3072, 3072]\n        k_proj_weight,  # [1024, 3072]\n        v_proj_weight,  # [1024, 3072]\n    ], dim=0)  # [5120, 3072]\n\n    # Single GEMM: hidden_states @ packed_qkv_weight^T \u2192 [B, T, 5120]\n    packed_qkv = F.linear(hidden_states, packed_qkv_weight)\n\n    # Unpack and reshape to (B, num_heads, T, head_dim)\n    query_states = packed_qkv[..., :3072].view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = packed_qkv[..., 3072:4096].view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = packed_qkv[..., 4096:5120].view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n\n    # RMSNorm(Q) and RMSNorm(K) - fp32 accumulation as per reference\n    def rms_norm(x, weight, eps):\n        x_float = x.float()\n        variance = x_float.pow(2).mean(-1, keepdim=True)\n        x_normed = x_float * torch.rsqrt(variance + eps)\n        output = x_normed * (1.0 + weight.float())\n        return output.type_as(x)\n\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n\n    # RoPE application\n    def rotate_half(x):\n        x1 = x[..., : x.shape[-1] // 2]\n        x2 = x[..., x.shape[-1] // 2 :]\n        return torch.cat((-x2, x1), dim=-1)\n\n    cos_expanded = cos.unsqueeze(1)  # [B, 1, T, 128]\n    sin_expanded = sin.unsqueeze(1)  # [B, 1, T, 128]\n\n    query_states = (query_states * cos_expanded) + (rotate_half(query_states) * sin_expanded)\n    key_states = (key_states * cos_expanded) + (rotate_half(key_states) * sin_expanded)\n\n    # GQA: repeat K and V heads from 8 to 24\n    def repeat_kv(hidden_states, n_rep):\n        batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n        if n_rep == 1:\n            return hidden_states\n        hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n        return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n    key_states = repeat_kv(key_states, num_key_value_groups)\n    value_states = repeat_kv(value_states, num_key_value_groups)\n\n    # Compute attention scores\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n\n    # Apply softcapping (tanh-based)\n    attn_weights = (attn_weights / attn_logit_softcapping).tanh() * attn_logit_softcapping\n\n    # Apply causal mask\n    causal_mask = attention_mask[:, :, :, :key_states.shape[-2]]\n    attn_weights = attn_weights + causal_mask\n\n    # Softmax in fp32 (per reference)\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n\n    # Attention output\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n\n    # Output projection\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n"
+      }
+    ]
+  }
+}

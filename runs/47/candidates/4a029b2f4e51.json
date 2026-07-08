@@ -1,0 +1,245 @@
+{
+  "cand_id": "4a029b2f4e51",
+  "task_id": 47,
+  "verdict": "dominated",
+  "sol_score": 0.26896042550780325,
+  "sol_score_calibrated": 0.23429702147975756,
+  "correct": true,
+  "vector": [
+    0.26228894150945536,
+    0.28029791097221396,
+    0.22213984746682075,
+    0.24337865541610523,
+    0.2654740654572983,
+    0.24986254440872954,
+    0.31024917106260635,
+    0.24583714892542805,
+    0.2723640825308394,
+    0.26200405491124723,
+    0.3198909020631525,
+    0.28695984740658975,
+    0.2951886729295823,
+    0.2462214977458496,
+    0.2518927826107258,
+    0.28931668270820765
+  ],
+  "strategy": "Packed QKV GEMM (single hidden_states read) + fused softcap+mask helper, avoiding 3\u00d7 separate linear projections that re",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "8e86cfc87f53",
+  "trajectory": "runs/47/work/4a029b2f4e51/trajectory.jsonl",
+  "gpu_s": 24.28,
+  "job_id": "47-4a029b2f4e51",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 44.0,
+      "power_w_max": 793.12,
+      "samples": 80,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 9.044245499999999,
+      "sol_ms": 0.343,
+      "baseline_latency_ms": 3.436678,
+      "sol_score": 0.26228894150945536,
+      "sol_score_cal": 0.22893527848460632,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 5.915544,
+      "sol_ms": 0.1851,
+      "baseline_latency_ms": 2.4169005,
+      "sol_score": 0.28029791097221396,
+      "sol_score_cal": 0.2456253467498231,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.505376,
+      "sol_ms": 0.0049,
+      "baseline_latency_ms": 0.1478249999999999,
+      "sol_score": 0.22213984746682075,
+      "sol_score_cal": 0.19329275427453882,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 2.156109,
+      "sol_ms": 0.2423,
+      "baseline_latency_ms": 0.8579055,
+      "sol_score": 0.24337865541610523,
+      "sol_score_cal": 0.2094555110074914,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 1.1420145000000002,
+      "sol_ms": 0.1213,
+      "baseline_latency_ms": 0.490209,
+      "sol_score": 0.2654740654572983,
+      "sol_score_cal": 0.22962004464497743,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.527215,
+      "sol_ms": 0.0306,
+      "baseline_latency_ms": 0.196017,
+      "sol_score": 0.24986254440872954,
+      "sol_score_cal": 0.21702490354109805,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.6942875,
+      "sol_ms": 0.036,
+      "baseline_latency_ms": 0.332097,
+      "sol_score": 0.31024917106260635,
+      "sol_score_cal": 0.2725740941750276,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.5271680000000001,
+      "sol_ms": 0.0178,
+      "baseline_latency_ms": 0.1838405,
+      "sol_score": 0.24583714892542805,
+      "sol_score_cal": 0.21408823198801208,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 2.2019010000000003,
+      "sol_ms": 0.1571,
+      "baseline_latency_ms": 0.922497,
+      "sol_score": 0.2723640825308394,
+      "sol_score_cal": 0.2370707659226777,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.5867195000000001,
+      "sol_ms": 0.0591,
+      "baseline_latency_ms": 0.246416,
+      "sol_score": 0.26200405491124723,
+      "sol_score_cal": 0.2266617057041165,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 22.950281,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 11.1566265,
+      "sol_score": 0.3198909020631525,
+      "sol_score_cal": 0.2822933551610101,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.650048,
+      "sol_ms": 0.0609,
+      "baseline_latency_ms": 0.298,
+      "sol_score": 0.28695984740658975,
+      "sol_score_cal": 0.24964277182781217,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.5640635,
+      "sol_ms": 0.0324,
+      "baseline_latency_ms": 0.255071,
+      "sol_score": 0.2951886729295823,
+      "sol_score_cal": 0.25846697987728046,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.001023,
+      "sol_ms": 0.1178,
+      "baseline_latency_ms": 0.4063045,
+      "sol_score": 0.2462214977458496,
+      "sol_score_cal": 0.21183630746747606,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.513071,
+      "sol_ms": 0.0164,
+      "baseline_latency_ms": 0.1836325,
+      "sol_score": 0.2518927826107258,
+      "sol_score_cal": 0.2196419195447508,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.878831,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3959519999999999,
+      "sol_score": 0.28931668270820765,
+      "sol_score_cal": 0.2525223733054226,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\ndef rms_norm(x, weight, eps):\n    \"\"\"RMSNorm with (1 + weight) scaling as used in Gemma3.\"\"\"\n    x_float = x.float()\n    variance = x_float.pow(2).mean(-1, keepdim=True)\n    x_normed = x_float * torch.rsqrt(variance + eps)\n    output = x_normed * (1.0 + weight.float())\n    return output.type_as(x)\n\n\ndef rotate_half(x):\n    \"\"\"Rotates half the hidden dims of the input.\"\"\"\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef apply_rotary_pos_emb(q, k, cos, sin):\n    \"\"\"Applies Rotary Position Embedding to the query and key tensors.\"\"\"\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    q_embed = (q * cos) + (rotate_half(q) * sin)\n    k_embed = (k * cos) + (rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef repeat_kv(hidden_states, n_rep):\n    \"\"\"Repeats key/value heads for grouped-query attention.\"\"\"\n    batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n    if n_rep == 1:\n        return hidden_states\n    hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n    return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n\ndef _apply_softcap_and_mask(attn_weights, attention_mask, attn_logit_softcapping):\n    \"\"\"Fused softcap + mask application with inline tanh.\"\"\"\n    attn_weights_scaled = attn_weights / attn_logit_softcapping\n    attn_weights_scaled = torch.tanh(attn_weights_scaled) * attn_logit_softcapping\n    causal_mask = attention_mask[:, :, :, :attn_weights.shape[-1]]\n    return attn_weights_scaled + causal_mask\n\n\ndef _create_packed_qkv_weight(q_proj_weight, k_proj_weight, v_proj_weight):\n    \"\"\"Pack Q, K, V projection weights into a single weight matrix for efficient GEMM.\"\"\"\n    qkv_weight = torch.cat([q_proj_weight, k_proj_weight, v_proj_weight], dim=0)\n    return qkv_weight\n\n\ndef _run_impl(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 24\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n\n    qkv_weight = _create_packed_qkv_weight(q_proj_weight, k_proj_weight, v_proj_weight)\n    qkv_output = F.linear(hidden_states, qkv_weight)\n\n    q_out = qkv_output[..., :3072]\n    k_out = qkv_output[..., 3072:4096]\n    v_out = qkv_output[..., 4096:5120]\n\n    query_states = q_out.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = k_out.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = v_out.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)\n\n    key_states = repeat_kv(key_states, num_key_value_groups)\n    value_states = repeat_kv(value_states, num_key_value_groups)\n\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    attn_weights = _apply_softcap_and_mask(attn_weights, attention_mask, attn_logit_softcapping)\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    return _run_impl(\n        hidden_states,\n        cos,\n        sin,\n        attention_mask,\n        q_proj_weight,\n        k_proj_weight,\n        v_proj_weight,\n        o_proj_weight,\n        q_norm_weight,\n        k_norm_weight,\n        attn_logit_softcapping,\n        rms_norm_eps,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t47_4a029b2f4e51",
+    "definition": "047_attention_with_qk_norm_and_rope",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\ndef rms_norm(x, weight, eps):\n    \"\"\"RMSNorm with (1 + weight) scaling as used in Gemma3.\"\"\"\n    x_float = x.float()\n    variance = x_float.pow(2).mean(-1, keepdim=True)\n    x_normed = x_float * torch.rsqrt(variance + eps)\n    output = x_normed * (1.0 + weight.float())\n    return output.type_as(x)\n\n\ndef rotate_half(x):\n    \"\"\"Rotates half the hidden dims of the input.\"\"\"\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef apply_rotary_pos_emb(q, k, cos, sin):\n    \"\"\"Applies Rotary Position Embedding to the query and key tensors.\"\"\"\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    q_embed = (q * cos) + (rotate_half(q) * sin)\n    k_embed = (k * cos) + (rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef repeat_kv(hidden_states, n_rep):\n    \"\"\"Repeats key/value heads for grouped-query attention.\"\"\"\n    batch, num_key_value_heads, slen, head_dim = hidden_states.shape\n    if n_rep == 1:\n        return hidden_states\n    hidden_states = hidden_states[:, :, None, :, :].expand(batch, num_key_value_heads, n_rep, slen, head_dim)\n    return hidden_states.reshape(batch, num_key_value_heads * n_rep, slen, head_dim)\n\n\ndef _apply_softcap_and_mask(attn_weights, attention_mask, attn_logit_softcapping):\n    \"\"\"Fused softcap + mask application with inline tanh.\"\"\"\n    attn_weights_scaled = attn_weights / attn_logit_softcapping\n    attn_weights_scaled = torch.tanh(attn_weights_scaled) * attn_logit_softcapping\n    causal_mask = attention_mask[:, :, :, :attn_weights.shape[-1]]\n    return attn_weights_scaled + causal_mask\n\n\ndef _create_packed_qkv_weight(q_proj_weight, k_proj_weight, v_proj_weight):\n    \"\"\"Pack Q, K, V projection weights into a single weight matrix for efficient GEMM.\"\"\"\n    qkv_weight = torch.cat([q_proj_weight, k_proj_weight, v_proj_weight], dim=0)\n    return qkv_weight\n\n\ndef _run_impl(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n    num_attention_heads = 24\n    num_key_value_heads = 8\n    head_dim = 128\n    num_key_value_groups = num_attention_heads // num_key_value_heads\n    scaling = head_dim ** -0.5\n\n    qkv_weight = _create_packed_qkv_weight(q_proj_weight, k_proj_weight, v_proj_weight)\n    qkv_output = F.linear(hidden_states, qkv_weight)\n\n    q_out = qkv_output[..., :3072]\n    k_out = qkv_output[..., 3072:4096]\n    v_out = qkv_output[..., 4096:5120]\n\n    query_states = q_out.view(batch_size, seq_len, num_attention_heads, head_dim).transpose(1, 2)\n    key_states = k_out.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n    value_states = v_out.view(batch_size, seq_len, num_key_value_heads, head_dim).transpose(1, 2)\n\n    query_states = rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = rms_norm(key_states, k_norm_weight, rms_norm_eps)\n    query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)\n\n    key_states = repeat_kv(key_states, num_key_value_groups)\n    value_states = repeat_kv(value_states, num_key_value_groups)\n\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * scaling\n    attn_weights = _apply_softcap_and_mask(attn_weights, attention_mask, attn_logit_softcapping)\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n\n    attn_output = torch.matmul(attn_weights, value_states)\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, num_attention_heads * head_dim)\n\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    return _run_impl(\n        hidden_states,\n        cos,\n        sin,\n        attention_mask,\n        q_proj_weight,\n        k_proj_weight,\n        v_proj_weight,\n        o_proj_weight,\n        q_norm_weight,\n        k_norm_weight,\n        attn_logit_softcapping,\n        rms_norm_eps,\n    )\n"
+      }
+    ]
+  }
+}

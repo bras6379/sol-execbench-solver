@@ -1,0 +1,3 @@
+{"cand_id": "c462ef791886", "sol_score": 0.35727465155899807, "sol_score_cal": 0.30339265225603257, "correct": true, "verdict": "entered", "agent": "", "model": "", "strategy": "seed"}
+{"cand_id": "c752b8ac537c", "sol_score": null, "sol_score_cal": null, "correct": false, "verdict": "dominated", "agent": "claude", "model": "haiku", "strategy": "Correctness-first fix: Remove buggy CUDA graphs, use tensor id() not data_ptr for memoization cache to prevent allocator"}
+{"cand_id": "a1d0cda7f839", "sol_score": 0.5927413224385244, "sol_score_cal": 0.5020503764483303, "correct": true, "verdict": "entered", "agent": "claude", "model": "sonnet", "strategy": "Keep the 3 dense GEMMs on cuBLAS (F.linear) but replace the reference's ~7 elementwise/copy ops (5-op RMSNorm, 2x .conti"}

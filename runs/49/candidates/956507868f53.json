@@ -1,0 +1,245 @@
+{
+  "cand_id": "956507868f53",
+  "task_id": 49,
+  "verdict": "entered",
+  "sol_score": 0.5825164238298013,
+  "sol_score_calibrated": 0.517393748522324,
+  "correct": true,
+  "vector": [
+    0.5591253552257657,
+    0.5587927317523868,
+    0.6253981161482686,
+    0.6229955186005076,
+    0.5747967479674796,
+    0.5619111709286676,
+    0.5575613860628776,
+    0.5551554137952962,
+    0.6015992609913109,
+    0.5774193548387095,
+    0.6209499263622966,
+    0.5596330275229358,
+    0.5588235294117646,
+    0.5984555984555985,
+    0.6249080006274047,
+    0.5627376425855513
+  ],
+  "strategy": "Single-launch bf16 GEMM: free head-stacking reshapes (no K materialization) + scaling fused into torch.baddbmm's alpha e",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "2140585c718d",
+  "trajectory": "runs/49/work/956507868f53/trajectory.jsonl",
+  "gpu_s": 8.022,
+  "job_id": "49-956507868f53",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 36.0,
+      "power_w_max": 350.39,
+      "samples": 22,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.04688,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.058864,
+      "sol_score": 0.5591253552257657,
+      "sol_score_cal": 0.5139535896207933,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.0113445,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.014208,
+      "sol_score": 0.5587927317523868,
+      "sol_score_cal": 0.5133553305036168,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.020192,
+      "sol_ms": 0.0119,
+      "baseline_latency_ms": 0.0257435,
+      "sol_score": 0.6253981161482686,
+      "sol_score_cal": 0.5330167357282732,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.13216,
+      "sol_ms": 0.0763,
+      "baseline_latency_ms": 0.168608,
+      "sol_score": 0.6229955186005076,
+      "sol_score_cal": 0.5327149835178533,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.005984,
+      "sol_ms": 0.0018,
+      "baseline_latency_ms": 0.007456,
+      "sol_score": 0.5747967479674796,
+      "sol_score_cal": 0.515261055884325,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.003104,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.00384,
+      "sol_score": 0.5619111709286676,
+      "sol_score_cal": 0.5111911058869625,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.003392,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.0041445,
+      "sol_score": 0.5575613860628776,
+      "sol_score_cal": 0.5075212575442349,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.070256,
+      "sol_ms": 0.0038,
+      "baseline_latency_ms": 0.0867355,
+      "sol_score": 0.5551554137952962,
+      "sol_score_cal": 0.5096192002784316,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.0124005,
+      "sol_ms": 0.0055,
+      "baseline_latency_ms": 0.01592,
+      "sol_score": 0.6015992609913109,
+      "sol_score_cal": 0.529563168830786,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.010016,
+      "sol_ms": 0.0053,
+      "baseline_latency_ms": 0.011744,
+      "sol_score": 0.5774193548387095,
+      "sol_score_cal": 0.4933001812748028,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.035872,
+      "sol_ms": 0.0194,
+      "baseline_latency_ms": 0.0463839999999999,
+      "sol_score": 0.6209499263622966,
+      "sol_score_cal": 0.5367634421606748,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.003872,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.004704,
+      "sol_score": 0.5596330275229358,
+      "sol_score_cal": 0.5062450724096436,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.00336,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.004096,
+      "sol_score": 0.5588235294117646,
+      "sol_score_cal": 0.5070782084010211,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.008032,
+      "sol_ms": 0.0033,
+      "baseline_latency_ms": 0.0103525,
+      "sol_score": 0.5984555984555985,
+      "sol_score_cal": 0.5298416748180771,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.036143999999999996,
+      "sol_ms": 0.0206,
+      "baseline_latency_ms": 0.0464964999999999,
+      "sol_score": 0.6249080006274047,
+      "sol_score_cal": 0.5360721836984698,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.00528,
+      "sol_ms": 0.0016,
+      "baseline_latency_ms": 0.006336,
+      "sol_score": 0.5627376425855513,
+      "sol_score_cal": 0.5028027857992186,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Correctness fix (proven necessary by a prior on-hardware review): PyTorch's\n# bf16 GEMM path may combine partial K-reduction sums in reduced precision\n# instead of fp32 (\"reduced precision reduction\") -- head_dim=256 is exactly\n# the regime where this causes measurable drift vs the reference's\n# fp32-upcast matmul (~1.95e-3 max abs error observed, enough to breach\n# tolerance near zero-crossing elements). Disabling it forces the same fp32\n# accumulation the reference gets from its .to(float32) path, while still\n# keeping bf16 tensor-core operands/throughput (no upcast, no extra bytes).\nif hasattr(torch.backends.cuda.matmul, \"allow_bf16_reduced_precision_reduction\"):\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n\n    Approach: single-launch bf16 GEMM. KVH=1 and n_rep=num_heads means every\n    query head shares the one K matrix, so both the key-head \"repeat\" and\n    the head-stacking are free reshapes (no real 4x copy like the\n    reference's expand+reshape). Heads are stacked into M=4*S for one\n    tensor-core-friendly batched GEMM per batch instead of 4 undersized\n    (S,256,S) GEMMs, and `scaling` is fused into the GEMM epilogue via\n    baddbmm's alpha (cuBLAS applies alpha to the fp32 accumulator before the\n    bf16 downcast -- same order as the reference's fp32-scale-then-downcast)\n    instead of a separate elementwise pass over the (B,4,S,S) output, which\n    for the largest graded shape is ~512MB -- a standalone scale kernel over\n    that roughly doubles the bytes moved for what should be a pure-bandwidth\n    GEMM. This collapses the whole op to one kernel launch, which matters\n    most for the 12 of 16 graded shapes that are launch/dispatch-bound\n    (t_SOL < 10us, see DESIGN.md) rather than bandwidth-bound.\n    No CUDA graph: an earlier on-hardware run wrapped this same small-shape\n    path in a CUDA graph and it scored *worse* across every one of those 12\n    shapes (measured: sol_score_cal ~0.15-0.2 vs ~0.28-0.35 direct) -- graph\n    replay still costs copy_(Q) + copy_(K) + replay() + clone(-out) = 4\n    launches, more than the 1-2 launches of the direct path it was meant to\n    replace, so it's a pure loss here and is intentionally not used.\n\n    Args:\n        query: (batch, num_attention_heads=4, seq_len, head_dim=256) bf16\n        key: (batch, num_key_value_heads=1, seq_len, head_dim=256) bf16\n        scaling: Scaling factor (1/sqrt(256)=0.0625)\n\n    Returns:\n        attn_scores: (batch, num_attention_heads, seq_len, seq_len) bf16\n    \"\"\"\n    batch, num_heads, seq_len, head_dim = query.shape\n\n    query_flat = query.reshape(batch, num_heads * seq_len, head_dim)\n    key_flat = key.reshape(batch, seq_len, head_dim)\n\n    # beta=0 placeholder: torch.baddbmm documents that when beta=0, `input`\n    # is never read (its nan/inf are not propagated), so this allocation's\n    # contents are irrelevant -- only its shape/dtype/device matter, and the\n    # CUDA caching allocator makes the alloc itself effectively free. Same\n    # beta=0/alpha=scale pattern HF's GPT-2 attention uses for this exact\n    # QK^T-with-scaling fusion.\n    placeholder = torch.empty(\n        batch, num_heads * seq_len, seq_len, dtype=query.dtype, device=query.device\n    )\n    attn_scores_flat = torch.baddbmm(\n        placeholder, query_flat, key_flat.transpose(-2, -1), beta=0.0, alpha=scaling\n    )\n\n    return attn_scores_flat.reshape(batch, num_heads, seq_len, seq_len).to(query.dtype)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t49_956507868f53",
+    "definition": "049_attention_qk_matmul_with_gqa_repeat_and_scaling",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\n\n# Correctness fix (proven necessary by a prior on-hardware review): PyTorch's\n# bf16 GEMM path may combine partial K-reduction sums in reduced precision\n# instead of fp32 (\"reduced precision reduction\") -- head_dim=256 is exactly\n# the regime where this causes measurable drift vs the reference's\n# fp32-upcast matmul (~1.95e-3 max abs error observed, enough to breach\n# tolerance near zero-crossing elements). Disabling it forces the same fp32\n# accumulation the reference gets from its .to(float32) path, while still\n# keeping bf16 tensor-core operands/throughput (no upcast, no extra bytes).\nif hasattr(torch.backends.cuda.matmul, \"allow_bf16_reduced_precision_reduction\"):\n    torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction = False\n\n\n@torch.no_grad()\ndef run(query: torch.Tensor, key: torch.Tensor, scaling: float) -> torch.Tensor:\n    \"\"\"\n    Fused attention Q@K^T computation with GQA key repetition and scaling.\n\n    Approach: single-launch bf16 GEMM. KVH=1 and n_rep=num_heads means every\n    query head shares the one K matrix, so both the key-head \"repeat\" and\n    the head-stacking are free reshapes (no real 4x copy like the\n    reference's expand+reshape). Heads are stacked into M=4*S for one\n    tensor-core-friendly batched GEMM per batch instead of 4 undersized\n    (S,256,S) GEMMs, and `scaling` is fused into the GEMM epilogue via\n    baddbmm's alpha (cuBLAS applies alpha to the fp32 accumulator before the\n    bf16 downcast -- same order as the reference's fp32-scale-then-downcast)\n    instead of a separate elementwise pass over the (B,4,S,S) output, which\n    for the largest graded shape is ~512MB -- a standalone scale kernel over\n    that roughly doubles the bytes moved for what should be a pure-bandwidth\n    GEMM. This collapses the whole op to one kernel launch, which matters\n    most for the 12 of 16 graded shapes that are launch/dispatch-bound\n    (t_SOL < 10us, see DESIGN.md) rather than bandwidth-bound.\n    No CUDA graph: an earlier on-hardware run wrapped this same small-shape\n    path in a CUDA graph and it scored *worse* across every one of those 12\n    shapes (measured: sol_score_cal ~0.15-0.2 vs ~0.28-0.35 direct) -- graph\n    replay still costs copy_(Q) + copy_(K) + replay() + clone(-out) = 4\n    launches, more than the 1-2 launches of the direct path it was meant to\n    replace, so it's a pure loss here and is intentionally not used.\n\n    Args:\n        query: (batch, num_attention_heads=4, seq_len, head_dim=256) bf16\n        key: (batch, num_key_value_heads=1, seq_len, head_dim=256) bf16\n        scaling: Scaling factor (1/sqrt(256)=0.0625)\n\n    Returns:\n        attn_scores: (batch, num_attention_heads, seq_len, seq_len) bf16\n    \"\"\"\n    batch, num_heads, seq_len, head_dim = query.shape\n\n    query_flat = query.reshape(batch, num_heads * seq_len, head_dim)\n    key_flat = key.reshape(batch, seq_len, head_dim)\n\n    # beta=0 placeholder: torch.baddbmm documents that when beta=0, `input`\n    # is never read (its nan/inf are not propagated), so this allocation's\n    # contents are irrelevant -- only its shape/dtype/device matter, and the\n    # CUDA caching allocator makes the alloc itself effectively free. Same\n    # beta=0/alpha=scale pattern HF's GPT-2 attention uses for this exact\n    # QK^T-with-scaling fusion.\n    placeholder = torch.empty(\n        batch, num_heads * seq_len, seq_len, dtype=query.dtype, device=query.device\n    )\n    attn_scores_flat = torch.baddbmm(\n        placeholder, query_flat, key_flat.transpose(-2, -1), beta=0.0, alpha=scaling\n    )\n\n    return attn_scores_flat.reshape(batch, num_heads, seq_len, seq_len).to(query.dtype)\n"
+      }
+    ]
+  }
+}

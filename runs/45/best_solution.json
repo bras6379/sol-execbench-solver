@@ -1,0 +1,25 @@
+{
+  "name": "t45_b2917e633fc1",
+  "definition": "045_fused_linear_gelu_grn_linear",
+  "author": "sol-solver",
+  "spec": {
+    "languages": [
+      "pytorch"
+    ],
+    "target_hardware": [
+      "B200",
+      "LOCAL"
+    ],
+    "entry_point": "kernel.py::run",
+    "dependencies": [
+      "torch"
+    ],
+    "destination_passing_style": false
+  },
+  "sources": [
+    {
+      "path": "kernel.py",
+      "content": "import torch\nimport torch.nn.functional as F\nimport torch._dynamo\n\ntorch._dynamo.config.recompile_limit = 32\n\n@torch.compile(mode=\"reduce-overhead\", dynamic=False)\ndef _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps):\n    \"\"\"Compiled forward with launch overhead reduction.\"\"\"\n    x = F.linear(hidden_states, pwconv1_weight, pwconv1_bias)\n    x = F.gelu(x)\n    global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n    norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + eps)\n    x = grn_weight * (x * norm_features) + grn_bias + x\n    output = F.linear(x, pwconv2_weight, pwconv2_bias)\n    return output\n\n\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"Launch-overhead optimized fused forward via torch.compile reduce-overhead mode.\"\"\"\n    output = _compiled_forward(hidden_states, pwconv1_weight, pwconv1_bias, grn_weight, grn_bias, pwconv2_weight, pwconv2_bias, eps)\n    return output.clone()\n"
+    }
+  ]
+}

@@ -429,27 +429,38 @@ def reflect_all(runs_dir: str | Path, task_ids: list[int] | None = None, *,
     return refls
 
 
-DIAGNOSIS_HEADER = "## Coach — expert diagnosis (fable-5)"
+DIAGNOSIS_HEADER = "## Coach — expert diagnosis"          # stable prefix — see attach_diagnosis
 
 
 def attach_diagnosis(runs_dir: str | Path, task_id: int) -> bool:
-    """Append the stored fable prose (diagnosis.json, written by the diagnose layer)
-    to `<task>/reflection.md`, idempotently. Called on every reflect pass so the
-    deterministic card always carries the latest diagnosis WITHOUT re-spending on
-    fable. No-op if there's no diagnosis yet."""
+    """Append the stored diagnosis prose (diagnosis.json, written by the diagnose
+    layer) to `<task>/reflection.md`, idempotently. Called on every reflect pass
+    so the deterministic card always carries the latest diagnosis WITHOUT
+    re-spending on it. No-op if there's no diagnosis yet.
+
+    The header names the model that ACTUALLY produced the prose (read from
+    diagnosis.json — it varies: fable-5, an OpenRouter fallback, native Claude,
+    whichever `--reflect-model`/FALLBACK_CHAIN landed on for that run), not a
+    fixed label — `--reflect-model` has changed several times across restarts
+    and a hardcoded name here would silently lie about the source. DIAGNOSIS_HEADER
+    itself stays a stable, model-less prefix so the stale-block strip below finds
+    and replaces ANY prior diagnosis, regardless of which model wrote it."""
     pdir = Path(runs_dir) / str(task_id)
     dfile, card = pdir / "diagnosis.json", pdir / "reflection.md"
     if not dfile.is_file() or not card.is_file():
         return False
     try:
-        prose = json.loads(dfile.read_text()).get("prose", "").strip()
+        d = json.loads(dfile.read_text())
+        prose = (d.get("prose") or "").strip()
+        model = d.get("model") or "?"
     except Exception:
         return False
     if not prose:
         return False
     text = card.read_text(errors="replace")
     body = text.split("\n" + DIAGNOSIS_HEADER, 1)[0].rstrip()   # drop any stale diagnosis block
-    card.write_text(f"{body}\n\n{DIAGNOSIS_HEADER}\n\n{prose}\n")
+    header = f"{DIAGNOSIS_HEADER} (via {model})"
+    card.write_text(f"{body}\n\n{header}\n\n{prose}\n")
     return True
 
 

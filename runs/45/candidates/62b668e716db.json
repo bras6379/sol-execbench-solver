@@ -1,0 +1,223 @@
+{
+  "cand_id": "62b668e716db",
+  "task_id": 45,
+  "verdict": "entered",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.5030150166865879,
+    0.5940850795430653,
+    0.5209754213333726,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Shape-specialized torch.compile with TF32 precision and per-shape caching: max-autotune for launch-bound shapes (N<25k),",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "b2917e633fc1",
+  "trajectory": "runs/45/work/62b668e716db/trajectory.jsonl",
+  "gpu_s": 44.272,
+  "job_id": "45-62b668e716db",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 41.0,
+      "power_w_max": 375.74,
+      "samples": 147,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.064608,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0014,
+      "baseline_latency_ms": 0.067888,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.104208,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.104192,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.5673905,
+      "sol_ms": 0.0674,
+      "baseline_latency_ms": 0.573457,
+      "sol_score": 0.5030150166865879,
+      "sol_score_cal": 0.4543306817879377,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.101472,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.144432,
+      "sol_score": 0.5940850795430653,
+      "sol_score_cal": 0.5478228613453036,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.1635365,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.176352,
+      "sol_score": 0.5209754213333726,
+      "sol_score_cal": 0.4728779245843321,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.1221599999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.0599839999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0025,
+      "baseline_latency_ms": 0.078064,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0046,
+      "baseline_latency_ms": 0.10152,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0339,
+      "baseline_latency_ms": 0.3117919999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.0575525,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0172,
+      "baseline_latency_ms": 0.180176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# Cache for compiled functions per shape signature\n_compiled_cache = {}\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"Optimized fused forward using torch.compile with shape-specialized modes and TF32 precision.\"\"\"\n\n    # Enable TF32 for faster matmuls while maintaining numerical stability\n    # TF32 has same 10-bit mantissa as FP16 but fp32 exponent range\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n\n    B, H, W, dim = hidden_states.shape\n    N = B * H * W\n\n    # Define the forward computation\n    def compute_forward(h_states, w1, b1, w2, b2, grn_w, grn_b, epsilon):\n        x = F.linear(h_states, w1, b1)\n        x = F.gelu(x)\n        global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n        norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + epsilon)\n        x = grn_w * (x * norm_features) + grn_b + x\n        output = F.linear(x, w2, b2)\n        return output\n\n    # For small shapes (launch-bound), use max-autotune for aggressive optimization\n    # For large shapes (compute-bound), use reduce-overhead for minimal launch overhead\n    shape_key = (B, H, W)\n\n    if shape_key not in _compiled_cache:\n        if N < 25000:  # launch-bound shapes\n            _compiled_cache[shape_key] = torch.compile(\n                compute_forward,\n                mode=\"max-autotune\",\n                fullgraph=True,\n                dynamic=False,\n            )\n        else:  # compute-bound shapes\n            _compiled_cache[shape_key] = torch.compile(\n                compute_forward,\n                mode=\"reduce-overhead\",\n                fullgraph=True,\n                dynamic=False,\n            )\n\n    compiled_fn = _compiled_cache[shape_key]\n    output = compiled_fn(\n        hidden_states,\n        pwconv1_weight,\n        pwconv1_bias,\n        pwconv2_weight,\n        pwconv2_bias,\n        grn_weight,\n        grn_bias,\n        eps,\n    )\n\n    # Clone to avoid returning graph-owned buffers (correctness gate requirement)\n    return output.clone()\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t45_62b668e716db",
+    "definition": "045_fused_linear_gelu_grn_linear",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n# Cache for compiled functions per shape signature\n_compiled_cache = {}\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    pwconv1_weight: torch.Tensor,\n    pwconv1_bias: torch.Tensor,\n    grn_weight: torch.Tensor,\n    grn_bias: torch.Tensor,\n    pwconv2_weight: torch.Tensor,\n    pwconv2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"Optimized fused forward using torch.compile with shape-specialized modes and TF32 precision.\"\"\"\n\n    # Enable TF32 for faster matmuls while maintaining numerical stability\n    # TF32 has same 10-bit mantissa as FP16 but fp32 exponent range\n    torch.backends.cuda.matmul.allow_tf32 = True\n    torch.backends.cudnn.allow_tf32 = True\n\n    B, H, W, dim = hidden_states.shape\n    N = B * H * W\n\n    # Define the forward computation\n    def compute_forward(h_states, w1, b1, w2, b2, grn_w, grn_b, epsilon):\n        x = F.linear(h_states, w1, b1)\n        x = F.gelu(x)\n        global_features = torch.linalg.vector_norm(x, ord=2, dim=(1, 2), keepdim=True)\n        norm_features = global_features / (global_features.mean(dim=-1, keepdim=True) + epsilon)\n        x = grn_w * (x * norm_features) + grn_b + x\n        output = F.linear(x, w2, b2)\n        return output\n\n    # For small shapes (launch-bound), use max-autotune for aggressive optimization\n    # For large shapes (compute-bound), use reduce-overhead for minimal launch overhead\n    shape_key = (B, H, W)\n\n    if shape_key not in _compiled_cache:\n        if N < 25000:  # launch-bound shapes\n            _compiled_cache[shape_key] = torch.compile(\n                compute_forward,\n                mode=\"max-autotune\",\n                fullgraph=True,\n                dynamic=False,\n            )\n        else:  # compute-bound shapes\n            _compiled_cache[shape_key] = torch.compile(\n                compute_forward,\n                mode=\"reduce-overhead\",\n                fullgraph=True,\n                dynamic=False,\n            )\n\n    compiled_fn = _compiled_cache[shape_key]\n    output = compiled_fn(\n        hidden_states,\n        pwconv1_weight,\n        pwconv1_bias,\n        pwconv2_weight,\n        pwconv2_bias,\n        grn_weight,\n        grn_bias,\n        eps,\n    )\n\n    # Clone to avoid returning graph-owned buffers (correctness gate requirement)\n    return output.clone()\n"
+      }
+    ]
+  }
+}

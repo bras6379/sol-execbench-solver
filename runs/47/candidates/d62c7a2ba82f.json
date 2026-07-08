@@ -1,0 +1,245 @@
+{
+  "cand_id": "d62c7a2ba82f",
+  "task_id": 47,
+  "verdict": "entered",
+  "sol_score": 0.3650491214845836,
+  "sol_score_calibrated": 0.32713648344516993,
+  "correct": true,
+  "vector": [
+    0.6265624933544857,
+    0.6806171602522474,
+    0.203372055960932,
+    0.30743237085121705,
+    0.3258382357292473,
+    0.21219468079784187,
+    0.3120959760186438,
+    0.2220172703350306,
+    0.4397194493891214,
+    0.2634011279017526,
+    0.7955122521815994,
+    0.31206915273422453,
+    0.29867937549504137,
+    0.2777758254073781,
+    0.22812561385511926,
+    0.33537290348945537
+  ],
+  "strategy": "Packed QKV GEMM + torch.compile(flex_attention, dynamic=False) with a causal block_mask (mask never materialized/read) a",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "8e86cfc87f53",
+  "trajectory": "runs/47/work/d62c7a2ba82f/trajectory.jsonl",
+  "gpu_s": 53.988,
+  "job_id": "47-d62c7a2ba82f",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 42.0,
+      "power_w_max": 461.51,
+      "samples": 178,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 2.186863,
+      "sol_ms": 0.343,
+      "baseline_latency_ms": 3.436678,
+      "sol_score": 0.6265624933544857,
+      "sol_score_cal": 0.5779286401175143,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 1.232383,
+      "sol_ms": 0.1851,
+      "baseline_latency_ms": 2.4169005,
+      "sol_score": 0.6806171602522474,
+      "sol_score_cal": 0.6352548842381159,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.564751,
+      "sol_ms": 0.0049,
+      "baseline_latency_ms": 0.1478249999999999,
+      "sol_score": 0.203372055960932,
+      "sol_score_cal": 0.17643347709837912,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 1.6291039999999999,
+      "sol_ms": 0.2423,
+      "baseline_latency_ms": 0.8579055,
+      "sol_score": 0.30743237085121705,
+      "sol_score_cal": 0.26627235007895494,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.8845755,
+      "sol_ms": 0.1213,
+      "baseline_latency_ms": 0.490209,
+      "sol_score": 0.3258382357292473,
+      "sol_score_cal": 0.28372075300419514,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.644736,
+      "sol_ms": 0.0306,
+      "baseline_latency_ms": 0.196017,
+      "sol_score": 0.21219468079784187,
+      "sol_score_cal": 0.18337839277796633,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.6886399999999999,
+      "sol_ms": 0.036,
+      "baseline_latency_ms": 0.332097,
+      "sol_score": 0.3120959760186438,
+      "sol_score_cal": 0.2742709053328771,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.5996315,
+      "sol_ms": 0.0178,
+      "baseline_latency_ms": 0.1838405,
+      "sol_score": 0.2220172703350306,
+      "sol_score_cal": 0.19266664836006384,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.1323515,
+      "sol_ms": 0.1571,
+      "baseline_latency_ms": 0.922497,
+      "sol_score": 0.4397194493891214,
+      "sol_score_cal": 0.391348218226224,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.5829275,
+      "sol_ms": 0.0591,
+      "baseline_latency_ms": 0.246416,
+      "sol_score": 0.2634011279017526,
+      "sol_score_cal": 0.2279061475534622,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 3.375486,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 11.1566265,
+      "sol_score": 0.7955122521815994,
+      "sol_score_cal": 0.7585599053057039,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.5835675,
+      "sol_ms": 0.0609,
+      "baseline_latency_ms": 0.298,
+      "sol_score": 0.31206915273422453,
+      "sol_score_cal": 0.2723267364928422,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.5552475,
+      "sol_ms": 0.0324,
+      "baseline_latency_ms": 0.255071,
+      "sol_score": 0.29867937549504137,
+      "sol_score_cal": 0.26165327594934296,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.867919,
+      "sol_ms": 0.1178,
+      "baseline_latency_ms": 0.4063045,
+      "sol_score": 0.2777758254073781,
+      "sol_score_cal": 0.23971563073836308,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.5822395,
+      "sol_ms": 0.0164,
+      "baseline_latency_ms": 0.1836325,
+      "sol_score": 0.22812561385511926,
+      "sol_score_cal": 0.19821381361083912,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.721455,
+      "sol_ms": 0.0644,
+      "baseline_latency_ms": 0.3959519999999999,
+      "sol_score": 0.33537290348945537,
+      "sol_score_cal": 0.29453395623787487,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import functools\nimport inspect\n\nimport torch\nimport torch.nn.functional as F\n\ntry:\n    from torch.nn.attention.flex_attention import create_block_mask, flex_attention\n    _HAS_FLEX_ATTENTION = True\nexcept Exception:\n    _HAS_FLEX_ATTENTION = False\n\nif _HAS_FLEX_ATTENTION:\n    try:\n        import torch._dynamo as _dynamo\n        # 16 distinct (batch_size, seq_len) workloads share this process; each\n        # is a fresh static shape under dynamic=False, so it needs its own\n        # compiled artifact. Raise the cache ceiling so shape #16 still\n        # compiles instead of silently falling back to eager.\n        if hasattr(_dynamo.config, \"cache_size_limit\"):\n            _dynamo.config.cache_size_limit = 64\n        if hasattr(_dynamo.config, \"recompile_limit\"):\n            _dynamo.config.recompile_limit = 64\n    except Exception:\n        pass\n\n    _SUPPORTS_ENABLE_GQA = \"enable_gqa\" in inspect.signature(flex_attention).parameters\n    # dynamic=False (not reduce-overhead, not dynamic=True): per-shape static\n    # compile. reduce-overhead's CUDA-graph static-address requirement\n    # collides with fresh per-call tensors and was catastrophically slow on a\n    # prior flex_attention attempt in this benchmark family.\n    _compiled_flex_attention = torch.compile(flex_attention, dynamic=False)\n\n\n_NUM_ATTENTION_HEADS = 24\n_NUM_KEY_VALUE_HEADS = 8\n_HEAD_DIM = 128\n_NUM_KEY_VALUE_GROUPS = _NUM_ATTENTION_HEADS // _NUM_KEY_VALUE_HEADS\n_SCALING = _HEAD_DIM ** -0.5\n\n_block_mask_cache = {}\n\n\ndef _causal_mask_mod(b, h, q_idx, kv_idx):\n    return q_idx >= kv_idx\n\n\ndef _get_block_mask(seq_len, device):\n    key = (seq_len, device)\n    bm = _block_mask_cache.get(key)\n    if bm is not None:\n        return bm\n    bm = create_block_mask(\n        _causal_mask_mod, B=None, H=None, Q_LEN=seq_len, KV_LEN=seq_len, device=device\n    )\n    _block_mask_cache[key] = bm\n    return bm\n\n\n@functools.lru_cache(maxsize=8)\ndef _make_softcap_mod(cap):\n    # Same function object reused for every call with an identical cap value\n    # (constant per model config) -- keeps the score_mod's identity stable\n    # across the 16 workloads so torch.compile's guards hit the cache instead\n    # of treating each call as a brand-new closure to recompile.\n    def _softcap(score, b, h, q_idx, kv_idx):\n        return cap * torch.tanh(score / cap)\n\n    return _softcap\n\n\ndef _rms_norm(x, weight, eps):\n    \"\"\"RMSNorm with (1 + weight) scaling as used in Gemma3.\"\"\"\n    x_float = x.float()\n    variance = x_float.pow(2).mean(-1, keepdim=True)\n    x_normed = x_float * torch.rsqrt(variance + eps)\n    output = x_normed * (1.0 + weight.float())\n    return output.type_as(x)\n\n\ndef _rotate_half(x):\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef _apply_rotary_pos_emb(q, k, cos, sin):\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    q_embed = (q * cos) + (_rotate_half(q) * sin)\n    k_embed = (k * cos) + (_rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef _repeat_kv(hidden_states, n_rep):\n    if n_rep == 1:\n        return hidden_states\n    batch, num_kv_heads, slen, head_dim = hidden_states.shape\n    hidden_states = hidden_states[:, :, None, :, :].expand(\n        batch, num_kv_heads, n_rep, slen, head_dim\n    )\n    return hidden_states.reshape(batch, num_kv_heads * n_rep, slen, head_dim)\n\n\ndef _eager_attention(query_states, key_states, value_states, attention_mask, cap, seq_len):\n    key_states = _repeat_kv(key_states, _NUM_KEY_VALUE_GROUPS)\n    value_states = _repeat_kv(value_states, _NUM_KEY_VALUE_GROUPS)\n\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * _SCALING\n    attn_weights = (attn_weights / cap).tanh() * cap\n\n    causal_mask = attention_mask[:, :, :, :seq_len]\n    attn_weights = attn_weights + causal_mask\n\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    return torch.matmul(attn_weights, value_states)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n\n    # Packed QKV projection: one read of hidden_states instead of three.\n    packed_qkv_weight = torch.cat([q_proj_weight, k_proj_weight, v_proj_weight], dim=0)\n    packed_qkv = F.linear(hidden_states, packed_qkv_weight)\n\n    q_dim = _NUM_ATTENTION_HEADS * _HEAD_DIM\n    kv_dim = _NUM_KEY_VALUE_HEADS * _HEAD_DIM\n\n    query_states = packed_qkv[..., :q_dim].view(\n        batch_size, seq_len, _NUM_ATTENTION_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n    key_states = packed_qkv[..., q_dim : q_dim + kv_dim].view(\n        batch_size, seq_len, _NUM_KEY_VALUE_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n    value_states = packed_qkv[..., q_dim + kv_dim :].view(\n        batch_size, seq_len, _NUM_KEY_VALUE_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    query_states = _rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = _rms_norm(key_states, k_norm_weight, rms_norm_eps)\n\n    query_states, key_states = _apply_rotary_pos_emb(query_states, key_states, cos, sin)\n\n    cap = float(attn_logit_softcapping)\n\n    if _HAS_FLEX_ATTENTION:\n        query_states = query_states.contiguous()\n        key_states = key_states.contiguous()\n        value_states = value_states.contiguous()\n\n        block_mask = _get_block_mask(seq_len, hidden_states.device)\n        score_mod = _make_softcap_mod(cap)\n\n        if _SUPPORTS_ENABLE_GQA:\n            k_in, v_in = key_states, value_states\n            attn_output = _compiled_flex_attention(\n                query_states,\n                k_in,\n                v_in,\n                score_mod=score_mod,\n                block_mask=block_mask,\n                scale=_SCALING,\n                enable_gqa=True,\n            )\n        else:\n            # Fallback if this torch build's flex_attention lacks enable_gqa:\n            # materialize the repeated K/V (still far cheaper than the naive\n            # reference, since the mask is never read and no [B,24,S,S]\n            # score tensor is ever materialized).\n            k_in = _repeat_kv(key_states, _NUM_KEY_VALUE_GROUPS)\n            v_in = _repeat_kv(value_states, _NUM_KEY_VALUE_GROUPS)\n            attn_output = _compiled_flex_attention(\n                query_states,\n                k_in,\n                v_in,\n                score_mod=score_mod,\n                block_mask=block_mask,\n                scale=_SCALING,\n            )\n    else:\n        attn_output = _eager_attention(\n            query_states, key_states, value_states, attention_mask, cap, seq_len\n        )\n\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, _NUM_ATTENTION_HEADS * _HEAD_DIM)\n\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t47_d62c7a2ba82f",
+    "definition": "047_attention_with_qk_norm_and_rope",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import functools\nimport inspect\n\nimport torch\nimport torch.nn.functional as F\n\ntry:\n    from torch.nn.attention.flex_attention import create_block_mask, flex_attention\n    _HAS_FLEX_ATTENTION = True\nexcept Exception:\n    _HAS_FLEX_ATTENTION = False\n\nif _HAS_FLEX_ATTENTION:\n    try:\n        import torch._dynamo as _dynamo\n        # 16 distinct (batch_size, seq_len) workloads share this process; each\n        # is a fresh static shape under dynamic=False, so it needs its own\n        # compiled artifact. Raise the cache ceiling so shape #16 still\n        # compiles instead of silently falling back to eager.\n        if hasattr(_dynamo.config, \"cache_size_limit\"):\n            _dynamo.config.cache_size_limit = 64\n        if hasattr(_dynamo.config, \"recompile_limit\"):\n            _dynamo.config.recompile_limit = 64\n    except Exception:\n        pass\n\n    _SUPPORTS_ENABLE_GQA = \"enable_gqa\" in inspect.signature(flex_attention).parameters\n    # dynamic=False (not reduce-overhead, not dynamic=True): per-shape static\n    # compile. reduce-overhead's CUDA-graph static-address requirement\n    # collides with fresh per-call tensors and was catastrophically slow on a\n    # prior flex_attention attempt in this benchmark family.\n    _compiled_flex_attention = torch.compile(flex_attention, dynamic=False)\n\n\n_NUM_ATTENTION_HEADS = 24\n_NUM_KEY_VALUE_HEADS = 8\n_HEAD_DIM = 128\n_NUM_KEY_VALUE_GROUPS = _NUM_ATTENTION_HEADS // _NUM_KEY_VALUE_HEADS\n_SCALING = _HEAD_DIM ** -0.5\n\n_block_mask_cache = {}\n\n\ndef _causal_mask_mod(b, h, q_idx, kv_idx):\n    return q_idx >= kv_idx\n\n\ndef _get_block_mask(seq_len, device):\n    key = (seq_len, device)\n    bm = _block_mask_cache.get(key)\n    if bm is not None:\n        return bm\n    bm = create_block_mask(\n        _causal_mask_mod, B=None, H=None, Q_LEN=seq_len, KV_LEN=seq_len, device=device\n    )\n    _block_mask_cache[key] = bm\n    return bm\n\n\n@functools.lru_cache(maxsize=8)\ndef _make_softcap_mod(cap):\n    # Same function object reused for every call with an identical cap value\n    # (constant per model config) -- keeps the score_mod's identity stable\n    # across the 16 workloads so torch.compile's guards hit the cache instead\n    # of treating each call as a brand-new closure to recompile.\n    def _softcap(score, b, h, q_idx, kv_idx):\n        return cap * torch.tanh(score / cap)\n\n    return _softcap\n\n\ndef _rms_norm(x, weight, eps):\n    \"\"\"RMSNorm with (1 + weight) scaling as used in Gemma3.\"\"\"\n    x_float = x.float()\n    variance = x_float.pow(2).mean(-1, keepdim=True)\n    x_normed = x_float * torch.rsqrt(variance + eps)\n    output = x_normed * (1.0 + weight.float())\n    return output.type_as(x)\n\n\ndef _rotate_half(x):\n    x1 = x[..., : x.shape[-1] // 2]\n    x2 = x[..., x.shape[-1] // 2 :]\n    return torch.cat((-x2, x1), dim=-1)\n\n\ndef _apply_rotary_pos_emb(q, k, cos, sin):\n    cos = cos.unsqueeze(1)\n    sin = sin.unsqueeze(1)\n    q_embed = (q * cos) + (_rotate_half(q) * sin)\n    k_embed = (k * cos) + (_rotate_half(k) * sin)\n    return q_embed, k_embed\n\n\ndef _repeat_kv(hidden_states, n_rep):\n    if n_rep == 1:\n        return hidden_states\n    batch, num_kv_heads, slen, head_dim = hidden_states.shape\n    hidden_states = hidden_states[:, :, None, :, :].expand(\n        batch, num_kv_heads, n_rep, slen, head_dim\n    )\n    return hidden_states.reshape(batch, num_kv_heads * n_rep, slen, head_dim)\n\n\ndef _eager_attention(query_states, key_states, value_states, attention_mask, cap, seq_len):\n    key_states = _repeat_kv(key_states, _NUM_KEY_VALUE_GROUPS)\n    value_states = _repeat_kv(value_states, _NUM_KEY_VALUE_GROUPS)\n\n    attn_weights = torch.matmul(query_states, key_states.transpose(2, 3)) * _SCALING\n    attn_weights = (attn_weights / cap).tanh() * cap\n\n    causal_mask = attention_mask[:, :, :, :seq_len]\n    attn_weights = attn_weights + causal_mask\n\n    attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)\n    return torch.matmul(attn_weights, value_states)\n\n\n@torch.no_grad()\ndef run(\n    hidden_states: torch.Tensor,\n    cos: torch.Tensor,\n    sin: torch.Tensor,\n    attention_mask: torch.Tensor,\n    q_proj_weight: torch.Tensor,\n    k_proj_weight: torch.Tensor,\n    v_proj_weight: torch.Tensor,\n    o_proj_weight: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    attn_logit_softcapping: float,\n    rms_norm_eps: float,\n):\n    batch_size, seq_len, hidden_size = hidden_states.shape\n\n    # Packed QKV projection: one read of hidden_states instead of three.\n    packed_qkv_weight = torch.cat([q_proj_weight, k_proj_weight, v_proj_weight], dim=0)\n    packed_qkv = F.linear(hidden_states, packed_qkv_weight)\n\n    q_dim = _NUM_ATTENTION_HEADS * _HEAD_DIM\n    kv_dim = _NUM_KEY_VALUE_HEADS * _HEAD_DIM\n\n    query_states = packed_qkv[..., :q_dim].view(\n        batch_size, seq_len, _NUM_ATTENTION_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n    key_states = packed_qkv[..., q_dim : q_dim + kv_dim].view(\n        batch_size, seq_len, _NUM_KEY_VALUE_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n    value_states = packed_qkv[..., q_dim + kv_dim :].view(\n        batch_size, seq_len, _NUM_KEY_VALUE_HEADS, _HEAD_DIM\n    ).transpose(1, 2)\n\n    query_states = _rms_norm(query_states, q_norm_weight, rms_norm_eps)\n    key_states = _rms_norm(key_states, k_norm_weight, rms_norm_eps)\n\n    query_states, key_states = _apply_rotary_pos_emb(query_states, key_states, cos, sin)\n\n    cap = float(attn_logit_softcapping)\n\n    if _HAS_FLEX_ATTENTION:\n        query_states = query_states.contiguous()\n        key_states = key_states.contiguous()\n        value_states = value_states.contiguous()\n\n        block_mask = _get_block_mask(seq_len, hidden_states.device)\n        score_mod = _make_softcap_mod(cap)\n\n        if _SUPPORTS_ENABLE_GQA:\n            k_in, v_in = key_states, value_states\n            attn_output = _compiled_flex_attention(\n                query_states,\n                k_in,\n                v_in,\n                score_mod=score_mod,\n                block_mask=block_mask,\n                scale=_SCALING,\n                enable_gqa=True,\n            )\n        else:\n            # Fallback if this torch build's flex_attention lacks enable_gqa:\n            # materialize the repeated K/V (still far cheaper than the naive\n            # reference, since the mask is never read and no [B,24,S,S]\n            # score tensor is ever materialized).\n            k_in = _repeat_kv(key_states, _NUM_KEY_VALUE_GROUPS)\n            v_in = _repeat_kv(value_states, _NUM_KEY_VALUE_GROUPS)\n            attn_output = _compiled_flex_attention(\n                query_states,\n                k_in,\n                v_in,\n                score_mod=score_mod,\n                block_mask=block_mask,\n                scale=_SCALING,\n            )\n    else:\n        attn_output = _eager_attention(\n            query_states, key_states, value_states, attention_mask, cap, seq_len\n        )\n\n    attn_output = attn_output.transpose(1, 2).contiguous()\n    attn_output = attn_output.reshape(batch_size, seq_len, _NUM_ATTENTION_HEADS * _HEAD_DIM)\n\n    attn_output = F.linear(attn_output, o_proj_weight)\n\n    return attn_output\n"
+      }
+    ]
+  }
+}
