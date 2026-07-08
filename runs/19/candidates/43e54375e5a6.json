@@ -1,0 +1,245 @@
+{
+  "cand_id": "43e54375e5a6",
+  "task_id": 19,
+  "verdict": "dominated",
+  "sol_score": 0.6007276106802717,
+  "sol_score_calibrated": 0.5554937408289098,
+  "correct": true,
+  "vector": [
+    0.7445268258508962,
+    0.2968507608995651,
+    0.37203779745708204,
+    0.270898315658141,
+    0.7539807187331227,
+    0.7879698969892365,
+    0.27396191070871057,
+    0.7572328478180316,
+    0.794292451377616,
+    0.31272388594354367,
+    0.7933918614307743,
+    0.7836183211852813,
+    0.3397187123947052,
+    0.7529367833081794,
+    0.7876043150824343,
+    0.7898963660470277
+  ],
+  "strategy": "CUDA-graph capture/replay for seq_len<=512 (launch-bound) on top of the 0.704 grid-stride fused Triton kernel; dedicated",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "e1087095482e",
+  "trajectory": "runs/19/work/43e54375e5a6/trajectory.jsonl",
+  "gpu_s": 121.346,
+  "job_id": "19-43e54375e5a6",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 46.0,
+      "power_w_max": 649.76,
+      "samples": 427,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.032591999999999996,
+      "sol_ms": 0.0129,
+      "baseline_latency_ms": 0.0702885,
+      "sol_score": 0.7445268258508962,
+      "sol_score_cal": 0.6891611180481352,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.038241,
+      "sol_ms": 0.0013,
+      "baseline_latency_ms": 0.0168955,
+      "sol_score": 0.2968507608995651,
+      "sol_score_cal": 0.26078432782423555,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.040479,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.02496,
+      "sol_score": 0.37203779745708204,
+      "sol_score_cal": 0.33016239862982605,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.038400000000000004,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.014896,
+      "sol_score": 0.270898315658141,
+      "sol_score_cal": 0.2371654833424358,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.0312155,
+      "sol_ms": 0.0114,
+      "baseline_latency_ms": 0.072129,
+      "sol_score": 0.7539807187331227,
+      "sol_score_cal": 0.7022687191722459,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0399195,
+      "sol_ms": 0.017,
+      "baseline_latency_ms": 0.102176,
+      "sol_score": 0.7879698969892365,
+      "sol_score_cal": 0.7363057491123913,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.038208000000000006,
+      "sol_ms": 0.001,
+      "baseline_latency_ms": 0.01504,
+      "sol_score": 0.27396191070871057,
+      "sol_score_cal": 0.23996915268327904,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.019375499999999997,
+      "sol_ms": 0.0066,
+      "baseline_latency_ms": 0.046449,
+      "sol_score": 0.7572328478180316,
+      "sol_score_cal": 0.7077240382415005,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.041679999999999995,
+      "sol_ms": 0.0183,
+      "baseline_latency_ms": 0.1085765,
+      "sol_score": 0.794292451377616,
+      "sol_score_cal": 0.7425538162642701,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.039872,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.0189599999999999,
+      "sol_score": 0.31272388594354367,
+      "sol_score_cal": 0.2753609657379032,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.024032,
+      "sol_ms": 0.0101,
+      "baseline_latency_ms": 0.0635999999999999,
+      "sol_score": 0.7933918614307743,
+      "sol_score_cal": 0.7430753708987793,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.013024,
+      "sol_ms": 0.0044,
+      "baseline_latency_ms": 0.0356314999999999,
+      "sol_score": 0.7836183211852813,
+      "sol_score_cal": 0.7378090179886344,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.046495499999999995,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.0251845,
+      "sol_score": 0.3397187123947052,
+      "sol_score_cal": 0.29987062855191415,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.0110395,
+      "sol_ms": 0.0031,
+      "baseline_latency_ms": 0.027296,
+      "sol_score": 0.7529367833081794,
+      "sol_score_cal": 0.7068032736243868,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.013248,
+      "sol_ms": 0.0049,
+      "baseline_latency_ms": 0.035856,
+      "sol_score": 0.7876043150824343,
+      "sol_score_cal": 0.7402001668056714,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.033712,
+      "sol_ms": 0.0143,
+      "baseline_latency_ms": 0.0872805,
+      "sol_score": 0.7898963660470277,
+      "sol_score_cal": 0.738685626336948,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Pure streaming / memory-bound fused RoPE-backward.\n# Traffic is already at the 5-read + 3-write HBM floor, so the only lever is\n# achieved HBM-BW% = memory-level parallelism (elements/thread) \u00d7 block size.\n# This round adds a grid-stride loop over seq_len so that all 148 SMs are\n# utilized even for large BLOCK_S (32, 64) \u2014 large blocks improve per-thread\n# work but reduce grid size, which the stride loop compensates.\n# Also adds BLOCK_S=32/64 autotune options for the big seq_len shapes.\n# EVICT flag (L2-bypass) carried forward from the frontier.\n#\n# CUDA-graph layer: shapes with seq_len <= 512 are launch-latency-bound\n# (kernel work ~2-3\u00b5s, autotune dispatch ~5-10\u00b5s).  We warm up until\n# @triton.autotune locks its per-shape config, then capture one dedicated\n# CUDAGraph per shape with its own static in/out buffers (no shared pool).\n# Per call: copy_ in -> replay() -> clone() out.  seq_len > 512 uses the\n# direct grid-stride launch untouched.\ndef _configs():\n    cfgs = []\n    for evict in [0, 1]:\n        cfgs.extend([\n            # BLOCK_S=1 \u2014 fine-grained, for tiny seq_len (128, 131, 211)\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=2),\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=4),\n            # BLOCK_S=2\n            triton.Config({\"BLOCK_S\": 2,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 2,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=4),\n            # BLOCK_S=4\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=8\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=16 \u2014 moderate, for mid-range seq_len\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=32 \u2014 coarse, for large seq_len (>= 2048)\n            triton.Config({\"BLOCK_S\": 32, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 32, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            # BLOCK_S=64 \u2014 very coarse, for very large seq_len (3803, 4096)\n            triton.Config({\"BLOCK_S\": 64, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n        ])\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"seq_len\"])\n@triton.jit\ndef _rope_backward_kernel(\n    grad_q_embed,\n    grad_k_embed,\n    q,\n    k,\n    embeddings,\n    grad_q,\n    grad_k,\n    grad_embeddings,\n    seq_len,\n    NUM_HEADS: tl.constexpr,\n    HALF: tl.constexpr,          # head_dim // 2 == 64\n    ROW_STRIDE: tl.constexpr,    # num_heads * head_dim == 2048\n    HEAD_STRIDE: tl.constexpr,   # head_dim == 128\n    EMB_STRIDE: tl.constexpr,    # head_dim == 128\n    BLOCK_S: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n):\n    pid_s = tl.program_id(0)\n    pid_d = tl.program_id(1)\n    num_pid_s = tl.num_programs(0)\n\n    # Head and dim-pair ranges are fixed per program\n    h = tl.arange(0, NUM_HEADS)                           # [NUM_HEADS]\n    d0 = pid_d * BLOCK_D + tl.arange(0, BLOCK_D)          # [BLOCK_D]\n    d1 = d0 + HALF                                        # paired second-half dims\n\n    # Grid-stride loop over seq_len \u2014 ensures all SMs are utilized even when\n    # the natural grid (cdiv(seq_len, BLOCK_S)) is smaller than 148 SMs\n    # (e.g., BLOCK_S=64 at seq_len=4096 -> 64 blocks natural, but we launch\n    # 148+, so each program claims a chunk via the stride).\n    for s_start in range(pid_s * BLOCK_S, seq_len, num_pid_s * BLOCK_S):\n        s = s_start + tl.arange(0, BLOCK_S)               # [BLOCK_S]\n        mask_s = s < seq_len\n\n        # 3D offsets: [BLOCK_S, NUM_HEADS, BLOCK_D]\n        row = s[:, None, None] * ROW_STRIDE\n        hh = h[None, :, None] * HEAD_STRIDE\n        off0 = row + hh + d0[None, None, :]\n        off1 = row + hh + d1[None, None, :]\n        m = mask_s[:, None, None]\n\n        # Embeddings offsets: [BLOCK_S, BLOCK_D]\n        erow = s[:, None] * EMB_STRIDE\n        eoff0 = erow + d0[None, :]\n        eoff1 = erow + d1[None, :]\n        em = mask_s[:, None]\n\n        # ---- load embeddings, compute cos/sin ----\n        if EVICT:\n            e0 = tl.load(embeddings + eoff0, mask=em, other=0.0, eviction_policy=\"evict_first\")\n            e1 = tl.load(embeddings + eoff1, mask=em, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            e0 = tl.load(embeddings + eoff0, mask=em, other=0.0)\n            e1 = tl.load(embeddings + eoff1, mask=em, other=0.0)\n        c0 = tl.cos(e0)\n        s0 = tl.sin(e0)\n        c1 = tl.cos(e1)\n        s1 = tl.sin(e1)\n\n        # ---- q path: grad_q + grad_cos/sin from q ----\n        if EVICT:\n            gq0 = tl.load(grad_q_embed + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            gq1 = tl.load(grad_q_embed + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            gq0 = tl.load(grad_q_embed + off0, mask=m, other=0.0)\n            gq1 = tl.load(grad_q_embed + off1, mask=m, other=0.0)\n\n        if EVICT:\n            tl.store(grad_q + off0, gq0 * c0[:, None, :] + gq1 * s1[:, None, :], mask=m, cache_modifier=\".cs\")\n            tl.store(grad_q + off1, gq1 * c1[:, None, :] - gq0 * s0[:, None, :], mask=m, cache_modifier=\".cs\")\n        else:\n            tl.store(grad_q + off0, gq0 * c0[:, None, :] + gq1 * s1[:, None, :], mask=m)\n            tl.store(grad_q + off1, gq1 * c1[:, None, :] - gq0 * s0[:, None, :], mask=m)\n\n        if EVICT:\n            q0 = tl.load(q + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            q1 = tl.load(q + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            q0 = tl.load(q + off0, mask=m, other=0.0)\n            q1 = tl.load(q + off1, mask=m, other=0.0)\n        # grad_cos = grad_q_embed * q, summed over heads\n        grad_cos0 = tl.sum(gq0 * q0, axis=1)   # -> [BLOCK_S, BLOCK_D]\n        grad_sin0 = -tl.sum(gq0 * q1, axis=1)  # q_rotated = [-q1, q0], sin pair\n        grad_cos1 = tl.sum(gq1 * q1, axis=1)\n        grad_sin1 = tl.sum(gq1 * q0, axis=1)\n\n        # ---- k path: grad_k + grad_cos/sin from k ----\n        if EVICT:\n            gk0 = tl.load(grad_k_embed + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            gk1 = tl.load(grad_k_embed + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            gk0 = tl.load(grad_k_embed + off0, mask=m, other=0.0)\n            gk1 = tl.load(grad_k_embed + off1, mask=m, other=0.0)\n\n        if EVICT:\n            tl.store(grad_k + off0, gk0 * c0[:, None, :] + gk1 * s1[:, None, :], mask=m, cache_modifier=\".cs\")\n            tl.store(grad_k + off1, gk1 * c1[:, None, :] - gk0 * s0[:, None, :], mask=m, cache_modifier=\".cs\")\n        else:\n            tl.store(grad_k + off0, gk0 * c0[:, None, :] + gk1 * s1[:, None, :], mask=m)\n            tl.store(grad_k + off1, gk1 * c1[:, None, :] - gk0 * s0[:, None, :], mask=m)\n\n        if EVICT:\n            k0 = tl.load(k + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            k1 = tl.load(k + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            k0 = tl.load(k + off0, mask=m, other=0.0)\n            k1 = tl.load(k + off1, mask=m, other=0.0)\n        grad_cos0 = grad_cos0 + tl.sum(gk0 * k0, axis=1)\n        grad_sin0 = grad_sin0 - tl.sum(gk0 * k1, axis=1)\n        grad_cos1 = grad_cos1 + tl.sum(gk1 * k1, axis=1)\n        grad_sin1 = grad_sin1 + tl.sum(gk1 * k0, axis=1)\n\n        # ---- store grad_embeddings ----\n        # d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        tl.store(grad_embeddings + eoff0, -s0 * grad_cos0 + c0 * grad_sin0, mask=em)\n        tl.store(grad_embeddings + eoff1, -s1 * grad_cos1 + c1 * grad_sin1, mask=em)\n\n\n# ---------------------------------------------------------------------------\n# CUDA-graph layer: one dedicated graph per small shape (seq_len <= 512).\n# These shapes are launch-latency-bound \u2014 kernel work is ~2-3 \u00b5s but Triton's\n# per-call autotune key-lookup + CPU dispatch is ~5-10 \u00b5s.  By warming up\n# until autotune locks the per-shape config, then capturing the settled kernel\n# launch into a CUDAGraph with its own static buffers (no shared pool), we\n# eliminate the dispatch overhead on every call after the first.\n#\n# Previous CUDA-graph attempts (0.557, 0.539) failed because they captured\n# before autotune settled, or aliased buffers across shapes.  Here we:\n#  1. warm up (10 calls) to let autotune lock its config\n#  2. synchronize to drain the GPU queue\n#  3. capture ONE graph with dedicated static in/out buffers per shape\n#  4. on each run: copy_ in -> replay() -> clone() out\n# ---------------------------------------------------------------------------\n_cuda_graph_cache = {}\n\n_CUDA_GRAPH_THRESHOLD = 512\n\n\ndef _direct_launch(\n    grad_q_embed, grad_k_embed, q, k, embeddings,\n    grad_q, grad_k, grad_embeddings,\n    seq_len, num_heads, half, head_dim,\n):\n    grid = lambda META: (\n        max(min(triton.cdiv(seq_len, META[\"BLOCK_S\"]), 148 * 8), 148),\n        half // META[\"BLOCK_D\"],\n    )\n    _rope_backward_kernel[grid](\n        grad_q_embed, grad_k_embed, q, k, embeddings,\n        grad_q, grad_k, grad_embeddings,\n        seq_len,\n        NUM_HEADS=num_heads,\n        HALF=half,\n        ROW_STRIDE=num_heads * head_dim,\n        HEAD_STRIDE=head_dim,\n        EMB_STRIDE=head_dim,\n    )\n    return grad_q, grad_k, grad_embeddings\n\n\ndef _run_cuda_graph(\n    grad_q_embed, grad_k_embed, q, k, embeddings,\n    grad_q, grad_k, grad_embeddings,\n    seq_len, num_heads, half, head_dim,\n):\n    key = seq_len\n\n    if key not in _cuda_graph_cache:\n        device = grad_q_embed.device\n        dtype = grad_q_embed.dtype\n\n        # Dedicated static buffers per shape \u2014 no cross-shape aliasing\n        s_grad_q_embed = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_k_embed = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_q = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_k = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_embeddings = torch.empty(seq_len, head_dim, dtype=dtype, device=device)\n        s_grad_q = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_k = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_embeddings = torch.empty(seq_len, head_dim, dtype=dtype, device=device)\n\n        grid = lambda META: (\n            max(min(triton.cdiv(seq_len, META[\"BLOCK_S\"]), 148 * 8), 148),\n            half // META[\"BLOCK_D\"],\n        )\n\n        # Warm up: let @triton.autotune search and lock the per-shape config.\n        # The first call triggers the full autotune sweep; subsequent calls\n        # hit the cache and are fast.  10 calls ensure the GPU is warm too.\n        for _ in range(10):\n            _rope_backward_kernel[grid](\n                s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n                s_grad_q, s_grad_k, s_grad_embeddings,\n                seq_len,\n                NUM_HEADS=num_heads,\n                HALF=half,\n                ROW_STRIDE=num_heads * head_dim,\n                HEAD_STRIDE=head_dim,\n                EMB_STRIDE=head_dim,\n            )\n        torch.cuda.synchronize()\n\n        # Capture \u2014 autotune is now settled, so the kernel launch is a\n        # deterministic direct call with fixed grid dimensions.\n        g = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(g):\n            _rope_backward_kernel[grid](\n                s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n                s_grad_q, s_grad_k, s_grad_embeddings,\n                seq_len,\n                NUM_HEADS=num_heads,\n                HALF=half,\n                ROW_STRIDE=num_heads * head_dim,\n                HEAD_STRIDE=head_dim,\n                EMB_STRIDE=head_dim,\n            )\n\n        _cuda_graph_cache[key] = (\n            g,\n            s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n            s_grad_q, s_grad_k, s_grad_embeddings,\n        )\n\n    (\n        g,\n        s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n        s_grad_q, s_grad_k, s_grad_embeddings,\n    ) = _cuda_graph_cache[key]\n\n    # Copy real inputs into the static buffers\n    s_grad_q_embed.copy_(grad_q_embed)\n    s_grad_k_embed.copy_(grad_k_embed)\n    s_q.copy_(q)\n    s_k.copy_(k)\n    s_embeddings.copy_(embeddings)\n\n    # Replay the captured kernel launch\n    g.replay()\n\n    # Copy results out of the static buffers\n    grad_q.copy_(s_grad_q)\n    grad_k.copy_(s_grad_k)\n    grad_embeddings.copy_(s_grad_embeddings)\n\n    return grad_q, grad_k, grad_embeddings\n\n\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    embeddings: torch.Tensor,\n):\n    grad_q = torch.empty_like(q)\n    grad_k = torch.empty_like(k)\n    grad_embeddings = torch.empty_like(embeddings)\n\n    seq_len, num_heads, head_dim = q.shape\n    if seq_len == 0:\n        return grad_q, grad_k, grad_embeddings\n\n    half = head_dim // 2\n\n    if seq_len <= _CUDA_GRAPH_THRESHOLD:\n        return _run_cuda_graph(\n            grad_q_embed, grad_k_embed, q, k, embeddings,\n            grad_q, grad_k, grad_embeddings,\n            seq_len, num_heads, half, head_dim,\n        )\n\n    return _direct_launch(\n        grad_q_embed, grad_k_embed, q, k, embeddings,\n        grad_q, grad_k, grad_embeddings,\n        seq_len, num_heads, half, head_dim,\n    )"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t19_43e54375e5a6",
+    "definition": "019_vision_3d_rotary_embedding_with_spatial_merge_indexing_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Pure streaming / memory-bound fused RoPE-backward.\n# Traffic is already at the 5-read + 3-write HBM floor, so the only lever is\n# achieved HBM-BW% = memory-level parallelism (elements/thread) \u00d7 block size.\n# This round adds a grid-stride loop over seq_len so that all 148 SMs are\n# utilized even for large BLOCK_S (32, 64) \u2014 large blocks improve per-thread\n# work but reduce grid size, which the stride loop compensates.\n# Also adds BLOCK_S=32/64 autotune options for the big seq_len shapes.\n# EVICT flag (L2-bypass) carried forward from the frontier.\n#\n# CUDA-graph layer: shapes with seq_len <= 512 are launch-latency-bound\n# (kernel work ~2-3\u00b5s, autotune dispatch ~5-10\u00b5s).  We warm up until\n# @triton.autotune locks its per-shape config, then capture one dedicated\n# CUDAGraph per shape with its own static in/out buffers (no shared pool).\n# Per call: copy_ in -> replay() -> clone() out.  seq_len > 512 uses the\n# direct grid-stride launch untouched.\ndef _configs():\n    cfgs = []\n    for evict in [0, 1]:\n        cfgs.extend([\n            # BLOCK_S=1 \u2014 fine-grained, for tiny seq_len (128, 131, 211)\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=2),\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 1,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=4),\n            # BLOCK_S=2\n            triton.Config({\"BLOCK_S\": 2,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 2,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=4),\n            # BLOCK_S=4\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 4,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=8\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=4),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            triton.Config({\"BLOCK_S\": 8,  \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=16 \u2014 moderate, for mid-range seq_len\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            triton.Config({\"BLOCK_S\": 16, \"BLOCK_D\": 32, \"EVICT\": evict}, num_warps=8),\n            # BLOCK_S=32 \u2014 coarse, for large seq_len (>= 2048)\n            triton.Config({\"BLOCK_S\": 32, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=8),\n            triton.Config({\"BLOCK_S\": 32, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n            # BLOCK_S=64 \u2014 very coarse, for very large seq_len (3803, 4096)\n            triton.Config({\"BLOCK_S\": 64, \"BLOCK_D\": 64, \"EVICT\": evict}, num_warps=16),\n        ])\n    return cfgs\n\n\n@triton.autotune(configs=_configs(), key=[\"seq_len\"])\n@triton.jit\ndef _rope_backward_kernel(\n    grad_q_embed,\n    grad_k_embed,\n    q,\n    k,\n    embeddings,\n    grad_q,\n    grad_k,\n    grad_embeddings,\n    seq_len,\n    NUM_HEADS: tl.constexpr,\n    HALF: tl.constexpr,          # head_dim // 2 == 64\n    ROW_STRIDE: tl.constexpr,    # num_heads * head_dim == 2048\n    HEAD_STRIDE: tl.constexpr,   # head_dim == 128\n    EMB_STRIDE: tl.constexpr,    # head_dim == 128\n    BLOCK_S: tl.constexpr,\n    BLOCK_D: tl.constexpr,\n    EVICT: tl.constexpr,\n):\n    pid_s = tl.program_id(0)\n    pid_d = tl.program_id(1)\n    num_pid_s = tl.num_programs(0)\n\n    # Head and dim-pair ranges are fixed per program\n    h = tl.arange(0, NUM_HEADS)                           # [NUM_HEADS]\n    d0 = pid_d * BLOCK_D + tl.arange(0, BLOCK_D)          # [BLOCK_D]\n    d1 = d0 + HALF                                        # paired second-half dims\n\n    # Grid-stride loop over seq_len \u2014 ensures all SMs are utilized even when\n    # the natural grid (cdiv(seq_len, BLOCK_S)) is smaller than 148 SMs\n    # (e.g., BLOCK_S=64 at seq_len=4096 -> 64 blocks natural, but we launch\n    # 148+, so each program claims a chunk via the stride).\n    for s_start in range(pid_s * BLOCK_S, seq_len, num_pid_s * BLOCK_S):\n        s = s_start + tl.arange(0, BLOCK_S)               # [BLOCK_S]\n        mask_s = s < seq_len\n\n        # 3D offsets: [BLOCK_S, NUM_HEADS, BLOCK_D]\n        row = s[:, None, None] * ROW_STRIDE\n        hh = h[None, :, None] * HEAD_STRIDE\n        off0 = row + hh + d0[None, None, :]\n        off1 = row + hh + d1[None, None, :]\n        m = mask_s[:, None, None]\n\n        # Embeddings offsets: [BLOCK_S, BLOCK_D]\n        erow = s[:, None] * EMB_STRIDE\n        eoff0 = erow + d0[None, :]\n        eoff1 = erow + d1[None, :]\n        em = mask_s[:, None]\n\n        # ---- load embeddings, compute cos/sin ----\n        if EVICT:\n            e0 = tl.load(embeddings + eoff0, mask=em, other=0.0, eviction_policy=\"evict_first\")\n            e1 = tl.load(embeddings + eoff1, mask=em, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            e0 = tl.load(embeddings + eoff0, mask=em, other=0.0)\n            e1 = tl.load(embeddings + eoff1, mask=em, other=0.0)\n        c0 = tl.cos(e0)\n        s0 = tl.sin(e0)\n        c1 = tl.cos(e1)\n        s1 = tl.sin(e1)\n\n        # ---- q path: grad_q + grad_cos/sin from q ----\n        if EVICT:\n            gq0 = tl.load(grad_q_embed + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            gq1 = tl.load(grad_q_embed + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            gq0 = tl.load(grad_q_embed + off0, mask=m, other=0.0)\n            gq1 = tl.load(grad_q_embed + off1, mask=m, other=0.0)\n\n        if EVICT:\n            tl.store(grad_q + off0, gq0 * c0[:, None, :] + gq1 * s1[:, None, :], mask=m, cache_modifier=\".cs\")\n            tl.store(grad_q + off1, gq1 * c1[:, None, :] - gq0 * s0[:, None, :], mask=m, cache_modifier=\".cs\")\n        else:\n            tl.store(grad_q + off0, gq0 * c0[:, None, :] + gq1 * s1[:, None, :], mask=m)\n            tl.store(grad_q + off1, gq1 * c1[:, None, :] - gq0 * s0[:, None, :], mask=m)\n\n        if EVICT:\n            q0 = tl.load(q + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            q1 = tl.load(q + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            q0 = tl.load(q + off0, mask=m, other=0.0)\n            q1 = tl.load(q + off1, mask=m, other=0.0)\n        # grad_cos = grad_q_embed * q, summed over heads\n        grad_cos0 = tl.sum(gq0 * q0, axis=1)   # -> [BLOCK_S, BLOCK_D]\n        grad_sin0 = -tl.sum(gq0 * q1, axis=1)  # q_rotated = [-q1, q0], sin pair\n        grad_cos1 = tl.sum(gq1 * q1, axis=1)\n        grad_sin1 = tl.sum(gq1 * q0, axis=1)\n\n        # ---- k path: grad_k + grad_cos/sin from k ----\n        if EVICT:\n            gk0 = tl.load(grad_k_embed + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            gk1 = tl.load(grad_k_embed + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            gk0 = tl.load(grad_k_embed + off0, mask=m, other=0.0)\n            gk1 = tl.load(grad_k_embed + off1, mask=m, other=0.0)\n\n        if EVICT:\n            tl.store(grad_k + off0, gk0 * c0[:, None, :] + gk1 * s1[:, None, :], mask=m, cache_modifier=\".cs\")\n            tl.store(grad_k + off1, gk1 * c1[:, None, :] - gk0 * s0[:, None, :], mask=m, cache_modifier=\".cs\")\n        else:\n            tl.store(grad_k + off0, gk0 * c0[:, None, :] + gk1 * s1[:, None, :], mask=m)\n            tl.store(grad_k + off1, gk1 * c1[:, None, :] - gk0 * s0[:, None, :], mask=m)\n\n        if EVICT:\n            k0 = tl.load(k + off0, mask=m, other=0.0, eviction_policy=\"evict_first\")\n            k1 = tl.load(k + off1, mask=m, other=0.0, eviction_policy=\"evict_first\")\n        else:\n            k0 = tl.load(k + off0, mask=m, other=0.0)\n            k1 = tl.load(k + off1, mask=m, other=0.0)\n        grad_cos0 = grad_cos0 + tl.sum(gk0 * k0, axis=1)\n        grad_sin0 = grad_sin0 - tl.sum(gk0 * k1, axis=1)\n        grad_cos1 = grad_cos1 + tl.sum(gk1 * k1, axis=1)\n        grad_sin1 = grad_sin1 + tl.sum(gk1 * k0, axis=1)\n\n        # ---- store grad_embeddings ----\n        # d(cos(emb))/d(emb) = -sin(emb), d(sin(emb))/d(emb) = cos(emb)\n        tl.store(grad_embeddings + eoff0, -s0 * grad_cos0 + c0 * grad_sin0, mask=em)\n        tl.store(grad_embeddings + eoff1, -s1 * grad_cos1 + c1 * grad_sin1, mask=em)\n\n\n# ---------------------------------------------------------------------------\n# CUDA-graph layer: one dedicated graph per small shape (seq_len <= 512).\n# These shapes are launch-latency-bound \u2014 kernel work is ~2-3 \u00b5s but Triton's\n# per-call autotune key-lookup + CPU dispatch is ~5-10 \u00b5s.  By warming up\n# until autotune locks the per-shape config, then capturing the settled kernel\n# launch into a CUDAGraph with its own static buffers (no shared pool), we\n# eliminate the dispatch overhead on every call after the first.\n#\n# Previous CUDA-graph attempts (0.557, 0.539) failed because they captured\n# before autotune settled, or aliased buffers across shapes.  Here we:\n#  1. warm up (10 calls) to let autotune lock its config\n#  2. synchronize to drain the GPU queue\n#  3. capture ONE graph with dedicated static in/out buffers per shape\n#  4. on each run: copy_ in -> replay() -> clone() out\n# ---------------------------------------------------------------------------\n_cuda_graph_cache = {}\n\n_CUDA_GRAPH_THRESHOLD = 512\n\n\ndef _direct_launch(\n    grad_q_embed, grad_k_embed, q, k, embeddings,\n    grad_q, grad_k, grad_embeddings,\n    seq_len, num_heads, half, head_dim,\n):\n    grid = lambda META: (\n        max(min(triton.cdiv(seq_len, META[\"BLOCK_S\"]), 148 * 8), 148),\n        half // META[\"BLOCK_D\"],\n    )\n    _rope_backward_kernel[grid](\n        grad_q_embed, grad_k_embed, q, k, embeddings,\n        grad_q, grad_k, grad_embeddings,\n        seq_len,\n        NUM_HEADS=num_heads,\n        HALF=half,\n        ROW_STRIDE=num_heads * head_dim,\n        HEAD_STRIDE=head_dim,\n        EMB_STRIDE=head_dim,\n    )\n    return grad_q, grad_k, grad_embeddings\n\n\ndef _run_cuda_graph(\n    grad_q_embed, grad_k_embed, q, k, embeddings,\n    grad_q, grad_k, grad_embeddings,\n    seq_len, num_heads, half, head_dim,\n):\n    key = seq_len\n\n    if key not in _cuda_graph_cache:\n        device = grad_q_embed.device\n        dtype = grad_q_embed.dtype\n\n        # Dedicated static buffers per shape \u2014 no cross-shape aliasing\n        s_grad_q_embed = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_k_embed = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_q = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_k = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_embeddings = torch.empty(seq_len, head_dim, dtype=dtype, device=device)\n        s_grad_q = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_k = torch.empty(seq_len, num_heads, head_dim, dtype=dtype, device=device)\n        s_grad_embeddings = torch.empty(seq_len, head_dim, dtype=dtype, device=device)\n\n        grid = lambda META: (\n            max(min(triton.cdiv(seq_len, META[\"BLOCK_S\"]), 148 * 8), 148),\n            half // META[\"BLOCK_D\"],\n        )\n\n        # Warm up: let @triton.autotune search and lock the per-shape config.\n        # The first call triggers the full autotune sweep; subsequent calls\n        # hit the cache and are fast.  10 calls ensure the GPU is warm too.\n        for _ in range(10):\n            _rope_backward_kernel[grid](\n                s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n                s_grad_q, s_grad_k, s_grad_embeddings,\n                seq_len,\n                NUM_HEADS=num_heads,\n                HALF=half,\n                ROW_STRIDE=num_heads * head_dim,\n                HEAD_STRIDE=head_dim,\n                EMB_STRIDE=head_dim,\n            )\n        torch.cuda.synchronize()\n\n        # Capture \u2014 autotune is now settled, so the kernel launch is a\n        # deterministic direct call with fixed grid dimensions.\n        g = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(g):\n            _rope_backward_kernel[grid](\n                s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n                s_grad_q, s_grad_k, s_grad_embeddings,\n                seq_len,\n                NUM_HEADS=num_heads,\n                HALF=half,\n                ROW_STRIDE=num_heads * head_dim,\n                HEAD_STRIDE=head_dim,\n                EMB_STRIDE=head_dim,\n            )\n\n        _cuda_graph_cache[key] = (\n            g,\n            s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n            s_grad_q, s_grad_k, s_grad_embeddings,\n        )\n\n    (\n        g,\n        s_grad_q_embed, s_grad_k_embed, s_q, s_k, s_embeddings,\n        s_grad_q, s_grad_k, s_grad_embeddings,\n    ) = _cuda_graph_cache[key]\n\n    # Copy real inputs into the static buffers\n    s_grad_q_embed.copy_(grad_q_embed)\n    s_grad_k_embed.copy_(grad_k_embed)\n    s_q.copy_(q)\n    s_k.copy_(k)\n    s_embeddings.copy_(embeddings)\n\n    # Replay the captured kernel launch\n    g.replay()\n\n    # Copy results out of the static buffers\n    grad_q.copy_(s_grad_q)\n    grad_k.copy_(s_grad_k)\n    grad_embeddings.copy_(s_grad_embeddings)\n\n    return grad_q, grad_k, grad_embeddings\n\n\n@torch.no_grad()\ndef run(\n    grad_q_embed: torch.Tensor,\n    grad_k_embed: torch.Tensor,\n    q: torch.Tensor,\n    k: torch.Tensor,\n    embeddings: torch.Tensor,\n):\n    grad_q = torch.empty_like(q)\n    grad_k = torch.empty_like(k)\n    grad_embeddings = torch.empty_like(embeddings)\n\n    seq_len, num_heads, head_dim = q.shape\n    if seq_len == 0:\n        return grad_q, grad_k, grad_embeddings\n\n    half = head_dim // 2\n\n    if seq_len <= _CUDA_GRAPH_THRESHOLD:\n        return _run_cuda_graph(\n            grad_q_embed, grad_k_embed, q, k, embeddings,\n            grad_q, grad_k, grad_embeddings,\n            seq_len, num_heads, half, head_dim,\n        )\n\n    return _direct_launch(\n        grad_q_embed, grad_k_embed, q, k, embeddings,\n        grad_q, grad_k, grad_embeddings,\n        seq_len, num_heads, half, head_dim,\n    )"
+      }
+    ]
+  }
+}

@@ -26,3 +26,6 @@ If it beats 0.721 but the 3 compute-bound shapes (idx 7/10/13, N>=496) are still
 ## 4. from `f3e2efa4` — Targeted-TF32 eager cuBLAS path from the best frontier kernel, with final bf16 dgrad accumulation folded through addmm a
 Higher-ceiling idea not shipped: build a fixed-shape copy-in CUDA graph that stages live inputs into persistent buffers, then replays the proven targeted-TF32 op sequence so launch overhead is removed even if the harness changes input allocations. Try this if the memory-bound N<=296 shapes still tie the 0.721 eager kernel or if a direct live-pointer graph does not replay.
 
+## 5. from `65d58c25` — Targeted-TF32 cuBLAS path: G2/G3/G5 use fp32 operands with TF32 tensor cores for correctness, G1/G4/G6 stay bf16, and G6
+Higher-ceiling idea not shipped: keep G2 in TF32 but add shape-bucket precision for G3/G5, using bf16 wgrad inputs only for N=64/128/196 and TF32 for N>=215. Try it only if the current TF32 frontier ties the parent again and per-shape correctness logs confirm the small-N wgrad path has enough tolerance headroom.
+

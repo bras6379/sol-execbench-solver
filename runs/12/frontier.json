@@ -3,7 +3,7 @@
   "family": "softmax",
   "name": "softmax_12",
   "epsilon": 0.02,
-  "size": 5,
+  "size": 6,
   "best_cand": "e4e96779baea",
   "best_score": 0.9200828955014422,
   "best_score_cal": 0.9003647823060621,
@@ -71,7 +71,7 @@
       "sol_score": 0.9195445907206147,
       "sol_score_cal": 0.8997635798525854,
       "all_passed": true,
-      "shapes_won": 7,
+      "shapes_won": 6,
       "vector": [
         0.9180662049155645,
         0.9169478815148105,
@@ -94,6 +94,35 @@
       "agent": "openrouter",
       "model": "deepseek/deepseek-v4-pro",
       "candidate": "candidates/d3257b2ccfb0.json"
+    },
+    {
+      "cand_id": "7f409c030993",
+      "sol_score": 0.9194506232667895,
+      "sol_score_cal": 0.8996417612952935,
+      "all_passed": true,
+      "shapes_won": 1,
+      "vector": [
+        0.9153732446415374,
+        0.9162607718246535,
+        0.9127218934911243,
+        0.9157706093189963,
+        0.9439261056167196,
+        0.9119402985074627,
+        0.9177215189873418,
+        0.9192123665807876,
+        0.9204248975027953,
+        0.9156039009752437,
+        0.9113737075332349,
+        0.9269596199524941,
+        0.926305948346383,
+        0.9224057725308575,
+        0.9191787821078545,
+        0.9160305343511449
+      ],
+      "strategy": "Drop the redundant Cody-Waite sincos pre-reduction and call __sincosf directly; use float2/bf162 for tiny shapes (B*S <=",
+      "agent": "openrouter",
+      "model": "moonshotai/kimi-k2.7-code",
+      "candidate": "candidates/7f409c030993.json"
     },
     {
       "cand_id": "d5d0ca1b9b23",

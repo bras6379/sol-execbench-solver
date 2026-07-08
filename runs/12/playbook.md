@@ -38,3 +38,6 @@ If this only ties or marginally beats 0.900, the remaining lever is the tiny-sha
 ## 9. from `d5cd73b5` — Shape-specialized CUDA (2-freq/thread float2+bf162 default, 4-freq/thread float4+uint2 for B=64/S=541), now calling __si
 CONTEXT.md's "one lever" (batch-redundancy: assume freqs is bit-identical across batch b and broadcast one sincos result) is a FALSE lead for this op -- do not attempt it. Verified directly in the harness source (`sol_execbench/core/bench/io.py`, `_generate_heuristic_tensor`/`_rand_tensor`): `freqs` has no name-based heuristic (only literal names "cos"/"sin" get the RoPE heuristic), so it falls back to plain independent `torch.randn(shape)` over the full [B,S,64] tensor -- every batch element is drawn independently, unlike problem 011 (011_rotary_position_embedding) which has a custom `get_inp
 
+## 10. from `7f409c03` — Drop the redundant Cody-Waite sincos pre-reduction and call __sincosf directly; use float2/bf162 for tiny shapes (B*S <=
+If this only ties the 0.900 frontier, the remaining lever is launch-bound tiny shapes: wrap the proven 2-freq kernel in a per-shape CUDA graph for the nine workloads with B*S <= 2048 to remove dispatch overhead. If that still does not move the needle, the graded shape set is at the kernel scheduling floor and the op is at ceiling.
+

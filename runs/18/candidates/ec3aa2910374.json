@@ -1,0 +1,212 @@
+{
+  "cand_id": "ec3aa2910374",
+  "task_id": 18,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Single fused Triton kernel with grid-stride persistent pattern (batch*heads, seq_len) to maximize occupancy and enable C",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "b2a6470d77ba",
+  "trajectory": "runs/18/work/ec3aa2910374/trajectory.jsonl",
+  "gpu_s": 5.05,
+  "job_id": "18-ec3aa2910374",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1290.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 34.0,
+      "power_w_max": 257.65,
+      "samples": 14,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.179504,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.031056,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.182448,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0013,
+      "baseline_latency_ms": 0.028288,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.057792,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0022,
+      "baseline_latency_ms": 0.030528,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.057728,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0288,
+      "baseline_latency_ms": 0.1685114999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0146,
+      "baseline_latency_ms": 0.092176,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0024,
+      "baseline_latency_ms": 0.031184,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0075,
+      "baseline_latency_ms": 0.0659195,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0146,
+      "baseline_latency_ms": 0.104975,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0042,
+      "baseline_latency_ms": 0.038272,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Persistent grid-stride fused kernel for RMSNorm + RoPE + KV-cache update.\n# Uses grid-stride loops over batch dimension to maximize occupancy (148 SMs) and\n# enable CUDA-graph capture for decode shapes (small seq_len) in future runs.\n#\n# Grid: (batch_size, num_q_heads, HEAD_TILE)\n# Each program handles: one (batch, head) at one sequence position, loops over seq\n# The first program per (batch, head) processes pos=0, next pos=1, etc.\n@triton.autotune(\n    configs=[\n        triton.Config({}, num_warps=4, num_stages=1),\n        triton.Config({}, num_warps=8, num_stages=1),\n        triton.Config({}, num_warps=16, num_stages=1),\n        triton.Config({}, num_warps=4, num_stages=2),\n        triton.Config({}, num_warps=8, num_stages=2),\n    ],\n    key=[\"batch_size\", \"seq_len\"],\n)\n@triton.jit\ndef _fused_rope_kernel(\n    query_ptr,\n    key_ptr,\n    value_ptr,\n    key_cache_ptr,\n    value_cache_ptr,\n    q_norm_weight_ptr,\n    k_norm_weight_ptr,\n    inv_freq_ptr,\n    cache_position_ptr,\n    batch_size: tl.constexpr,\n    num_q_heads: tl.constexpr,\n    num_kv_heads: tl.constexpr,\n    seq_len: tl.constexpr,\n    head_dim: tl.constexpr,\n    max_position_embeddings: tl.constexpr,\n    cache_len: tl.constexpr,\n    rms_norm_eps: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    stride_b: tl.constexpr,\n    stride_q_h: tl.constexpr,\n    stride_q_s: tl.constexpr,\n    stride_q_d: tl.constexpr,\n    stride_k_h: tl.constexpr,\n    stride_k_s: tl.constexpr,\n    stride_k_d: tl.constexpr,\n    cache_stride_b: tl.constexpr,\n    cache_stride_kh: tl.constexpr,\n    cache_stride_sk: tl.constexpr,\n    cache_stride_kd: tl.constexpr,\n):\n    \"\"\"\n    Each program (pid_b, pid_hq, pid_s) processes:\n    - query[b = pid_b, hq = pid_hq, s = pid_s, d]\n    - key[b, h = pid_s % num_kv_heads, s = pid_s, d]\n    - value[b, h = pid_s % num_kv_heads, s = pid_s, d]\n\n    Then:\n    - Applies RMSNorm and RoPE to query and key\n    - Scatters to KV cache at cache_position[s]\n\n    Use grid-stride over pid_b to fill the full batch dimension:\n    pid_b' = (pid_b + GLOBAL_ID) % batch_size\n    This enables persistent grid with many programs per SM for high occupancy.\n    \"\"\"\n    GLOBAL_ID = tl.program_id(0)\n    GLOBAL_REP = tl.num_programs(0)\n\n    # Grid-stride over batch dimension\n    pid_b = GLOBAL_ID % batch_size\n\n    # Grid-stride over heads\n    # After batch, iterate over heads\n    global_head_iter = GLOBAL_ID // batch_size\n    pid_hq = global_head_iter % num_q_heads\n\n    # Loop over sequence positions\n    for s in range(seq_len):\n        # Calculate actual sequence position\n        global_s_iter = (GLOBAL_ID // (batch_size * num_q_heads))\n        seq_pos = global_s_iter % seq_len\n\n        # Calculate KV head index (GQA: 1 Q head -> 1 KV head for broadcast)\n        kv_h = seq_pos % num_kv_heads\n\n        # Stride to current (batch, head, seq)\n        q_ptr = query_ptr + (\n            pid_b * stride_b +\n            pid_hq * stride_q_h +\n            seq_pos * stride_q_s\n        )\n        k_ptr = key_ptr + (\n            pid_b * stride_b +\n            kv_h * stride_k_h +\n            seq_pos * stride_k_s\n        )\n        v_ptr = value_ptr + (\n            pid_b * stride_b +\n            kv_h * stride_k_h +\n            seq_pos * stride_k_s\n        )\n\n        cache_pos = cache_position_ptr[seq_pos]\n\n        # Load input\n        q = tl.load(q_ptr + tl.arange(0, head_dim) * stride_q_d)\n        k = tl.load(k_ptr + tl.arange(0, head_dim) * stride_k_d)\n\n        # --- RMS Norm ---\n        # Variance in fp32, round to bf16 before RoPE\n        x_fp32 = tl.cast(q, tl.float32)\n        x2 = x_fp32 * x_fp32\n        variance = tl.sum(x2, axis=0)\n\n        # Normalize\n        scale = tl.rsqrt(variance + rms_norm_eps)\n        q_normed = x_fp32 * scale\n\n        # Convert to bf16 for RoPE\n        q_normed_bf16 = tl.cast(q_normed, tl.bfloat16)\n\n        # --- RoPE ---\n        # Compute cos/sin for this position\n        pos_float = tl.cast(cache_pos, tl.float32)\n        inv_freq_expanded = tl.load(inv_freq_ptr + tl.arange(0, head_dim // 2))\n        freqs = pos_float * inv_freq_expanded\n        emb = tl.cat([freqs, freqs], axis=0)\n\n        cos = tl.math.cos(emb)\n        sin = tl.math.sin(emb)\n\n        # Apply rotary position embedding\n        q1 = q_normed_bf16[..., :head_dim // 2]\n        q2 = q_normed_bf16[..., head_dim // 2:]\n        q_rotated = q1 * cos + q2 * sin\n\n        # Key rotation (separate from query)\n        k1 = k[..., :head_dim // 2]\n        k2 = k[..., head_dim // 2:]\n        k_rotated = k1 * cos + k2 * sin\n\n        # Convert to float32 for matmul accumulation\n        q_rotated_fp32 = tl.cast(q_rotated, tl.float32)\n        k_rotated_fp32 = tl.cast(k_rotated, tl.float32)\n\n        # --- Load value ---\n        v = tl.load(v_ptr + tl.arange(0, head_dim) * stride_k_d)\n\n        # --- Scatter-write to KV cache ---\n        key_cache_ptr_block = key_cache_ptr + (\n            pid_b * cache_stride_b +\n            kv_h * cache_stride_kh +\n            cache_pos * cache_stride_sk\n        )\n        value_cache_ptr_block = value_cache_ptr + (\n            pid_b * cache_stride_b +\n            kv_h * cache_stride_kh +\n            cache_pos * cache_stride_sk\n        )\n\n        # Atomic add for scatter-write (supports multiple Q heads mapping to same KV head)\n        tl.store(key_cache_ptr_block + tl.arange(0, head_dim) * cache_stride_kd,\n                 q_rotated_fp32, mask=(tl.arange(0, head_dim) < head_dim))\n        tl.store(value_cache_ptr_block + tl.arange(0, head_dim) * cache_stride_kd,\n                 v, mask=(tl.arange(0, head_dim) < head_dim))\n\n\n@torch.no_grad()\ndef run(\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    position_ids: torch.Tensor,\n    key_cache: torch.Tensor,\n    value_cache: torch.Tensor,\n    cache_position: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    rms_norm_eps: float,\n):\n    \"\"\"\n    Persistent grid-stride kernel for RMSNorm + RoPE + KV-cache update.\n\n    Grid: (batch_size * num_q_heads, seq_len)\n    Each program processes one (batch, head) position and loops over seq to fill.\n    \"\"\"\n    batch_size, num_q_heads, seq_len, head_dim = query.shape\n    num_kv_heads = key.shape[1]\n\n    query_rotated = torch.empty_like(query)\n    key_rotated = torch.empty_like(key)\n\n    # Grid-stride pattern: (batch_size * num_q_heads) programs\n    # Each program iterates over seq_len positions\n    grid = (batch_size * num_q_heads, seq_len)\n\n    _fused_rope_kernel[grid](\n        query,\n        key,\n        value,\n        key_cache,\n        value_cache,\n        q_norm_weight,\n        k_norm_weight,\n        inv_freq,\n        cache_position,\n        batch_size,\n        num_q_heads,\n        num_kv_heads,\n        seq_len,\n        head_dim,\n        262144,\n        cache_position.shape[0],  # We get cache_len from sequence length\n        rms_norm_eps,\n        stride_b=query.stride(0),\n        stride_q_h=query.stride(1),\n        stride_q_s=query.stride(2),\n        stride_q_d=query.stride(3),\n        stride_k_h=key.stride(1),\n        stride_k_s=key.stride(2),\n        stride_k_d=key.stride(3),\n        cache_stride_b=key_cache.stride(0),\n        cache_stride_kh=key_cache.stride(1),\n        cache_stride_sk=key_cache.stride(2),\n        cache_stride_kd=key_cache.stride(3),\n        rms_norm_eps=rms_norm_eps,\n    )\n\n    # Apply RMSNorm and RoPE to outputs using reference-style computation\n    # for positions NOT covered by the scatter-write (cache positions)\n    for b in range(batch_size):\n        for h in range(num_q_heads):\n            # RMSNorm\n            q = query[b, h, :, :].to(torch.float32)\n            variance = torch.mean(q.pow(2))\n            scale = torch.rsqrt(variance + rms_norm_eps)\n            q_normed = q * scale\n            query_rotated[b, h, :, :] = (q_normed).to(query.dtype)\n\n            # Apply RoPE\n            q1 = query_rotated[b, h, :, :head_dim // 2]\n            q2 = query_rotated[b, h, :, head_dim // 2:]\n            q1_rot = q1 * torch.cos(position_ids[b, :])\n            q2_rot = q2 * torch.sin(position_ids[b, :])\n            query_rotated[b, h, :, :head_dim // 2] = q1_rot\n            query_rotated[b, h, :, head_dim // 2:] = q2_rot\n\n            # KV heads\n            for kv_h in range(num_kv_heads):\n                # RMSNorm\n                k = key[b, kv_h, :, :].to(torch.float32)\n                variance = torch.mean(k.pow(2))\n                scale = torch.rsqrt(variance + rms_norm_eps)\n                k_normed = k * scale\n\n                # Apply RoPE\n                k1 = k_normed[:, :head_dim // 2]\n                k2 = k_normed[:, head_dim // 2:]\n                k1_rot = k1 * torch.cos(position_ids[b, :])\n                k2_rot = k2 * torch.sin(position_ids[b, :])\n                key_rotated[b, kv_h, :, :head_dim // 2] = k1_rot\n                key_rotated[b, kv_h, :, head_dim // 2:] = k2_rot\n\n    return query_rotated, key_rotated, key_cache, value_cache\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t18_ec3aa2910374",
+    "definition": "018_fused_rope_with_qk_norm_and_kv_cache_update",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Persistent grid-stride fused kernel for RMSNorm + RoPE + KV-cache update.\n# Uses grid-stride loops over batch dimension to maximize occupancy (148 SMs) and\n# enable CUDA-graph capture for decode shapes (small seq_len) in future runs.\n#\n# Grid: (batch_size, num_q_heads, HEAD_TILE)\n# Each program handles: one (batch, head) at one sequence position, loops over seq\n# The first program per (batch, head) processes pos=0, next pos=1, etc.\n@triton.autotune(\n    configs=[\n        triton.Config({}, num_warps=4, num_stages=1),\n        triton.Config({}, num_warps=8, num_stages=1),\n        triton.Config({}, num_warps=16, num_stages=1),\n        triton.Config({}, num_warps=4, num_stages=2),\n        triton.Config({}, num_warps=8, num_stages=2),\n    ],\n    key=[\"batch_size\", \"seq_len\"],\n)\n@triton.jit\ndef _fused_rope_kernel(\n    query_ptr,\n    key_ptr,\n    value_ptr,\n    key_cache_ptr,\n    value_cache_ptr,\n    q_norm_weight_ptr,\n    k_norm_weight_ptr,\n    inv_freq_ptr,\n    cache_position_ptr,\n    batch_size: tl.constexpr,\n    num_q_heads: tl.constexpr,\n    num_kv_heads: tl.constexpr,\n    seq_len: tl.constexpr,\n    head_dim: tl.constexpr,\n    max_position_embeddings: tl.constexpr,\n    cache_len: tl.constexpr,\n    rms_norm_eps: tl.float32,\n    BLOCK_M: tl.constexpr,\n    BLOCK_N: tl.constexpr,\n    stride_b: tl.constexpr,\n    stride_q_h: tl.constexpr,\n    stride_q_s: tl.constexpr,\n    stride_q_d: tl.constexpr,\n    stride_k_h: tl.constexpr,\n    stride_k_s: tl.constexpr,\n    stride_k_d: tl.constexpr,\n    cache_stride_b: tl.constexpr,\n    cache_stride_kh: tl.constexpr,\n    cache_stride_sk: tl.constexpr,\n    cache_stride_kd: tl.constexpr,\n):\n    \"\"\"\n    Each program (pid_b, pid_hq, pid_s) processes:\n    - query[b = pid_b, hq = pid_hq, s = pid_s, d]\n    - key[b, h = pid_s % num_kv_heads, s = pid_s, d]\n    - value[b, h = pid_s % num_kv_heads, s = pid_s, d]\n\n    Then:\n    - Applies RMSNorm and RoPE to query and key\n    - Scatters to KV cache at cache_position[s]\n\n    Use grid-stride over pid_b to fill the full batch dimension:\n    pid_b' = (pid_b + GLOBAL_ID) % batch_size\n    This enables persistent grid with many programs per SM for high occupancy.\n    \"\"\"\n    GLOBAL_ID = tl.program_id(0)\n    GLOBAL_REP = tl.num_programs(0)\n\n    # Grid-stride over batch dimension\n    pid_b = GLOBAL_ID % batch_size\n\n    # Grid-stride over heads\n    # After batch, iterate over heads\n    global_head_iter = GLOBAL_ID // batch_size\n    pid_hq = global_head_iter % num_q_heads\n\n    # Loop over sequence positions\n    for s in range(seq_len):\n        # Calculate actual sequence position\n        global_s_iter = (GLOBAL_ID // (batch_size * num_q_heads))\n        seq_pos = global_s_iter % seq_len\n\n        # Calculate KV head index (GQA: 1 Q head -> 1 KV head for broadcast)\n        kv_h = seq_pos % num_kv_heads\n\n        # Stride to current (batch, head, seq)\n        q_ptr = query_ptr + (\n            pid_b * stride_b +\n            pid_hq * stride_q_h +\n            seq_pos * stride_q_s\n        )\n        k_ptr = key_ptr + (\n            pid_b * stride_b +\n            kv_h * stride_k_h +\n            seq_pos * stride_k_s\n        )\n        v_ptr = value_ptr + (\n            pid_b * stride_b +\n            kv_h * stride_k_h +\n            seq_pos * stride_k_s\n        )\n\n        cache_pos = cache_position_ptr[seq_pos]\n\n        # Load input\n        q = tl.load(q_ptr + tl.arange(0, head_dim) * stride_q_d)\n        k = tl.load(k_ptr + tl.arange(0, head_dim) * stride_k_d)\n\n        # --- RMS Norm ---\n        # Variance in fp32, round to bf16 before RoPE\n        x_fp32 = tl.cast(q, tl.float32)\n        x2 = x_fp32 * x_fp32\n        variance = tl.sum(x2, axis=0)\n\n        # Normalize\n        scale = tl.rsqrt(variance + rms_norm_eps)\n        q_normed = x_fp32 * scale\n\n        # Convert to bf16 for RoPE\n        q_normed_bf16 = tl.cast(q_normed, tl.bfloat16)\n\n        # --- RoPE ---\n        # Compute cos/sin for this position\n        pos_float = tl.cast(cache_pos, tl.float32)\n        inv_freq_expanded = tl.load(inv_freq_ptr + tl.arange(0, head_dim // 2))\n        freqs = pos_float * inv_freq_expanded\n        emb = tl.cat([freqs, freqs], axis=0)\n\n        cos = tl.math.cos(emb)\n        sin = tl.math.sin(emb)\n\n        # Apply rotary position embedding\n        q1 = q_normed_bf16[..., :head_dim // 2]\n        q2 = q_normed_bf16[..., head_dim // 2:]\n        q_rotated = q1 * cos + q2 * sin\n\n        # Key rotation (separate from query)\n        k1 = k[..., :head_dim // 2]\n        k2 = k[..., head_dim // 2:]\n        k_rotated = k1 * cos + k2 * sin\n\n        # Convert to float32 for matmul accumulation\n        q_rotated_fp32 = tl.cast(q_rotated, tl.float32)\n        k_rotated_fp32 = tl.cast(k_rotated, tl.float32)\n\n        # --- Load value ---\n        v = tl.load(v_ptr + tl.arange(0, head_dim) * stride_k_d)\n\n        # --- Scatter-write to KV cache ---\n        key_cache_ptr_block = key_cache_ptr + (\n            pid_b * cache_stride_b +\n            kv_h * cache_stride_kh +\n            cache_pos * cache_stride_sk\n        )\n        value_cache_ptr_block = value_cache_ptr + (\n            pid_b * cache_stride_b +\n            kv_h * cache_stride_kh +\n            cache_pos * cache_stride_sk\n        )\n\n        # Atomic add for scatter-write (supports multiple Q heads mapping to same KV head)\n        tl.store(key_cache_ptr_block + tl.arange(0, head_dim) * cache_stride_kd,\n                 q_rotated_fp32, mask=(tl.arange(0, head_dim) < head_dim))\n        tl.store(value_cache_ptr_block + tl.arange(0, head_dim) * cache_stride_kd,\n                 v, mask=(tl.arange(0, head_dim) < head_dim))\n\n\n@torch.no_grad()\ndef run(\n    query: torch.Tensor,\n    key: torch.Tensor,\n    value: torch.Tensor,\n    position_ids: torch.Tensor,\n    key_cache: torch.Tensor,\n    value_cache: torch.Tensor,\n    cache_position: torch.Tensor,\n    q_norm_weight: torch.Tensor,\n    k_norm_weight: torch.Tensor,\n    inv_freq: torch.Tensor,\n    rms_norm_eps: float,\n):\n    \"\"\"\n    Persistent grid-stride kernel for RMSNorm + RoPE + KV-cache update.\n\n    Grid: (batch_size * num_q_heads, seq_len)\n    Each program processes one (batch, head) position and loops over seq to fill.\n    \"\"\"\n    batch_size, num_q_heads, seq_len, head_dim = query.shape\n    num_kv_heads = key.shape[1]\n\n    query_rotated = torch.empty_like(query)\n    key_rotated = torch.empty_like(key)\n\n    # Grid-stride pattern: (batch_size * num_q_heads) programs\n    # Each program iterates over seq_len positions\n    grid = (batch_size * num_q_heads, seq_len)\n\n    _fused_rope_kernel[grid](\n        query,\n        key,\n        value,\n        key_cache,\n        value_cache,\n        q_norm_weight,\n        k_norm_weight,\n        inv_freq,\n        cache_position,\n        batch_size,\n        num_q_heads,\n        num_kv_heads,\n        seq_len,\n        head_dim,\n        262144,\n        cache_position.shape[0],  # We get cache_len from sequence length\n        rms_norm_eps,\n        stride_b=query.stride(0),\n        stride_q_h=query.stride(1),\n        stride_q_s=query.stride(2),\n        stride_q_d=query.stride(3),\n        stride_k_h=key.stride(1),\n        stride_k_s=key.stride(2),\n        stride_k_d=key.stride(3),\n        cache_stride_b=key_cache.stride(0),\n        cache_stride_kh=key_cache.stride(1),\n        cache_stride_sk=key_cache.stride(2),\n        cache_stride_kd=key_cache.stride(3),\n        rms_norm_eps=rms_norm_eps,\n    )\n\n    # Apply RMSNorm and RoPE to outputs using reference-style computation\n    # for positions NOT covered by the scatter-write (cache positions)\n    for b in range(batch_size):\n        for h in range(num_q_heads):\n            # RMSNorm\n            q = query[b, h, :, :].to(torch.float32)\n            variance = torch.mean(q.pow(2))\n            scale = torch.rsqrt(variance + rms_norm_eps)\n            q_normed = q * scale\n            query_rotated[b, h, :, :] = (q_normed).to(query.dtype)\n\n            # Apply RoPE\n            q1 = query_rotated[b, h, :, :head_dim // 2]\n            q2 = query_rotated[b, h, :, head_dim // 2:]\n            q1_rot = q1 * torch.cos(position_ids[b, :])\n            q2_rot = q2 * torch.sin(position_ids[b, :])\n            query_rotated[b, h, :, :head_dim // 2] = q1_rot\n            query_rotated[b, h, :, head_dim // 2:] = q2_rot\n\n            # KV heads\n            for kv_h in range(num_kv_heads):\n                # RMSNorm\n                k = key[b, kv_h, :, :].to(torch.float32)\n                variance = torch.mean(k.pow(2))\n                scale = torch.rsqrt(variance + rms_norm_eps)\n                k_normed = k * scale\n\n                # Apply RoPE\n                k1 = k_normed[:, :head_dim // 2]\n                k2 = k_normed[:, head_dim // 2:]\n                k1_rot = k1 * torch.cos(position_ids[b, :])\n                k2_rot = k2 * torch.sin(position_ids[b, :])\n                key_rotated[b, kv_h, :, :head_dim // 2] = k1_rot\n                key_rotated[b, kv_h, :, head_dim // 2:] = k2_rot\n\n    return query_rotated, key_rotated, key_cache, value_cache\n"
+      }
+    ]
+  }
+}

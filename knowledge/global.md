@@ -102,3 +102,15 @@
 - [attention_qk_matmul_with_gqa_repeat_and_scaling] task 49: best=0.5825 tier=0
 - [fused_linear_gelu_grn_linear] task 45: best=0.3957 tier=0
 - [attention_qkv_projection_with_bias_and_reshape] task 50: best=0.6503 tier=0
+- [fused_residual_rms_norm_backward] task 13: best=0.7547 tier=0
+- [conv_gated_projection_with_causal_conv] task 5: best=0.835 tier=0
+- [rotary_embedding_with_attention_scaling_backward] task 14: best=0.909 tier=0
+- [rotary_position_embedding] task 11: best=0.7638 tier=0
+- [hybrid_attention_mask_preparation] task 28: best=0.8646 tier=0
+- [moe_expert_load_balancing_and_token_capacity_backward] task 42: best=0.717 tier=0
+- [hyena_depthwise] task 6: best=0.7654 tier=0
+- [expert_output_weighted_index_add_accumulation] task 8: best=0.8683 tier=0
+- [attention_output_projection_with_reshape_backward] task 4: best=0.8122 tier=0
+- [vision_patch_merger_spatial_shuffle_mlp] task 20: best=0.7325 tier=0
+- [multimodal_rope_position_computation_with_grid_based_indexing] task 23: best=0.9369 tier=0
+- [expert_token_scatter_with_weighted_forward_backward] task 9: best=0.7606 tier=0

@@ -33,3 +33,6 @@ If BLOCK_ROWS=4 ties or slightly beats frontier (0.669), the next lever is CUDA 
 ## 6. from `c1b5853d` — Single fused Triton kernel with branch-free scalar arithmetic (no .item(), no redundant clones, one pass over data)
 If this ties/barely beats frontier (0.669), next lever is CUDA graph capture/replay: warmup with 10 iters to capture the fused kernel launch, then replay for timed reps to reduce micro-shape overhead from ~3-8µs to ~0.1-0.5µs. Must pre-allocate output buffer and pass it in to maintain graph stability; careful buffer aliasing discipline needed per [[sol-execbench-correctness-gating]].
 
+## 7. from `f380333e` — Reload proven 0.669 fused Triton kernel unchanged in logic/order-of-ops; add streaming cache hints (eviction_policy="evi
+If large shapes (#3,#4,#5,#9,#10) still sit near baseline parity after streaming hints, the next lever is a real `@triton.autotune` sweep (not a hand-picked guess) over BLOCK_ROWS ∈ {8,16,32,64} × num_warps ∈ {4,8}, keyed on batch_seq_len, restricted to the large-shape branch only (the micro-shape branch is already tuned and should stay untouched) — my BLOCK_ROWS=16/num_warps=8 choice for large N is a reasoned but unverified guess, and the compile/benchmark cost lands safely inside the harness's warmup iterations since it only needs to run once per distinct batch_seq_len key.
+

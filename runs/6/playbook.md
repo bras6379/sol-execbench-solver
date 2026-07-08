@@ -32,3 +32,9 @@ Higher-ceiling idea NOT shipped: the two smallest single-tile mem-bound shapes (
 ## 5. from `47d36b18` — 2D persistent grid-stride over (B,channel) pairs with inner time-tile loop — each CTA stays on the same (B,C) pair for a
 Higher-ceiling idea NOT shipped: CHANNEL_BLOCK coarsening (CHANNEL_BLOCK=2 or 4) so each CTA processes multiple adjacent channels, reducing the grid size and amortizing weight-load overhead across channels that share the same filter weights pattern. Trigger: if this 2D grid doesn't clear ~0.78, the grid is too sparse — coarsen with CHANNEL_BLOCK=2, adjusting the inner loop to iterate over channel-group then time-tile, and add CHANNEL_BLOCK to the autotune space.
 
+## 6. from `d10c8b20` — Per-shape config specialization: added BLOCK_T=64 variants to simple-kernel configs for small-B*S shapes to increase CTA
+If this improvement doesn't clear ~0.74, the next lever is **shared-memory halo staging**: load the BLOCK_T+2 window of each 3 input rows ONCE into shared memory with vectorized loads, then read all three taps (t, t-1, t-2) from smem for interior tiles, eliminating per-lane predicated LSU loads on lookback. This targets the lingering LSU-throughput bottleneck on small-S mem-bound shapes (idx 2, 10) that remain single-tile.
+
+## 7. from `236daa2b` — Unified interior-tile mask for power-of-two lookback loads (single mask-based path removes tb==0/ tb>0 branching, enable
+Higher-ceiling idea NOT shipped: CHANNEL_BLOCK coarsening with 2D grid-stride (each CTA processes adjacent channel groups, reducing launch overhead and amortizing weight-loading). Trigger: if this unification only clears ~0.75, retry the 2D persistent schedule with CHANNEL_BLOCK=2 and a tighter autotune over w/wo coarsening, which targets the remaining L1 thrash from channel-hopping and is the most promising left unexplored.
+

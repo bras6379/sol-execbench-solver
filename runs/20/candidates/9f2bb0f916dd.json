@@ -1,0 +1,234 @@
+{
+  "cand_id": "9f2bb0f916dd",
+  "task_id": 20,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.2558447040537632,
+    0.0,
+    0.0,
+    0.24768359565586653,
+    0.0,
+    0.2272183906471909,
+    0.21367737689098806,
+    0.6868388815288614,
+    0.7433525370296468,
+    0.23340785391512267,
+    0.730450759491506,
+    0.6158544271802473,
+    0.0,
+    0.26142592048605384,
+    0.24816009261556268
+  ],
+  "strategy": "Fused LN+shuffle Triton kernel + cuBLAS FC1/GELU/FC2, with CUDA-graph capture of the whole pipeline for M<=2048 to colla",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "777972e5181b",
+  "trajectory": "runs/20/work/9f2bb0f916dd/trajectory.jsonl",
+  "gpu_s": 12.942,
+  "job_id": "20-9f2bb0f916dd",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 41.0,
+      "power_w_max": 435.13,
+      "samples": 41,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.4672955,
+      "sol_ms": 0.068,
+      "baseline_latency_ms": 0.20528,
+      "sol_score": 0.2558447040537632,
+      "sol_score_cal": 0.21952097813737842,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1147519999999999,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.108976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.3841595,
+      "sol_ms": 0.0511,
+      "baseline_latency_ms": 0.1607525,
+      "sol_score": 0.24768359565586653,
+      "sol_score_cal": 0.21262751579130518,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0268,
+      "baseline_latency_ms": 0.132432,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.8127665,
+      "sol_ms": 0.1356,
+      "baseline_latency_ms": 0.334705,
+      "sol_score": 0.2272183906471909,
+      "sol_score_cal": 0.19317507853555835,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.6698865,
+      "sol_ms": 0.106,
+      "baseline_latency_ms": 0.259232,
+      "sol_score": 0.21367737689098806,
+      "sol_score_cal": 0.18146915703809371,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.807758,
+      "sol_ms": 0.541,
+      "baseline_latency_ms": 1.1260655,
+      "sol_score": 0.6868388815288614,
+      "sol_score_cal": 0.5819824364035037,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.286383,
+      "sol_ms": 0.2031,
+      "baseline_latency_ms": 0.4443205,
+      "sol_score": 0.7433525370296468,
+      "sol_score_cal": 0.6366063404983904,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.7227175,
+      "sol_ms": 0.1187,
+      "baseline_latency_ms": 0.302608,
+      "sol_score": 0.23340785391512267,
+      "sol_score_cal": 0.19876749518970352,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.381023,
+      "sol_ms": 0.2707,
+      "baseline_latency_ms": 0.569664,
+      "sol_score": 0.730450759491506,
+      "sol_score_cal": 0.6206675587224808,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.5281414999999998,
+      "sol_ms": 1.0817,
+      "baseline_latency_ms": 1.797426,
+      "sol_score": 0.6158544271802473,
+      "sol_score_cal": 0.4927496810986834,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1149765,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "INCORRECT_NUMERICAL"
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.343455,
+      "sol_ms": 0.0342,
+      "baseline_latency_ms": 0.143664,
+      "sol_score": 0.26142592048605384,
+      "sol_score_cal": 0.2261767616518565,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.299744,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.104832,
+      "sol_score": 0.24816009261556268,
+      "sol_score_cal": 0.2163236796218192,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _ln_shuffle_kernel(\n    hidden_ptr, grid_thw_ptr, w_ptr, b_ptr, out_ptr,\n    eps,\n    NGRIDS: tl.constexpr,\n    H: tl.constexpr,\n    CHUNK: tl.constexpr,\n):\n    \"\"\"\n    Fused LayerNorm + spatial-shuffle kernel.\n\n    Each program handles one output slot (4 per merged row). It derives the\n    source hidden row from grid_thw inline, normalises that row in fp32 exactly\n    like the reference, and writes the bf16 result to the shuffled output slot.\n    \"\"\"\n    pid = tl.program_id(0).to(tl.int64)\n    merged_row = pid // 4\n    block = pid % 4\n    di = block // 2\n    dj = block % 2\n\n    # Inline scan over grid_thw to locate the grid that owns merged_row.\n    zero = merged_row - merged_row\n    m_off = zero\n    s_off = zero\n    sel_h = zero\n    sel_w = zero\n    sel_soff = zero\n    sel_moff = zero\n    found = zero\n    for g in tl.static_range(NGRIDS):\n        tg = tl.load(grid_thw_ptr + g * 3 + 0)\n        hg = tl.load(grid_thw_ptr + g * 3 + 1)\n        wg = tl.load(grid_thw_ptr + g * 3 + 2)\n        mcount = tg * (hg // 2) * (wg // 2)\n        scount = tg * hg * wg\n        in_this = (found == 0) & (merged_row < m_off + mcount)\n        sel_h = tl.where(in_this, hg, sel_h)\n        sel_w = tl.where(in_this, wg, sel_w)\n        sel_soff = tl.where(in_this, s_off, sel_soff)\n        sel_moff = tl.where(in_this, m_off, sel_moff)\n        found = tl.where(in_this, 1, found)\n        m_off += mcount\n        s_off += scount\n\n    # Compute source row index for the 2x2 spatial merge.\n    local_m = merged_row - sel_moff\n    wm = sel_w // 2\n    hwm = (sel_h // 2) * wm\n    ti = local_m // hwm\n    rem = local_m % hwm\n    hmi = rem // wm\n    wmi = rem % wm\n    base = sel_soff + ti * (sel_h * sel_w)\n    src_row = base + (2 * hmi + di) * sel_w + (2 * wmi + dj)\n\n    # Reference-exact fp32 LayerNorm over H = 1536 = 3 * 512.\n    row_base = hidden_ptr + src_row * H\n    c = tl.arange(0, CHUNK)\n    x0 = tl.load(row_base + c, eviction_policy='evict_first').to(tl.float32)\n    x1 = tl.load(row_base + CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n    x2 = tl.load(row_base + 2 * CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n\n    n = H\n    mean = (tl.sum(x0, axis=0) + tl.sum(x1, axis=0) + tl.sum(x2, axis=0)) / n\n    xc0 = x0 - mean\n    xc1 = x1 - mean\n    xc2 = x2 - mean\n    var = (tl.sum(xc0 * xc0, axis=0) + tl.sum(xc1 * xc1, axis=0)\n           + tl.sum(xc2 * xc2, axis=0)) / n\n    rstd = 1.0 / tl.sqrt(var + eps)\n\n    w0 = tl.load(w_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    w1 = tl.load(w_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    w2 = tl.load(w_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b0 = tl.load(b_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    b1 = tl.load(b_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b2 = tl.load(b_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n\n    y0 = xc0 * rstd * w0 + b0\n    y1 = xc1 * rstd * w1 + b1\n    y2 = xc2 * rstd * w2 + b2\n\n    out_base = out_ptr + pid * H\n    tl.store(out_base + c, y0.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + CHUNK + c, y1.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + 2 * CHUNK + c, y2.to(tl.bfloat16), eviction_policy='evict_last')\n\n\ndef _ln_shuffle_num_warps(M: int) -> int:\n    \"\"\"Small merged-row counts are launch-latency/occupancy bound.\"\"\"\n    if M <= 300:\n        return 2\n    if M <= 2048:\n        return 4\n    return 8\n\n\ndef _forward(\n    hidden, grid_thw, ln_weight, ln_bias,\n    fc1_weight, fc1_bias, fc2_weight, fc2_bias,\n    eps, out_buf,\n):\n    \"\"\"Single forward pass: LN+shuffle Triton kernel -> FC1+GELU -> FC2.\n\n    Writes the final [M, 3584] result into the supplied ``out_buf``.\n    \"\"\"\n    H = 1536\n    HE = 6144\n    device = hidden.device\n\n    N = hidden.shape[0]\n    M = N // 4\n    ngrids = grid_thw.shape[0]\n\n    shuffled = torch.empty((M, HE), dtype=torch.bfloat16, device=device)\n    grid = (4 * M,)\n    _ln_shuffle_kernel[grid](\n        hidden, grid_thw, ln_weight, ln_bias, shuffled,\n        float(eps),\n        NGRIDS=ngrids,\n        H=H,\n        CHUNK=512,\n        num_warps=_ln_shuffle_num_warps(M),\n    )\n\n    fc1 = torch._addmm_activation(\n        fc1_bias, shuffled, fc1_weight.t(),\n        beta=1, alpha=1, use_gelu=True,\n    )\n    torch.addmm(fc2_bias, fc1, fc2_weight.t(), beta=1, alpha=1, out=out_buf)\n    return out_buf\n\n\n# Module-level CUDA-graph cache, keyed by (num_patches, num_grids).\n_GRAPH_CACHE = {}\n_GRAPH_THRESHOLD_M = 2048  # graph the full pipeline for small/medium M shapes\n\n\ndef _input_ptrs(hidden, grid_thw, ln_weight, ln_bias,\n                fc1_weight, fc1_bias, fc2_weight, fc2_bias):\n    return (\n        hidden.data_ptr(), grid_thw.data_ptr(),\n        ln_weight.data_ptr(), ln_bias.data_ptr(),\n        fc1_weight.data_ptr(), fc1_bias.data_ptr(),\n        fc2_weight.data_ptr(), fc2_bias.data_ptr(),\n    )\n\n\ndef _capture_graph(inputs, static_out):\n    \"\"\"Capture the full forward pass into a CUDA graph; return graph or None.\"\"\"\n    try:\n        # Make sure the stream is idle, then warm up so cuBLAS/Triton settle.\n        torch.cuda.synchronize()\n        for _ in range(3):\n            _forward(*inputs, static_out)\n        # Wait for warmup kernels before recording.\n        torch.cuda.synchronize()\n        graph = torch.cuda.Graph()\n        with torch.cuda.graph(graph):\n            _forward(*inputs, static_out)\n        return graph\n    except Exception:\n        return None\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger: LayerNorm -> spatial shuffle -> 2-layer MLP with GELU.\n\n    For small/medium merged-row counts (M <= 2048) we capture the whole\n    3-operation pipeline into a CUDA graph and replay it, cloning the result\n    out of the graph's static output buffer so we never return aliased memory.\n    The slow path is the same eager pipeline that established the 0.651 frontier.\n    \"\"\"\n    device = hidden.device\n    N = hidden.shape[0]\n    M = N // 4\n    O = 3584\n    ngrids = grid_thw.shape[0]\n    key = (N, ngrids)\n\n    inputs = (\n        hidden, grid_thw, ln_weight, ln_bias,\n        fc1_weight, fc1_bias, fc2_weight, fc2_bias, eps,\n    )\n\n    if M <= _GRAPH_THRESHOLD_M:\n        cached = _GRAPH_CACHE.get(key)\n        if cached is not None:\n            graph, static_out, ptrs = cached\n            if _input_ptrs(*inputs[:-1]) == ptrs:\n                graph.replay()\n                return static_out.clone()\n\n        static_out = torch.empty((M, O), dtype=torch.bfloat16, device=device)\n        graph = _capture_graph(inputs, static_out)\n        if graph is not None:\n            _GRAPH_CACHE[key] = (graph, static_out, _input_ptrs(*inputs[:-1]))\n            graph.replay()\n            return static_out.clone()\n\n    # Fallback / large-M path: eager, fresh output buffer.\n    out = torch.empty((M, O), dtype=torch.bfloat16, device=device)\n    return _forward(*inputs, out)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t20_9f2bb0f916dd",
+    "definition": "020_vision_patch_merger_spatial_shuffle_mlp",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _ln_shuffle_kernel(\n    hidden_ptr, grid_thw_ptr, w_ptr, b_ptr, out_ptr,\n    eps,\n    NGRIDS: tl.constexpr,\n    H: tl.constexpr,\n    CHUNK: tl.constexpr,\n):\n    \"\"\"\n    Fused LayerNorm + spatial-shuffle kernel.\n\n    Each program handles one output slot (4 per merged row). It derives the\n    source hidden row from grid_thw inline, normalises that row in fp32 exactly\n    like the reference, and writes the bf16 result to the shuffled output slot.\n    \"\"\"\n    pid = tl.program_id(0).to(tl.int64)\n    merged_row = pid // 4\n    block = pid % 4\n    di = block // 2\n    dj = block % 2\n\n    # Inline scan over grid_thw to locate the grid that owns merged_row.\n    zero = merged_row - merged_row\n    m_off = zero\n    s_off = zero\n    sel_h = zero\n    sel_w = zero\n    sel_soff = zero\n    sel_moff = zero\n    found = zero\n    for g in tl.static_range(NGRIDS):\n        tg = tl.load(grid_thw_ptr + g * 3 + 0)\n        hg = tl.load(grid_thw_ptr + g * 3 + 1)\n        wg = tl.load(grid_thw_ptr + g * 3 + 2)\n        mcount = tg * (hg // 2) * (wg // 2)\n        scount = tg * hg * wg\n        in_this = (found == 0) & (merged_row < m_off + mcount)\n        sel_h = tl.where(in_this, hg, sel_h)\n        sel_w = tl.where(in_this, wg, sel_w)\n        sel_soff = tl.where(in_this, s_off, sel_soff)\n        sel_moff = tl.where(in_this, m_off, sel_moff)\n        found = tl.where(in_this, 1, found)\n        m_off += mcount\n        s_off += scount\n\n    # Compute source row index for the 2x2 spatial merge.\n    local_m = merged_row - sel_moff\n    wm = sel_w // 2\n    hwm = (sel_h // 2) * wm\n    ti = local_m // hwm\n    rem = local_m % hwm\n    hmi = rem // wm\n    wmi = rem % wm\n    base = sel_soff + ti * (sel_h * sel_w)\n    src_row = base + (2 * hmi + di) * sel_w + (2 * wmi + dj)\n\n    # Reference-exact fp32 LayerNorm over H = 1536 = 3 * 512.\n    row_base = hidden_ptr + src_row * H\n    c = tl.arange(0, CHUNK)\n    x0 = tl.load(row_base + c, eviction_policy='evict_first').to(tl.float32)\n    x1 = tl.load(row_base + CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n    x2 = tl.load(row_base + 2 * CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n\n    n = H\n    mean = (tl.sum(x0, axis=0) + tl.sum(x1, axis=0) + tl.sum(x2, axis=0)) / n\n    xc0 = x0 - mean\n    xc1 = x1 - mean\n    xc2 = x2 - mean\n    var = (tl.sum(xc0 * xc0, axis=0) + tl.sum(xc1 * xc1, axis=0)\n           + tl.sum(xc2 * xc2, axis=0)) / n\n    rstd = 1.0 / tl.sqrt(var + eps)\n\n    w0 = tl.load(w_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    w1 = tl.load(w_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    w2 = tl.load(w_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b0 = tl.load(b_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    b1 = tl.load(b_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b2 = tl.load(b_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n\n    y0 = xc0 * rstd * w0 + b0\n    y1 = xc1 * rstd * w1 + b1\n    y2 = xc2 * rstd * w2 + b2\n\n    out_base = out_ptr + pid * H\n    tl.store(out_base + c, y0.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + CHUNK + c, y1.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + 2 * CHUNK + c, y2.to(tl.bfloat16), eviction_policy='evict_last')\n\n\ndef _ln_shuffle_num_warps(M: int) -> int:\n    \"\"\"Small merged-row counts are launch-latency/occupancy bound.\"\"\"\n    if M <= 300:\n        return 2\n    if M <= 2048:\n        return 4\n    return 8\n\n\ndef _forward(\n    hidden, grid_thw, ln_weight, ln_bias,\n    fc1_weight, fc1_bias, fc2_weight, fc2_bias,\n    eps, out_buf,\n):\n    \"\"\"Single forward pass: LN+shuffle Triton kernel -> FC1+GELU -> FC2.\n\n    Writes the final [M, 3584] result into the supplied ``out_buf``.\n    \"\"\"\n    H = 1536\n    HE = 6144\n    device = hidden.device\n\n    N = hidden.shape[0]\n    M = N // 4\n    ngrids = grid_thw.shape[0]\n\n    shuffled = torch.empty((M, HE), dtype=torch.bfloat16, device=device)\n    grid = (4 * M,)\n    _ln_shuffle_kernel[grid](\n        hidden, grid_thw, ln_weight, ln_bias, shuffled,\n        float(eps),\n        NGRIDS=ngrids,\n        H=H,\n        CHUNK=512,\n        num_warps=_ln_shuffle_num_warps(M),\n    )\n\n    fc1 = torch._addmm_activation(\n        fc1_bias, shuffled, fc1_weight.t(),\n        beta=1, alpha=1, use_gelu=True,\n    )\n    torch.addmm(fc2_bias, fc1, fc2_weight.t(), beta=1, alpha=1, out=out_buf)\n    return out_buf\n\n\n# Module-level CUDA-graph cache, keyed by (num_patches, num_grids).\n_GRAPH_CACHE = {}\n_GRAPH_THRESHOLD_M = 2048  # graph the full pipeline for small/medium M shapes\n\n\ndef _input_ptrs(hidden, grid_thw, ln_weight, ln_bias,\n                fc1_weight, fc1_bias, fc2_weight, fc2_bias):\n    return (\n        hidden.data_ptr(), grid_thw.data_ptr(),\n        ln_weight.data_ptr(), ln_bias.data_ptr(),\n        fc1_weight.data_ptr(), fc1_bias.data_ptr(),\n        fc2_weight.data_ptr(), fc2_bias.data_ptr(),\n    )\n\n\ndef _capture_graph(inputs, static_out):\n    \"\"\"Capture the full forward pass into a CUDA graph; return graph or None.\"\"\"\n    try:\n        # Make sure the stream is idle, then warm up so cuBLAS/Triton settle.\n        torch.cuda.synchronize()\n        for _ in range(3):\n            _forward(*inputs, static_out)\n        # Wait for warmup kernels before recording.\n        torch.cuda.synchronize()\n        graph = torch.cuda.Graph()\n        with torch.cuda.graph(graph):\n            _forward(*inputs, static_out)\n        return graph\n    except Exception:\n        return None\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger: LayerNorm -> spatial shuffle -> 2-layer MLP with GELU.\n\n    For small/medium merged-row counts (M <= 2048) we capture the whole\n    3-operation pipeline into a CUDA graph and replay it, cloning the result\n    out of the graph's static output buffer so we never return aliased memory.\n    The slow path is the same eager pipeline that established the 0.651 frontier.\n    \"\"\"\n    device = hidden.device\n    N = hidden.shape[0]\n    M = N // 4\n    O = 3584\n    ngrids = grid_thw.shape[0]\n    key = (N, ngrids)\n\n    inputs = (\n        hidden, grid_thw, ln_weight, ln_bias,\n        fc1_weight, fc1_bias, fc2_weight, fc2_bias, eps,\n    )\n\n    if M <= _GRAPH_THRESHOLD_M:\n        cached = _GRAPH_CACHE.get(key)\n        if cached is not None:\n            graph, static_out, ptrs = cached\n            if _input_ptrs(*inputs[:-1]) == ptrs:\n                graph.replay()\n                return static_out.clone()\n\n        static_out = torch.empty((M, O), dtype=torch.bfloat16, device=device)\n        graph = _capture_graph(inputs, static_out)\n        if graph is not None:\n            _GRAPH_CACHE[key] = (graph, static_out, _input_ptrs(*inputs[:-1]))\n            graph.replay()\n            return static_out.clone()\n\n    # Fallback / large-M path: eager, fresh output buffer.\n    out = torch.empty((M, O), dtype=torch.bfloat16, device=device)\n    return _forward(*inputs, out)\n"
+      }
+    ]
+  }
+}
