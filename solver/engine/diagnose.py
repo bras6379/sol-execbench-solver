@@ -1,12 +1,15 @@
-"""Fable-5 expert diagnosis layer on top of the deterministic reflection cards.
+"""Expert diagnosis layer on top of the deterministic reflection cards.
 
 The detectors in `reflection.py` say WHAT is stuck (regressing / rabbit-hole /
 plateaued) and WHERE the loss is. This layer adds the WHY + the one untried lever,
-in prose, from a strong model (claude-fable-5) reading the best kernel + the
-reference + the attempt ledger. That prose is appended to the coach card and fed
-to every agent.
+in prose, from a strong model reading the best kernel + the reference + the
+attempt ledger. That prose is appended to the coach card and fed to every agent.
+`--reflect-model` picks the model (default: native claude-sonnet-5) — CHEAP ONLY:
+never point this at an expensive frontier model (e.g. fable-5) or opus, since it
+runs continuously in the background across every stuck problem and the spend
+compounds fast; sonnet/haiku (native) or an OpenRouter model are the intended use.
 
-Fable is expensive, so this is gated hard:
+Still expensive relative to the deterministic cards, so this is gated hard:
   - only STUCK problems (regressing / plateaued / rabbit_hole / broken) — never a
     problem that's still climbing on its own.
   - deduped on a state fingerprint (status · best · #evals): a 20-min tick only
@@ -15,10 +18,14 @@ Fable is expensive, so this is gated hard:
     is unavailable (no credits, rate-limited, CLI error), FALLBACK_CHAIN tries
     OpenRouter-routed models before giving up — one blocked provider never stalls
     the Coach; only total exhaustion leaves the deterministic card standing alone.
+  - `--reflect-model` also accepts a comma-separated POOL, rotated round-robin
+    over each sweep's stuck list — spreads spend across providers and gives a
+    still-stuck problem a different expert's read each time, instead of the
+    same model repeating itself.
 
 The result is persisted to `<task>/diagnosis.json` {fingerprint, model, ts, prose,
 cost_usd, tok_in, tok_out, tok_cached} so `reflection.reflect_all` can re-attach it
-to the card on every (cheap) pass without re-spending on fable.
+to the card on every (cheap) pass without re-spending.
 """
 
 from __future__ import annotations
@@ -34,14 +41,14 @@ from . import reflection as R
 
 STUCK = {"regressing", "plateaued", "rabbit_hole", "broken"}
 
-# Fallback order when the primary reflection model is unavailable (rate-limited, out
-# of credits, CLI error): try the requested model on native claude auth first, then
-# fall through to OpenRouter-routed models already proven productive in this fleet.
-# Mirrors the agent pool's own graceful-downgrade pattern (cli_agent._provider_env)
-# so a blocked reflection model never stalls the Coach — it just costs a cheaper
-# model's diagnosis instead of none at all.
+# Backup rungs tried when the REQUESTED reflection model is unavailable
+# (rate-limited, out of credits, CLI error) — proven-productive models in this
+# fleet, tried in this order after the caller's own request. Mirrors the agent
+# pool's own graceful-downgrade pattern (cli_agent._provider_env) so a blocked
+# reflection model never stalls the Coach — it just costs a cheaper model's
+# diagnosis instead of none at all.
 FALLBACK_CHAIN: list[tuple[str, str]] = [
-    ("claude", ""),                              # "" = use the caller's requested --reflect-model
+    ("claude", "claude-sonnet-5"),
     ("openrouter", "deepseek/deepseek-v4-pro"),
     ("openrouter", "moonshotai/kimi-k2.7-code"),
 ]
@@ -142,28 +149,42 @@ async def _try_model(prompt: str, model: str, timeout: float, cwd: str | None,
     return _extract_text(raw), usage
 
 
+_REFLECT_SPECS = ("openrouter", "glm", "deepseek", "kimi", "claude")
+
+
+def _parse_reflect_model(model: str) -> tuple[str, str]:
+    """Split a --reflect-model entry into (spec_name, model) using the same
+    agent/model syntax as --tier (e.g. 'openrouter/z-ai/glm-4.7-flash' ->
+    ('openrouter', 'z-ai/glm-4.7-flash')). A bare name with no recognized
+    prefix (e.g. 'claude-sonnet-5', 'sonnet') is native claude. `codex/*` is
+    NOT valid here — reflection only ever shells out to the `claude` CLI
+    binary (see _try_model), never `codex exec`; a codex-prefixed request
+    falls through to being treated as a literal (and therefore invalid,
+    fails clearly rather than silently misrouting) native-claude model name."""
+    if "/" in model:
+        prefix, rest = model.split("/", 1)
+        if prefix in _REFLECT_SPECS:
+            return prefix, rest
+    return "claude", model
+
+
 async def _call_fable(prompt: str, model: str, timeout: float,
                       cwd: str | None = None) -> tuple[str | None, str, dict]:
-    """Try the requested reflection model, then walk FALLBACK_CHAIN so a single
-    blocked provider (rate limit, no credits) never stalls the Coach. `cwd` is
-    optional and unused by the diagnose caller (kb content is embedded directly
-    in the prompt — see _kb_index — so no file/tool access is needed for this
-    call); kept as a parameter for callers that do want a specific cwd.
-    Returns (prose_or_None, label of the model that actually produced it, total
-    usage {cost_usd, in, out, cached} summed across every rung tried — including
-    failed ones that billed)."""
+    """Try the REQUESTED reflection model on its own provider first, then walk
+    FALLBACK_CHAIN so a single blocked provider (rate limit, no credits) never
+    stalls the Coach. `cwd` is optional and unused by the diagnose caller (kb
+    content is embedded directly in the prompt — see _kb_index — so no
+    file/tool access is needed for this call); kept as a parameter for callers
+    that do want a specific cwd. Returns (prose_or_None, label of the model
+    that actually produced it, total usage {cost_usd, in, out, cached} summed
+    across every rung tried — including failed ones that billed)."""
     if not shutil.which("claude"):
         return None, "", {}
+    req_spec, req_model = _parse_reflect_model(model)
+    chain = [(req_spec, req_model)] + [(s, m) for s, m in FALLBACK_CHAIN if s != req_spec]
     seen: set[tuple[str, str]] = set()
     total_usage: dict = {}
-    for spec_name, fallback_model in FALLBACK_CHAIN:
-        m = fallback_model or model
-        # Skip the native-claude rung entirely when the requested model isn't a
-        # claude-style name (e.g. --reflect-model deepseek/deepseek-v4-pro) — avoids
-        # a wasted round-trip against native auth for a model it was never meant to
-        # serve, so a fully-OpenRouter reflect-model never touches Claude at all.
-        if spec_name == "claude" and fallback_model == "" and not model.startswith("claude"):
-            continue
+    for spec_name, m in chain:
         if (spec_name, m) in seen:
             continue
         seen.add((spec_name, m))
@@ -342,25 +363,32 @@ async def diagnose_one(runs_dir: Path, r: R.ProblemReflection, *, model: str,
 
 
 async def diagnose_stuck(runs_dir: str | Path, refls: dict[int, R.ProblemReflection], *,
-                         model: str = "claude-fable-5", timeout: float = 360,
+                         model: str | list[str] = "claude-sonnet-5", timeout: float = 360,
                          kb_dir: str | Path = "kb", max_concurrency: int = 4,
                          progress=None, log=lambda *_: None) -> int:
     """Run fable on every STUCK problem whose state moved since its last diagnosis.
     Returns how many fresh diagnoses were written. After writing, re-attach the
     stored prose to each card so agents pick it up on the next plan. `progress(done)`
-    is called after each problem completes (for a live 'reflecting X/Y' indicator)."""
+    is called after each problem completes (for a live 'reflecting X/Y' indicator).
+
+    `model` accepts a POOL of models (e.g. a mix of OpenRouter models + native
+    Claude) — rotated round-robin over this sweep's stuck list, so a problem
+    that's STILL stuck after one model's suggested lever gets a genuinely
+    different expert's read next time, rather than the same model repeating
+    itself (each rung still has its own FALLBACK_CHAIN backup on failure)."""
     runs_dir = Path(runs_dir)
     stuck = [r for r in refls.values() if r.status in STUCK]
     if not stuck:
         return 0
+    models = [model] if isinstance(model, str) else list(model)
     sem = asyncio.Semaphore(max(1, max_concurrency))
     done = 0
 
-    async def _guard(r):
+    async def _guard(r, m):
         nonlocal done
         async with sem:
             try:
-                res = await diagnose_one(runs_dir, r, model=model, timeout=timeout,
+                res = await diagnose_one(runs_dir, r, model=m, timeout=timeout,
                                          kb_dir=kb_dir, log=log)
             except Exception as exc:                    # one bad diagnosis never aborts the sweep
                 log(f"[diagnose] task {r.task_id}: {exc!r}")
@@ -373,7 +401,7 @@ async def diagnose_stuck(runs_dir: str | Path, refls: dict[int, R.ProblemReflect
                 pass
         return res
 
-    results = await asyncio.gather(*(_guard(r) for r in stuck))
+    results = await asyncio.gather(*(_guard(r, models[i % len(models)]) for i, r in enumerate(stuck)))
     for r in refls.values():
         R.attach_diagnosis(runs_dir, r.task_id)
     n = sum(1 for x in results if x)

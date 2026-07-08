@@ -19,6 +19,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import re
 import shutil
 import subprocess
 from dataclasses import dataclass
@@ -100,6 +101,18 @@ _PLAN = (
     "attempts. The kb/ directory is a B200 optimization knowledge base (start at\n"
     "kb/README.md; e.g. optimization-recipe.md, profiling-guide.md, b200-hardware.md,\n"
     "fusion-patterns.md) — consult the files relevant to this op before you write.\n"
+    "BEFORE you write a single line of the kernel, do this reasoning explicitly (in your\n"
+    "own thinking, not a separate file): (1) name WHICH of DESIGN.md's ranked approaches\n"
+    "you're implementing and WHY that one now — see the frontier-state note in CONTEXT.md\n"
+    "for whether this should be a safe correctness-first approach or the ambitious one;\n"
+    "(2) pick the single trickiest graded shape in workloads.md (smallest, most irregular,\n"
+    "or highest-risk for the launch config you're about to use) and manually trace it —\n"
+    "the actual grid/block dims, loop bounds, and mask conditions your kernel will compute\n"
+    "for THAT shape's real numbers. Most real bugs only show up on one specific shape, not\n"
+    "in the general logic — 'the logic looks right' without doing this trace is how a third\n"
+    "of candidates fail. Only start writing kernel.py once that trace actually checks out;\n"
+    "if it doesn't, that's a sign to pick a different (usually simpler) approach, not to\n"
+    "write the risky one anyway and hope the reviewer catches it.\n"
     "Write your optimized implementation to a file named kernel.py or\n"
     "kernel.cu (one language), and a one-line summary of the approach to strategy.txt.\n"
     "CONTRACT: the kernel file MUST define a top-level function named `run` with the\n"
@@ -203,6 +216,7 @@ class _Run:
     tokens: dict           # {in, out, reasoning, cached, cost_usd} where the stream provides them
     trajectory: Path       # persisted raw event stream (trajectory.jsonl)
     error_hint: str = ""   # best-effort failure message pulled from STDOUT (see _extract_error_hint)
+    context_read: list | None = None   # kb/*.md files actually consulted (see _extract_context_read)
 
 
 def _extract_error_hint(schema: str, raw: str) -> str:
@@ -230,6 +244,49 @@ def _extract_error_hint(schema: str, raw: str) -> str:
             if msg:
                 return str(msg)
     return ""
+
+
+_KB_PATH_RE = re.compile(r"(?:^|[\s'\"])((?:\./)?kb/[\w.\-]+\.md)")
+
+
+def _extract_context_read(schema: str, raw: str) -> list[str]:
+    """Which `kb/*.md` files this call actually consulted — auditable evidence
+    for "is the model using the context we hand it", not just an assumption.
+    claude schema: `Read` tool_use blocks (a structured file_path). codex schema
+    has no Read tool at all — it reads files via plain shell (`command_execution`
+    items running `nl`/`cat`/`rg`/`sed` etc.), so this greps the COMMAND TEXT for
+    `kb/*.md` references instead; a naive claude-only check undercounts codex to
+    zero even when it read half the knowledge base. Returns the distinct
+    filenames in first-seen order (not full paths — every call's cwd differs)."""
+    seen: list[str] = []
+    seen_set: set[str] = set()
+
+    def _add(name: str) -> None:
+        name = name.rsplit("/", 1)[-1]
+        if name not in seen_set:
+            seen_set.add(name)
+            seen.append(name)
+
+    for line in raw.splitlines():
+        line = line.strip()
+        if not line.startswith("{"):
+            continue
+        try:
+            e = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if schema == "claude" and e.get("type") == "assistant":
+            for c in (e.get("message") or {}).get("content") or []:
+                if isinstance(c, dict) and c.get("type") == "tool_use" and c.get("name") == "Read":
+                    fp = (c.get("input") or {}).get("file_path", "")
+                    if "/kb/" in fp or fp.startswith("kb/"):
+                        _add(fp)
+        elif schema == "codex" and e.get("type") == "item.completed":
+            item = e.get("item") or {}
+            if item.get("type") == "command_execution":
+                for m in _KB_PATH_RE.finditer(item.get("command", "")):
+                    _add(m.group(1))
+    return seen
 
 
 def _parse_tokens(schema: str, raw: str) -> dict:
@@ -319,7 +376,7 @@ class CliAgent:
                          parent=getattr(parent, "cand_id", None),
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
-                         trajectory=str(traj_path))
+                         trajectory=str(traj_path), context_read=res.context_read or [])
 
     async def review(self, cand: Candidate, ctx) -> ReviewVerdict:
         """Pre-GPU code review: an INDEPENDENT (agent,model) — never the one that
@@ -337,11 +394,27 @@ class CliAgent:
         verdict = _parse_review(f.read_text() if f.exists() else "", reviewer=f"{self.spec.name}:{self.model}")
         verdict.cost_usd = (res.tokens or {}).get("cost_usd") or 0.0
         verdict.tokens = res.tokens or {}
+        verdict.context_read = res.context_read or []
         return verdict
 
     # ---- helpers ----
     def _workdir(self, key, sub: str) -> Path:
+        """A fresh scratch dir for one attempt. `sub` (e.g. `cand{seq}`) is only
+        unique WITHIN one process lifetime — `self._seq` resets to 0 on every
+        restart, so the same name gets reused across restarts. A candidate whose
+        plan() raised before `_rekey_workdir` ever ran (e.g. the "wrote no kernel"
+        RuntimeError) leaves its dir behind un-renamed; `mkdir(exist_ok=True)`
+        alone would silently inherit that leftover content into the NEXT attempt
+        that reuses the same name. Confirmed live (2026-07-08): a stale Triton
+        kernel.py from a prior day survived into a fresh CUDA repair attempt,
+        got flagged as 'mixed C++/Python' (correctly, given what was actually in
+        the directory) and check-rejected — which then shipped the ORIGINAL,
+        reviewer-flagged-buggy candidate to the GPU as the fallback. Clearing
+        first guarantees every attempt starts from nothing but what THIS call
+        writes."""
         wd = self.runs_dir / str(key) / "work" / sub
+        if wd.exists():
+            shutil.rmtree(wd, ignore_errors=True)
         wd.mkdir(parents=True, exist_ok=True)
         return wd
 
@@ -470,7 +543,8 @@ class CliAgent:
         await asyncio.to_thread(self._render, raw, wd / "trajectory.txt")   # readable render (best-effort)
         return _Run(err.decode("utf-8", "replace"), proc.returncode or 0,
                     _parse_tokens(self.spec.stream, raw), traj,
-                    _extract_error_hint(self.spec.stream, raw))
+                    _extract_error_hint(self.spec.stream, raw),
+                    _extract_context_read(self.spec.stream, raw))
 
     def _render(self, raw: str, out_path: Path) -> None:
         """Render the raw stream to readable text via the vendored jq wrapper."""
@@ -504,6 +578,17 @@ def _context_md(parent, ctx) -> str:
              "is in parentheses.", ""]
     if parent is not None and getattr(parent, "solution", None):
         lines.append("The parent kernel to improve on is in this directory's kernel file(s).")
+    fr = getattr(ctx, "frontier", None)
+    members = list(getattr(fr, "members", None) or []) if fr else []
+    if members and all((m.strategy or "") == "seed" for m in members):
+        lines += ["", "## Nothing real has been accepted yet — sequence risk accordingly",
+                  "The frontier is still just the unoptimized reference seed; no agent has banked",
+                  "a genuine correctness win on this problem. Per DESIGN.md's ranked approaches,",
+                  "implement the SAFEST/most-reliable one now to get a real, correct score on the",
+                  "board — not the highest-ceiling one. A failed ambitious attempt leaves the",
+                  "frontier exactly where it is now (worse than a modest real win); once a working",
+                  "baseline exists, later rounds can escalate toward the higher-ceiling approach",
+                  "with a fallback already secured."]
     critique = getattr(ctx, "review_critique", None)
     if critique:
         lines += ["", "## Pre-submission code review — FIX these before this ships to the GPU",
@@ -535,8 +620,6 @@ def _context_md(parent, ctx) -> str:
                   "Its kernel is in `sibling_kernel.py` — this is your best STARTING POINT.",
                   "ADAPT it to THIS problem's shapes/constants (it likely hardcodes the sibling's",
                   "shape, e.g. a fixed hidden size); do not just copy it verbatim."]
-    fr = getattr(ctx, "frontier", None)
-    members = list(getattr(fr, "members", None) or []) if fr else []
     if members:
         members.sort(key=lambda m: (_member_cal(m) if _member_cal(m) is not None else m.mean),
                      reverse=True)                                     # best first

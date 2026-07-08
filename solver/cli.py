@@ -198,6 +198,13 @@ def _cmd_solve(args) -> None:
         ladder = " → ".join(t.name + "(" + ",".join(str(p) for p in t.pool) + ")" for t in cfg.tiers)
         print(f"ladder: {ladder}  ·  design: {cfg.design_model}")
 
+    reflect_models = [m.strip() for m in args.reflect_model.split(",") if m.strip()]
+    for m in reflect_models:
+        if m.startswith("codex/") or m.startswith("codex-"):
+            raise SystemExit(f"--reflect-model {m!r}: codex/gpt-5.5 is not valid here — reflection "
+                             "only ever shells out to the `claude` CLI binary, never `codex exec`")
+    reflect_model = reflect_models[0] if len(reflect_models) <= 1 else reflect_models
+
     if args.gpu:
         # Real end-to-end: rent an ephemeral B200, bootstrap the harness, score
         # every candidate on the GPU, then terminate the pod (guaranteed teardown).
@@ -217,7 +224,7 @@ def _cmd_solve(args) -> None:
                                  provider=RunPodProvider(api), spec=spec, config=hcfg,
                                  max_concurrency=args.max_concurrency, shuffle=args.shuffle,
                                  reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min,
-                                 reflect_model=args.reflect_model,
+                                 reflect_model=reflect_model, reuse_pod=args.gpu_reuse_pod,
                                  max_lifetime_min=(args.gpu_max_hours * 60 if args.gpu_max_hours else None)))
     else:
         if args.agent != "sim":
@@ -231,7 +238,7 @@ def _cmd_solve(args) -> None:
                               families=families, names=names,
                               max_concurrency=args.max_concurrency, shuffle=args.shuffle,
                               reflect_first=args.reflect_first, reflect_every_min=args.reflect_every_min,
-                              reflect_model=args.reflect_model))
+                              reflect_model=reflect_model))
     js = J.read_all(runs_dir)
     ms = [metrics.problem_metrics(t, evs) for t, evs in sorted(js.items()) if t in ids]
     scored = [m["best"] for m in ms if m["best"] is not None]
@@ -617,11 +624,17 @@ def main(argv: list[str] | None = None) -> None:
                          help="also rebuild coach cards every N minutes during the run so long runs keep "
                               "reflecting on fresh results (0=only at startup)")
     p_solve.add_argument("--reflect-model", default="claude-sonnet-5",
-                         help="strong model that reads the tried kernels' SOURCE and adds a why-it's-stuck "
-                              "+ one-untried-lever diagnosis to the coach card of STUCK problems (deduped on "
-                              "state so spend is bounded; runs in the BACKGROUND, never blocks the GPU; at "
-                              "startup + every --reflect-every-min). Uses the same native-auth claude CLI as "
-                              "the opus agents. Empty string = deterministic cards only, no LLM spend")
+                         help="strong model (or comma-separated POOL of models, e.g. "
+                              "'claude-sonnet-5,openrouter/deepseek/deepseek-v4-pro,openrouter/z-ai/"
+                              "glm-4.7-flash') that reads the tried kernels' SOURCE and adds a "
+                              "why-it's-stuck + one-untried-lever diagnosis to the coach card of STUCK "
+                              "problems (deduped on state so spend is bounded; runs in the BACKGROUND, "
+                              "never blocks the GPU; at startup + every --reflect-every-min). A pool is "
+                              "rotated round-robin over each sweep's stuck list, so a problem still stuck "
+                              "after one model's suggestion gets a genuinely different expert's read next "
+                              "time. Uses the same agent/model syntax as --tier, but ALWAYS shells out to "
+                              "the `claude` CLI binary (native or provider-routed) — codex/gpt-5.5 is not a "
+                              "valid reflect-model. Empty string = deterministic cards only, no LLM spend")
     p_solve.add_argument("--fake-scores", action="store_true",
                          help="score real agent kernels by content hash (no GPU) so the loop exercises")
     p_solve.add_argument("--delay", type=float, default=0.006,
@@ -637,6 +650,16 @@ def main(argv: list[str] | None = None) -> None:
                               "is resumable, so a cut-off is safe. Strongly recommended for real runs")
     p_solve.add_argument("--gpu-iterations", type=int, default=50,
                          help="harness timed iterations per workload (leaderboard uses 50; lower = noisier)")
+    p_solve.add_argument("--gpu-reuse-pod", action="store_true",
+                         help="adopt an already-RUNNING tagged pod instead of reaping+recreating one, "
+                              "and leave it running on a manual restart (Ctrl-C / kill -TERM) instead of "
+                              "tearing it down — for a quick code/prompt fix, this skips the ~5-10 min "
+                              "re-bootstrap (uv sync/git clone/apt-install all no-op on an already-warm "
+                              "pod, so bootstrap still runs but finishes in seconds). --gpu-max-hours is "
+                              "anchored to the POD's own real rental time, not this process's launch time, "
+                              "so a chain of quick restarts can't reset/extend the safety cap. Normal "
+                              "completion or the cap being hit still terminates the pod as usual — this "
+                              "ONLY changes what happens on a deliberate restart-in-place")
     p_solve.set_defaults(func=_cmd_solve)
 
     p_stat = sub.add_parser("status", help="per-problem summary over a runs dir")

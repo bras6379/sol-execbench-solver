@@ -9,3 +9,6 @@ If this only ties baseline or Triton's large-shape bandwidth is under ~6 TB/s, s
 ## 2. from `bb4eb238` — Chunk half_dim (64) into BLOCK_D-sized tiles to cut register pressure from O(BLOCK_M×64) to O(BLOCK_M×BLOCK_D), unblocki
 If this still scores below ~0.93, escalate to a persistent CUDA kernel: 148-CTA grid (one per SM), each CTA work-steals tiles of BLOCK_M=256 rows from a global atomic counter. Use float4 loads for emb (fp32), ushort4 for grad_cos/grad_sin (bf16), pre-broadcast inv_freq into __shared__ (256 bytes), and warp-shuffle the 64-element dot-product reduction. The trigger is that Triton's codegen overhead (non-ideal instruction scheduling, missed vectorization of bf16 loads) leaves ~5-10% bandwidth on the table vs hand-tuned CUDA on this strictly memory-bound, low-AI op.
 
+## 3. from `dc061e75` — Shape-dispatch between the 0.885 fused Triton frontier autotune set and a coalesced no-BLOCK_D=8 autotune set for the ex
+If this exact-shape hybrid only ties or regresses, try a one-language `kernel.cu` retry of the 2D-grid CUDA kernel with the prior compile fixes: include `ATen/cuda/CUDAContext.h` and `c10/cuda/CUDAException.h`, remove any Python source, keep strides or require contiguous only after measuring, and specialize B=64/S=3011,8192 with vectorized bf16/fp32 row loads plus shared `inv_freq`.
+

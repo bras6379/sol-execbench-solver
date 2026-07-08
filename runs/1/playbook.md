@@ -21,3 +21,6 @@ Higher ceiling not shipped: implement a CuTe/CUDA dS kernel that stages a BLOCK_
 ## 3. from `7f1d48d8` — Two fused Triton kernels: single-pass full-row dS for Skv≤512, two-pass L2-resident dS for larger Skv; dV uses fast-dim
 Higher ceiling not shipped: a CuTe/CUDA SMEM-resident single-pass dS kernel that explicitly stages a BLOCK_Q×Skv row of P/mask and dP chunks in shared memory, computes the full f32 delta once, then writes dS without the second P/mask read. Trigger if the large-Skv shapes (idx2 S=2048, idx11 S=1024, idx15 S=4096) still sit below ~0.75—these are the workloads where the Triton two-pass re-reads P/mask from HBM and Triton cannot hold mutable scratch across tile loops.
 
+## 4. from `a29ca61a` — l2_persist eviction-policy hints on the 0.624 two-kernel Triton fusion: evict_last on P/mask (two-pass dS) and dO (dV),
+Higher-ceiling not shipped: a CuTe/CUDA SMEM-resident single-pass dS kernel that stages a BLOCK_Q×Skv row of P/mask and dP chunks in shared memory, computes the full f32 delta once, then writes dS without the second P/mask read. Trigger: if the large-Skv shapes (idx2 S=2048, idx11 S=1024, idx15 S=4096) still sit below ~0.75 after this round's eviction hints — those are the workloads where the Triton two-pass re-reads P/mask from HBM even with evict_last, and Triton cannot hold mutable scratch across tile loops.
+

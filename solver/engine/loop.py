@@ -290,7 +290,8 @@ async def solve_problem(
                    model=persp.model, strategy=cand.strategy, solution=cand.solution,
                    dur_s=0.0, tok_in=(tok.get("in") or 0), tok_out=(tok.get("out") or 0),
                    tok_cached=(tok.get("cached") or 0), cost_usd=(tok.get("cost_usd") or 0.0),
-                   no_op=is_noop, trajectory=cand.trajectory, handoff=cand.handoff)
+                   no_op=is_noop, trajectory=cand.trajectory, handoff=cand.handoff,
+                   context_read=cand.context_read or [])
 
         ok, _errs = check_fn(cand.solution, task_id)
         ctx.record("check", cand=cand.cand_id, ok=ok)
@@ -341,7 +342,8 @@ async def solve_problem(
                 ctx.record("review", cand=cand.cand_id, reviewer=str(review_persp),
                           verdict=verdict.verdict, issues=verdict.issues, round=round_n,
                           cost_usd=verdict.cost_usd, tok_in=(vtok.get("in") or 0),
-                          tok_out=(vtok.get("out") or 0), tok_cached=(vtok.get("cached") or 0))
+                          tok_out=(vtok.get("out") or 0), tok_cached=(vtok.get("cached") or 0),
+                          context_read=verdict.context_read or [])
                 if verdict.ship or round_n >= cfg.review_max_rounds:
                     break
                 round_n += 1
@@ -360,7 +362,8 @@ async def solve_problem(
                           solution=repaired.solution, dur_s=0.0, tok_in=(rtok.get("in") or 0),
                           tok_out=(rtok.get("out") or 0), tok_cached=(rtok.get("cached") or 0),
                           cost_usd=(rtok.get("cost_usd") or 0.0),
-                          repair=True, trajectory=repaired.trajectory, handoff=repaired.handoff)
+                          repair=True, trajectory=repaired.trajectory, handoff=repaired.handoff,
+                          context_read=repaired.context_read or [])
                 rok, _rerrs = check_fn(repaired.solution, task_id)
                 ctx.record("check", cand=repaired.cand_id, ok=rok)
                 if not rok:
@@ -442,10 +445,14 @@ async def run_fleet(
     shuffle: bool = False,
     reflect_first: bool = False,
     reflect_every_min: float = 0,
-    reflect_model: str = "",
+    reflect_model: str | list[str] = "",
 ) -> None:
     families = families or {}
     names = names or {}
+    # A pool rotates across the stuck list in diagnose_stuck (see there); the
+    # dashboard just needs a readable label, not the raw list.
+    reflect_label = (reflect_model if isinstance(reflect_model, str)
+                     else "+".join(m.rsplit("/", 1)[-1] for m in reflect_model))
 
     # Cross-run reflection (the "Coach") is wired below, AFTER the working-set
     # publisher. Critically it must NEVER block the GPU: the cheap deterministic cards
@@ -490,11 +497,11 @@ async def run_fleet(
                 return
             from . import diagnose as diag
             stuck = [r for r in refls.values() if r.status in diag.STUCK]
-            status["reflect"] = {"done": 0, "total": len(stuck), "model": reflect_model} if stuck else None
+            status["reflect"] = {"done": 0, "total": len(stuck), "model": reflect_label} if stuck else None
             _write_active()
 
             def _prog(done: int) -> None:
-                status["reflect"] = ({"done": done, "total": len(stuck), "model": reflect_model}
+                status["reflect"] = ({"done": done, "total": len(stuck), "model": reflect_label}
                                      if done < len(stuck) else None)
                 _write_active()
             await diag.diagnose_stuck(runs_dir, refls, model=reflect_model,

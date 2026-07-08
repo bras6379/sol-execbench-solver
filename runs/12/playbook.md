@@ -26,3 +26,12 @@ FALLBACK if this round REGRESSES or fails to compile: the proven Triton flat ker
 ## 5. from `d3257b2c` — Replace FP64 range reduction (x - 2π*rint(x/2π)) with fp32 Cody-Waite (nearbyint + FMA) to shorten per-thread latency ch
 4-freq/thread with float4 loads + int2 packed stores, using the same Cody-Waite reduction. The prior 4-freq CUDA attempt (0.000_6e334853) had a fatal index bug: `base = (row << 6) | (lane << 1)` should be `base = (row << 5) | (lane << 1)` — the int2 stores index into 32 slots/row (128 bf16 / 4), not 64. Fix that, keep the grid-stride loop, and use the Cody-Waite reduction from this round. Trigger: if this round only ties 0.898 or the large shape (B=64/S=541) is the one workload holding the score down, the 4-freq approach halves per-element instruction count and could move the bandwidth-bound s
 
+## 6. from `e4e96779` — Shape-specialized fused CUDA RoPE: keep the proven Cody-Waite float2/bf162 path for latency-bound shapes and use a corre
+If this only ties, extend the float4/uint2 path to the mid-sized memory-bound shapes with exact-shape dispatch (try rows >=4096, block=128 for rows <=8192 and block=256 for B=64,S=541). Trigger this only after the largest-shape float4 path passes correctness, because the small shapes are scheduling-floor-bound and should stay on the proven float2 kernel.
+
+## 7. from `b333995e` — Shape-specialized fused CUDA RoPE: 2-freq/thread for tiny shapes (B*S < 4096), 4-freq/thread float4+uint2 for mid shapes
+If this only ties or marginally beats 0.900, the remaining lever is the tiny-shape launch floor: try per-shape block autotune on the proven 2-freq kernel (block=512/1024 for rows < 1024) and an 8-freq/thread float8 path for the largest shape (B=64, S=541); mid shapes are now covered by this round's 4-freq expansion.
+
+## 8. from `d5d0ca1b` — 4-freq/thread CUDA with inline Cody-Waite reduction, uint2 128-bit packed stores, and per-shape block dispatch (1024/512
+8-freq/thread for bandwidth-bound shapes (B*S >= 8192): use 2x float4 loads, 8x sincosf, 4x uint2 stores per half. Trigger: if this ties 0.900 or the B=64/S=541 shape still trails SOL. The 8-freq path further halves the grid and doubles ILP, but only helps the ~2 memory-bound shapes — tiny shapes are at the scheduling floor and won't move. Also untried: a persistent grid-stride loop over rows (one block per SM, each block processes multiple complete rows) to eliminate block-scheduling jitter on mid-sized shapes.
+

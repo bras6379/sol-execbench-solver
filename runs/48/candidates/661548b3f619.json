@@ -1,0 +1,245 @@
+{
+  "cand_id": "661548b3f619",
+  "task_id": 48,
+  "verdict": "entered",
+  "sol_score": 0.4929216892596748,
+  "sol_score_calibrated": 0.38832089539755943,
+  "correct": true,
+  "vector": [
+    0.47875367694078524,
+    0.5214838451599851,
+    0.4191158331045757,
+    0.41046992873409016,
+    0.5561971411087228,
+    0.5248489889758382,
+    0.5204355497771169,
+    0.5165548015931554,
+    0.421033947769863,
+    0.5245065992493269,
+    0.5593838455986003,
+    0.5574524754543554,
+    0.5167622489811724,
+    0.5178734269560459,
+    0.4537611596004201,
+    0.3881135591507431
+  ],
+  "strategy": "Same two cuBLAS GEMMs as the reference (bit-identical), but replace the reference's ~9 separate fp32 elementwise ops for",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "03a163efb168",
+  "trajectory": "runs/48/work/661548b3f619/trajectory.jsonl",
+  "gpu_s": 10.392,
+  "job_id": "48-661548b3f619",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 46.0,
+      "power_w_max": 680.22,
+      "samples": 28,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.669135,
+      "sol_ms": 0.4409,
+      "baseline_latency_ms": 0.650529,
+      "sol_score": 0.47875367694078524,
+      "sol_score_cal": 0.37102500859956294,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.095136,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.0998085,
+      "sol_score": 0.5214838451599851,
+      "sol_score_cal": 0.4471561896143788,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 1.9302359999999998,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 1.7731875,
+      "sol_score": 0.4191158331045757,
+      "sol_score_cal": 0.3041994101026644,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 1.9582215,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 1.778435,
+      "sol_score": 0.41046992873409016,
+      "sol_score_cal": 0.2994909047028094,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.25595199999999996,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.277441,
+      "sol_score": 0.5561971411087228,
+      "sol_score_cal": 0.443412891159963,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.4328955,
+      "sol_ms": 0.2998,
+      "baseline_latency_ms": 0.4468165,
+      "sol_score": 0.5248489889758382,
+      "sol_score_cal": 0.4057170486172059,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0922395,
+      "sol_ms": 0.0406,
+      "baseline_latency_ms": 0.0966404999999999,
+      "sol_score": 0.5204355497771169,
+      "sol_score_cal": 0.44758814718250567,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.472991,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 0.481969,
+      "sol_score": 0.5165548015931554,
+      "sol_score_cal": 0.3879723663760532,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 1.923261,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 1.7713315,
+      "sol_score": 0.421033947769863,
+      "sol_score_cal": 0.3051286808755825,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.095104,
+      "sol_ms": 0.0431,
+      "baseline_latency_ms": 0.1004645,
+      "sol_score": 0.5245065992493269,
+      "sol_score_cal": 0.4501356186124953,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.1440955,
+      "sol_ms": 0.0858,
+      "baseline_latency_ms": 0.159809,
+      "sol_score": 0.5593838455986003,
+      "sol_score_cal": 0.4634755392484889,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.25583900000000004,
+      "sol_ms": 0.1711,
+      "baseline_latency_ms": 0.277841,
+      "sol_score": 0.5574524754543554,
+      "sol_score_cal": 0.4445885389113996,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.4729275,
+      "sol_ms": 0.3419,
+      "baseline_latency_ms": 0.4820175,
+      "sol_score": 0.5167622489811724,
+      "sol_score_cal": 0.38813580203225073,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.082896,
+      "sol_ms": 0.0406,
+      "baseline_latency_ms": 0.086032,
+      "sol_score": 0.5178734269560459,
+      "sol_score_cal": 0.4390488280434611,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.9487505,
+      "sol_ms": 0.6833,
+      "baseline_latency_ms": 0.90381,
+      "sol_score": 0.4537611596004201,
+      "sol_score_cal": 0.33098522350084547,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 2.0141415,
+      "sol_ms": 1.3663,
+      "baseline_latency_ms": 1.7772195,
+      "sol_score": 0.3881135591507431,
+      "sol_score_cal": 0.28507412878128435,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor, gate_proj: torch.Tensor, up_proj: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused gate and up projection with GELU-tanh activation.\n\n    Computes: gelu_tanh(x @ gate_proj.T) * (x @ up_proj.T)\n\n    Same two cuBLAS GEMMs as the reference (bit-identical math, zero numerical\n    risk), but the reference's ~9 separate fp32 elementwise ops for the\n    GELU-tanh chain (to(f32), pow, mul, add, mul, tanh, add, mul, to(bf16))\n    collapse into ONE native fused ATen kernel (`F.gelu(..., approximate=\n    \"tanh\")`, which internally upcasts to fp32 for the tanh math exactly like\n    the reference and downcasts back to bf16), followed by a single multiply.\n    That takes the epilogue from ~9 kernel launches (each paying real B200\n    per-kernel device-time overhead on top of a wasteful fp32-width\n    intermediate) down to 2, without introducing any custom kernel code.\n    \"\"\"\n    gate_output = torch.matmul(x, gate_proj.t())\n    up_output = torch.matmul(x, up_proj.t())\n\n    activated_gate = F.gelu(gate_output, approximate=\"tanh\")\n    output = activated_gate.mul(up_output)\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t48_661548b3f619",
+    "definition": "048_fused_gate_up_projection_with_swiglu",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor, gate_proj: torch.Tensor, up_proj: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused gate and up projection with GELU-tanh activation.\n\n    Computes: gelu_tanh(x @ gate_proj.T) * (x @ up_proj.T)\n\n    Same two cuBLAS GEMMs as the reference (bit-identical math, zero numerical\n    risk), but the reference's ~9 separate fp32 elementwise ops for the\n    GELU-tanh chain (to(f32), pow, mul, add, mul, tanh, add, mul, to(bf16))\n    collapse into ONE native fused ATen kernel (`F.gelu(..., approximate=\n    \"tanh\")`, which internally upcasts to fp32 for the tanh math exactly like\n    the reference and downcasts back to bf16), followed by a single multiply.\n    That takes the epilogue from ~9 kernel launches (each paying real B200\n    per-kernel device-time overhead on top of a wasteful fp32-width\n    intermediate) down to 2, without introducing any custom kernel code.\n    \"\"\"\n    gate_output = torch.matmul(x, gate_proj.t())\n    up_output = torch.matmul(x, up_proj.t())\n\n    activated_gate = F.gelu(gate_output, approximate=\"tanh\")\n    output = activated_gate.mul(up_output)\n\n    return output\n"
+      }
+    ]
+  }
+}

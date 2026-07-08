@@ -13,7 +13,7 @@
       "sol_score": 0.9048463681771899,
       "sol_score_cal": 0.8847627523691657,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 11,
       "vector": [
         0.9387987665906957,
         0.942738144122552,
@@ -38,33 +38,33 @@
       "candidate": "candidates/a8f3f0376b72.json"
     },
     {
-      "cand_id": "bb4eb2382023",
-      "sol_score": 0.8963893904540373,
-      "sol_score_cal": 0.8750125570343126,
+      "cand_id": "dc061e75ac5d",
+      "sol_score": 0.9024021696754824,
+      "sol_score_cal": 0.8821876750441352,
       "all_passed": true,
-      "shapes_won": 1,
+      "shapes_won": 7,
       "vector": [
-        0.931307354701423,
-        0.9337317397078354,
-        0.936334167976863,
-        0.9319174275506152,
-        0.9392801251956181,
-        0.9337013268710078,
-        0.9353117956423741,
-        0.9307855345078819,
-        0.5890037725303898,
-        0.937623162043353,
-        0.9328751600012846,
-        0.9328849053165229,
-        0.9372011320386454,
-        0.9307999926284946,
-        0.6710960465534824,
-        0.9383766039988063
+        0.9320511114068947,
+        0.9422406861431252,
+        0.9487088717131787,
+        0.9328972968497744,
+        0.9485016692017462,
+        0.9422714029075648,
+        0.9339084771192799,
+        0.93874415497662,
+        0.5805624176902485,
+        0.949424405218726,
+        0.9397692819640612,
+        0.9393512224010943,
+        0.9438329238329238,
+        0.9515538013734116,
+        0.6643209216699328,
+        0.9502960703391352
       ],
-      "strategy": "Chunk half_dim (64) into BLOCK_D-sized tiles to cut register pressure from O(BLOCK_M\u00d764) to O(BLOCK_M\u00d7BLOCK_D), unblocki",
-      "agent": "openrouter",
-      "model": "deepseek/deepseek-v4-pro",
-      "candidate": "candidates/bb4eb2382023.json"
+      "strategy": "Shape-dispatch between the 0.885 fused Triton frontier autotune set and a coalesced no-BLOCK_D=8 autotune set for the ex",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/dc061e75ac5d.json"
     }
   ]
 }

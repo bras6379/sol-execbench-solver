@@ -57,28 +57,49 @@ Needed whenever a flag/code change should take effect (Python doesn't
 hot-reload a running process) — e.g. switching `--reflect-model`, tightening
 `--review`, changing the model pool.
 
+**Use `--gpu-reuse-pod` for this** (added 2026-07-08) — a code/prompt-only
+restart doesn't need a new pod. With it: `kill -TERM <pid>` leaves the pod
+running instead of tearing it down, and the next launch (same `--gpu-reuse-pod`
+flag, same tag) adopts it directly — skipping pod creation, SSH wait, and the
+~5-10 min `uv sync`/clone/apt-install bootstrap entirely (bootstrap still runs,
+but every step no-ops in seconds against an already-warm pod, and this is how
+the latest `run_eval.sh`/config/problem set gets pushed even on a reuse).
+`--gpu-max-hours` is anchored to the POD's own RunPod-reported rental start
+time (`PodHandle.rented_at`, parsed from `lastStatusChange`), not this
+process's launch time — so a chain of quick restarts can't reset or extend the
+real safety cap. Steps:
+
 1. `git status` — never discard uncommitted work by accident.
-2. `kill -TERM <pid>`. This is safe: `PodSession` (`solver/engine/pod.py`)
-   arms a SIGINT/SIGTERM handler (`_arm_last_resort`) plus an `atexit` hook
-   that synchronously terminates the pod even on a hard kill — confirmed live
-   (2026-07-08): SIGTERM → pod gone within ~3s, verified via
-   `list_tagged`.
-3. **Verify pod teardown** via `list_tagged` before relaunching — should be
-   `count: 0`. If it isn't, something didn't clean up; investigate before
-   spending on a second pod.
+2. `kill -TERM <pid>`. With `--gpu-reuse-pod` on the ORIGINAL launch, the pod is
+   deliberately left RUNNING (confirm via `list_tagged` — should show
+   `count: 1`, not 0). Without that flag, the old default behavior applies:
+   `PodSession`'s SIGINT/SIGTERM handler (`_arm_last_resort`) + `atexit` hook
+   tear the pod down even on a hard kill — confirmed live (2026-07-08): SIGTERM
+   → pod gone within ~3s.
+3. **Verify pod state** via `list_tagged` before relaunching:
+   `--gpu-reuse-pod` → expect `count: 1` (the pod you're about to adopt);
+   no reuse → expect `count: 0`. Either way, an unexpected count means
+   something didn't clean up (or didn't survive) — investigate before
+   relaunching.
 4. **Sweep orphaned agent CLI processes** — a SIGTERM'd fleet can leave
-   headless `claude -p ...`/`codex exec ...` calls running (`ppid=1`):
+   headless `claude -p ...`/`codex exec ...` calls running (`ppid=1`)
+   regardless of `--gpu-reuse-pod` (that flag only affects the POD, not the
+   local agent subprocesses):
    ```
    ps -o pid,ppid,command -u $(whoami) | grep "claude -p\|codex exec" \
      | grep -v grep | awk '$2==1{print $1}' | xargs -r kill -TERM
    ```
    Verify these are genuinely headless (ppid=1) before killing — never kill
    your own interactive Claude Code session.
-5. Relaunch with `nohup ... > logfile 2>&1 & disown`, then verify:
-   `ps -p <newpid> -o pid,etime` and `list_tagged` shows exactly one new pod.
+5. Relaunch with the SAME `--gpu-reuse-pod` flag (if used originally) and
+   `nohup ... > logfile 2>&1 & disown`, then verify: `ps -p <newpid> -o
+   pid,etime`, and check the log for `"adopted existing pod ... — skipping
+   create/reap"` once output starts flowing (see the buffering note below).
 6. **The new log file will be EMPTY for a while** — see §5, this is expected,
    not a sign the launch failed. Cross-check via `runs/_active.json` (a live
    heartbeat the engine writes) or `list_tagged` instead of waiting on the log.
+   With `--gpu-reuse-pod`, real journal activity should resume within roughly a
+   minute (bootstrap is fast on a warm pod) instead of the usual ~10 min.
 
 ## 3. Incident: GPU executor stalled (queue backed up, nothing executing)
 

@@ -113,6 +113,59 @@ def test_call_fable_falls_back_when_primary_provider_fails(monkeypatch):
     assert attempts[1][0] == "deepseek/deepseek-v4-pro"
 
 
+def test_parse_reflect_model_splits_agent_prefix():
+    assert diagnose._parse_reflect_model("openrouter/z-ai/glm-4.7-flash") == \
+        ("openrouter", "z-ai/glm-4.7-flash")
+    assert diagnose._parse_reflect_model("deepseek/deepseek-v4-pro") == \
+        ("deepseek", "deepseek-v4-pro")
+    assert diagnose._parse_reflect_model("claude-sonnet-5") == ("claude", "claude-sonnet-5")
+    assert diagnose._parse_reflect_model("sonnet") == ("claude", "sonnet")
+    # codex is not a valid reflect spec — falls through to a literal (invalid) claude
+    # model name rather than silently routing to the wrong CLI binary
+    assert diagnose._parse_reflect_model("codex/gpt-5.5") == ("claude", "codex/gpt-5.5")
+
+
+def test_call_fable_routes_to_the_actually_requested_model(monkeypatch):
+    """Regression: --reflect-model with an OpenRouter model NOT in FALLBACK_CHAIN
+    used to be silently discarded — the fallback rungs used FALLBACK_CHAIN's own
+    hardcoded model names instead of the one the caller actually asked for."""
+    monkeypatch.setattr(diagnose.shutil, "which", lambda name: "/usr/bin/claude")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "test-key")
+    attempts = []
+
+    async def fake_try(prompt, model, timeout, cwd, env):
+        attempts.append((model, env.get("ANTHROPIC_BASE_URL")))
+        return f"diagnosis from {model}", {"cost_usd": 0.01}
+
+    monkeypatch.setattr(diagnose, "_try_model", fake_try)
+    prose, used, usage = run(diagnose._call_fable("prompt", "openrouter/z-ai/glm-4.7-flash", 10))
+    assert attempts[0][0] == "z-ai/glm-4.7-flash"          # the ACTUAL requested model, not a
+    assert used == "openrouter:z-ai/glm-4.7-flash"          # FALLBACK_CHAIN placeholder
+    assert prose == "diagnosis from z-ai/glm-4.7-flash"
+
+
+def test_diagnose_stuck_rotates_across_a_model_pool(tmp_path, monkeypatch):
+    """A --reflect-model POOL rotates round-robin over the stuck list, so a
+    problem still stuck after one model's take gets a different one next time."""
+    seen_models = []
+
+    async def fake_diagnose_one(runs_dir, r, *, model, timeout, kb_dir="kb", log=lambda *_: None):
+        seen_models.append((r.task_id, model))
+        return True
+
+    monkeypatch.setattr(diagnose, "diagnose_one", fake_diagnose_one)
+    monkeypatch.setattr(R, "attach_diagnosis", lambda *a, **k: None)
+    refls = {
+        t: R.ProblemReflection(task_id=t, status="plateaued", name="", family="",
+                               headline="", n_evals=1, best=0.5)
+        for t in (1, 2, 3, 4)
+    }
+    run(diagnose.diagnose_stuck(tmp_path, refls, model=["model-a", "model-b"]))
+    picked = dict(seen_models)
+    assert picked[1] == "model-a" and picked[2] == "model-b"
+    assert picked[3] == "model-a" and picked[4] == "model-b"
+
+
 def test_call_fable_skips_fallback_with_no_api_key(monkeypatch):
     monkeypatch.setattr(diagnose.shutil, "which", lambda name: "/usr/bin/claude")
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)

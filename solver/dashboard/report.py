@@ -313,17 +313,17 @@ _CSS = """
 :root{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;
 --grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;}
+--o-accepted:#0ca30c;--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-error:#d03b3b;--o-revised:#2a78d6;}
 @media (prefers-color-scheme: dark){:root{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;
 --grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;}}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;}}
 :root[data-theme=light]{--surface:#fcfcfb;--panel:#ffffff;--ink:#0b0b0b;--ink2:#52514e;--ink3:#8a887f;--grid:#e8e7e2;--ref:#c9c7bf;--seq:#2a78d6;
 --s1:#2a78d6;--s2:#1baf7a;--s3:#eda100;--s4:#008300;--s5:#4a3aa7;--s6:#e34948;--s7:#e87ba4;--s8:#eb6834;
---o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;}
+--o-dominated:#9c9a92;--o-rejected:#eb6834;--o-duplicate:#eda100;--o-no_op:#c2410c;--o-incorrect:#e87ba4;--o-flaky:#a855c7;--o-revised:#2a78d6;}
 :root[data-theme=dark]{--surface:#1a1a19;--panel:#222221;--ink:#ffffff;--ink2:#c3c2b7;--ink3:#8a887f;--grid:#33322f;--ref:#4a4945;--seq:#3987e5;
 --s1:#3987e5;--s2:#199e70;--s3:#c98500;--s4:#008300;--s5:#9085e9;--s6:#e66767;--s7:#d55181;--s8:#d95926;
---o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;}
+--o-dominated:#7c7a72;--o-rejected:#d95926;--o-duplicate:#c98500;--o-no_op:#e0692e;--o-incorrect:#d55181;--o-flaky:#c07de0;--o-revised:#3987e5;}
 *{box-sizing:border-box}
 body{margin:0;background:var(--surface);color:var(--ink);
 font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:24px}
@@ -906,7 +906,7 @@ def build_hub(data: dict, *, refresh: int | None, detail_dir: str = "p") -> str:
 _STATUS_CHIP = {
     "accepted": "o-accepted", "dominated": "o-dominated", "rejected": "o-rejected",
     "duplicate": "o-duplicate", "no_op": "o-no_op", "incorrect": "o-incorrect", "flaky": "o-flaky",
-    "error": "o-error", "planned": "o-dominated",
+    "error": "o-error", "planned": "o-dominated", "revised": "o-revised",
 }
 
 
@@ -926,6 +926,20 @@ def _code_blocks(p: dict) -> str:
                 f'<span>score <b>{score}</b></span>'
                 f'<span>{_esc(", ".join(spec.get("languages", ["?"])))}</span>'
                 f'<span>{_esc(c.get("model") or "")}</span></div>')
+        # None = journal predates context-tracking (2026-07-08) — say nothing rather
+        # than falsely implying "read zero files" for a candidate we never checked.
+        # [] = tracked, and the model genuinely consulted no kb/ file that call.
+        kb_writer = c.get("context_read")
+        kb_reviewer = c.get("reviewer_context_read")
+        if kb_writer is not None or kb_reviewer is not None:
+            meta += '<div class="modal-meta modal-kb">'
+            if kb_writer is not None:
+                meta += (f'<span>writer read kb/: {_esc(", ".join(kb_writer))}</span>' if kb_writer
+                         else '<span class="muted">writer read NO kb/ files</span>')
+            if kb_reviewer is not None:
+                meta += (f'<span>reviewer read kb/: {_esc(", ".join(kb_reviewer))}</span>' if kb_reviewer
+                         else '<span class="muted">reviewer read NO kb/ files</span>')
+            meta += '</div>'
         srcs = "".join(
             f'<div class="src-h">{_esc(s.get("path", "?"))}</div>'
             f'<pre><code>{_esc(s.get("content", ""))}</code></pre>'

@@ -97,6 +97,27 @@ def test_plan_collision_preserves_every_trajectory(tmp_path):
     assert cand2.tokens["in"] == 100                        # second call's own tokens still captured
 
 
+def test_plan_workdir_clears_stale_content_from_a_prior_process_lifetime(tmp_path):
+    """Regression (2026-07-08): `cand{seq}` is only unique WITHIN one process —
+    self._seq resets to 0 on every restart, so a candidate that errored before
+    _rekey_workdir ever ran (leaving its temp dir un-renamed) can have its name
+    reused by a LATER process's totally unrelated attempt. Live incident: a
+    leftover Triton kernel.py from a prior day survived into a fresh CUDA repair
+    attempt and got correctly flagged as 'mixed C++/Python' — for content the
+    current agent never wrote. The workdir must start clean every time."""
+    agent = _agent(_fake_spec(tmp_path), tmp_path)
+    stale = tmp_path / "runs" / "7" / "work" / "cand1"
+    stale.mkdir(parents=True)
+    (stale / "kernel.cu").write_text("// leftover from a completely different, unrelated attempt\n")
+    (stale / "strategy.txt").write_text("stale strategy from a prior process lifetime")
+
+    cand = run(agent.plan(parent=None, ctx=_fake_ctx()))          # this call also lands on cand1
+
+    paths = {s["path"] for s in cand.solution["sources"]}
+    assert paths == {"kernel.py"}                                 # only what THIS call wrote
+    assert cand.strategy != "stale strategy from a prior process lifetime"
+
+
 def test_design_reads_file(tmp_path):
     agent = _agent(_fake_spec(tmp_path), tmp_path)
     text, tokens = run(agent.design(7))                       # from design.md
@@ -136,6 +157,34 @@ def test_context_md_renders_reserve_plays():
     assert "Reserve plays" in md
     assert "radix-sort + atomic-free segmented reduction" in md
     assert "atomic scatter" in md                             # the strategy that flagged it
+
+
+def test_context_md_flags_seed_only_frontier_for_risk_sequencing():
+    """When nothing but the seed has been accepted yet, the writer must be told
+    to bank a safe correctness win before reaching for the design's highest-
+    ceiling approach (the #44 compile-hang incident: an agent went straight for
+    the riskiest ranked approach on its very first real attempt and burned the
+    single-flight GPU for 10 minutes on a COMPILE_ERROR)."""
+    from solver.engine.cli_agent import _context_md
+    seed_member = SimpleNamespace(strategy="seed", mean=0.1, sol_score_cal=None,
+                                  cand_id="seed0000")
+    ctx = SimpleNamespace(design="", sibling_hint=None, recent_failures=[],
+                          frontier=SimpleNamespace(members=[seed_member]), playbook=[])
+    md = _context_md(parent=None, ctx=ctx)
+    assert "Nothing real has been accepted yet" in md
+    assert "SAFEST" in md
+
+
+def test_context_md_silent_once_a_real_candidate_is_accepted():
+    from solver.engine.cli_agent import _context_md
+    seed_member = SimpleNamespace(strategy="seed", mean=0.1, sol_score_cal=None,
+                                  cand_id="seed0000")
+    real_member = SimpleNamespace(strategy="fused Triton kernel", mean=0.6,
+                                  sol_score_cal=0.55, cand_id="real0001")
+    ctx = SimpleNamespace(design="", sibling_hint=None, recent_failures=[],
+                          frontier=SimpleNamespace(members=[seed_member, real_member]), playbook=[])
+    md = _context_md(parent=None, ctx=ctx)
+    assert "Nothing real has been accepted yet" not in md
 
 
 def test_timeout_raises(tmp_path):
@@ -201,3 +250,58 @@ def test_parse_review_treats_hand_trace_line_as_not_an_issue():
     assert not revise.ship
     assert len(revise.issues) == 2
     assert "fp16" in revise.issues[0]
+
+
+def test_extract_context_read_claude_schema_from_tool_use_blocks():
+    """Auditable evidence of what the model actually consulted, not an assumption
+    — claude reports file reads as structured Read tool_use blocks."""
+    from solver.engine.cli_agent import _extract_context_read
+    import json as _json
+
+    raw = "\n".join(_json.dumps(e) for e in [
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "name": "Read",
+             "input": {"file_path": "/work/cand1/reference.py"}},
+        ]}},
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "name": "Read",
+             "input": {"file_path": "/work/cand1/kb/README.md"}},
+        ]}},
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "name": "Read",
+             "input": {"file_path": "/work/cand1/kb/b200-hardware.md"}},
+        ]}},
+        {"type": "assistant", "message": {"content": [
+            {"type": "tool_use", "name": "Read",       # a repeat — must not duplicate
+             "input": {"file_path": "/work/cand1/kb/README.md"}},
+        ]}},
+    ])
+    assert _extract_context_read("claude", raw) == ["README.md", "b200-hardware.md"]
+
+
+def test_extract_context_read_codex_schema_from_shell_commands():
+    """codex has no Read tool at all — it reads files via plain shell
+    (nl/cat/rg/sed), so this must grep command TEXT, not tool_use blocks, or it
+    silently undercounts codex to zero even when it read half the kb (confirmed
+    live, 2026-07-08 — the naive claude-only check showed 20/20 codex calls with
+    'zero kb reads' when they were reading kb/*.md via `nl -ba kb/...`)."""
+    from solver.engine.cli_agent import _extract_context_read
+    import json as _json
+
+    raw = "\n".join(_json.dumps(e) for e in [
+        {"type": "item.completed", "item": {"type": "command_execution",
+         "command": "/bin/zsh -lc 'nl -ba kb/README.md'"}},
+        {"type": "item.completed", "item": {"type": "command_execution",
+         "command": "/bin/zsh -lc \"rg -n 'num_warps' kb/*.md\""}},
+        {"type": "item.completed", "item": {"type": "command_execution",
+         "command": "/bin/zsh -lc 'nl -ba kb/fusion-patterns.md'"}},
+        {"type": "item.completed", "item": {"type": "command_execution",
+         "command": "/bin/zsh -lc 'nl -ba reference.py'"}},        # not kb/ — excluded
+    ])
+    assert _extract_context_read("codex", raw) == ["README.md", "fusion-patterns.md"]
+
+
+def test_extract_context_read_empty_when_nothing_consulted():
+    from solver.engine.cli_agent import _extract_context_read
+    assert _extract_context_read("claude", "") == []
+    assert _extract_context_read("codex", "") == []

@@ -8,9 +8,10 @@ all re-deriving one family ("bf16 LM-head GEMM"), while two specific workloads
 
 This module extracts that structure **deterministically** (no LLM) so it can be
 injected back into every agent's context as a "you are stuck, here is what's been
-tried and where the loss actually is" directive. A stronger model (fable-5) layers
-a *why + which untried lever* diagnosis on top (see `reflect.py`), but the signals
-below stand on their own and cost nothing.
+tried and where the loss actually is" directive. A stronger (but CHEAP —
+sonnet/haiku or an OpenRouter model, never an expensive frontier model) model
+layers a *why + which untried lever* diagnosis on top (see `diagnose.py`), but
+the signals below stand on their own and cost nothing.
 
 Pure core: `analyze(events, candidates)` → `ProblemReflection`; `render_card()` →
 markdown. `from_runs_dir()` is the thin IO loader.
@@ -439,8 +440,8 @@ def attach_diagnosis(runs_dir: str | Path, task_id: int) -> bool:
     re-spending on it. No-op if there's no diagnosis yet.
 
     The header names the model that ACTUALLY produced the prose (read from
-    diagnosis.json — it varies: fable-5, an OpenRouter fallback, native Claude,
-    whichever `--reflect-model`/FALLBACK_CHAIN landed on for that run), not a
+    diagnosis.json — it varies: native claude-sonnet-5, an OpenRouter fallback,
+    or whichever `--reflect-model`/FALLBACK_CHAIN landed on for that run), not a
     fixed label — `--reflect-model` has changed several times across restarts
     and a hardcoded name here would silently lie about the source. DIAGNOSIS_HEADER
     itself stays a stable, model-less prefix so the stale-block strip below finds

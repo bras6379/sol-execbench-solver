@@ -15,6 +15,8 @@ from __future__ import annotations
 
 import asyncio
 import atexit
+import datetime
+import re
 import signal
 import time
 from dataclasses import dataclass
@@ -60,6 +62,7 @@ class PodHandle:
     ssh_port: int | None = None
     cost_per_hr: float | None = None
     tag: str = ""
+    rented_at: str | None = None            # ISO ts, RunPod's own record — see _parse_rented_at
 
 
 class PodProvider(Protocol):
@@ -157,37 +160,81 @@ class RunPodProvider:
                 if tag in (p.get("name", "") or "") and p.get("desiredStatus") != "TERMINATED"]
 
 
+_RENTED_AT_RE = re.compile(r"Rented by User: (\w+ \w+ \d+ \d+ \d+:\d+:\d+) GMT\+0000")
+
+
+def _parse_rented_at(last_status_change: str | None) -> str | None:
+    """RunPod's `lastStatusChange` is a human string like 'Rented by User: Wed Jul
+    08 2026 01:13:03 GMT+0000 (...)' — the only authoritative record of when a pod
+    was actually created (no clean createdAt field in the API). Used to anchor
+    --gpu-max-hours to the pod's REAL age across a --gpu-reuse-pod restart, so a
+    string of quick restarts can't reset the safety cap's clock. Returns an ISO
+    string, or None if the field is missing/unparseable (caller must not assume a
+    fresh pod in that case — see solve_on_gpu)."""
+    if not last_status_change:
+        return None
+    m = _RENTED_AT_RE.match(last_status_change)
+    if not m:
+        return None
+    try:
+        dt = datetime.datetime.strptime(m.group(1), "%a %b %d %Y %H:%M:%S")
+        return dt.replace(tzinfo=datetime.timezone.utc).isoformat()
+    except ValueError:
+        return None
+
+
 def _from_runpod(p: dict, tag: str) -> PodHandle:
     rt = (p or {}).get("runtime") or {}
     ports = rt.get("ports") or []
     ssh = next((x for x in ports if x.get("privatePort") == 22), {})
     return PodHandle(id=p.get("id", ""), status=p.get("desiredStatus", "CREATING"),
                      ssh_host=ssh.get("ip"), ssh_port=ssh.get("publicPort"),
-                     cost_per_hr=p.get("costPerHr"), tag=tag)
+                     cost_per_hr=p.get("costPerHr"), tag=tag,
+                     rented_at=_parse_rented_at(p.get("lastStatusChange")))
 
 
 class PodSession:
-    """Create a pod on enter, guarantee its termination on exit (any path)."""
+    """Create a pod on enter, guarantee its termination on exit (any path) —
+    UNLESS `reuse=True` and the exit was a caught SIGINT/SIGTERM, in which case
+    the pod is deliberately left running for the next launch to adopt (see
+    `--gpu-reuse-pod`). Normal completion (the `async with` block finishing, or
+    `--gpu-max-hours`'s own internal timeout) always still terminates — `reuse`
+    only changes what happens on a manual restart-in-place, never the safety
+    backstop for "the run is actually done" or "a real crash happened outside
+    the signal path"."""
 
     def __init__(self, provider: PodProvider, spec: PodSpec, *,
                  ready_timeout: float = 600.0, poll_s: float = 2.0,
-                 arm_signals: bool = True) -> None:
+                 arm_signals: bool = True, reuse: bool = False,
+                 terminate_on_signal: bool = True) -> None:
         self.provider = provider
         self.spec = spec
         self.ready_timeout = ready_timeout
         self.poll_s = poll_s
         self.arm_signals = arm_signals
+        self.reuse = reuse
+        self.terminate_on_signal = terminate_on_signal
         self.pod: PodHandle | None = None
+        self.adopted = False
         self._terminated = False
+        self._signaled = False
 
     async def __aenter__(self) -> PodHandle:
-        await self.reap()                              # kill stragglers from a prior crash first
-        self.pod = await self._create_and_wait()
+        live = [h for h in await self.provider.list_tagged(self.spec.tag)
+                if h.status == "RUNNING"] if self.reuse else []
+        if self.reuse and len(live) == 1:
+            self.pod = live[0]                           # adopt — skip reap AND create entirely
+            self.adopted = True
+        else:
+            await self.reap()                            # kill stragglers from a prior crash first
+            self.pod = await self._create_and_wait()
         if self.arm_signals:
             self._arm_last_resort()
         return self.pod
 
     async def __aexit__(self, *exc) -> None:
+        if self._signaled and not self.terminate_on_signal:
+            return                          # deliberate restart-in-place: leave the pod for reuse
         await self.terminate()
 
     async def reap(self) -> int:
@@ -218,13 +265,17 @@ class PodSession:
 
     def _arm_last_resort(self) -> None:
         """atexit + signal handlers: a synchronous terminate if the async
-        `finally` never runs (hard crash / kill). No-op once terminated."""
+        `finally` never runs (hard crash / kill). No-op once terminated — and,
+        when `reuse` is on, no-op on a CAUGHT signal specifically (a crash that
+        doesn't go through this handler still terminates normally; only a
+        deliberate SIGINT/SIGTERM restart-in-place is spared)."""
         atexit.register(self._terminate_sync)
         for sig in (signal.SIGINT, signal.SIGTERM):
             try:
                 prev = signal.getsignal(sig)
 
                 def handler(signum, frame, _prev=prev):
+                    self._signaled = True
                     self._terminate_sync()
                     if callable(_prev):
                         _prev(signum, frame)
@@ -235,6 +286,8 @@ class PodSession:
                 pass                                    # not the main thread — atexit still covers us
 
     def _terminate_sync(self) -> None:
+        if self._signaled and not self.terminate_on_signal:
+            return                          # deliberate restart-in-place: leave the pod for reuse
         if self.pod and not self._terminated:
             self._terminated = True
             try:

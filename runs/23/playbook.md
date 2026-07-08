@@ -15,3 +15,6 @@ Double-buffer the output to eliminate the clone entirely: allocate two static ou
 ## 4. from `0a3c59bc` — Sync-once vectorized PyTorch + double-buffered CUDA graph: one graph launch computes bilinear gather/sum and MRoPE cos/s
 If this round plateaus, the next reserve play is to split the single graph into two independent CUDA graphs on separate streams—one for the patch gather+sum and one for MRoPE cos/sin—and replay them concurrently, since the two outputs are independent and the trig kernels currently serialize after the gather in the captured sequence.
 
+## 5. from `cc40028f` — Fixed CUDA-graph dead-code bug: _compute_to_buffer had shape mismatch ([T,64]→[T,128] slice), silently killing graph cap
+If this round doesn't beat 0.85: the next lever is splitting the CUDA graph into two independent graphs on separate streams — one for the bilinear gather+weighted-sum (pw[idx]*wgt).sum(0) and one for the MRoPE cos/sin — and replaying them concurrently. The two outputs are independent and the MRoPE part is tiny, so the concurrency win is modest but the MRoPE kernels currently serialize after the gather inside the single captured sequence. Trigger: score stays below ~0.85 or the gather-to-HBM traffic (the [4,T,1536] intermediate) is confirmed as the bottleneck via profiling.
+

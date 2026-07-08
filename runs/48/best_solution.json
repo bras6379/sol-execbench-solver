@@ -1,5 +1,5 @@
 {
-  "name": "t48_03a163efb168",
+  "name": "t48_661548b3f619",
   "definition": "048_fused_gate_up_projection_with_swiglu",
   "author": "sol-solver",
   "spec": {
@@ -10,7 +10,7 @@
       "B200",
       "LOCAL"
     ],
-    "entry_point": "reference.py::run",
+    "entry_point": "kernel.py::run",
     "dependencies": [
       "torch"
     ],
@@ -18,8 +18,8 @@
   },
   "sources": [
     {
-      "path": "reference.py",
-      "content": "import torch\nimport math\n\n@torch.no_grad()\ndef run(x: torch.Tensor, gate_proj: torch.Tensor, up_proj: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused gate and up projection with GELU-tanh activation.\n    \n    Computes: gelu_tanh(x @ gate_proj.T) * (x @ up_proj.T)\n    \n    Args:\n        x: Input tensor of shape (batch_size, seq_len, hidden_size)\n        gate_proj: Gate projection weights of shape (intermediate_size, hidden_size)\n        up_proj: Up projection weights of shape (intermediate_size, hidden_size)\n    \n    Returns:\n        Output tensor of shape (batch_size, seq_len, intermediate_size)\n    \"\"\"\n    # Compute gate projection: x @ gate_proj.T\n    # x: (batch_size, seq_len, hidden_size)\n    # gate_proj: (intermediate_size, hidden_size)\n    # gate_output: (batch_size, seq_len, intermediate_size)\n    gate_output = torch.matmul(x, gate_proj.t())\n    \n    # Compute up projection: x @ up_proj.T\n    # up_output: (batch_size, seq_len, intermediate_size)\n    up_output = torch.matmul(x, up_proj.t())\n    \n    # Apply GELU with tanh approximation to gate output\n    # GELU_tanh(x) = 0.5 * x * (1 + tanh(sqrt(2/pi) * (x + 0.044715 * x^3)))\n    sqrt_2_over_pi = math.sqrt(2.0 / math.pi)\n    gate_float = gate_output.to(torch.float32)\n    inner = sqrt_2_over_pi * (gate_float + 0.044715 * gate_float.pow(3))\n    activated_gate = 0.5 * gate_float * (1.0 + torch.tanh(inner))\n    activated_gate = activated_gate.to(gate_output.dtype)\n    \n    # Element-wise multiplication: activated_gate * up_output\n    output = activated_gate * up_output\n    \n    return output\n"
+      "path": "kernel.py",
+      "content": "import torch\nimport torch.nn.functional as F\n\n\n@torch.no_grad()\ndef run(x: torch.Tensor, gate_proj: torch.Tensor, up_proj: torch.Tensor) -> torch.Tensor:\n    \"\"\"\n    Fused gate and up projection with GELU-tanh activation.\n\n    Computes: gelu_tanh(x @ gate_proj.T) * (x @ up_proj.T)\n\n    Same two cuBLAS GEMMs as the reference (bit-identical math, zero numerical\n    risk), but the reference's ~9 separate fp32 elementwise ops for the\n    GELU-tanh chain (to(f32), pow, mul, add, mul, tanh, add, mul, to(bf16))\n    collapse into ONE native fused ATen kernel (`F.gelu(..., approximate=\n    \"tanh\")`, which internally upcasts to fp32 for the tanh math exactly like\n    the reference and downcasts back to bf16), followed by a single multiply.\n    That takes the epilogue from ~9 kernel launches (each paying real B200\n    per-kernel device-time overhead on top of a wasteful fp32-width\n    intermediate) down to 2, without introducing any custom kernel code.\n    \"\"\"\n    gate_output = torch.matmul(x, gate_proj.t())\n    up_output = torch.matmul(x, up_proj.t())\n\n    activated_gate = F.gelu(gate_output, approximate=\"tanh\")\n    output = activated_gate.mul(up_output)\n\n    return output\n"
     }
   ]
 }

@@ -166,11 +166,25 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                 "cand": e["cand"], "ts": ts, "model": e.get("model", model),
                 "parent": e.get("parent"), "strategy": e.get("strategy", ""),
                 "solution": e.get("solution"), "status": "planned",
-                "sol_score": None,
+                # None (key absent — journal predates this feature) is kept distinct
+                # from [] (tracked, and the model genuinely read no kb/ files) —
+                # collapsing them would make every pre-2026-07-08 candidate falsely
+                # look like it read nothing.
+                "sol_score": None, "context_read": e.get("context_read"),
+                "reviewer_context_read": None,
             })
         elif ev == "review":
             _spend("review", e.get("reviewer", "?"), e.get("cost_usd", 0.0),
                    e.get("tok_in", 0), e.get("tok_out", 0), e.get("tok_cached", 0))
+            c = candidates.get(e.get("cand"))
+            if c is not None:
+                c["reviewer_context_read"] = e.get("context_read")
+                # A "revise" verdict sends the SAME writer back for a repair turn — this
+                # candidate is done, superseded by whatever plan_done comes next in the
+                # repair loop. Without this, it sits at "planned" forever (indistinguishable
+                # from genuinely in-flight work) since nothing else ever revisits its status.
+                if e.get("verdict") == "revise" and c["status"] == "planned":
+                    c["status"] = "revised"
         elif ev == "diagnose_cost":
             _spend("diagnose", e.get("model", "?"), e.get("cost_usd", 0.0),
                    e.get("tok_in", 0) or 0, e.get("tok_out", 0) or 0, e.get("tok_cached", 0) or 0)
@@ -208,7 +222,7 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
                     "cand": e["cand"], "ts": ts, "model": model, "parent": None,
                     "strategy": e.get("strategy", "seed: reference wrapper baseline"),
                     "solution": e.get("solution"), "status": "planned",
-                    "sol_score": None,
+                    "sol_score": None, "context_read": None, "reviewer_context_read": None,
                 }
             if e.get("solution_status") == "error":
                 outcomes["error"] += 1

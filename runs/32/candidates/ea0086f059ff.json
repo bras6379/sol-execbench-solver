@@ -1,0 +1,245 @@
+{
+  "cand_id": "ea0086f059ff",
+  "task_id": 32,
+  "verdict": "entered",
+  "sol_score": 0.5866001505148853,
+  "sol_score_calibrated": 0.5207872793968632,
+  "correct": true,
+  "vector": [
+    0.6522751560830193,
+    0.5301690096351288,
+    0.5699029126213593,
+    0.6132991668119749,
+    0.6284178386759653,
+    0.5521052105210522,
+    0.5526727771459156,
+    0.5551523947750363,
+    0.5589680951879541,
+    0.4982790460382132,
+    0.7926735921268452,
+    0.5520069718562567,
+    0.7569781137863971,
+    0.5186021474642962,
+    0.5342763308320687,
+    0.519823644676682
+  ],
+  "strategy": "Correctness-first layout fusion: use cuBLAS bmm into final interleaved strides for B<=4 shapes and a direct-output Trito",
+  "agent": "codex",
+  "model": "gpt-5.5",
+  "parent": "da7136326220",
+  "trajectory": "runs/32/work/ea0086f059ff/trajectory.jsonl",
+  "gpu_s": 9.014,
+  "job_id": "32-ea0086f059ff",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 37.0,
+      "power_w_max": 310.97,
+      "samples": 26,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.0322555,
+      "sol_ms": 0.0168,
+      "baseline_latency_ms": 0.045792,
+      "sol_score": 0.6522751560830193,
+      "sol_score_cal": 0.5732358075844008,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.046096,
+      "sol_ms": 0.0223,
+      "baseline_latency_ms": 0.049152,
+      "sol_score": 0.5301690096351288,
+      "sol_score_cal": 0.45200638855446834,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.005344,
+      "sol_ms": 0.0018,
+      "baseline_latency_ms": 0.006496,
+      "sol_score": 0.5699029126213593,
+      "sol_score_cal": 0.5073816685682675,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.0587035,
+      "sol_ms": 0.0332,
+      "baseline_latency_ms": 0.0736479999999999,
+      "sol_score": 0.6132991668119749,
+      "sol_score_cal": 0.5245822377787526,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.044,
+      "sol_ms": 0.0168,
+      "baseline_latency_ms": 0.0628005,
+      "sol_score": 0.6284178386759653,
+      "sol_score_cal": 0.5640046345964039,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.08105599999999999,
+      "sol_ms": 0.0094,
+      "baseline_latency_ms": 0.097728,
+      "sol_score": 0.5521052105210522,
+      "sol_score_cal": 0.5036244907193698,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0188155,
+      "sol_ms": 0.0021,
+      "baseline_latency_ms": 0.022752,
+      "sol_score": 0.5526727771459156,
+      "sol_score_cal": 0.5044154055772684,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.008256,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.01008,
+      "sol_score": 0.5551523947750363,
+      "sol_score_cal": 0.507052335754812,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.062656,
+      "sol_ms": 0.0103,
+      "baseline_latency_ms": 0.0766565,
+      "sol_score": 0.5589680951879541,
+      "sol_score_cal": 0.5080229133787495,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.06811149999999999,
+      "sol_ms": 0.0332,
+      "baseline_latency_ms": 0.067872,
+      "sol_score": 0.4982790460382132,
+      "sol_score_cal": 0.42014095540019336,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.011136,
+      "sol_ms": 0.0045,
+      "baseline_latency_ms": 0.0298715,
+      "sol_score": 0.7926735921268452,
+      "sol_score_cal": 0.7435233479489405,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0496475,
+      "sol_ms": 0.0278,
+      "baseline_latency_ms": 0.05472,
+      "sol_score": 0.5520069718562567,
+      "sol_score_cal": 0.4625387829405319,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.024608,
+      "sol_ms": 0.0113,
+      "baseline_latency_ms": 0.0527525,
+      "sol_score": 0.7569781137863971,
+      "sol_score_cal": 0.6974306153070142,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.074864,
+      "sol_ms": 0.0496,
+      "baseline_latency_ms": 0.0768165,
+      "sol_score": 0.5186021474642962,
+      "sol_score_cal": 0.4080149722673048,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.206944,
+      "sol_ms": 0.0277,
+      "baseline_latency_ms": 0.2333279999999999,
+      "sol_score": 0.5342763308320687,
+      "sol_score_cal": 0.484752919059926,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.131024,
+      "sol_ms": 0.0134,
+      "baseline_latency_ms": 0.140736,
+      "sol_score": 0.519823644676682,
+      "sol_score_cal": 0.4718689949134083,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nNUM_HEADS = 40\nHEAD_DIM = 128\nHIDDEN_SIZE = 5120\n\n\n@triton.jit\ndef _attn_value_kernel(\n    attn_weights,\n    value_states,\n    output,\n    S: tl.constexpr,\n    A_SB: tl.constexpr,\n    A_SH: tl.constexpr,\n    A_SM: tl.constexpr,\n    A_SK: tl.constexpr,\n    V_SB: tl.constexpr,\n    V_SH: tl.constexpr,\n    V_SK: tl.constexpr,\n    V_SN: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    b = pid_bh // 40\n    h = pid_bh - b * 40\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_n = tl.arange(0, 128)\n\n    acc = tl.zeros((BLOCK_M, 128), tl.float32)\n\n    for k0 in tl.range(0, S, BLOCK_K):\n        k = k0 + offs_k\n        a_ptrs = (\n            attn_weights\n            + b * A_SB\n            + h * A_SH\n            + offs_m[:, None] * A_SM\n            + k[None, :] * A_SK\n        )\n        v_ptrs = (\n            value_states\n            + b * V_SB\n            + h * V_SH\n            + k[:, None] * V_SK\n            + offs_n[None, :] * V_SN\n        )\n        a = tl.load(a_ptrs, mask=(offs_m[:, None] < S) & (k[None, :] < S), other=0.0)\n        v = tl.load(v_ptrs, mask=(k[:, None] < S) & (offs_n[None, :] < 128), other=0.0)\n        acc = tl.dot(a, v, acc, out_dtype=tl.float32)\n\n    out_ptrs = (\n        output\n        + b * S * 5120\n        + offs_m[:, None] * 5120\n        + h * 128\n        + offs_n[None, :]\n    )\n    tl.store(out_ptrs, acc, mask=(offs_m[:, None] < S) & (offs_n[None, :] < 128))\n\n\ndef _run_low_batch_cublas(attn_weights: torch.Tensor, value_states: torch.Tensor) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n    seq_len = attn_weights.shape[2]\n    output = torch.empty(\n        (batch_size, seq_len, HIDDEN_SIZE),\n        device=attn_weights.device,\n        dtype=attn_weights.dtype,\n    )\n\n    for b in range(batch_size):\n        out_b = output[b].as_strided(\n            (NUM_HEADS, seq_len, HEAD_DIM),\n            (HEAD_DIM, HIDDEN_SIZE, 1),\n        )\n        torch.bmm(attn_weights[b], value_states[b], out=out_b)\n\n    return output\n\n\ndef _run_high_batch_triton(attn_weights: torch.Tensor, value_states: torch.Tensor) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n    seq_len = attn_weights.shape[2]\n    output = torch.empty(\n        (batch_size, seq_len, HIDDEN_SIZE),\n        device=attn_weights.device,\n        dtype=attn_weights.dtype,\n    )\n\n    if seq_len <= 128:\n        block_k = 32\n    else:\n        block_k = 64\n    block_m = 64\n\n    grid = (batch_size * NUM_HEADS, triton.cdiv(seq_len, block_m))\n    _attn_value_kernel[grid](\n        attn_weights,\n        value_states,\n        output,\n        seq_len,\n        attn_weights.stride(0),\n        attn_weights.stride(1),\n        attn_weights.stride(2),\n        attn_weights.stride(3),\n        value_states.stride(0),\n        value_states.stride(1),\n        value_states.stride(2),\n        value_states.stride(3),\n        BLOCK_M=block_m,\n        BLOCK_K=block_k,\n        num_warps=8,\n        num_stages=3,\n    )\n    return output\n\n\n@torch.no_grad()\ndef run(\n    attn_weights: torch.Tensor,\n    value_states: torch.Tensor,\n) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n\n    if batch_size <= 4:\n        return _run_low_batch_cublas(attn_weights, value_states)\n    return _run_high_batch_triton(attn_weights, value_states)\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t32_ea0086f059ff",
+    "definition": "032_attention_weights_matmul_with_value_projection",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\nNUM_HEADS = 40\nHEAD_DIM = 128\nHIDDEN_SIZE = 5120\n\n\n@triton.jit\ndef _attn_value_kernel(\n    attn_weights,\n    value_states,\n    output,\n    S: tl.constexpr,\n    A_SB: tl.constexpr,\n    A_SH: tl.constexpr,\n    A_SM: tl.constexpr,\n    A_SK: tl.constexpr,\n    V_SB: tl.constexpr,\n    V_SH: tl.constexpr,\n    V_SK: tl.constexpr,\n    V_SN: tl.constexpr,\n    BLOCK_M: tl.constexpr,\n    BLOCK_K: tl.constexpr,\n):\n    pid_bh = tl.program_id(0)\n    pid_m = tl.program_id(1)\n\n    b = pid_bh // 40\n    h = pid_bh - b * 40\n\n    offs_m = pid_m * BLOCK_M + tl.arange(0, BLOCK_M)\n    offs_k = tl.arange(0, BLOCK_K)\n    offs_n = tl.arange(0, 128)\n\n    acc = tl.zeros((BLOCK_M, 128), tl.float32)\n\n    for k0 in tl.range(0, S, BLOCK_K):\n        k = k0 + offs_k\n        a_ptrs = (\n            attn_weights\n            + b * A_SB\n            + h * A_SH\n            + offs_m[:, None] * A_SM\n            + k[None, :] * A_SK\n        )\n        v_ptrs = (\n            value_states\n            + b * V_SB\n            + h * V_SH\n            + k[:, None] * V_SK\n            + offs_n[None, :] * V_SN\n        )\n        a = tl.load(a_ptrs, mask=(offs_m[:, None] < S) & (k[None, :] < S), other=0.0)\n        v = tl.load(v_ptrs, mask=(k[:, None] < S) & (offs_n[None, :] < 128), other=0.0)\n        acc = tl.dot(a, v, acc, out_dtype=tl.float32)\n\n    out_ptrs = (\n        output\n        + b * S * 5120\n        + offs_m[:, None] * 5120\n        + h * 128\n        + offs_n[None, :]\n    )\n    tl.store(out_ptrs, acc, mask=(offs_m[:, None] < S) & (offs_n[None, :] < 128))\n\n\ndef _run_low_batch_cublas(attn_weights: torch.Tensor, value_states: torch.Tensor) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n    seq_len = attn_weights.shape[2]\n    output = torch.empty(\n        (batch_size, seq_len, HIDDEN_SIZE),\n        device=attn_weights.device,\n        dtype=attn_weights.dtype,\n    )\n\n    for b in range(batch_size):\n        out_b = output[b].as_strided(\n            (NUM_HEADS, seq_len, HEAD_DIM),\n            (HEAD_DIM, HIDDEN_SIZE, 1),\n        )\n        torch.bmm(attn_weights[b], value_states[b], out=out_b)\n\n    return output\n\n\ndef _run_high_batch_triton(attn_weights: torch.Tensor, value_states: torch.Tensor) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n    seq_len = attn_weights.shape[2]\n    output = torch.empty(\n        (batch_size, seq_len, HIDDEN_SIZE),\n        device=attn_weights.device,\n        dtype=attn_weights.dtype,\n    )\n\n    if seq_len <= 128:\n        block_k = 32\n    else:\n        block_k = 64\n    block_m = 64\n\n    grid = (batch_size * NUM_HEADS, triton.cdiv(seq_len, block_m))\n    _attn_value_kernel[grid](\n        attn_weights,\n        value_states,\n        output,\n        seq_len,\n        attn_weights.stride(0),\n        attn_weights.stride(1),\n        attn_weights.stride(2),\n        attn_weights.stride(3),\n        value_states.stride(0),\n        value_states.stride(1),\n        value_states.stride(2),\n        value_states.stride(3),\n        BLOCK_M=block_m,\n        BLOCK_K=block_k,\n        num_warps=8,\n        num_stages=3,\n    )\n    return output\n\n\n@torch.no_grad()\ndef run(\n    attn_weights: torch.Tensor,\n    value_states: torch.Tensor,\n) -> torch.Tensor:\n    batch_size = attn_weights.shape[0]\n\n    if batch_size <= 4:\n        return _run_low_batch_cublas(attn_weights, value_states)\n    return _run_high_batch_triton(attn_weights, value_states)\n"
+      }
+    ]
+  }
+}

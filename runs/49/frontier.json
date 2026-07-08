@@ -3,7 +3,7 @@
   "family": "conv",
   "name": "conv_49",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 2,
   "best_cand": "956507868f53",
   "best_score": 0.5825164238298013,
   "best_score_cal": 0.517393748522324,
@@ -13,7 +13,7 @@
       "sol_score": 0.5825164238298013,
       "sol_score_cal": 0.517393748522324,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 13,
       "vector": [
         0.5591253552257657,
         0.5587927317523868,
@@ -36,6 +36,35 @@
       "agent": "claude",
       "model": "sonnet",
       "candidate": "candidates/956507868f53.json"
+    },
+    {
+      "cand_id": "140b67e1b60d",
+      "sol_score": 0.5814840010130864,
+      "sol_score_cal": 0.5164200747922526,
+      "all_passed": true,
+      "shapes_won": 6,
+      "vector": [
+        0.5531865042174321,
+        0.5584372948128694,
+        0.6240448982351747,
+        0.6218560423606925,
+        0.5766721044045677,
+        0.5589022757697456,
+        0.5603044046429395,
+        0.5553933468383251,
+        0.6010613751730502,
+        0.5774193548387095,
+        0.619133387635228,
+        0.5570776255707763,
+        0.5588235294117646,
+        0.5952230240114782,
+        0.6234712057010777,
+        0.5627376425855513
+      ],
+      "strategy": "Single-launch bf16 GEMM with head-stacking (no materialized K repeat) and scaling fused via baddbmm's alpha; removed tor",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/140b67e1b60d.json"
     }
   ]
 }

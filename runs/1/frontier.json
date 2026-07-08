@@ -13,7 +13,7 @@
       "sol_score": 0.6694275664673348,
       "sol_score_cal": 0.6239796105179323,
       "all_passed": true,
-      "shapes_won": 3,
+      "shapes_won": 4,
       "vector": [
         0.5010371650821088,
         0.5180637324716967,
@@ -96,33 +96,33 @@
       "candidate": "candidates/9d66689d4dd3.json"
     },
     {
-      "cand_id": "7f1d48d81a7c",
-      "sol_score": 0.65130108669589,
-      "sol_score_cal": 0.6066151333529914,
+      "cand_id": "a29ca61a188b",
+      "sol_score": 0.6637496430599593,
+      "sol_score_cal": 0.618495246970146,
       "all_passed": true,
-      "shapes_won": 8,
+      "shapes_won": 7,
       "vector": [
-        0.37498483921481957,
-        0.5592543764372768,
-        0.6281581999189193,
-        0.887905303765215,
-        0.7061072274761919,
-        0.501668169264786,
-        0.8553828820554269,
-        0.6807496323109908,
-        0.5635832696784518,
-        0.7929993113384117,
-        0.8074127378719816,
-        0.5066323827140002,
-        0.6433060412113382,
-        0.8828049300468578,
-        0.49384245192338705,
-        0.5360256319061856
+        0.5087765490609092,
+        0.5734463124956315,
+        0.6324806013420935,
+        0.8850316177905166,
+        0.7163300149133407,
+        0.4988752224246505,
+        0.8613123256010599,
+        0.6830729465797527,
+        0.5774453341097685,
+        0.7934062533816687,
+        0.8091301117407963,
+        0.5085955877111697,
+        0.6474331128127496,
+        0.8807837047102706,
+        0.5027319533466429,
+        0.5411426409383276
       ],
-      "strategy": "Two fused Triton kernels: single-pass full-row dS for Skv\u2264512, two-pass L2-resident dS for larger Skv; dV uses fast-dim ",
+      "strategy": "l2_persist eviction-policy hints on the 0.624 two-kernel Triton fusion: evict_last on P/mask (two-pass dS) and dO (dV), ",
       "agent": "openrouter",
-      "model": "moonshotai/kimi-k2.7-code",
-      "candidate": "candidates/7f1d48d81a7c.json"
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/a29ca61a188b.json"
     }
   ]
 }

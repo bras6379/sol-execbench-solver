@@ -98,3 +98,7 @@
 - [mla_fused_qkv_rope_split] task 43: best=0.5927 tier=0
 - [moe_expert_load_balancing_and_token_capacity_backward] task 42: best=0.717 tier=0
 - [attention_with_qk_norm_and_rope] task 47: best=0.365 tier=0
+- [fused_gate_up_projection_with_swiglu] task 48: best=0.4929 tier=0
+- [attention_qk_matmul_with_gqa_repeat_and_scaling] task 49: best=0.5825 tier=0
+- [fused_linear_gelu_grn_linear] task 45: best=0.3957 tier=0
+- [attention_qkv_projection_with_bias_and_reshape] task 50: best=0.6503 tier=0

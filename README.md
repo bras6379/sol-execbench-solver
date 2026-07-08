@@ -190,7 +190,15 @@ solver solve --gpu 1-10 \
 - **Resumes from journals** — re-running the same ids continues where it left off,
   keeping every frontier (kill the process to pause; `docs/oncall-runbook.md`
   §2 has the safe restart procedure — SIGTERM is handled and guarantees pod
-  teardown even on a hard kill).
+  teardown even on a hard kill, unless `--gpu-reuse-pod` is set).
+- **`--gpu-reuse-pod`** — a restart for a code/prompt fix doesn't need a new pod.
+  Leaves the pod running on a SIGINT/SIGTERM instead of tearing it down; the next
+  launch adopts it directly, skipping the ~5-10 min `uv sync`/bootstrap (it still
+  runs, but every step no-ops in seconds on an already-warm pod, which is also
+  how an updated `RUN_EVAL_SH`/config gets pushed). `--gpu-max-hours` anchors to
+  the pod's own real rental time, so a chain of quick restarts can't reset the
+  safety cap. Normal completion or the cap being hit still tears the pod down —
+  this only changes what a *deliberate* restart does.
 - **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier shuffles its
   models per problem; multiple tiers escalate cheap→strong on plateau.
 - **Cheap models, one CLI.** Claude/GPT are pricey, so any provider with an

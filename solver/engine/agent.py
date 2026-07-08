@@ -29,6 +29,8 @@ class Candidate:
     handoff: str | None = None          # higher-ceiling idea NOT shipped → the per-problem playbook
     tokens: dict | None = None          # {in, out, reasoning, cached, cost_usd} from the agent stream
     trajectory: str | None = None       # path to the persisted agent trajectory (jsonl)
+    context_read: list | None = None    # kb/*.md files this call actually consulted — auditable,
+                                         # not assumed (see cli_agent._extract_context_read)
 
 
 @dataclass
@@ -41,6 +43,8 @@ class ReviewVerdict:
     cost_usd: float = 0.0               # $ this review call cost, when the CLI reports it
     tokens: dict = field(default_factory=dict)   # {in, out, cached} — pricing varies by
                                                   # provider, so raw tokens matter alongside $
+    context_read: list = field(default_factory=list)   # kb/*.md files this reviewer actually
+                                                         # consulted (see cli_agent._extract_context_read)
 
     @property
     def ship(self) -> bool:

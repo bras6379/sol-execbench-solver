@@ -91,3 +91,74 @@ def test_terminate_is_idempotent():
         return p
     p = run(scenario())
     assert p.terminated == 1                           # counted once, no double-terminate
+
+
+# ---- --gpu-reuse-pod: adopt-in-place instead of reap+recreate on restart ----
+
+def test_reuse_adopts_a_single_running_pod_instead_of_recreating():
+    async def scenario():
+        p = MockProvider()
+        existing = p.seed_orphan("test-run")           # a pod left running from a prior launch
+        async with _session(p, reuse=True) as pod:
+            assert pod.id == existing.id
+        return p
+    p = run(scenario())
+    assert p.created == 0                              # never created a new one
+    assert p.terminated == 1                           # normal exit still tears it down (no signal)
+
+
+def test_reuse_creates_fresh_when_no_pod_exists():
+    async def scenario():
+        p = MockProvider()
+        s = _session(p, reuse=True)
+        async with s as pod:
+            assert s.adopted is False
+        return p, s
+    p, s = run(scenario())
+    assert p.created == 1 and p.terminated == 1
+
+
+def test_reuse_falls_back_to_reap_and_create_on_ambiguous_state():
+    """More than one live tagged pod is an unexpected/ambiguous state — reap all
+    and start clean rather than guessing which one to adopt."""
+    async def scenario():
+        p = MockProvider()
+        p.seed_orphan("test-run")
+        p.seed_orphan("test-run")
+        s = _session(p, reuse=True)
+        async with s:
+            assert s.adopted is False
+        return p
+    p = run(scenario())
+    assert p.terminated == 3                           # 2 reaped + the fresh one, on normal exit
+
+
+def test_reuse_survives_a_signal_but_not_normal_completion():
+    """The whole point of --gpu-reuse-pod: a caught SIGINT/SIGTERM restart leaves
+    the pod running for the next launch to adopt. Normal completion (no signal)
+    must still terminate — reuse only changes the restart-in-place path."""
+    async def scenario():
+        p = MockProvider()
+        s = _session(p, reuse=True, terminate_on_signal=False)
+        async with s:
+            s._signaled = True                         # simulate a caught SIGTERM mid-run
+        return p, s
+    p, s = run(scenario())
+    assert p.terminated == 0                            # left running, not torn down
+    assert s._terminated is False
+
+    async def normal_scenario():
+        p = MockProvider()
+        async with _session(p, reuse=True, terminate_on_signal=False):
+            pass                                        # no signal this time
+        return p
+    p2 = run(normal_scenario())
+    assert p2.terminated == 1                            # normal exit still tears it down
+
+
+def test_parse_rented_at_extracts_runpod_timestamp():
+    from solver.engine.pod import _parse_rented_at
+    iso = _parse_rented_at("Rented by User: Wed Jul 08 2026 01:13:03 GMT+0000 (Coordinated Universal Time)")
+    assert iso == "2026-07-08T01:13:03+00:00"
+    assert _parse_rented_at(None) is None
+    assert _parse_rented_at("garbage") is None

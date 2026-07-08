@@ -15,6 +15,7 @@ install `run_eval.sh` + config, and rsync only the problems this run needs.
 from __future__ import annotations
 
 import asyncio
+import datetime
 import json
 import re
 import time
@@ -116,18 +117,32 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
                        key: str = "~/.ssh/id_ed25519", max_concurrency: int = 0,
                        max_lifetime_min: float | None = None, shuffle: bool = False,
                        reflect_first: bool = False, reflect_every_min: float = 0,
-                       reflect_model: str = "", log=print) -> None:
+                       reflect_model: str | list[str] = "", reuse_pod: bool = False,
+                       log=print) -> None:
     """Provision → bootstrap → run the fleet on the pod → guaranteed teardown.
 
     `max_lifetime_min` is a HARD wall-clock cap on total pod uptime (create →
     terminate, bootstrap included): when hit, the fleet is cancelled and the pod is
     terminated via the API (the only reliable way to stop RunPod billing). The run
     is resumable, so a cut-off is safe. Primary cap; a cron backstop reaps the pod
-    even if this process is hard-killed."""
+    even if this process is hard-killed.
+
+    `reuse_pod=True` (--gpu-reuse-pod) adopts an already-RUNNING tagged pod instead
+    of reaping+recreating one, and leaves it running on a manual SIGINT/SIGTERM
+    restart (e.g. after a prompt/code fix) instead of tearing it down — `bootstrap`
+    still runs unconditionally (it's near-instant on a warm pod: `uv sync`/git
+    clone/apt-install all no-op when already satisfied) so the freshest run_eval.sh
+    /config/problem set is always pushed. The cap is anchored to the POD's own
+    RunPod-reported rental start time (`rented_at`), not this process's launch
+    time, so a string of quick restarts never resets/extends the safety clock."""
     spec = spec or PodSpec()
     t_start = time.monotonic()
-    async with PodSession(provider, spec) as pod:            # reap → create → (finally) terminate
-        log(f"[gpu] pod {pod.id} created; waiting for SSH ...")
+    session = PodSession(provider, spec, reuse=reuse_pod, terminate_on_signal=not reuse_pod)
+    async with session as pod:
+        if session.adopted:
+            log(f"[gpu] adopted existing pod {pod.id} (--gpu-reuse-pod) — skipping create/reap")
+        else:
+            log(f"[gpu] pod {pod.id} created; waiting for SSH ...")
         h = await wait_ssh_ready(provider, pod.id)
         conn = PodConn(host=h.ssh_host, port=int(h.ssh_port), key=key,
                        control_path="~/.ssh/cm/%r@%h:%p")
@@ -141,9 +156,10 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
                           reflect_first=reflect_first, reflect_every_min=reflect_every_min,
                           reflect_model=reflect_model)
         if max_lifetime_min:
-            remaining = max(1.0, max_lifetime_min * 60 - (time.monotonic() - t_start))
-            log(f"[gpu] hard {max_lifetime_min:.0f}-min pod cap — fleet has ~{remaining/60:.0f} min "
-                f"before forced teardown")
+            elapsed = _pod_age_s(h, t_start)
+            remaining = max(1.0, max_lifetime_min * 60 - elapsed)
+            log(f"[gpu] hard {max_lifetime_min:.0f}-min pod cap ({'pod age' if h.rented_at else 'this launch'}"
+                f" = {elapsed/60:.0f} min so far) — fleet has ~{remaining/60:.0f} min before forced teardown")
             try:
                 await asyncio.wait_for(fleet, timeout=remaining)
                 log("[gpu] fleet done — terminating pod")
@@ -152,6 +168,20 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
         else:
             await fleet
             log("[gpu] fleet done — terminating pod")
+
+
+def _pod_age_s(h: PodHandle, fallback_t_start: float) -> float:
+    """Seconds since the pod was actually rented (RunPod's own record), so
+    --gpu-max-hours reflects true pod age across a --gpu-reuse-pod restart chain
+    rather than resetting to 0 on each relaunch. Falls back to this process's own
+    elapsed time if RunPod didn't report a parseable rental timestamp."""
+    if h.rented_at:
+        try:
+            rented = datetime.datetime.fromisoformat(h.rented_at)
+            return max(0.0, (datetime.datetime.now(datetime.timezone.utc) - rented).total_seconds())
+        except ValueError:
+            pass
+    return time.monotonic() - fallback_t_start
 
 
 async def _sleep(s: float) -> None:
