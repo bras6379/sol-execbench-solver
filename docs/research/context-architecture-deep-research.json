@@ -1,0 +1,221 @@
+{
+  "question": "For a fleet of LLM coding agents that write GPU kernels (Triton/CUDA) to optimize ~15-50 diverse operators against a benchmark (SOL-ExecBench: attention, MoE, RoPE, GEMMs, norms, scans), evaluated by real GPU runs with correctness+latency scoring \u2014 investigate SOTA approaches for building and using a PERSISTENT, REUSABLE LIBRARY of validated code patterns/techniques (e.g., a confirmed-working split-K GEMM implementation, a correct CUDA-graph capture pattern, a persistent-grid kernel template) that later agents can retrieve and adapt when tackling a DIFFERENT problem that needs the SAME technique, instead of re-deriving (and re-breaking) it from scratch each time.\n\nCurrently: agents get static per-project documentation (a ~24-file knowledge base on B200 hardware/Triton/CUDA-graphs/autotuning), a per-problem \"coach\" reflection card summarizing prior attempts+failures on THAT problem, and a narrow \"sibling hint\" that transfers a working kernel between two instances of the SAME operator (e.g., RoPE-forward on two different shapes) \u2014 but NO mechanism to transfer a TECHNIQUE (e.g., \"how to correctly write a split-K Triton GEMM\") across DIFFERENT, unrelated operators. Observed failure mode: a reasonably sound strategy (e.g., \"apply split-K here, like the confirmed win on problem #10\") repeatedly fails on IMPLEMENTATION details (Triton syntax errors, dtype mismatches, launch-config bugs) rather than on the underlying algorithmic idea. Separately, evidence suggests top leaderboard scorers (near speed-of-light) push further down the optimization ladder (raw CUDA/PTX, persistent kernels with zero host round-trips) than this fleet typically reaches, possibly because ambitious low-level attempts have a much higher single-shot failure rate than safer Triton/CUDA-graph variations, so the search drifts toward safe local optima.\n\nResearch and report on:\n(1) Retrieval-augmented code generation \u2014 how production and research systems (Copilot-style RAG, RAG for code, tool-augmented coding agents) retrieve and inject reusable code snippets/examples into a generation prompt; what retrieval signal works best (semantic embedding vs keyword/technique tags vs structural similarity) for CODE specifically.\n(2) Memory-augmented / experience-replay coding agents \u2014 Reflexion, Voyager (Minecraft skill library), ExpeL, AgentCoder, and similar systems that accumulate a growing library of validated skills/functions from their own successful trajectories and reuse them later \u2014 how they decide what's \"reusable\" vs task-specific, how they validate a skill before adding it to the library, how they curate/prune to avoid staleness or bloat, and what empirical evidence exists that this improves downstream success rate vs a flat context/no-library baseline.\n(3) Library learning / program synthesis research \u2014 DreamCoder, LILO, Stitch, and similar systems that automatically abstract reusable subroutines from a corpus of solved programs \u2014 their abstraction-extraction algorithms and how they decide the right GRANULARITY of a reusable unit (too specific = useless elsewhere, too generic = not actionable).\n(4) GPU-kernel-specific automated optimization research \u2014 Sakana AI's \"CUDA Engineer\" and its reward-hacking failure modes, KernelBench/GPU MODE leaderboard retrospectives, FunSearch/AlphaEvolve-style evolutionary program search \u2014 what do these report about reusing validated low-level code patterns (tile configs, kernel skeletons) across different kernels/problems, and any documented failure modes of doing so (e.g., subtly-wrong pattern propagating errors, overfitting to one shape/dtype). Also: what do these systems/competitions report about WHY top solutions reach near-speed-of-light (e.g., raw PTX, warp specialization, persistent kernels, exhaustive/evolutionary autotuning) versus mid-tier solutions that plateau at a \"good but not great\" rung of the abstraction ladder.\n(5) Practical retrieval/indexing design for a small-to-medium corpus (dozens to low hundreds of validated patterns) \u2014 is a full vector-embedding RAG system overkill vs. a simpler tag/technique-indexed lookup table for a corpus this size; how do people handle \"is this pattern still trustworthy\" (versioning, usage/success-rate tracking, expiry) at small scale.\n\nOutput: a synthesis with citations covering all 5 areas, geared toward informing a design decision (build vs not build; what granularity; what validation/retrieval mechanism; how to encourage the search to attempt higher-risk/higher-ceiling techniques instead of converging on safe local optima) for a real, currently-operating agent fleet \u2014 not a general literature survey.",
+  "summary": "Research across RAG-for-code, memory-augmented agents, and library-learning literature converges on several points relevant to building a persistent cross-technique pattern library, but with an important gap: none of the evidence that survived verification is GPU-kernel-specific. (1) For code retrieval generally, similarity/embedding-based retrieval beats keyword/identifier lookup, and combining lexical+semantic signals beats either alone (advantage growing with model scale) \u2014 but the one system explicitly framed around \"retrieve by algorithmic technique, not surface text\" (SolveRank) required a bespoke trained retriever and only reliably helped on hard problems, and the underlying diagnosis that plain semantic similarity \"misses\" technique-level similarity did not survive adversarial verification. (2) The hardest sub-problem \u2014 picking the right granularity for a reusable unit \u2014 is handled in the library-learning literature by symbolic/algorithmic compression search (DreamCoder's MDL objective, Stitch's corpus-guided synthesis) rather than LLM judgment, and LILO shows that auto-generated documentation of a mined abstraction measurably improves its later reuse, not just its readability. (3) Validation must be aggressive and mostly automatic: Leroy found that unfiltered abstraction-candidate generation is over 99.99% garbage (6 valid out of ~45,000 candidates), and even carefully engineered real-code library learning yields only marginal net benefit once correctness-preserving overhead is counted. (4) The single most sobering finding for the fleet's actual hope is that mined abstractions empirically fail to transfer outside the distribution they were learned on \u2014 even within the same toy DSL (AbstractBeam) \u2014 which is a direct warning that a technique extracted from one operator (e.g., split-K GEMM on problem #10) will not automatically generalize to an unrelated operator without deliberate genericization and re-validation on the new target. (5) CODESKILL is the closest architectural analogue to what the fleet needs \u2014 dense-embedding retrieval of task-level skills plus \"event/trigger\"-based skills matched to live error states, gated into the library by an explicit add/merge/drop policy that screens out patterns \"overly specific, or unlikely to transfer\" \u2014 but its own claimed performance edge over a no-library baseline did not survive verification, so treat it as a template, not proof of ROI. Critically, every claim sourced from GPU-kernel-optimization-specific literature (cuPilot's RAG strategy pool, its ablation results, its strategy/implementation decoupling) was refuted under adversarial fact-checking, and no claims from Sakana's CUDA Engineer, KernelBench/GPU MODE retrospectives, or FunSearch/AlphaEvolve survived at all \u2014 so this synthesis has zero confirmed empirical grounding in the domain the fleet actually operates in, and any design choice for GPU-kernel technique reuse is an extrapolation from general-purpose code/library-learning research, not domain evidence.",
+  "findings": [
+    {
+      "claim": "For code completion/generation, similarity-based (semantic embedding) retrieval of actual code substantially outperforms identifier/keyword-based retrieval, and combining a lexical retriever (BM25) with a semantic embedding retriever beats either alone \u2014 with the combination's advantage growing at larger model scale (negligible or even negative below ~7B). Separately, BM25 and semantic retrievers surface almost entirely disjoint top candidates (64-76% non-overlap out of 100 queries), indicating they capture different, complementary notions of code similarity rather than one subsuming the other.",
+      "confidence": "high",
+      "sources": [
+        "https://arxiv.org/pdf/2507.18515"
+      ],
+      "evidence": "WeChat/Tencent industrial study across 26 LLMs (0.5B-671B) on 1,669 internal C++ repos and 100 hand-annotated completions. DeepSeek-V3: base 35.23/54.85 -> identifier-RAG 42.24/61.75 -> similarity-RAG 60.28/73.11 -> BM25+similarity combined 63.62/75.26 (CodeBLEU/EditSim). Lexical vs semantic retrieval overlap: only 24-36 of 100 top-1 picks matched between BM25 and each of three semantic retrievers. All three sub-claims (identifier vs similarity gap, hybrid > either alone with scale-dependence, low BM25/semantic overlap) verified 3-0 against the primary paper text and tables; this is a peer-reviewed industrial case study, not marketing, though all three facets come from one paper/one codebase (C++, WeChat), not independent replications."
+    },
+    {
+      "claim": "Retrieval signals beyond generic semantic similarity (a bespoke solution-aware retriever trained to predict which past solutions help solve a new problem; graph-structured, iterative, requirement-driven retrieval for repo-level generation) can outperform plain semantic-embedding retrieval, especially for harder problems or repo-scale context. However, the underlying diagnosis that semantic similarity 'misses' algorithmic/technique-level similarity was NOT confirmed, and a specific magnitude claim about graph-retrieval's ablation benefit was refuted \u2014 so the qualitative direction is supported but the size of the advantage and its root cause are uncertain.",
+      "confidence": "medium",
+      "sources": [
+        "https://arxiv.org/pdf/2509.01129",
+        "https://arxiv.org/pdf/2504.10046"
+      ],
+      "evidence": "SolveRank (EMNLP 2025 Findings, xCodeEval): decisively beats BM25/DPR/ReACC/CodeBERT on precision/recall (MRR 0.755 vs 0.057-0.186), and boosts downstream Pass@1 specifically on Hard problems (16.67% vs 5.56-13.89% baselines) while being weaker than BM25 on medium-difficulty tasks; caveats include a small hard-tier sample (~n=36), an in-domain-trained retriever advantage, and only a tie with BM25 on an out-of-domain (APPS) generalization check (2-1 vote). CodeRAG/GraphCodeAgent (repo-level generation, DevEval/CoderEval): text-similarity RAG scored 27.07-40.43 Pass@1 vs the graph/iterative-retrieval system's 58.14 (3-0 vote on the qualitative argument and self-reported numbers) \u2014 but a companion claim asserting a precise 6.31-point ablation drop from removing the graph-reasoning component was explicitly refuted (0-3), so the exact causal magnitude is not established. Both are self-reported benchmark comparisons without independent third-party replication; a companion claim that this diagnosis generalizes to 'semantic embedding similarity is the wrong signal for technique transfer' was itself refuted (1-2 vote), so this finding should not be read as debunking embedding retrieval in general."
+    },
+    {
+      "claim": "Deciding the right granularity for a reusable code abstraction is handled in state-of-the-art library-learning systems by symbolic/algorithmic compression search over a corpus of validated solution programs (MDL/Bayesian objectives, corpus-guided top-down synthesis) rather than by LLM judgment. LILO explicitly delegates this decision to Stitch's symbolic search and only uses the LLM afterward to name/document already-selected abstractions.",
+      "confidence": "high",
+      "sources": [
+        "https://arxiv.org/abs/2310.19791",
+        "https://arxiv.org/pdf/2211.16605",
+        "https://dl.acm.org/doi/10.1145/3453483.3454080"
+      ],
+      "evidence": "LILO (ICLR 2024): 'consolidating code into libraries of reusable and readable programs' via LLM-guided synthesis of a validated program corpus + Stitch-based symbolic compression; AutoDoc only names/documents abstractions Stitch has already chosen, with no LLM role in selecting which abstractions enter the library (3-0 votes on both the refactoring framing and the division-of-labor claim). Stitch (POPL 2023): builds abstractions directly from DSL primitives via 'corpus-guided top-down synthesis,' using syntactic pattern matching between partial abstractions and the corpus to prune the search space toward abstractions capturing the most shared structure across programs -- contrasted explicitly with DreamCoder's deductive refactoring-of-existing-programs approach (3-0). DreamCoder (PLDI 2021): the abstraction step is a formal Bayesian/MDL objective -- L = argmax_L P[L]*prod_{x in X} max_rho P[x|rho]P[rho|L] -- computed jointly over the ENTIRE training task corpus at once (not per-task or heuristic), operating only on refactorings of already-correct solutions found during waking (3-0). A related claim characterizing Stitch's granularity objective as 'maximize abstraction-size times number-of-reuse-sites' was refuted (1-2), so the precise utility function is not confirmed beyond the general MDL/compression framing."
+    },
+    {
+      "claim": "Auto-generated natural-language documentation (names, docstrings) attached to a mined abstraction is not merely cosmetic for human readability -- it measurably improves an LLM synthesizer's ability to correctly interpret and reuse that abstraction later, though the effect is domain-dependent and documentation alone (without the underlying search/compression step) is not sufficient to beat a no-library baseline.",
+      "confidence": "medium",
+      "sources": [
+        "https://arxiv.org/abs/2310.19791"
+      ],
+      "evidence": "LILO's ablation (ICLR 2024) isolates AutoDoc's effect holding search fixed: undocumented abstractions solve rates were REGEX 53.20%, CLEVR 85.76%, LOGO 21.02%; adding AutoDoc raised REGEX to 62.93% (+9.73pp) and CLEVR to 88.03% (+2.27pp), with zero gain on LOGO (attributed to naming errors in that domain). Full LILO (search+AutoDoc together) is needed to exceed the no-library baseline in every domain; AutoDoc alone does not. Vote 2-1; single-paper evidence, but a clean controlled ablation, and corroborated in spirit (not directly) by more recent work on identifier/naming effects on LLM code comprehension."
+    },
+    {
+      "claim": "Automated abstraction-candidate generation, when applied to a real (non-DSL, non-toy) imperative-language corpus without heavy domain-specific validation, is overwhelmingly noisy -- the vast majority of raw candidates are syntactically incomplete, structurally invalid, or trivially small, and only a tiny fraction survive filtering. Even after this filtering and correctness-preserving engineering effort, the net compression benefit of the resulting library is marginal or slightly negative once the library's own size is counted.",
+      "confidence": "medium",
+      "sources": [
+        "https://arxiv.org/pdf/2410.06438"
+      ],
+      "evidence": "Leroy (HATRA/SPLASH 2024 workshop, 122 real Python programs): generic Stitch search produced 3,123 macro-like (syntactically incomplete) candidates, 32 candidates with invalid parameters (e.g. operators as arguments), and ~42,000 candidates below a 20-AST-node size threshold -- only 6 valid, non-trivial abstractions survived (3-0 vote). Overall corpus compression was only 1.04x excluding the extracted library, and the corpus actually GREW 1.2% in AST nodes once the library was included, because correctness-preserving 'closing' (adding return values/parameters for variable-scoping correctness in an imperative language) inflates abstraction size (2-1 vote). Both findings come from one small, self-described 'worst-case' corpus (short university coursework functions, low repetition) at a workshop-tier venue, so magnitudes may not generalize, but the qualitative lesson (raw symbolic search needs heavy filtering; real-code gains are far smaller than DSL benchmarks suggest) is unlikely to be an artifact of corpus choice alone."
+    },
+    {
+      "claim": "Library learning delivers real, sometimes dramatic, in-domain benefits when a mined abstraction matches the target task's distribution (order-of-magnitude search-time/complexity reduction in DreamCoder's illustrative example; statistically significant pass-rate gains for AbstractBeam over its no-library baseline on held-out handwritten tasks) -- but abstractions mined from one task distribution do NOT reliably transfer to a different distribution, even within the identical DSL and primitive set, and can actively slow down search when misapplied there.",
+      "confidence": "high",
+      "sources": [
+        "https://dl.acm.org/doi/10.1145/3453483.3454080",
+        "https://arxiv.org/pdf/2405.17514"
+      ],
+      "evidence": "DreamCoder's canonical example: a library-based 'Sort List' solution used 5 function calls and was found in under 10 minutes, versus 32 function calls and an estimated >10^72 years of brute-force search using only initial primitives (3-0, verified against paper text and rendered figure). AbstractBeam (2-fold CV, Student's t-test p<0.05): 53.6%+/-2.3% vs LambdaBeam's 50.2%+/-2.0% on fold 1, and 39.6%+/-1.5% vs 36.0%+/-2.5% on fold 2 -- a real, statistically significant in-domain gain (2-1 vote). But on a synthetic out-of-distribution task set within the SAME DSL and same 28 primitives, AbstractBeam showed no significant difference from the no-library baseline (52.6% vs 53.8% and 52.4% vs 51.2%) and was actually slower to find solutions (3.62s vs 1.37s average) -- the paper's own conclusion states abstractions 'do not generalize beyond the domain they are derived from' (3-0 vote). This is the single most direct empirical warning for the fleet's cross-operator technique-transfer hope: even a narrow distribution shift within one toy domain broke transfer."
+    },
+    {
+      "claim": "The closest existing architectural analogue to a persistent, cross-task skill library for coding agents (CODESKILL) retrieves reusable skills via dense embedding similarity at two granularities -- task-level skills matched to the task goal, and event-driven skills matched to the agent's live reasoning/error state via explicit trigger conditions -- and gates every candidate skill through a learned add/merge/drop maintenance policy before it enters the persistent library, explicitly rejecting candidates that are redundant, weakly grounded, 'overly specific, or unlikely to transfer.' This is a directly relevant design template, but the paper's own claim that this system beats no-library and alternative-memory baselines did not survive independent verification.",
+      "confidence": "high",
+      "sources": [
+        "https://arxiv.org/html/2605.25430"
+      ],
+      "evidence": "Verified verbatim against the paper: 'Retrieval is based on dense semantic similarity, matching task-level skills to the task goal and event-driven skills to the agent's current reasoning and observation through their trigger conditions,' with separate dense indices (all-MiniLM-L6-v2 embeddings) for each skill type (3-0 vote). The add/merge/drop policy is a trained (RL, hybrid rubric + execution-reward) classifier, not a heuristic, and explicitly names transfer/generality as a gating criterion, applied before insertion into the active skill bank (3-0 vote). Note: a companion claim quantifying CODESKILL's improvement over a no-skill baseline (+9.69pp) and over the best alternative memory approach (+4.01pp) was explicitly REFUTED (1-2 vote) -- so while the retrieval and gating mechanisms are accurately described and directly relevant as an architecture to emulate, there is no confirmed evidence this specific system actually outperforms simpler baselines. The paper is also very recent (dated ~May 2026), likely pre-peer-review."
+    }
+  ],
+  "caveats": "Several important caveats bound how far this synthesis can inform the design decision:\n\n1. GPU-kernel-specific evidence gap (Area 4 of the original ask): every claim sourced from GPU-kernel-optimization literature was refuted. The three cuPilot claims investigated (persistent RAG-indexed strategy database, a 54.1% latency-reduction ablation, and strategy/implementation-granularity decoupling) all failed adversarial verification (0-3 votes each). No claims from Sakana AI's CUDA Engineer (or its reward-hacking failure modes), KernelBench/GPU MODE leaderboard retrospectives, or FunSearch/AlphaEvolve survived at all -- meaning those sources were either not found to contain verifiable claims matching the research question, or were not represented in the confirmed set. This synthesis therefore has zero confirmed, domain-specific evidence about reusing validated low-level kernel patterns across problems, or about why top kernel solutions reach near-speed-of-light versus mid-tier plateaus. Any conclusion for that specific sub-question is an extrapolation from general-purpose code/library-learning research, not direct evidence, and should be treated with corresponding skepticism.\n\n2. Practical small-corpus retrieval design (Area 5) is also unaddressed by any confirmed claim: nothing in the verified set directly compares vector-embedding RAG versus a tag/technique-indexed lookup table at the scale of \"dozens to low hundreds of patterns,\" nor addresses versioning/staleness/success-rate-decay tracking mechanisms. Design conclusions here (e.g., \"a hybrid lexical+semantic or even tag-based system may suffice at this scale, mirroring the finding that hybrid retrieval beats pure-semantic and that different signals are complementary\") are reasonable inferences from Finding 1, not directly cited results, and should be flagged as inference rather than confirmed research.\n\n3. Concentration risk: three of the strongest-sounding findings (Finding 1's three sub-claims) all derive from a single industrial paper (WeChat/Tencent, one C++ codebase). This is a well-executed, large-scale study (26 models, peer-reviewed) but is one data point, not a triangulated consensus across independent research groups -- treat it as strong-but-singular evidence.\n\n4. The two claims most directly on-point for the fleet's stated pain point were refuted, not confirmed: (a) the diagnosis that semantic-similarity retrieval specifically fails to capture algorithmic/technique-level similarity (SolveRank paper's core framing), and (b) that a CODESKILL-style persistent skill library measurably beats a no-library baseline. This means the intuitively most relevant evidence for \"build this library, it will clearly help\" did not hold up under scrutiny -- the case for building has to rest on the more indirect, mechanism-level findings (granularity via symbolic search, documentation aiding reuse, aggressive validation, in-domain-only transfer) rather than a validated end-to-end success story.\n\n5. External validity of the library-learning literature to GPU kernels is unproven: DreamCoder/Stitch/LILO/AbstractBeam operate on small DSLs (list processing, LOGO turtle graphics, grid-world tasks) with hundreds of lines of code and clean functional semantics; Leroy's real-code experiment used 122 short Python functions (~7 LOC average). None of this touches numerically-sensitive, hardware-constrained, correctness-gated GPU kernel code (Triton/CUDA with real B200 hardware quirks, dtype/tolerance requirements). The single most relevant negative finding (AbstractBeam: abstractions don't transfer even within the same DSL under mild distribution shift) is if anything a reason for extra caution, not confidence, when extrapolating to a much larger domain gap (split-K GEMM -> RoPE backward, say).\n\n6. Time-sensitivity: CODESKILL (arXiv 2605.25430) is dated ~May 2026, essentially brand-new and likely not yet peer-reviewed at time of research; treat its architecture as an illustrative current-research-direction template, not settled best practice. The SolveRank paper (EMNLP 2025 Findings) is peer-reviewed but its Hard-tier downstream-boost numbers rest on a small sample (~n=36 per condition).",
+  "openQuestions": [
+    "Does genuinely cross-operator technique transfer (e.g., split-K GEMM idea moving from a GEMM problem to an unrelated scatter-add or RoPE problem) require a different retrieval signal than code-similarity embeddings -- e.g., structured tags for technique name, hardware constraint, and failure mode, or a bespoke solution-aware retriever like SolveRank -- since the evidence found neither confirms nor cleanly refutes whether plain semantic embedding similarity is adequate for this specific transfer task.",
+    "What do GPU-kernel-optimization-specific systems (Sakana AI's CUDA Engineer and its documented reward-hacking modes, KernelBench/GPU MODE leaderboard retrospectives, FunSearch/AlphaEvolve-style evolutionary kernel search) actually report about reusing validated tile configs/kernel skeletons across problems, and about why top solutions push to raw PTX/warp-specialization/persistent-kernel rungs while others plateau? This synthesis found no claims from these sources that survived verification, so a dedicated, differently-scoped research pass focused narrowly on these named sources (rather than the broader code-RAG/library-learning literature) is needed before this remains an open question for the design decision.",
+    "At the fleet's actual corpus scale (dozens to low hundreds of validated patterns), does a lightweight tag/keyword or technique-indexed lookup table capture most of the retrieval benefit more cheaply than a full embedding-based vector RAG system, given that Finding 1 shows lexical and semantic signals are complementary rather than redundant even at large scale -- and is that finding's scale-dependence (embedding advantage grows with model/corpus size) something that reverses or holds at small corpus size?",
+    "What would an automatic correctness-gate analogous to Leroy's AST-validity filtering look like for GPU kernel code, where 'valid' has to mean 'passes real GPU numerical-tolerance and performance tests on the new target operator,' not just syntactic well-formedness -- and given that Leroy found >99.99% of raw candidates need to be rejected even for simple Python, how expensive (in GPU-hours) would equivalent validation be for a kernel-pattern library, and does that cost change the build-vs-not-build calculus?"
+  ],
+  "refuted": [
+    {
+      "claim": "The paper's core diagnosis is that existing code-retrieval models rely on surface-level semantic similarity (text/embedding matching) and this misses the deeper solution-level (algorithmic/technique) similarity that actually predicts whether a retrieved example is useful for solving a new problem \u2014 i.e., semantic embedding similarity of problem text is not the right retrieval signal for transferring a solving technique.",
+      "vote": "1-2",
+      "source": "https://arxiv.org/pdf/2509.01129"
+    },
+    {
+      "claim": "Graph-guided structural retrieval (dependency/call/import graph + a 'requirement graph') substantially outperforms the system's own ablated, less-structural retrieval: removing the DS-code graph reasoning component drops GPT-4o Pass@1 by 6.31 points on the DevEval benchmark.",
+      "vote": "0-3",
+      "source": "https://arxiv.org/pdf/2504.10046"
+    },
+    {
+      "claim": "The right 'granularity' for a reusable abstraction is operationalized as a compression utility function that maximizes the product of the abstraction's size and the number of corpus locations it can be rewritten into -- i.e. an abstraction must be general enough to be reused often but specific enough to capture substantial shared code at each use site.",
+      "vote": "1-2",
+      "source": "https://arxiv.org/pdf/2211.16605"
+    },
+    {
+      "claim": "The system enforces a minimum-complexity gate before admitting a mined pattern to the reusable library: an abstraction must contain at least two non-trivial (non-variable) sub-expressions, filtering out overly specific one-off patterns to keep the library generalizable.",
+      "vote": "1-2",
+      "source": "https://arxiv.org/pdf/2405.17514"
+    },
+    {
+      "claim": "A curated, maintained skill library measurably beats both a no-library baseline and stronger prompt-based/flat-memory baselines on downstream coding-agent success rate: +9.69 points over no-skill baseline and +4.01 points over the best alternative memory/prompt approach (29.57% to 39.26% pass rate, a ~33% relative gain), using a frozen policy model so the gain is attributable to the skill mechanism itself.",
+      "vote": "1-2",
+      "source": "https://arxiv.org/html/2605.25430"
+    },
+    {
+      "claim": "cuPilot maintains a persistent, external RAG-indexed database of prior kernel optimization data that is retrieved by similarity to a new kernel and injected into prompts for generating strategies on that new kernel \u2014 a direct instance of cross-problem technique transfer via retrieval.",
+      "vote": "0-3",
+      "source": "https://arxiv.org/pdf/2512.16465"
+    },
+    {
+      "claim": "An ablation shows that enabling the external RAG strategy pool (vs. not using it) reduces generated-kernel latency by 54.1% on average across four tasks, and this benefit holds across two different backbone LLMs (DeepSeek-R1 and Gemini-2.5-Pro), constituting direct empirical evidence that a persistent reusable strategy library improves downstream optimization outcomes vs a no-library baseline.",
+      "vote": "0-3",
+      "source": "https://arxiv.org/pdf/2512.16465"
+    },
+    {
+      "claim": "cuPilot deliberately reuses/combines prior techniques at the granularity of a natural-language 'strategy' abstraction rather than at the level of literal code, and this decoupling of strategy from implementation is what increases the success rate of combining techniques from different parent kernels \u2014 directly bearing on the question of what granularity a reusable unit should be.",
+      "vote": "0-3",
+      "source": "https://arxiv.org/pdf/2512.16465"
+    }
+  ],
+  "unverified": [],
+  "sources": [
+    {
+      "url": "https://sourcegraph.com/blog/anatomy-of-a-coding-assistant",
+      "quality": "blog",
+      "angle": "a",
+      "claimCount": 4
+    },
+    {
+      "url": "https://sourcegraph.com/blog/how-cody-understands-your-codebase",
+      "quality": "blog",
+      "angle": "a",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/html/2510.04905v1",
+      "quality": "secondary",
+      "angle": "a",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.18515",
+      "quality": "primary",
+      "angle": "a",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2509.01129",
+      "quality": "primary",
+      "angle": "a",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2504.10046",
+      "quality": "primary",
+      "angle": "a",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/abs/2310.19791",
+      "quality": "primary",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2211.16605",
+      "quality": "primary",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://dl.acm.org/doi/10.1145/3453483.3454080",
+      "quality": "primary",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://www.marktechpost.com/2023/11/07/mit-researchers-introduce-lilo-a-neuro-symbolic-framework-for-learning-interpretable-libraries-for-program-synthesis/",
+      "quality": "blog",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2405.17514",
+      "quality": "primary",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2410.06438",
+      "quality": "primary",
+      "angle": "c",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/html/2605.25430",
+      "quality": "primary",
+      "angle": "e",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2512.16465",
+      "quality": "primary",
+      "angle": "e",
+      "claimCount": 5
+    },
+    {
+      "url": "https://arxiv.org/pdf/2507.23194",
+      "quality": "primary",
+      "angle": "e",
+      "claimCount": 5
+    }
+  ],
+  "stats": {
+    "angles": 3,
+    "sourcesFetched": 15,
+    "claimsExtracted": 74,
+    "claimsVerified": 25,
+    "confirmed": 17,
+    "killed": 8,
+    "unverified": 0,
+    "afterSynthesis": 7,
+    "urlDupes": 1,
+    "budgetDropped": 2,
+    "agentCalls": 95
+  }
+}
