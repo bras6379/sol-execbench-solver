@@ -1,0 +1,245 @@
+{
+  "cand_id": "715af8f952b2",
+  "task_id": 8,
+  "verdict": "dominated",
+  "sol_score": 0.8645734152795088,
+  "sol_score_calibrated": 0.8407383848732639,
+  "correct": true,
+  "vector": [
+    0.8862109514801371,
+    0.8881226620083531,
+    0.8273411502891993,
+    0.9009486380708249,
+    0.8866828067610707,
+    0.8329736441932891,
+    0.8953989426015666,
+    0.8709638261714009,
+    0.8142986630410153,
+    0.8125,
+    0.8681305201177625,
+    0.8965385108142421,
+    0.8312475570248372,
+    0.8176678445229683,
+    0.9024045858973262,
+    0.9017443414781487
+  ],
+  "strategy": "Keep the proven fused Triton bf16 atomic scatter-add (clone-seed, grid=N=8T one program/row, BLOCK=1024 x3 tiles, evict_",
+  "agent": "claude",
+  "model": "sonnet",
+  "parent": "acf29c27de11",
+  "trajectory": "runs/8/work/715af8f952b2/trajectory.jsonl",
+  "gpu_s": 7.515,
+  "job_id": "8-715af8f952b2",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 35.0,
+      "power_w_max": 309.08,
+      "samples": 23,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.03152,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2203675,
+      "sol_score": 0.8862109514801371,
+      "sol_score_cal": 0.8650219601615003,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.032656000000000004,
+      "sol_ms": 0.0039,
+      "baseline_latency_ms": 0.2321755,
+      "sol_score": 0.8881226620083531,
+      "sol_score_cal": 0.8671890569433209,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.009024,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.0402075,
+      "sol_score": 0.8273411502891993,
+      "sol_score_cal": 0.7985946598370771,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.10504,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846127,
+      "sol_score": 0.9009486380708249,
+      "sol_score_cal": 0.8819037233009288,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.03176,
+      "sol_ms": 0.0037,
+      "baseline_latency_ms": 0.2232635,
+      "sol_score": 0.8866828067610707,
+      "sol_score_cal": 0.8655890472955899,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0137765,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.06392,
+      "sol_score": 0.8329736441932891,
+      "sol_score_cal": 0.8049897556967752,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.0560955,
+      "sol_ms": 0.007,
+      "baseline_latency_ms": 0.427264,
+      "sol_score": 0.8953989426015666,
+      "sol_score_cal": 0.8755178156002994,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.019008,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.1168,
+      "sol_score": 0.8709638261714009,
+      "sol_score_cal": 0.8477359837045648,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.028224,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.116992,
+      "sol_score": 0.8142986630410153,
+      "sol_score_cal": 0.784507638770636,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.007632,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.031072,
+      "sol_score": 0.8125,
+      "sol_score_cal": 0.7822543877303739,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.019200000000000002,
+      "sol_ms": 0.002,
+      "baseline_latency_ms": 0.115232,
+      "sol_score": 0.8681305201177625,
+      "sol_score_cal": 0.844510739856802,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0508155,
+      "sol_ms": 0.0064,
+      "baseline_latency_ms": 0.3912795,
+      "sol_score": 0.8965385108142421,
+      "sol_score_cal": 0.8768186541178403,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.013936,
+      "sol_ms": 0.0012,
+      "baseline_latency_ms": 0.0639355,
+      "sol_score": 0.8312475570248372,
+      "sol_score_cal": 0.8030725810023485,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.009056,
+      "sol_ms": 0.0008,
+      "baseline_latency_ms": 0.037824,
+      "sol_score": 0.8176678445229683,
+      "sol_score_cal": 0.7877339542610484,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.103632,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.846895,
+      "sol_score": 0.9024045858973262,
+      "sol_score_cal": 0.8835664850343888,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.10409550000000001,
+      "sol_ms": 0.0135,
+      "baseline_latency_ms": 0.844943,
+      "sol_score": 0.9017443414781487,
+      "sol_score_cal": 0.8828077146587274,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Reference semantics (008 \u00b7 MoE expert-output combine):\n#   output = final_hidden_states.clone()\n#   output.index_add_(0, token_indices, expert_outputs)\n#     i.e.  out[t] = fhs[t] + \u03a3_{i : idx[i]==t} eo[i]\n#\n# Roofline: deeply memory-bound. The dominant term is the *read-once* coalesced\n# stream of `expert_outputs` (8\u00b7T\u00b7H\u00b72 B \u2248 80% of all traffic). The output buffer\n# (\u226450 MB at the largest workload T=8192) fits entirely in the 126 MB L2, so the\n# atomic read-modify-writes stay L2-resident (~21 TB/s) \u2014 provided the ~400 MB\n# `eo` stream does not evict it (hence `eviction_policy='evict_first'`, since eo\n# is touched exactly once and never re-read).\n#\n# The scored workloads fix H=3072 (= 3\u00b71024) and num_experts_per_tok=8. One\n# program handles a whole expert-output row: it loads the int64 target index\n# once, then streams the three 1024-wide (128-bit-coalesced) tiles and atomic-\n# adds them into the pre-seeded output. Grid = N = 8\u00b7T keeps every SM saturated\n# at large T while cutting launched-block count 3\u00d7 versus a (row, tile) grid,\n# which matters on the launch/schedule-bound small-T shapes.\n#\n# The seed `output = fhs.clone()` is mandatory: the harness reuses the input\n# tensors across timing iterations, so accumulating in place would corrupt later\n# iterations. A single fused seed+scatter kernel is *not* possible without a\n# grid-wide barrier (a scatter program could atomic-add before the seed of its\n# token is written) \u2014 a raw CUDA cooperative-groups grid.sync() kernel that\n# fuses clone+scatter into one launch was already tried on this problem and\n# scored markedly worse than this two-launch design (occupancy-capped grid <<\n# grid=N's massive block count costs more parallelism than the saved launch\n# buys back), so the two-launch clone+scatter remains the correctness-safe AND\n# performance-safe minimum.\n#\n# What *is* new here: the seed copy no longer goes through ATen's generic\n# `.clone()`. It's replaced with a small tuned Triton flat-copy kernel (wide\n# BLOCK, high warp count) so the seed launch pays the same near-peak HBM\n# bandwidth as `.clone()` but with a lighter, purpose-built launch path \u2014\n# the remaining structural gap on the smallest-T shapes (workloads near the\n# ~20us launch-overhead floor) is CPU/launch overhead, not achievable bytes/s,\n# so trimming per-launch overhead is the only axis left to move there.\n\n\n@triton.jit\ndef _copy_kernel(dst_ptr, src_ptr, numel, BLOCK: tl.constexpr):\n    pid = tl.program_id(0).to(tl.int64)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < numel\n    v = tl.load(src_ptr + offs, mask=mask, eviction_policy=\"evict_first\")\n    tl.store(dst_ptr + offs, v, mask=mask)\n\n\n@triton.jit\ndef _scatter_add_kernel(\n    out_ptr,        # bf16 [T, 3072], pre-seeded with final_hidden_states\n    eo_ptr,         # bf16 [N, 3072], N = 8T\n    idx_ptr,        # int64 [N]\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)\n    out_row = tl.load(idx_ptr + row)\n    offs = tl.arange(0, BLOCK)\n\n    in_base = row * 3072\n    out_base = out_row * 3072\n\n    # Hoist all three coalesced eo loads (the dominant read-once traffic) ahead\n    # of the atomics so the reads overlap the atomic RMW latency \u2014 maximises\n    # memory-level parallelism on the term that sets the roofline. eo is streamed\n    # once and never reused \u2192 evict_first keeps it out of L2 so the L2-resident\n    # output accumulator is not thrashed.\n    v0 = tl.load(eo_ptr + in_base + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v1 = tl.load(eo_ptr + in_base + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v2 = tl.load(eo_ptr + in_base + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    # Commutative sum \u2192 atomicity without ordering: relaxed drops the per-atomic\n    # fence. The three tiles hit disjoint columns, so their order is irrelevant.\n    tl.atomic_add(out_ptr + out_base + 0 * BLOCK + offs, v0, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 1 * BLOCK + offs, v1, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 2 * BLOCK + offs, v2, sem=\"relaxed\")\n\n\ndef _launch(output, expert_outputs, token_indices, N):\n    _scatter_add_kernel[(N,)](\n        output,\n        expert_outputs,\n        token_indices,\n        BLOCK=1024,\n        num_warps=4,\n    )\n\n\ndef _fast_path_ok(output, expert_outputs, token_indices):\n    return (\n        expert_outputs.shape[1] == 3072\n        and output.is_contiguous()\n        and expert_outputs.is_contiguous()\n        and token_indices.is_contiguous()\n    )\n\n\ndef _seed_output(final_hidden_states):\n    # Tuned flat-copy replacement for `.clone()`: same bytes moved (one HBM\n    # read + write of the whole buffer), but a purpose-built launch instead of\n    # ATen's generic strided-copy dispatch. Only valid for contiguous inputs\n    # (guaranteed by this op's input generator); non-contiguous callers fall\n    # back to the always-correct `.clone()`.\n    if not final_hidden_states.is_contiguous():\n        return final_hidden_states.clone()\n\n    output = torch.empty_like(final_hidden_states, memory_format=torch.contiguous_format)\n    numel = output.numel()\n    BLOCK = 4096\n    grid = (triton.cdiv(numel, BLOCK),)\n    _copy_kernel[grid](output, final_hidden_states, numel, BLOCK=BLOCK, num_warps=8)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    output = _seed_output(final_hidden_states)\n\n    N = expert_outputs.shape[0]\n    if N == 0:\n        return output\n\n    if _fast_path_ok(output, expert_outputs, token_indices):\n        _launch(output, expert_outputs, token_indices, N)\n    else:\n        # Generic fallback (never hit by the scored H=3072 workloads).\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t8_715af8f952b2",
+    "definition": "008_expert_output_weighted_index_add_accumulation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# Reference semantics (008 \u00b7 MoE expert-output combine):\n#   output = final_hidden_states.clone()\n#   output.index_add_(0, token_indices, expert_outputs)\n#     i.e.  out[t] = fhs[t] + \u03a3_{i : idx[i]==t} eo[i]\n#\n# Roofline: deeply memory-bound. The dominant term is the *read-once* coalesced\n# stream of `expert_outputs` (8\u00b7T\u00b7H\u00b72 B \u2248 80% of all traffic). The output buffer\n# (\u226450 MB at the largest workload T=8192) fits entirely in the 126 MB L2, so the\n# atomic read-modify-writes stay L2-resident (~21 TB/s) \u2014 provided the ~400 MB\n# `eo` stream does not evict it (hence `eviction_policy='evict_first'`, since eo\n# is touched exactly once and never re-read).\n#\n# The scored workloads fix H=3072 (= 3\u00b71024) and num_experts_per_tok=8. One\n# program handles a whole expert-output row: it loads the int64 target index\n# once, then streams the three 1024-wide (128-bit-coalesced) tiles and atomic-\n# adds them into the pre-seeded output. Grid = N = 8\u00b7T keeps every SM saturated\n# at large T while cutting launched-block count 3\u00d7 versus a (row, tile) grid,\n# which matters on the launch/schedule-bound small-T shapes.\n#\n# The seed `output = fhs.clone()` is mandatory: the harness reuses the input\n# tensors across timing iterations, so accumulating in place would corrupt later\n# iterations. A single fused seed+scatter kernel is *not* possible without a\n# grid-wide barrier (a scatter program could atomic-add before the seed of its\n# token is written) \u2014 a raw CUDA cooperative-groups grid.sync() kernel that\n# fuses clone+scatter into one launch was already tried on this problem and\n# scored markedly worse than this two-launch design (occupancy-capped grid <<\n# grid=N's massive block count costs more parallelism than the saved launch\n# buys back), so the two-launch clone+scatter remains the correctness-safe AND\n# performance-safe minimum.\n#\n# What *is* new here: the seed copy no longer goes through ATen's generic\n# `.clone()`. It's replaced with a small tuned Triton flat-copy kernel (wide\n# BLOCK, high warp count) so the seed launch pays the same near-peak HBM\n# bandwidth as `.clone()` but with a lighter, purpose-built launch path \u2014\n# the remaining structural gap on the smallest-T shapes (workloads near the\n# ~20us launch-overhead floor) is CPU/launch overhead, not achievable bytes/s,\n# so trimming per-launch overhead is the only axis left to move there.\n\n\n@triton.jit\ndef _copy_kernel(dst_ptr, src_ptr, numel, BLOCK: tl.constexpr):\n    pid = tl.program_id(0).to(tl.int64)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < numel\n    v = tl.load(src_ptr + offs, mask=mask, eviction_policy=\"evict_first\")\n    tl.store(dst_ptr + offs, v, mask=mask)\n\n\n@triton.jit\ndef _scatter_add_kernel(\n    out_ptr,        # bf16 [T, 3072], pre-seeded with final_hidden_states\n    eo_ptr,         # bf16 [N, 3072], N = 8T\n    idx_ptr,        # int64 [N]\n    BLOCK: tl.constexpr,\n):\n    row = tl.program_id(0).to(tl.int64)\n    out_row = tl.load(idx_ptr + row)\n    offs = tl.arange(0, BLOCK)\n\n    in_base = row * 3072\n    out_base = out_row * 3072\n\n    # Hoist all three coalesced eo loads (the dominant read-once traffic) ahead\n    # of the atomics so the reads overlap the atomic RMW latency \u2014 maximises\n    # memory-level parallelism on the term that sets the roofline. eo is streamed\n    # once and never reused \u2192 evict_first keeps it out of L2 so the L2-resident\n    # output accumulator is not thrashed.\n    v0 = tl.load(eo_ptr + in_base + 0 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v1 = tl.load(eo_ptr + in_base + 1 * BLOCK + offs, eviction_policy=\"evict_first\")\n    v2 = tl.load(eo_ptr + in_base + 2 * BLOCK + offs, eviction_policy=\"evict_first\")\n\n    # Commutative sum \u2192 atomicity without ordering: relaxed drops the per-atomic\n    # fence. The three tiles hit disjoint columns, so their order is irrelevant.\n    tl.atomic_add(out_ptr + out_base + 0 * BLOCK + offs, v0, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 1 * BLOCK + offs, v1, sem=\"relaxed\")\n    tl.atomic_add(out_ptr + out_base + 2 * BLOCK + offs, v2, sem=\"relaxed\")\n\n\ndef _launch(output, expert_outputs, token_indices, N):\n    _scatter_add_kernel[(N,)](\n        output,\n        expert_outputs,\n        token_indices,\n        BLOCK=1024,\n        num_warps=4,\n    )\n\n\ndef _fast_path_ok(output, expert_outputs, token_indices):\n    return (\n        expert_outputs.shape[1] == 3072\n        and output.is_contiguous()\n        and expert_outputs.is_contiguous()\n        and token_indices.is_contiguous()\n    )\n\n\ndef _seed_output(final_hidden_states):\n    # Tuned flat-copy replacement for `.clone()`: same bytes moved (one HBM\n    # read + write of the whole buffer), but a purpose-built launch instead of\n    # ATen's generic strided-copy dispatch. Only valid for contiguous inputs\n    # (guaranteed by this op's input generator); non-contiguous callers fall\n    # back to the always-correct `.clone()`.\n    if not final_hidden_states.is_contiguous():\n        return final_hidden_states.clone()\n\n    output = torch.empty_like(final_hidden_states, memory_format=torch.contiguous_format)\n    numel = output.numel()\n    BLOCK = 4096\n    grid = (triton.cdiv(numel, BLOCK),)\n    _copy_kernel[grid](output, final_hidden_states, numel, BLOCK=BLOCK, num_warps=8)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    final_hidden_states: torch.Tensor,\n    expert_outputs: torch.Tensor,\n    token_indices: torch.Tensor,\n):\n    output = _seed_output(final_hidden_states)\n\n    N = expert_outputs.shape[0]\n    if N == 0:\n        return output\n\n    if _fast_path_ok(output, expert_outputs, token_indices):\n        _launch(output, expert_outputs, token_indices, N)\n    else:\n        # Generic fallback (never hit by the scored H=3072 workloads).\n        output.index_add_(0, token_indices, expert_outputs)\n\n    return output\n"
+      }
+    ]
+  }
+}

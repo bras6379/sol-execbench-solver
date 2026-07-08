@@ -162,3 +162,121 @@ def test_parse_rented_at_extracts_runpod_timestamp():
     assert iso == "2026-07-08T01:13:03+00:00"
     assert _parse_rented_at(None) is None
     assert _parse_rented_at("garbage") is None
+
+
+# --------------------------------------------------------------------------- #
+# Graceful shutdown — a signal must wait for any in-flight GPU eval-to-accept
+# span (GpuWorkGuard) before tearing anything down, instead of interrupting it
+# mid-way (the live incident this fixes: a scored candidate that never got its
+# accept recorded because a SIGTERM landed right after exec_done). These call
+# `_on_signal_async`/`_graceful_shutdown` DIRECTLY rather than sending a real
+# OS signal — `arm_signals=False` throughout, so no process-wide handler is
+# ever installed by this test file, and `os.kill`/`signal.signal` are
+# monkeypatched so a test never actually delivers a signal to the test runner.
+# --------------------------------------------------------------------------- #
+def test_graceful_shutdown_waits_for_the_gpu_guard_before_terminating(monkeypatch):
+    import signal as signal_mod
+
+    from solver.engine.gpu_guard import GpuWorkGuard
+
+    killed = []
+    monkeypatch.setattr(signal_mod, "signal", lambda *a: None)
+    monkeypatch.setattr("os.kill", lambda *a: killed.append(a))
+
+    guard = GpuWorkGuard()
+    order = []
+
+    async def scenario():
+        p = MockProvider()
+        s = _session(p, gpu_guard=guard, shutdown_grace_s=5.0)
+        async with s:
+            async def _hold_then_release():
+                with guard:
+                    order.append("holding")
+                    await asyncio.sleep(0.05)
+                order.append("released")
+            task = asyncio.create_task(_hold_then_release())
+            await asyncio.sleep(0.01)
+            assert guard.busy
+            await s._graceful_shutdown(signal_mod.SIGTERM)
+            order.append("terminated")
+            await task
+        return p, s
+
+    p, s = run(scenario())
+    assert order == ["holding", "released", "terminated"]   # waited for release BEFORE terminating
+    assert p.terminated == 1                                 # _terminate_sync actually ran
+    assert killed                                            # handed off to re-raise, didn't just return
+
+
+def test_graceful_shutdown_proceeds_anyway_once_the_grace_period_elapses(monkeypatch):
+    """Never hang a shutdown forever — a bound, not a guarantee."""
+    import signal as signal_mod
+
+    from solver.engine.gpu_guard import GpuWorkGuard
+
+    monkeypatch.setattr(signal_mod, "signal", lambda *a: None)
+    monkeypatch.setattr("os.kill", lambda *a: None)
+
+    guard = GpuWorkGuard()
+
+    async def scenario():
+        p = MockProvider()
+        s = _session(p, gpu_guard=guard, shutdown_grace_s=0.05)
+        async with s:
+            async def _hold_forever():
+                with guard:
+                    await asyncio.sleep(10)
+            task = asyncio.create_task(_hold_forever())
+            await asyncio.sleep(0.01)
+            await s._graceful_shutdown(signal_mod.SIGTERM)   # must return despite guard still busy
+            task.cancel()
+        return p
+
+    p = run(scenario())
+    assert p.terminated == 1
+
+
+def test_graceful_shutdown_skips_the_wait_without_a_guard(monkeypatch):
+    """No gpu_guard configured (e.g. a caller that doesn't care) -> terminate
+    immediately, same as before this feature existed."""
+    import signal as signal_mod
+
+    monkeypatch.setattr(signal_mod, "signal", lambda *a: None)
+    monkeypatch.setattr("os.kill", lambda *a: None)
+
+    async def scenario():
+        p = MockProvider()
+        s = _session(p)                     # no gpu_guard
+        async with s:
+            await s._graceful_shutdown(signal_mod.SIGTERM)
+        return p
+
+    p = run(scenario())
+    assert p.terminated == 1
+
+
+def test_on_signal_async_only_schedules_one_shutdown_for_repeat_signals(monkeypatch):
+    """A second Ctrl-C while already shutting down must not spawn a second
+    graceful-shutdown task — the original (already bounded) wait just keeps
+    going."""
+    import signal as signal_mod
+
+    calls = []
+
+    async def scenario():
+        p = MockProvider()
+        s = _session(p)
+
+        async def _fake_graceful_shutdown(sig):
+            calls.append(sig)
+
+        s._graceful_shutdown = _fake_graceful_shutdown
+        async with s:
+            s._on_signal_async(signal_mod.SIGTERM)
+            s._on_signal_async(signal_mod.SIGTERM)          # repeat — must be ignored
+            await asyncio.sleep(0.01)                        # let the scheduled task run
+        return calls
+
+    calls = run(scenario())
+    assert calls == [signal_mod.SIGTERM]

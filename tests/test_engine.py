@@ -14,6 +14,7 @@ from solver import journal as journal_mod
 from solver.engine import (
     Config,
     Frontier,
+    GpuWorkGuard,
     Member,
     Perspective,
     StubExecutor,
@@ -538,3 +539,55 @@ def test_run_fleet_publishes_task_phase_to_the_active_file(tmp_path):
     run(run_fleet([1], StubExecutor(), agents, c, runs_dir=tmp_path))
     active = _json.loads((tmp_path / "_active.json").read_text())
     assert active.get("task_phase") == {}          # problem finished -> no call in flight
+
+
+# --------------------------------------------------------------------------- #
+# GpuWorkGuard integration — solve_problem must hold the guard across the
+# WHOLE exec-to-accept span (not just the eval call itself), so a shutdown
+# waiting on it doesn't resume too early and still land in the same gap that
+# caused the live incident (see gpu_guard.py).
+# --------------------------------------------------------------------------- #
+def test_solve_problem_holds_the_gpu_guard_across_the_eval_to_accept_span(tmp_path):
+    guard = GpuWorkGuard()
+    seen_busy_during_eval = {"v": False}
+
+    class _WatchingExecutor(StubExecutor):
+        async def evaluate(self, *a, **kw):
+            seen_busy_during_eval["v"] = guard.busy
+            return await super().evaluate(*a, **kw)
+
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    run(solve_problem(1, _WatchingExecutor(), agents, c, runs_dir=tmp_path, gpu_guard=guard))
+
+    assert seen_busy_during_eval["v"] is True     # held BEFORE the eval call, not just during it
+    assert not guard.busy                          # released once the whole span (incl. accept+persist) finished
+
+
+def test_solve_problem_defaults_to_a_private_guard_when_none_is_given(tmp_path):
+    """Every existing caller (nothing passes gpu_guard) must keep working
+    exactly as before — this is an opt-in side channel, not required."""
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    ctx = run(solve_problem(1, StubExecutor(), agents, c, runs_dir=tmp_path))
+    assert ctx.iters >= 1
+
+
+def test_run_fleet_shares_one_gpu_guard_across_concurrent_problems(tmp_path):
+    """A caller-supplied guard sees GPU work from EVERY problem in the fleet,
+    not just one — this is what lets solve_on_gpu wait for "any" in-flight
+    eval fleet-wide before a shutdown, regardless of which problem holds it."""
+    guard = GpuWorkGuard()
+    max_seen_busy = {"v": False}
+
+    class _WatchingExecutor(StubExecutor):
+        async def evaluate(self, *a, **kw):
+            if guard.busy:
+                max_seen_busy["v"] = True
+            return await super().evaluate(*a, **kw)
+
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    agents = stub_agents(c.perspectives, scripted({"claude:haiku": [{"scores": [0.6]}]}))
+    run(run_fleet([1, 2, 3], _WatchingExecutor(), agents, c, runs_dir=tmp_path, gpu_guard=guard))
+    assert max_seen_busy["v"] is True
+    assert not guard.busy

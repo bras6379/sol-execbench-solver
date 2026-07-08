@@ -330,3 +330,103 @@ def test_a_live_in_flight_candidate_is_not_marked_interrupted(tmp_path):
     row = next(c for c in data["problems"][0]["candidates"] if c["cand"] == "a1")
     assert data["problems"][0]["live_state"] == "running"
     assert row["status"] == "gpu_queued"          # genuinely still in flight, left alone
+
+
+# --------------------------------------------------------------------------- #
+# verify_queued / verifying — a candidate that already has a real score (from
+# exec_done) but isn't accepted yet because it's a would-be frontier entry
+# undergoing re-verification (--verify-runs), which competes for the SAME
+# single-flight GPU lock every other problem shares. Confirmed live
+# (2026-07-08): without this, the stale "gpu: running" from the ALREADY
+# FINISHED primary eval made two different problems look like they were both
+# running on the GPU simultaneously, when only one actually held the lock.
+# --------------------------------------------------------------------------- #
+def test_a_candidate_awaiting_reverify_shows_verify_queued():
+    events = [
+        {"ev": "plan_done", "cand": "a1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "a1", "ok": True},
+        {"ev": "exec_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "exec_started", "job": "a1"},
+        {"ev": "exec_done", "job": "a1", "cand": "a1", "all_passed": True,
+         "sol_score": 0.72, "scores": [0.72]},
+        {"ev": "verify_enqueued", "job": "a1", "cand": "a1"},
+    ]
+    assert _cand_status(events, "a1") == "verify_queued"
+
+
+def test_a_candidate_actively_reverifying_shows_verifying():
+    events = [
+        {"ev": "plan_done", "cand": "a1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "a1", "ok": True},
+        {"ev": "exec_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "exec_started", "job": "a1"},
+        {"ev": "exec_done", "job": "a1", "cand": "a1", "all_passed": True,
+         "sol_score": 0.72, "scores": [0.72]},
+        {"ev": "verify_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "verify_started", "cand": "a1", "attempt": 1, "job": "a1-v1"},
+    ]
+    assert _cand_status(events, "a1") == "verifying"
+
+
+def test_verifying_still_resolves_to_accepted_once_done():
+    events = [
+        {"ev": "plan_done", "cand": "a1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "a1", "ok": True},
+        {"ev": "exec_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "exec_started", "job": "a1"},
+        {"ev": "exec_done", "job": "a1", "cand": "a1", "all_passed": True,
+         "sol_score": 0.72, "scores": [0.72]},
+        {"ev": "verify_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "verify_started", "cand": "a1", "attempt": 1, "job": "a1-v1"},
+        {"ev": "verify_done", "cand": "a1", "attempt": 1, "job": "a1-v1", "all_passed": True},
+        {"ev": "accept", "cand": "a1", "verdict": "entered", "best": 0.72, "frontier": 1},
+    ]
+    assert _cand_status(events, "a1") == "accepted"
+
+
+def test_verifying_resolves_to_flaky_when_a_rerun_disagrees():
+    events = [
+        {"ev": "plan_done", "cand": "a1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "a1", "ok": True},
+        {"ev": "exec_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "exec_started", "job": "a1"},
+        {"ev": "exec_done", "job": "a1", "cand": "a1", "all_passed": True,
+         "sol_score": 0.72, "scores": [0.72]},
+        {"ev": "verify_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "verify_started", "cand": "a1", "attempt": 1, "job": "a1-v1"},
+        {"ev": "verify_done", "cand": "a1", "attempt": 1, "job": "a1-v1", "all_passed": False},
+        {"ev": "flaky", "cand": "a1", "attempt": 1},
+    ]
+    assert _cand_status(events, "a1") == "flaky"
+
+
+def test_two_problems_mid_verify_dont_both_look_like_theyre_running_the_primary_eval():
+    """The exact live scenario that prompted this fix: two DIFFERENT problems'
+    candidates both already have real scores and are mid-reverify at once — one
+    ACTUALLY holds the single-flight GPU lock (verify_started fired), the other
+    is still waiting its turn (only verify_enqueued so far). Neither should
+    render as the ambiguous "gpu_running" that looks identical to a primary eval
+    with no score yet."""
+    events_p1 = [
+        {"ev": "plan_done", "cand": "a1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "a1", "ok": True},
+        {"ev": "exec_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "exec_started", "job": "a1"},
+        {"ev": "exec_done", "job": "a1", "cand": "a1", "all_passed": True,
+         "sol_score": 0.72, "scores": [0.72]},
+        {"ev": "verify_enqueued", "job": "a1", "cand": "a1"},
+        {"ev": "verify_started", "cand": "a1", "attempt": 1, "job": "a1-v1"},  # holds the lock
+    ]
+    events_p2 = [
+        {"ev": "plan_done", "cand": "b1", "model": "m", "strategy": "s"},
+        {"ev": "check", "cand": "b1", "ok": True},
+        {"ev": "exec_enqueued", "job": "b1", "cand": "b1"},
+        {"ev": "exec_started", "job": "b1"},
+        {"ev": "exec_done", "job": "b1", "cand": "b1", "all_passed": True,
+         "sol_score": 0.73, "scores": [0.73]},
+        {"ev": "verify_enqueued", "job": "b1", "cand": "b1"},          # waiting its turn
+    ]
+    s1 = _cand_status(events_p1, "a1")
+    s2 = _cand_status(events_p2, "b1")
+    assert s1 == "verifying" and s2 == "verify_queued"
+    assert s1 != "gpu_running" and s2 != "gpu_running"

@@ -101,8 +101,28 @@ def traces_from_jsonl(text: str) -> list[dict]:
             "latency_ms": perf.get("latency_ms"), "matched_ratio": None,
             "max_abs_error": corr.get("max_absolute_error"),
             "max_rel_error": corr.get("max_relative_error"),
+            "log": ev.get("log"),
         })
     return rows
+
+
+def _workload_detail(t: dict | None) -> str | None:
+    """The harness's actual diagnostic for a failed workload — a Triton/CUDA
+    traceback snippet (trace.jsonl's `log` field) or the measured error
+    magnitude — not just the bare status code. Confirmed live (2026-07-08):
+    the real harness already reports both; `traces_from_jsonl` parsed them out
+    of the trace but this mapping silently dropped them, so a failed
+    candidate's feedback to the next agent was never more specific than
+    "RUNTIME_ERROR" — nothing to actually act on."""
+    if not t:
+        return None
+    log = (t.get("log") or "").strip()
+    if log:
+        return log[:500]
+    mae, mre = t.get("max_abs_error"), t.get("max_rel_error")
+    if mae is not None or mre is not None:
+        return f"max_abs_error={mae}, max_rel_error={mre}"
+    return None
 
 
 def map_traces_to_result(task_id: int, traces: list[dict], *, solution_status: str | None = None,
@@ -125,7 +145,8 @@ def map_traces_to_result(task_id: int, traces: list[dict], *, solution_status: s
             latency_ms=(t or {}).get("latency_ms"),
             sol_ms=sm.get("sol_ms"), baseline_latency_ms=sm.get("baseline_latency_ms"),
             matched_ratio=(t or {}).get("matched_ratio"),
-            error=None if passed else (solution_status or (t or {}).get("status") or "NO_TRACE")))
+            error=None if passed else (solution_status or (t or {}).get("status") or "NO_TRACE"),
+            detail=None if passed else _workload_detail(t)))
     all_passed = solution_status is None and len(rows) > 0 and all(r.correct for r in rows)
     scores = [r.sol_score for r in rows if r.correct and r.sol_score is not None]
     mean = sum(scores) / len(scores) if all_passed and scores else None

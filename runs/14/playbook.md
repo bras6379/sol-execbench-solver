@@ -12,3 +12,8 @@ If this still scores below ~0.93, escalate to a persistent CUDA kernel: 148-CTA 
 ## 3. from `dc061e75` — Shape-dispatch between the 0.885 fused Triton frontier autotune set and a coalesced no-BLOCK_D=8 autotune set for the ex
 If this exact-shape hybrid only ties or regresses, try a one-language `kernel.cu` retry of the 2D-grid CUDA kernel with the prior compile fixes: include `ATen/cuda/CUDAContext.h` and `c10/cuda/CUDAException.h`, remove any Python source, keep strides or require contiguous only after measuring, and specialize B=64/S=3011,8192 with vectorized bf16/fp32 row loads plus shared `inv_freq`.
 
+## 4. from `7b7eab33` — Manual 2-stage software prefetch for cold-L2 streaming: pre-load chunk 0, then iterate loading chunk i while processing
+# Handoff: Next Kernel Iteration
+
+If this manual 2-stage prefetch regresses or only ties the 0.885 frontier, or if workloads #8/#14 still score below ~0.72-0.75, escalate to a persistent CUDA kernel: 148-CTA grid (one per SM), each CTA work-steals tiles of BLOCK_M=256 rows from a global atomic counter, with float4/ushort4 vectorized loads for emb/grad_cos_sin, shared-memory inv_freq broadcast (256 bytes per CTA), and warp-shuffle 64-element dot-product reduction. This removes launch overhead and explicit Triton codegen suboptimalities, pushing achieved HBM BW from current ~5-6 TB/s into the 6.
+

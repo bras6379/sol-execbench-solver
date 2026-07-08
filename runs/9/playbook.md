@@ -18,3 +18,11 @@ TRIGGER: if this passes all 16 (unlocks sol_score) but the memory-bound shapes
 ## 2. from `a49df0b8` — Targeted TF32 eager kernel: run G2 and the K=N wgrads G3/G5 in TF32 tensor-core GEMMs to eliminate the N>=215 rounding f
 If this passes all 16 but the memory-bound shapes (N <= ~300) stay above ~1.15x SOL, the next lift is a custom Triton wgrad kernel for G1/G3/G5 that reads bf16 activations and weights, upcasts them inside the dot, and writes the (H,F)/(F,H) weight-grad outputs directly as bf16, plus a Triton G2 that loads w2 as bf16 and upcasts on-chip to TF32—this removes the eager fp32 copies of gated_output, selected_tokens, and w2_weight.
 
+## 3. from `3afa044f` — Keep the proven 0.721 TF32-selective precision plan (G2/G3/G5 TF32, G1/G4/G6 bf16) unchanged; wrap everything except the
+If this only ties or barely beats 0.721, the CUDA-graph replay path is likely never triggering (i.e. `entry["ptrs"] == ptrs` fails every call) -- check whether the harness actually reuses the same input tensor objects across a workload's warmup+timed loop, or regenerates fresh allocations per call; if the latter, switch to a copy-in static-buffer graph (copy live inputs into persistent capture buffers each call, like problem-007's cuFFT pattern) instead of binding directly to live pointers.
+
+If it beats 0.721 but the 3 compute-bound shapes (idx 7/10/13, N>=496) are still the laggards, retry th
+
+## 4. from `f3e2efa4` — Targeted-TF32 eager cuBLAS path from the best frontier kernel, with final bf16 dgrad accumulation folded through addmm a
+Higher-ceiling idea not shipped: build a fixed-shape copy-in CUDA graph that stages live inputs into persistent buffers, then replays the proven targeted-TF32 op sequence so launch overhead is removed even if the harness changes input allocations. Try this if the memory-bound N<=296 shapes still tie the 0.721 eager kernel or if a direct live-pointer graph does not replay.
+

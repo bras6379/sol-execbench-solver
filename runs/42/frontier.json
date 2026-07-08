@@ -3,7 +3,7 @@
   "family": "softmax",
   "name": "softmax_42",
   "epsilon": 0.02,
-  "size": 1,
+  "size": 3,
   "best_cand": "3a943cb6aa6c",
   "best_score": 0.7169787944809952,
   "best_score_cal": 0.668900308872837,
@@ -13,7 +13,7 @@
       "sol_score": 0.7169787944809952,
       "sol_score_cal": 0.668900308872837,
       "all_passed": true,
-      "shapes_won": 16,
+      "shapes_won": 8,
       "vector": [
         0.7644441031423311,
         0.7616630223703726,
@@ -36,6 +36,64 @@
       "agent": "claude",
       "model": "haiku",
       "candidate": "candidates/3a943cb6aa6c.json"
+    },
+    {
+      "cand_id": "5b6a2f59c5d5",
+      "sol_score": 0.7160048695279034,
+      "sol_score_cal": 0.6677422012220742,
+      "all_passed": true,
+      "shapes_won": 6,
+      "vector": [
+        0.7644441031423311,
+        0.7596303412938054,
+        0.7688442505572737,
+        0.7972973253971861,
+        0.4975068449211669,
+        0.502716084212629,
+        0.7622867907449898,
+        0.7579532017464071,
+        0.7570617816646469,
+        0.5004884611235827,
+        0.7939123483628147,
+        0.7599814298978644,
+        0.7600755961361976,
+        0.7554375820888145,
+        0.7541206209592543,
+        0.7643211501974899
+      ],
+      "strategy": "Reduce BLOCK_ROWS from 8 to 4 to increase grid parallelism for launch-bound micro-shapes while maintaining data-level pa",
+      "agent": "claude",
+      "model": "haiku",
+      "candidate": "candidates/5b6a2f59c5d5.json"
+    },
+    {
+      "cand_id": "c1b5853db315",
+      "sol_score": 0.7155683770915219,
+      "sol_score_cal": 0.6672847908367264,
+      "all_passed": true,
+      "shapes_won": 5,
+      "vector": [
+        0.7621956457594896,
+        0.7555018529098015,
+        0.7688442505572737,
+        0.7963569890788595,
+        0.4966967540498899,
+        0.5021880899637564,
+        0.7634680835814396,
+        0.7589085184480452,
+        0.7535717578542178,
+        0.5014682521070437,
+        0.7942460706327183,
+        0.757636531934588,
+        0.7600755961361976,
+        0.7542906053629957,
+        0.7552206359812161,
+        0.7684243991068178
+      ],
+      "strategy": "Single fused Triton kernel with branch-free scalar arithmetic (no .item(), no redundant clones, one pass over data)",
+      "agent": "openrouter",
+      "model": "z-ai/glm-4.7-flash",
+      "candidate": "candidates/c1b5853db315.json"
     }
   ]
 }

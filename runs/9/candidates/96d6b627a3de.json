@@ -1,0 +1,247 @@
+{
+  "cand_id": "96d6b627a3de",
+  "task_id": 9,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "fp16-cast/fp32-accum for G2/G3/G5: replace TF32 with fp16 tensor cores for same 10-bit mantissa precision but 2x through",
+  "agent": "openrouter",
+  "model": "z-ai/glm-4.7-flash",
+  "parent": "a49df0b8d230",
+  "trajectory": "runs/9/work/96d6b627a3de/trajectory.jsonl",
+  "gpu_s": 3.384,
+  "job_id": "9-96d6b627a3de",
+  "asi": {
+    "stage": "harness",
+    "error": "Problem:  009_expert_token_scatter_with_weighted_forward_backward\nSolution: t9_9-96d6b627a3de\nWorkloads: 16\nConfig:   {\"warmup_runs\": 10, \"iterations\": 50, \"lock_clocks\": false, \n\"benchmark_reference\": false, \"seed\": 200}\n\u2826 Evaluating 16 workload(s)...\nEvaluation failed\nTraceback (most recent call last):\n  File \"/tmp/sol_execbench_z1izqs82/eval_driver.py\", line 245, in <module>\n    _user_mod = importlib.import_module(_mod_name)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/importlib/__init__.py\", line 90, in import_module\n    return _bootstrap._gcd_import(name, package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen importlib._bootstrap>\", line 1387, in _gcd_import\n  File \"<frozen importlib._bootstrap>\", line 1360, in _find_and_load\n  File \"<frozen importlib._bootstrap>\", line 1331, in _find_and_load_unlocked\n  File \"<frozen importlib._bootstrap>\", line 935, in _load_unlocked\n  File \"<frozen importlib._bootstrap_external>\", line 995, in exec_module\n  File \"<frozen importlib._bootstrap>\", line 488, in _call_with_frames_removed\n  File \"/tmp/sol_execbench_z1izqs82/kernel.py\", line 20, in <module>\n    torch.backends.cuda.matmul.allow_tf16_reduction = True\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \n\"/root/SOL-ExecBench/.venv/lib/python3.12/site-packages/torch/backends/cuda/__in\nit__.py\", line 153, in __setattr__\n    raise AttributeError(\"Unknown attribute \" + name)\nAttributeError: Unknown attribute allow_tf16_reduction\n[W708 04:09:14.866919379 AllocatorConfig.cpp:28] Warning: \nPYTORCH_CUDA_ALLOC_CONF is deprecated, use PYTORCH_ALLOC_CONF instead (function \noperator())\n\n",
+    "solution_status": "COMPILE_ERROR",
+    "gpu": {
+      "sm_mhz_median": 120.0,
+      "sm_mhz_max": 847.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 196.65,
+      "samples": 8,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0951,
+      "baseline_latency_ms": 1.014866,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0978,
+      "baseline_latency_ms": 1.5979230000000002,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1,
+      "baseline_latency_ms": 2.512388,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1009,
+      "baseline_latency_ms": 2.181668,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0979,
+      "baseline_latency_ms": 1.597139,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1311,
+      "baseline_latency_ms": 3.1140535,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1101,
+      "baseline_latency_ms": 2.529397,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.7971,
+      "baseline_latency_ms": 15.350396,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0952,
+      "baseline_latency_ms": 1.014466,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5216365,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1996,
+      "baseline_latency_ms": 4.3613040000000005,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1017,
+      "baseline_latency_ms": 2.2930765,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 12,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5237965,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 13,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1934,
+      "baseline_latency_ms": 4.26468,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 14,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0943,
+      "baseline_latency_ms": 1.011282,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    },
+    {
+      "index": 15,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.1156,
+      "baseline_latency_ms": 2.8358295,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "COMPILE_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nReference is pure fp32 internally, but the tolerances are loose (rtol=0.05,\natol up to 0.04, matched_ratio=0.99, no error cap).  The failure mode of a\nstraight bf16 rewrite is the K=N wgrads G3/G5, whose error is amplified by\nthe bf16 grad_gated produced by the G2 dgrad.  This implementation fixes that\nby running G2 and the two wgrads G3/G5 in fp16-cast/fp32-accum (same 10-bit\nmantissa precision as TF32, but 2x throughput), while G1 and the final dgrads\nG4/G6 stay in bf16/fp32-accum (they were already safe in the pure-bf16 run).\n\nAll fp32 matmuls dispatch through cuBLAS with fp16 tensor cores enabled (fp32\naccum), which gives the same precision as TF32 but ~2x throughput.\n\"\"\"\n\nimport torch\n\n# Enable fp16 tensor cores for improved throughput while maintaining fp32\n# accumulation precision (same mantissa bits as TF32, but 2x the performance)\ntorch.backends.cuda.matmul.allow_tf16_reduction = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # Gather the N rows of grad_output that correspond to this expert.\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # grad_routing_weights: row dot of gwo and expert_output, scattered.\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights[token_indices] = grad_sel_w.to(torch.bfloat16)\n\n    # grad_expert_output used to seed the w2 branch.  Keep an exact fp32 copy\n    # for the fp16-cast dgrad G2, and a bf16 copy for the safe G1 wgrad.\n    selected_weights_f = selected_weights.float()\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)          # (N, H) bf16\n    geo_f16 = gwo.half() * selected_weights_f.unsqueeze(-1)   # (N, H) fp16 (10-bit mantissa)\n\n    # ---- w2 branch ----\n    # G1: grad_w2_weight = geo^T @ gated_output  \u2014 bf16 is sufficient (does not\n    # flow through grad_gated), so avoid the extra fp32 write.\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # G2: grad_gated = geo @ w2_weight  \u2014 fp16 inputs, fp32 accumulation.\n    # Same precision as TF32 (10-bit mantissa), but fp16 tensor cores are 2x faster.\n    w2_f16 = w2_weight.half()\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)            # (N, F) fp16 \u2192 accum in fp32\n\n    # ---- gating backward + SiLU' (all fp32) ----\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1_f32)\n    silu_grad = sig * (1.0 + w1_f32 * (1.0 - sig))\n\n    grad_up_f32 = grad_gated_f16.float() * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = grad_gated_f16.float() * up_f32 * silu_grad\n\n    # ---- w1/w3 wgrads \u2014 TF32 to control error over the small K=N ----\n    selected_f32 = selected_tokens.float()\n    grad_w3_weight = torch.matmul(\n        grad_up_f32.transpose(0, 1), selected_f32\n    ).to(torch.bfloat16)\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f32.transpose(0, 1), selected_f32\n    ).to(torch.bfloat16)\n\n    # ---- dgrads G4/G6 \u2014 bf16/fp32-accum is safe for the per-token output ----\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n    gst_w1 = torch.matmul(grad_w1o, w1_weight)\n\n    # ---- accumulate and scatter back to full hidden-states gradient ----\n    grad_selected_tokens = gst_w1 + gst_w3\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states[token_indices] = grad_selected_tokens\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t9_96d6b627a3de",
+    "definition": "009_expert_token_scatter_with_weighted_forward_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nReference is pure fp32 internally, but the tolerances are loose (rtol=0.05,\natol up to 0.04, matched_ratio=0.99, no error cap).  The failure mode of a\nstraight bf16 rewrite is the K=N wgrads G3/G5, whose error is amplified by\nthe bf16 grad_gated produced by the G2 dgrad.  This implementation fixes that\nby running G2 and the two wgrads G3/G5 in fp16-cast/fp32-accum (same 10-bit\nmantissa precision as TF32, but 2x throughput), while G1 and the final dgrads\nG4/G6 stay in bf16/fp32-accum (they were already safe in the pure-bf16 run).\n\nAll fp32 matmuls dispatch through cuBLAS with fp16 tensor cores enabled (fp32\naccum), which gives the same precision as TF32 but ~2x throughput.\n\"\"\"\n\nimport torch\n\n# Enable fp16 tensor cores for improved throughput while maintaining fp32\n# accumulation precision (same mantissa bits as TF32, but 2x the performance)\ntorch.backends.cuda.matmul.allow_tf16_reduction = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # Gather the N rows of grad_output that correspond to this expert.\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # grad_routing_weights: row dot of gwo and expert_output, scattered.\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights[token_indices] = grad_sel_w.to(torch.bfloat16)\n\n    # grad_expert_output used to seed the w2 branch.  Keep an exact fp32 copy\n    # for the fp16-cast dgrad G2, and a bf16 copy for the safe G1 wgrad.\n    selected_weights_f = selected_weights.float()\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)          # (N, H) bf16\n    geo_f16 = gwo.half() * selected_weights_f.unsqueeze(-1)   # (N, H) fp16 (10-bit mantissa)\n\n    # ---- w2 branch ----\n    # G1: grad_w2_weight = geo^T @ gated_output  \u2014 bf16 is sufficient (does not\n    # flow through grad_gated), so avoid the extra fp32 write.\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # G2: grad_gated = geo @ w2_weight  \u2014 fp16 inputs, fp32 accumulation.\n    # Same precision as TF32 (10-bit mantissa), but fp16 tensor cores are 2x faster.\n    w2_f16 = w2_weight.half()\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)            # (N, F) fp16 \u2192 accum in fp32\n\n    # ---- gating backward + SiLU' (all fp32) ----\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1_f32)\n    silu_grad = sig * (1.0 + w1_f32 * (1.0 - sig))\n\n    grad_up_f32 = grad_gated_f16.float() * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = grad_gated_f16.float() * up_f32 * silu_grad\n\n    # ---- w1/w3 wgrads \u2014 TF32 to control error over the small K=N ----\n    selected_f32 = selected_tokens.float()\n    grad_w3_weight = torch.matmul(\n        grad_up_f32.transpose(0, 1), selected_f32\n    ).to(torch.bfloat16)\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f32.transpose(0, 1), selected_f32\n    ).to(torch.bfloat16)\n\n    # ---- dgrads G4/G6 \u2014 bf16/fp32-accum is safe for the per-token output ----\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n    gst_w1 = torch.matmul(grad_w1o, w1_weight)\n\n    # ---- accumulate and scatter back to full hidden-states gradient ----\n    grad_selected_tokens = gst_w1 + gst_w3\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states[token_indices] = grad_selected_tokens\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )\n"
+      }
+    ]
+  }
+}

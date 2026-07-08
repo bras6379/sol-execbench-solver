@@ -1,0 +1,245 @@
+{
+  "cand_id": "76357c60f2ad",
+  "task_id": 9,
+  "verdict": "dominated",
+  "sol_score": 0.7202011147801141,
+  "sol_score_calibrated": 0.6806283644327118,
+  "correct": true,
+  "vector": [
+    0.5638280916674431,
+    0.6654339404698377,
+    0.7457051955267976,
+    0.7150302298042434,
+    0.6665201060038154,
+    0.7728732795820046,
+    0.7467380903877375,
+    0.8997138661460348,
+    0.5630545845657435,
+    0.7462917826895078,
+    0.8218776401389195,
+    0.7260957241270538,
+    0.7466929334634641,
+    0.8177090216566517,
+    0.5607300273460623,
+    0.7649233229065084
+  ],
+  "strategy": "fp16 for precision-critical G2/G3/G5 GEMMs (10-bit mantissa = TF32, 2.25 PFLOPS = 2x TF32), bf16 for safe G1/G4/G6, fp32",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "f3e2efa4db7d",
+  "trajectory": "runs/9/work/76357c60f2ad/trajectory.jsonl",
+  "gpu_s": 21.811,
+  "job_id": "9-76357c60f2ad",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 454.15,
+      "samples": 74,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.806622,
+      "sol_ms": 0.0951,
+      "baseline_latency_ms": 1.014866,
+      "sol_score": 0.5638280916674431,
+      "sol_score_cal": 0.5154061073387297,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.85203,
+      "sol_ms": 0.0978,
+      "baseline_latency_ms": 1.5979230000000002,
+      "sol_score": 0.6654339404698377,
+      "sol_score_cal": 0.6208504979247291,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.9226544999999999,
+      "sol_ms": 0.1,
+      "baseline_latency_ms": 2.512388,
+      "sol_score": 0.7457051955267976,
+      "sol_score_cal": 0.7073732094033585,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.930174,
+      "sol_ms": 0.1009,
+      "baseline_latency_ms": 2.181668,
+      "sol_score": 0.7150302298042434,
+      "sol_score_cal": 0.674091230994979,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.848014,
+      "sol_ms": 0.0979,
+      "baseline_latency_ms": 1.597139,
+      "sol_score": 0.6665201060038154,
+      "sol_score_cal": 0.6219681139613747,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 1.00771,
+      "sol_ms": 0.1311,
+      "baseline_latency_ms": 3.1140535,
+      "sol_score": 0.7728732795820046,
+      "sol_score_cal": 0.7363447513722687,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.930623,
+      "sol_ms": 0.1101,
+      "baseline_latency_ms": 2.529397,
+      "sol_score": 0.7467380903877375,
+      "sol_score_cal": 0.7080927912192241,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 2.4192755,
+      "sol_ms": 0.7971,
+      "baseline_latency_ms": 15.350396,
+      "sol_score": 0.8997138661460348,
+      "sol_score_cal": 0.874852954932747,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.808575,
+      "sol_ms": 0.0952,
+      "baseline_latency_ms": 1.014466,
+      "sol_score": 0.5630545845657435,
+      "sol_score_cal": 0.5146287354894927,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.925566,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5216365,
+      "sol_score": 0.7462917826895078,
+      "sol_score_cal": 0.7078729506171093,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.10155,
+      "sol_ms": 0.1996,
+      "baseline_latency_ms": 4.3613040000000005,
+      "sol_score": 0.8218776401389195,
+      "sol_score_cal": 0.7892555749406617,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.9283505000000001,
+      "sol_ms": 0.1017,
+      "baseline_latency_ms": 2.2930765,
+      "sol_score": 0.7260957241270538,
+      "sol_score_cal": 0.6860027466167855,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.924558,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5237965,
+      "sol_score": 0.7466929334634641,
+      "sol_score_cal": 0.7083061063970433,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.101006,
+      "sol_ms": 0.1934,
+      "baseline_latency_ms": 4.26468,
+      "sol_score": 0.8177090216566517,
+      "sol_score_cal": 0.7847377535330942,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.812654,
+      "sol_ms": 0.0943,
+      "baseline_latency_ms": 1.011282,
+      "sol_score": 0.5607300273460623,
+      "sol_score_cal": 0.5123547927563522,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.9515825,
+      "sol_ms": 0.1156,
+      "baseline_latency_ms": 2.8358295,
+      "sol_score": 0.7649233229065084,
+      "sol_score_cal": 0.7279155134254395,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nfp16 for precision-critical GEMMs (G2/G3/G5), bf16 for safe GEMMs (G1/G4/G6).\nfp16 has the same 10-bit mantissa as TF32 (equal rounding precision, proven\ncorrect for all 16 shapes) but runs at 2.25 PFLOPS vs TF32's 1.1 PFLOPS \u2014 a\nclean 2x throughput win on the 3 GEMMs that correctness requires precision on.\n\nThe elementwise gating/SiLU' chain stays in fp32 (as in the reference) to\npreserve the exact sigmoid/silu_grad computation.  G4/G6 dgrads stay bf16\n(fp32-accum) \u2014 proven safe in the 0.720 frontier since they feed only the\nper-token grad_hidden_states output whose error is N-independent.\n\"\"\"\n\nimport torch\n\n# Keep TF32 enabled for safety (no fp32 matmuls used, but doesn't hurt)\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # ---- gather ----\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # ---- grad_routing_weights ----\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights.index_copy_(0, token_indices, grad_sel_w.to(torch.bfloat16))\n\n    # ---- geo for G1 (bf16) and G2 (fp16) ----\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # G1: grad_w2_weight = geo^T @ gated_output \u2014 bf16 is sufficient (does not\n    # flow through grad_gated, so its 7-bit mantissa output is safe).\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # G2: grad_gated = geo @ w2_weight \u2014 fp16 (10-bit mantissa = TF32 precision,\n    # 2.25 PFLOPS = 2x TF32 throughput).  This is the key fix for the downstream\n    # G3/G5 wgrads: fp16 grad_gated keeps full 10-bit precision.\n    geo_f16 = gwo.to(torch.float16) * selected_weights.to(torch.float16).unsqueeze(-1)\n    w2_f16 = w2_weight.to(torch.float16)\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)  # (N, F) fp16\n\n    # ---- gating backward + SiLU' (fp32, matching reference) ----\n    grad_gated_f32 = grad_gated_f16.float()\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1_f32)\n    silu_grad = sig * (1.0 + w1_f32 * (1.0 - sig))\n\n    grad_up_f32 = grad_gated_f32 * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = grad_gated_f32 * up_f32 * silu_grad\n\n    # ---- G3/G5 wgrads \u2014 fp16 (10-bit mantissa, 2.25 PFLOPS) ----\n    # Pre-cast selected_tokens to fp16 once, reused for both wgrads.\n    selected_f16 = selected_tokens.to(torch.float16)\n\n    grad_w3_weight = torch.matmul(\n        grad_up_f32.to(torch.float16).transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f32.to(torch.float16).transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    # ---- G4/G6 dgrads \u2014 bf16/fp32-accum is safe for the per-token output ----\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n\n    # Fold the second dgrad and the gst_w1 + gst_w3 accumulation into cuBLAS\n    # beta=1, avoiding a separate full (N,H) add kernel.\n    grad_selected_tokens = torch.addmm(gst_w3, grad_w1o, w1_weight)\n\n    # ---- scatter back to full hidden-states gradient ----\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states.index_copy_(0, token_indices, grad_selected_tokens)\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t9_76357c60f2ad",
+    "definition": "009_expert_token_scatter_with_weighted_forward_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 \u2014 expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nfp16 for precision-critical GEMMs (G2/G3/G5), bf16 for safe GEMMs (G1/G4/G6).\nfp16 has the same 10-bit mantissa as TF32 (equal rounding precision, proven\ncorrect for all 16 shapes) but runs at 2.25 PFLOPS vs TF32's 1.1 PFLOPS \u2014 a\nclean 2x throughput win on the 3 GEMMs that correctness requires precision on.\n\nThe elementwise gating/SiLU' chain stays in fp32 (as in the reference) to\npreserve the exact sigmoid/silu_grad computation.  G4/G6 dgrads stay bf16\n(fp32-accum) \u2014 proven safe in the 0.720 frontier since they feed only the\nper-token grad_hidden_states output whose error is N-independent.\n\"\"\"\n\nimport torch\n\n# Keep TF32 enabled for safety (no fp32 matmuls used, but doesn't hurt)\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    device = grad_output.device\n\n    # ---- gather ----\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # ---- grad_routing_weights ----\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights.index_copy_(0, token_indices, grad_sel_w.to(torch.bfloat16))\n\n    # ---- geo for G1 (bf16) and G2 (fp16) ----\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # G1: grad_w2_weight = geo^T @ gated_output \u2014 bf16 is sufficient (does not\n    # flow through grad_gated, so its 7-bit mantissa output is safe).\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # G2: grad_gated = geo @ w2_weight \u2014 fp16 (10-bit mantissa = TF32 precision,\n    # 2.25 PFLOPS = 2x TF32 throughput).  This is the key fix for the downstream\n    # G3/G5 wgrads: fp16 grad_gated keeps full 10-bit precision.\n    geo_f16 = gwo.to(torch.float16) * selected_weights.to(torch.float16).unsqueeze(-1)\n    w2_f16 = w2_weight.to(torch.float16)\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)  # (N, F) fp16\n\n    # ---- gating backward + SiLU' (fp32, matching reference) ----\n    grad_gated_f32 = grad_gated_f16.float()\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1_f32)\n    silu_grad = sig * (1.0 + w1_f32 * (1.0 - sig))\n\n    grad_up_f32 = grad_gated_f32 * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = grad_gated_f32 * up_f32 * silu_grad\n\n    # ---- G3/G5 wgrads \u2014 fp16 (10-bit mantissa, 2.25 PFLOPS) ----\n    # Pre-cast selected_tokens to fp16 once, reused for both wgrads.\n    selected_f16 = selected_tokens.to(torch.float16)\n\n    grad_w3_weight = torch.matmul(\n        grad_up_f32.to(torch.float16).transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f32.to(torch.float16).transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    # ---- G4/G6 dgrads \u2014 bf16/fp32-accum is safe for the per-token output ----\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n\n    # Fold the second dgrad and the gst_w1 + gst_w3 accumulation into cuBLAS\n    # beta=1, avoiding a separate full (N,H) add kernel.\n    grad_selected_tokens = torch.addmm(gst_w3, grad_w1o, w1_weight)\n\n    # ---- scatter back to full hidden-states gradient ----\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states.index_copy_(0, token_indices, grad_selected_tokens)\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )"
+      }
+    ]
+  }
+}

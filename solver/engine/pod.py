@@ -16,11 +16,14 @@ from __future__ import annotations
 import asyncio
 import atexit
 import datetime
+import os
 import re
 import signal
 import time
 from dataclasses import dataclass
 from typing import Protocol
+
+from .gpu_guard import GpuWorkGuard
 
 
 # Custom-image SSH bootstrap (validated live, docs/gpu-execution.md §3b). The base
@@ -206,7 +209,9 @@ class PodSession:
     def __init__(self, provider: PodProvider, spec: PodSpec, *,
                  ready_timeout: float = 600.0, poll_s: float = 2.0,
                  arm_signals: bool = True, reuse: bool = False,
-                 terminate_on_signal: bool = True) -> None:
+                 terminate_on_signal: bool = True,
+                 gpu_guard: GpuWorkGuard | None = None,
+                 shutdown_grace_s: float = 180.0) -> None:
         self.provider = provider
         self.spec = spec
         self.ready_timeout = ready_timeout
@@ -214,6 +219,15 @@ class PodSession:
         self.arm_signals = arm_signals
         self.reuse = reuse
         self.terminate_on_signal = terminate_on_signal
+        # A signal used to just raise KeyboardInterrupt immediately, which could
+        # (and did, live, 2026-07-08) land in the gap between a GPU eval finishing
+        # and its accept+persist step being recorded — silently orphaning a
+        # candidate that already spent real GPU time. If given, a bounded wait for
+        # any in-flight eval-to-accept span (see GpuWorkGuard) now happens first —
+        # restarting already costs several minutes for new agent calls to spin up
+        # regardless, so this grace period is free.
+        self.gpu_guard = gpu_guard
+        self.shutdown_grace_s = shutdown_grace_s
         self.pod: PodHandle | None = None
         self.adopted = False
         self._terminated = False
@@ -268,9 +282,29 @@ class PodSession:
         `finally` never runs (hard crash / kill). No-op once terminated — and,
         when `reuse` is on, no-op on a CAUGHT signal specifically (a crash that
         doesn't go through this handler still terminates normally; only a
-        deliberate SIGINT/SIGTERM restart-in-place is spared)."""
+        deliberate SIGINT/SIGTERM restart-in-place is spared).
+
+        Primary path (the normal case — `solve_on_gpu` runs via `asyncio.run()`
+        on the main thread): `loop.add_signal_handler`, which lets the handler
+        itself be async — so it can wait (bounded, via `gpu_guard`) for any
+        in-flight GPU eval-to-accept span to finish before actually tearing
+        anything down, rather than interrupting mid-way (see GpuWorkGuard).
+        Falls back to the old immediate raw `signal.signal` handler when no
+        running loop is available (e.g. not the main thread) — atexit still
+        covers that case regardless."""
         atexit.register(self._terminate_sync)
+        loop: asyncio.AbstractEventLoop | None
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            loop = None
         for sig in (signal.SIGINT, signal.SIGTERM):
+            if loop is not None:
+                try:
+                    loop.add_signal_handler(sig, self._on_signal_async, sig)
+                    continue                             # async path armed — skip the raw fallback
+                except (NotImplementedError, RuntimeError, ValueError, OSError):
+                    pass                                 # e.g. unsupported platform — fall through
             try:
                 prev = signal.getsignal(sig)
 
@@ -284,6 +318,27 @@ class PodSession:
                 signal.signal(sig, handler)
             except (ValueError, OSError):
                 pass                                    # not the main thread — atexit still covers us
+
+    def _on_signal_async(self, sig: int) -> None:
+        """The async-integrated handler: never blocks, never interrupts
+        anything itself — just schedules the graceful wait+shutdown as a
+        background task. A repeat signal while that's already running is
+        ignored (the original wait keeps going; it's already bounded)."""
+        if self._signaled:
+            return
+        self._signaled = True
+        asyncio.ensure_future(self._graceful_shutdown(sig))
+
+    async def _graceful_shutdown(self, sig: int) -> None:
+        if self.gpu_guard is not None:
+            await self.gpu_guard.wait_idle(self.shutdown_grace_s)
+        self._terminate_sync()
+        # Hand off to Python's normal SIGINT disposition (raises
+        # KeyboardInterrupt in the running thread) so the process actually
+        # exits the way an unhandled Ctrl-C always has, instead of
+        # reimplementing task-cancellation semantics here.
+        signal.signal(signal.SIGINT, signal.default_int_handler)
+        os.kill(os.getpid(), signal.SIGINT)
 
     def _terminate_sync(self) -> None:
         if self._signaled and not self.terminate_on_signal:

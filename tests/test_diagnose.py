@@ -264,6 +264,46 @@ def test_failure_detail_is_actionable():
     assert _failure_detail(ok) == ""
 
 
+def test_failure_detail_includes_the_harness_diagnostic_not_just_the_status_code():
+    """Confirmed live (2026-07-08): the real harness reports an actual Triton/CUDA
+    traceback (trace.jsonl's `log`) or the measured error magnitude for a failed
+    workload — this was being parsed then discarded, so the next agent only ever
+    saw a bare 'RUNTIME_ERROR' with nothing to act on. Must surface a real
+    example, not just the status."""
+    from solver.engine.executor import EvalResult, WorkloadResult
+    from solver.engine.loop import _failure_detail
+
+    result = EvalResult(task_id=1, correct=False, sol_score=None, per_workload=[
+        WorkloadResult(index=0, correct=False, error="RUNTIME_ERROR",
+                       detail="User function failed: at 22:11: BLOCK_H undefined"),
+        WorkloadResult(index=1, correct=False, error="RUNTIME_ERROR",
+                       detail="User function failed: at 22:11: BLOCK_H undefined"),
+        WorkloadResult(index=2, correct=False, error="INCORRECT_NUMERICAL",
+                       detail="max_abs_error=0.4, max_rel_error=0.23"),
+        WorkloadResult(index=3, correct=True),
+    ])
+    detail = _failure_detail(result)
+    assert "User function failed: at 22:11: BLOCK_H undefined" in detail
+    assert "max_abs_error=0.4, max_rel_error=0.23" in detail
+
+
+def test_failure_detail_falls_back_to_the_compile_error_stderr_snippet():
+    """COMPILE_ERROR fails before any workload runs, so there's no per-workload
+    trace/log — the only diagnostic available is the SSH-captured stderr stored
+    on the EvalResult itself (asi.error, see ssh_exec.py)."""
+    from solver.engine.executor import EvalResult, WorkloadResult
+    from solver.engine.loop import _failure_detail
+
+    result = EvalResult(task_id=1, correct=False, sol_score=None,
+                        asi={"error": "nvcc: error: identifier \"foo\" is undefined"},
+                        per_workload=[
+                            WorkloadResult(index=0, correct=False, error="COMPILE_ERROR"),
+                            WorkloadResult(index=1, correct=False, error="COMPILE_ERROR"),
+                        ])
+    detail = _failure_detail(result)
+    assert 'nvcc: error: identifier "foo" is undefined' in detail
+
+
 def test_live_state_recency_fallback():
     import datetime as dt
     from solver.dashboard.metrics import _live_state

@@ -1,0 +1,201 @@
+{
+  "cand_id": "7fd7e1c36fee",
+  "task_id": 28,
+  "verdict": "dominated",
+  "sol_score": null,
+  "sol_score_calibrated": null,
+  "correct": false,
+  "vector": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "strategy": "Collapse the full causal mask from a [T,S] Toeplitz matrix to a length-(T+S-1) diagonal step vector written by one tiny ",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "4fd4dd8505c4",
+  "trajectory": "runs/28/work/7fd7e1c36fee/trajectory.jsonl",
+  "gpu_s": 4.956,
+  "job_id": "28-7fd7e1c36fee",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 33.0,
+      "power_w_max": 257.19,
+      "samples": 13,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006816,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 1,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 2,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0111365,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 3,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006768,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 4,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.064384,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 5,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.008224,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 6,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.00704,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 7,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0071195,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 8,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.014336,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 9,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0158395,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 10,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.006976,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    },
+    {
+      "index": 11,
+      "correct": false,
+      "latency_ms": null,
+      "sol_ms": 0.0004,
+      "baseline_latency_ms": 0.0211205,
+      "sol_score": null,
+      "sol_score_cal": null,
+      "error": "RUNTIME_ERROR"
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n# Per-shape CUDA-graph cache: key (T, S, past) -> (graph, diag_buf)\n# The full causal mask is constant along j-i diagonals (Toeplitz), so it\n# collapses to a length-(T+S-1) step function.  We build only that tiny vector\n# once per shape and reconstruct the [B, 64, T, S] result as a zero-copy view.\n_diag_graph_cache = {}\n\n# Single-element False buffer that backs every all-False SWA-mask view.  The SWA\n# branch in the reference is a provable no-op: masked_fill(_, False) on zeros\n# leaves the tensor unchanged, so the SWA output is universally all-False.\n_swa_false = None\n\n_CUDA = torch.device(\"cuda\")\n\n\n@triton.jit\ndef _diag_kernel(\n    diag_ptr,\n    N,\n    threshold,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Write the length-N diagonal step function for the full causal mask.\n\n    full[i, j] depends only on d = j - i.  Map d to k = (T - 1 - i) + j, i.e.\n    k runs from 0 to T + S - 2.  Then full[i, j] = (k > past + T - 1),\n    so every row is just a shifted slice of this one 1-D vector.\n    \"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < N\n    val = offs > threshold\n    # torch.bool is 1 byte/element; tl.int8 {0,1} is bitwise identical.\n    tl.store(diag_ptr + offs, val.to(tl.int8), mask=mask)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation.\n\n    The full causal mask is a shifted upper-triangle, which is Toeplitz and\n    therefore fully described by a length-(T + S - 1) step vector.  We write\n    only that vector via a tiny Triton kernel (captured in a per-shape CUDA\n    graph) and return the requested [B, 64, T, S] tensor as a strided view.\n    The sliding-window mask is a provable all-False tensor.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n    N = T + S - 1\n\n    device = _CUDA\n    key = (T, S, past)\n\n    cached = _diag_graph_cache.get(key)\n    if cached is None:\n        threshold = past + T - 1\n        BLOCK = 1024\n        diag_buf = torch.empty((N,), dtype=torch.bool, device=device)\n        grid = ((N + BLOCK - 1) // BLOCK,)\n\n        # Warm-up the Triton kernel and ensure the stream is idle before capture.\n        _diag_kernel[grid](diag_buf, N, threshold, BLOCK=BLOCK, num_warps=4)\n        torch.cuda.synchronize()\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            _diag_kernel[grid](diag_buf, N, threshold, BLOCK=BLOCK, num_warps=4)\n        torch.cuda.synchronize()\n\n        _diag_graph_cache[key] = (graph, diag_buf)\n        cached = (graph, diag_buf)\n    else:\n        graph, diag_buf = cached\n        graph.replay()\n\n    global _swa_false\n    if _swa_false is None:\n        _swa_false = torch.tensor([False], dtype=torch.bool, device=device)\n\n    # Reconstruct the 4-D full mask as a Toeplitz view of the 1-D diagonal.\n    # storage_offset = T - 1 centers row 0 at k = T - 1 + j.\n    full_attention_mask = torch.as_strided(\n        diag_buf,\n        (B, _NUM_FULL_HEADS, T, S),\n        (0, 0, -1, 1),\n        storage_offset=T - 1,\n    )\n\n    # All-False SWA view.\n    sliding_window_attention_mask = torch.as_strided(\n        _swa_false,\n        (B, _NUM_SWA_HEADS, T, S),\n        (0, 0, 0, 0),\n        storage_offset=0,\n    )\n\n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t28_7fd7e1c36fee",
+    "definition": "028_hybrid_attention_mask_preparation",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n_NUM_FULL_HEADS = 64\n_NUM_SWA_HEADS = 64\n\n# Per-shape CUDA-graph cache: key (T, S, past) -> (graph, diag_buf)\n# The full causal mask is constant along j-i diagonals (Toeplitz), so it\n# collapses to a length-(T+S-1) step function.  We build only that tiny vector\n# once per shape and reconstruct the [B, 64, T, S] result as a zero-copy view.\n_diag_graph_cache = {}\n\n# Single-element False buffer that backs every all-False SWA-mask view.  The SWA\n# branch in the reference is a provable no-op: masked_fill(_, False) on zeros\n# leaves the tensor unchanged, so the SWA output is universally all-False.\n_swa_false = None\n\n_CUDA = torch.device(\"cuda\")\n\n\n@triton.jit\ndef _diag_kernel(\n    diag_ptr,\n    N,\n    threshold,\n    BLOCK: tl.constexpr,\n):\n    \"\"\"Write the length-N diagonal step function for the full causal mask.\n\n    full[i, j] depends only on d = j - i.  Map d to k = (T - 1 - i) + j, i.e.\n    k runs from 0 to T + S - 2.  Then full[i, j] = (k > past + T - 1),\n    so every row is just a shifted slice of this one 1-D vector.\n    \"\"\"\n    pid = tl.program_id(0)\n    offs = pid * BLOCK + tl.arange(0, BLOCK)\n    mask = offs < N\n    val = offs > threshold\n    # torch.bool is 1 byte/element; tl.int8 {0,1} is bitwise identical.\n    tl.store(diag_ptr + offs, val.to(tl.int8), mask=mask)\n\n\n@torch.no_grad()\ndef run(\n    batch_size_scalar: int,\n    seq_length_scalar: int,\n    past_key_values_length_scalar: int,\n):\n    \"\"\"Hybrid attention mask preparation.\n\n    The full causal mask is a shifted upper-triangle, which is Toeplitz and\n    therefore fully described by a length-(T + S - 1) step vector.  We write\n    only that vector via a tiny Triton kernel (captured in a per-shape CUDA\n    graph) and return the requested [B, 64, T, S] tensor as a strided view.\n    The sliding-window mask is a provable all-False tensor.\n    \"\"\"\n    B = int(batch_size_scalar)\n    T = int(seq_length_scalar)\n    past = int(past_key_values_length_scalar)\n    S = T + past\n    N = T + S - 1\n\n    device = _CUDA\n    key = (T, S, past)\n\n    cached = _diag_graph_cache.get(key)\n    if cached is None:\n        threshold = past + T - 1\n        BLOCK = 1024\n        diag_buf = torch.empty((N,), dtype=torch.bool, device=device)\n        grid = ((N + BLOCK - 1) // BLOCK,)\n\n        # Warm-up the Triton kernel and ensure the stream is idle before capture.\n        _diag_kernel[grid](diag_buf, N, threshold, BLOCK=BLOCK, num_warps=4)\n        torch.cuda.synchronize()\n\n        graph = torch.cuda.CUDAGraph()\n        with torch.cuda.graph(graph):\n            _diag_kernel[grid](diag_buf, N, threshold, BLOCK=BLOCK, num_warps=4)\n        torch.cuda.synchronize()\n\n        _diag_graph_cache[key] = (graph, diag_buf)\n        cached = (graph, diag_buf)\n    else:\n        graph, diag_buf = cached\n        graph.replay()\n\n    global _swa_false\n    if _swa_false is None:\n        _swa_false = torch.tensor([False], dtype=torch.bool, device=device)\n\n    # Reconstruct the 4-D full mask as a Toeplitz view of the 1-D diagonal.\n    # storage_offset = T - 1 centers row 0 at k = T - 1 + j.\n    full_attention_mask = torch.as_strided(\n        diag_buf,\n        (B, _NUM_FULL_HEADS, T, S),\n        (0, 0, -1, 1),\n        storage_offset=T - 1,\n    )\n\n    # All-False SWA view.\n    sliding_window_attention_mask = torch.as_strided(\n        _swa_false,\n        (B, _NUM_SWA_HEADS, T, S),\n        (0, 0, 0, 0),\n        storage_offset=0,\n    )\n\n    return full_attention_mask, sliding_window_attention_mask\n"
+      }
+    ]
+  }
+}

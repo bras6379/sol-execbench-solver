@@ -20,3 +20,17 @@ If this only ties or barely beats 0.848, the next lever is to add `tl.multiple_o
 ## 5. from `4847a63a` — Single-launch vectorized Triton fusion for RMSNorm+RoPE+KV-cache update, with stable prefill tiling and a 32-head S=1 di
 I did not ship a true decode megakernel that processes all Q/KV work for one batch in one persistent program; try that if workloads 0 and 2 still lag after this 32-head S=1 dispatch. For prefill regressions, revert the decode-only branch first, then consider a two-stage sin/cos precompute only if profiling shows SFU range reduction dominating despite cold-L2 traffic.
 
+## 6. from `d78ff529` — Same single-launch fused Triton kernel (RMSNorm+RoPE+KV-cache scatter, unit-stride vectorized LDG/STG) as the 0.865 fron
+This round is a narrow, low-risk probe, not a new ceiling: HEAD_BLOCK=8 for the
+two seq_len==1 shapes only removes the KV program's 50%-masked-lane waste and
+doubles program count (still << 148 SMs, one wave either way), so the expected
+win is small and may be a no-op if decode latency is dominated by fixed kernel
+prologue/CPU-dispatch cost rather than SM occupancy -- I did not touch the 11
+already-tuned prefill shapes at all, so there is no regression risk there.
+
+The one lever CONTEXT.md flags as genuinely untried is CUDA-graph capture
+across the (likely-static-address) repeat calls the grad
+
+## 7. from `bf010c0b` — Single-launch vectorized Triton fusion for RMSNorm+RoPE+KV-cache update, preserving HEAD_BLOCK=16 for prefill and using
+If this decode-only slice ties or regresses, try a real S=1 decode megakernel: one program per batch computes all 96 Q heads plus 8 KV heads with vectorized head_dim lanes, then writes K/V cache once. Trigger it only when workloads 0 and 2 remain the loss source; otherwise keep the current prefill path because it is already bandwidth-ceiling limited.
+

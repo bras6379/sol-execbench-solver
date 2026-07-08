@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 
 from solver import scoring
-from solver.engine.harness import map_traces_to_result, pod_harness
+from solver.engine.harness import map_traces_to_result, pod_harness, traces_from_jsonl
 
 ROOT = Path("problems")
 N230 = len(json.loads((ROOT / "230" / "metadata.json").read_text())["sol"]["per_workload"])
@@ -55,6 +55,45 @@ def test_compile_error_is_frontier_safe():
     assert not r.correct and r.sol_score is None
     assert len(r.vector()) == N230 and all(v == 0.0 for v in r.vector())  # full-length zeros
     assert r.asi["solution_status"] == "COMPILE_ERROR"
+
+
+def test_traces_from_jsonl_extracts_the_harness_log_field():
+    """The real harness's trace line carries a `log` field with the actual
+    Triton/CUDA error (confirmed live, 2026-07-08 — e.g. "User function failed:
+    at 22:11: ..." or "Timing failed: No kernel activities recorded for
+    iteration 0") — this must survive parsing, not just the bare status."""
+    line = json.dumps({"evaluation": {"status": "RUNTIME_ERROR",
+                       "log": "User function failed: at 22:11: BLOCK_H undefined",
+                       "performance": None, "correctness": None}})
+    rows = traces_from_jsonl(line)
+    assert rows[0]["log"] == "User function failed: at 22:11: BLOCK_H undefined"
+
+
+def test_a_failed_workload_carries_the_harness_log_as_its_detail():
+    line = json.dumps({"evaluation": {"status": "RUNTIME_ERROR",
+                       "log": "User function failed: at 22:11: BLOCK_H undefined",
+                       "performance": None, "correctness": None}})
+    traces = traces_from_jsonl(line)
+    r = map_traces_to_result(230, traces, problems_dir=ROOT)
+    assert r.per_workload[0].error == "RUNTIME_ERROR"
+    assert r.per_workload[0].detail == "User function failed: at 22:11: BLOCK_H undefined"
+
+
+def test_a_numerically_failed_workload_carries_the_error_magnitude_as_its_detail():
+    """No `log` for a tolerance failure (the kernel ran fine, the answer was just
+    wrong) — the measured error magnitude is the useful diagnostic instead."""
+    line = json.dumps({"evaluation": {"status": "INCORRECT_NUMERICAL", "log": "",
+                       "performance": {"latency_ms": 0.01},
+                       "correctness": {"max_absolute_error": 0.4, "max_relative_error": 0.23}}})
+    traces = traces_from_jsonl(line)
+    r = map_traces_to_result(230, traces, problems_dir=ROOT)
+    assert r.per_workload[0].detail == "max_abs_error=0.4, max_rel_error=0.23"
+
+
+def test_a_passed_workload_has_no_detail():
+    traces = _traces()
+    r = map_traces_to_result(230, traces, problems_dir=ROOT)
+    assert all(w.detail is None for w in r.per_workload)
 
 
 def test_pod_harness_materializes_and_drives(tmp_path):

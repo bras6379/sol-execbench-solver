@@ -1,0 +1,245 @@
+{
+  "cand_id": "47d36b18e3d2",
+  "task_id": 6,
+  "verdict": "entered",
+  "sol_score": 0.7674531353500778,
+  "sol_score_calibrated": 0.7297418562006075,
+  "correct": true,
+  "vector": [
+    0.8904038660683466,
+    0.6621892972024563,
+    0.6843905472636815,
+    0.9052148631161454,
+    0.6369112239537734,
+    0.6552333804809052,
+    0.6655119322555813,
+    0.9098411817740482,
+    0.6544866476692036,
+    0.8976005336780003,
+    0.6634665282823019,
+    0.6652073055183455,
+    0.6672765290120231,
+    0.9059213089209194,
+    0.9093330883703841,
+    0.906261932035128
+  ],
+  "strategy": "2D persistent grid-stride over (B,channel) pairs with inner time-tile loop \u2014 each CTA stays on the same (B,C) pair for a",
+  "agent": "openrouter",
+  "model": "deepseek/deepseek-v4-pro",
+  "parent": "bdcc783fef35",
+  "trajectory": "runs/6/work/47d36b18e3d2/trajectory.jsonl",
+  "gpu_s": 49.619,
+  "job_id": "6-47d36b18e3d2",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 43.0,
+      "power_w_max": 636.98,
+      "samples": 173,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.00304,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.021136,
+      "sol_score": 0.8904038660683466,
+      "sol_score_cal": 0.8687525259329112,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.011264,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.0195835,
+      "sol_score": 0.6621892972024563,
+      "sol_score_cal": 0.6111885635566291,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.01072,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.020208,
+      "sol_score": 0.6843905472636815,
+      "sol_score_cal": 0.6341842909007087,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.00352,
+      "sol_ms": 0.0007,
+      "baseline_latency_ms": 0.0276315,
+      "sol_score": 0.9052148631161454,
+      "sol_score_cal": 0.8853134255743698,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.020352,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.0320805,
+      "sol_score": 0.6369112239537734,
+      "sol_score_cal": 0.5841726378380183,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.0104,
+      "sol_ms": 0.0026,
+      "baseline_latency_ms": 0.017424,
+      "sol_score": 0.6552333804809052,
+      "sol_score_cal": 0.6026016260162602,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.018704,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.032464,
+      "sol_score": 0.6655119322555813,
+      "sol_score_cal": 0.6130966522582453,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.0048,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.040257,
+      "sol_score": 0.9098411817740482,
+      "sol_score_cal": 0.8910548121986008,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.019168,
+      "sol_ms": 0.0048,
+      "baseline_latency_ms": 0.0320165,
+      "sol_score": 0.6544866476692036,
+      "sol_score_cal": 0.6017832054803365,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.003056,
+      "sol_ms": 0.0006,
+      "baseline_latency_ms": 0.0221285,
+      "sol_score": 0.8976005336780003,
+      "sol_score_cal": 0.8763841769271415,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.006688,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.0117279999999999,
+      "sol_score": 0.6634665282823019,
+      "sol_score_cal": 0.6129425075748834,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.0066235,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.01168,
+      "sol_score": 0.6652073055183455,
+      "sol_score_cal": 0.6146613641557629,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.006592,
+      "sol_ms": 0.0015,
+      "baseline_latency_ms": 0.011712,
+      "sol_score": 0.6672765290120231,
+      "sol_score_cal": 0.6167977734397649,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.002432,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.019104,
+      "sol_score": 0.9059213089209194,
+      "sol_score_cal": 0.8859857663176823,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.004848,
+      "sol_ms": 0.0009,
+      "baseline_latency_ms": 0.040496,
+      "sol_score": 0.9093330883703841,
+      "sol_score_cal": 0.8904957413811094,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.002464,
+      "sol_ms": 0.0005,
+      "baseline_latency_ms": 0.019488,
+      "sol_score": 0.906261932035128,
+      "sol_score_cal": 0.8864546296572948,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Fused Hyena short-filter: depthwise causal conv1d (k=3, causal lookback 2)\n# + channel split (768 -> 3x256) + first gate (v_gated = v * x0).\n#\n# Semantics (from reference): F.conv1d(padding=2) then truncate to seq_len is a\n# CAUSAL conv with lookback 2:\n#     uc[c, t] = bias[c] + w[c,0]*u[c,t-2] + w[c,1]*u[c,t-1] + w[c,2]*u[c,t]\n# (u<0 -> 0). For output channel c in [0, d_model):\n#     x0[c] = conv(row c),  x1[c] = conv(row c+d),  v[c] = conv(row c+2d)\n#     v_gated[c] = v[c] * x0[c]\n# Each output element for channel c reads exactly the 3 input rows {c,c+d,c+2d}.\n# HBM traffic floor = read u once + write 3 outputs once (= 2x u bytes).\n# All fp32 (tolerance atol=rtol=1e-5 -> no TF32/bf16 downcast anywhere).\n#\n# THIS ROUND \u2014 2D PERSISTENT GRID (COACH-DIRECTED FIX):\n#   The 0.730 frontier's 1D grid-stride jumps across different (B,C) pairs each\n#   iteration, so each element of `u` is read from HBM up to 3\u00d7 \u2014 once as center,\n#   twice as lookback by other CTAs. Effective HBM traffic ~3\u00d7 the byte floor.\n#\n#   Fix: 2D persistent grid over (B, C) pairs with an inner time-tile loop.\n#   Each CTA stays on the same (B,C) pair for all time tiles, so the previous\n#   tile's center load stays in L1 and lookback loads become L1 hits (~21 TB/s)\n#   not HBM reads. The center load and all 3 stores stay vectorized (contiguous,\n#   aligned). The mask on lookback loads is cheap (predicated on a single L1\n#   cache line).\n#\n#   Grid: (min(B * DM, NUM_SM * PROG_MULT),) \u2014 bounded by PROG_MULT to avoid\n#   too many waves for the large-B shapes. Each CTA grid-strides over (B,C)\n#   pairs, and for each pair runs an inner sequential loop over time tiles.\n# ---------------------------------------------------------------------------\n\nNUM_SM = 148  # B200\n\n\n@triton.jit\ndef _hyena_body(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    pid_b, pid_c, tb, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n):\n    \"\"\"Compute one (batch, channel, time-tile) tile.\n\n    Time stride is a compile-time 1 (u + all outputs are contiguous), so the\n    center load a_t and all 3 stores are contiguous & 16-B aligned -> vectorized\n    (LDG/STG.E.128) whenever the tile is fully in-bounds (S % BLOCK_T == 0).\n    \"\"\"\n    offs_t = tb * BLOCK_T + tl.arange(0, BLOCK_T)\n    offs_t = tl.max_contiguous(tl.multiple_of(offs_t, BLOCK_T), BLOCK_T)\n\n    c0 = pid_c\n    c1 = pid_c + DM\n    c2 = pid_c + 2 * DM\n    ub = pid_b * stride_ub\n    base0 = ub + c0 * stride_uc\n    base1 = ub + c1 * stride_uc\n    base2 = ub + c2 * stride_uc\n\n    # Per-channel filter taps + bias (3 scalars each; L1-resident).\n    w00 = tl.load(w_ptr + c0 * stride_wc + 0 * stride_wk)\n    w01 = tl.load(w_ptr + c0 * stride_wc + 1 * stride_wk)\n    w02 = tl.load(w_ptr + c0 * stride_wc + 2 * stride_wk)\n    b0 = tl.load(b_ptr + c0)\n    w10 = tl.load(w_ptr + c1 * stride_wc + 0 * stride_wk)\n    w11 = tl.load(w_ptr + c1 * stride_wc + 1 * stride_wk)\n    w12 = tl.load(w_ptr + c1 * stride_wc + 2 * stride_wk)\n    b1 = tl.load(b_ptr + c1)\n    w20 = tl.load(w_ptr + c2 * stride_wc + 0 * stride_wk)\n    w21 = tl.load(w_ptr + c2 * stride_wc + 1 * stride_wk)\n    w22 = tl.load(w_ptr + c2 * stride_wc + 2 * stride_wk)\n    b2 = tl.load(b_ptr + c2)\n\n    out_row = pid_b * stride_ob + pid_c * stride_oc\n\n    if (S % BLOCK_T) == 0:\n        # EXACT: every tile fully in-bounds (offs_t in [0, S)). The center load\n        # a_t and the 3 stores -- the whole unique HBM stream -- are unmasked\n        # and contiguous -> vectorized.\n        #\n        # Lookback loads (a_{t-1}, a_{t-2}) split on the causal-boundary tile:\n        #   * tb == 0: offs_t-1/-2 go negative for the first 1-2 lanes -> keep\n        #     the cheap `>=0` mask (this tile is rare -- one per (batch,\n        #     channel), the rest of the grid is interior).\n        #   * tb > 0: tm1 = tb*BLOCK_T-1 >= BLOCK_T-1 >= 127 >= 0 and\n        #     tm2 = tb*BLOCK_T-2 >= BLOCK_T-2 >= 126 >= 0 for every BLOCK_T in\n        #     the autotune space (>=128) -> ALWAYS in-bounds. A mask that is\n        #     true for all-but-a-few lanes is still non-uniform, which forces\n        #     Triton to fall back to per-lane predicated scalar loads for the\n        #     WHOLE tile; dropping the mask entirely on interior tiles lets\n        #     these loads vectorize (LDG.E.128) exactly like the center load.\n        #     `tb` is a uniform (CTA-wide) scalar, so this is a uniform branch\n        #     (no warp divergence), the same pattern already used above for\n        #     the `(S % BLOCK_T) == 0` compile-time/runtime split.\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n\n        a_t = tl.load(u_ptr + base0 + offs_t)\n        e_t = tl.load(u_ptr + base1 + offs_t)\n        g_t = tl.load(u_ptr + base2 + offs_t)\n\n        if tb == 0:\n            m1 = tm1 >= 0\n            m2 = tm2 >= 0\n            a_1 = tl.load(u_ptr + base0 + tm1, mask=m1, other=0.0)\n            a_2 = tl.load(u_ptr + base0 + tm2, mask=m2, other=0.0)\n            e_1 = tl.load(u_ptr + base1 + tm1, mask=m1, other=0.0)\n            e_2 = tl.load(u_ptr + base1 + tm2, mask=m2, other=0.0)\n            g_1 = tl.load(u_ptr + base2 + tm1, mask=m1, other=0.0)\n            g_2 = tl.load(u_ptr + base2 + tm2, mask=m2, other=0.0)\n        else:\n            a_1 = tl.load(u_ptr + base0 + tm1)\n            a_2 = tl.load(u_ptr + base0 + tm2)\n            e_1 = tl.load(u_ptr + base1 + tm1)\n            e_2 = tl.load(u_ptr + base1 + tm2)\n            g_1 = tl.load(u_ptr + base2 + tm1)\n            g_2 = tl.load(u_ptr + base2 + tm2)\n\n        x0 = b0 + w00 * a_2 + w01 * a_1 + w02 * a_t\n        x1 = b1 + w10 * e_2 + w11 * e_1 + w12 * e_t\n        v = b2 + w20 * g_2 + w21 * g_1 + w22 * g_t\n\n        vg = v * x0\n\n        op = out_row + offs_t\n        tl.store(x0_ptr + op, x0)\n        tl.store(x1_ptr + op, x1)\n        tl.store(vg_ptr + op, vg)\n    else:\n        # GENERAL (S % BLOCK_T != 0, e.g. S=293): fully masked, always correct.\n        mask0 = offs_t < S\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n        m1 = (tm1 >= 0) & (tm1 < S)\n        m2 = (tm2 >= 0) & (tm2 < S)\n\n        a_t = tl.load(u_ptr + base0 + offs_t, mask=mask0, other=0.0)\n        a_1 = tl.load(u_ptr + base0 + tm1, mask=m1, other=0.0)\n        a_2 = tl.load(u_ptr + base0 + tm2, mask=m2, other=0.0)\n        x0 = b0 + w00 * a_2 + w01 * a_1 + w02 * a_t\n\n        e_t = tl.load(u_ptr + base1 + offs_t, mask=mask0, other=0.0)\n        e_1 = tl.load(u_ptr + base1 + tm1, mask=m1, other=0.0)\n        e_2 = tl.load(u_ptr + base1 + tm2, mask=m2, other=0.0)\n        x1 = b1 + w10 * e_2 + w11 * e_1 + w12 * e_t\n\n        g_t = tl.load(u_ptr + base2 + offs_t, mask=mask0, other=0.0)\n        g_1 = tl.load(u_ptr + base2 + tm1, mask=m1, other=0.0)\n        g_2 = tl.load(u_ptr + base2 + tm2, mask=m2, other=0.0)\n        v = b2 + w20 * g_2 + w21 * g_1 + w22 * g_t\n\n        vg = v * x0\n\n        op = out_row + offs_t\n        tl.store(x0_ptr + op, x0, mask=mask0)\n        tl.store(x1_ptr + op, x1, mask=mask0)\n        tl.store(vg_ptr + op, vg, mask=mask0)\n\n\n# ------------------------- simple kernel (launch-bound) --------------------\ndef _simple_configs():\n    # (BLOCK_T, num_warps); elements/thread = BLOCK_T / (32 * num_warps).\n    space = [\n        (128, 1), (128, 2),\n        (256, 1), (256, 2), (256, 4),\n        (512, 1), (512, 2), (512, 4),\n        (1024, 2), (1024, 4), (1024, 8),\n        (2048, 4),\n    ]\n    return [triton.Config({\"BLOCK_T\": bt}, num_warps=nw) for (bt, nw) in space]\n\n\n@triton.autotune(configs=_simple_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_simple_kernel(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    B, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n):\n    pid_b = tl.program_id(0)\n    pid_c = tl.program_id(1)\n    pid_t = tl.program_id(2)\n    _hyena_body(\n        u_ptr, w_ptr, b_ptr,\n        x0_ptr, x1_ptr, vg_ptr,\n        pid_b, pid_c, pid_t, S,\n        stride_ub, stride_uc,\n        stride_wc, stride_wk,\n        stride_ob, stride_oc,\n        DM, BLOCK_T,\n    )\n\n\n# --------------------- persistent kernel (memory-bound) --------------------\ndef _persistent_configs():\n    # (BLOCK_T, PROG_MULT, num_warps, num_stages).\n    #   2D grid = min(B * DM, NUM_SM * PROG_MULT) \u2014 each CTA grid-strides over\n    #   (B, C) pairs and runs an inner sequential loop over all time tiles for\n    #   that pair. With CTA affinity, the previous tile's center load stays in\n    #   L1, so lookback loads (tm1, tm2) become L1 cache hits.\n    #   Larger PROG_MULT = more CTAs, shorter inner loop (less L1 reuse per CTA\n    #   but better wave-fill for large-B shapes). Smaller PROG_MULT = fewer CTAs,\n    #   longer inner loop (more L1 reuse). The autotuner picks the sweet spot.\n    space = [\n        (256, 64, 2, 2),   # near-degenerate safety (~simple 256/2)\n        (512, 64, 2, 2),   # near-degenerate safety (~simple 512/2)\n        (128, 64, 1, 2),   # near-degenerate safety, short-S\n        (256, 32, 2, 3),   # persistent, high MLP, pipelined\n        (256, 16, 4, 3),   # persistent, high occupancy\n        (512, 32, 2, 3),   # persistent, high MLP, pipelined\n        (512, 16, 4, 3),   # persistent\n        (512, 8, 2, 4),    # persistent, few waves, deep prefetch\n        (1024, 8, 4, 3),   # big tile, pipelined (favors wide vector stores)\n        (1024, 16, 4, 2),  # big tile\n        (1024, 8, 2, 4),   # big tile, deep prefetch, 2 warps -> more elems/thread\n        (128, 32, 1, 3),   # short-S persistent, pipelined\n        (256, 8, 4, 4),    # deep prefetch, high occupancy\n        (2048, 8, 8, 2),   # very big tile, wide MLP\n        (2048, 4, 4, 4),   # very big tile, few waves, deep prefetch\n        (1024, 4, 4, 5),   # deepest prefetch, few waves\n    ]\n    return [\n        triton.Config({\"BLOCK_T\": bt, \"PROG_MULT\": pm}, num_warps=nw, num_stages=ns)\n        for (bt, pm, nw, ns) in space\n    ]\n\n\n@triton.autotune(configs=_persistent_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_persistent_kernel(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    B, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    PROG_MULT: tl.constexpr,  # used only by the grid lambda; unused inside.\n):\n    \"\"\"2D persistent grid: grid-strides over (B, C) pairs, inner loop over time\n    tiles. Each CTA stays on the same (B,C) pair for all time tiles, so the\n    previous tile's center load is L1-resident -> lookback loads hit L1 cache\n    (was 3\u00d7 HBM reads in the 1D grid-stride).\"\"\"\n    pid = tl.program_id(0)\n    n_prog = tl.num_programs(0)\n\n    n_bc = B * DM                     # total (batch, channel) pairs\n    tiles_per_bc = tl.cdiv(S, BLOCK_T)  # time tiles per (batch, channel) pair\n\n    # Outer: grid-stride over (B, C) pairs.\n    for bc in range(pid, n_bc, n_prog):\n        pid_c = bc % DM\n        pid_b = bc // DM\n        # Inner: sequential time-tile loop \u2014 L1 cache is warm across iterations.\n        for tb in range(tiles_per_bc):\n            _hyena_body(\n                u_ptr, w_ptr, b_ptr,\n                x0_ptr, x1_ptr, vg_ptr,\n                pid_b, pid_c, tb, S,\n                stride_ub, stride_uc,\n                stride_wc, stride_wk,\n                stride_ob, stride_oc,\n                DM, BLOCK_T,\n            )\n\n\n@torch.no_grad()\ndef run(u: torch.Tensor, short_filter_weight: torch.Tensor, short_filter_bias: torch.Tensor):\n    \"\"\"\n    Depthwise causal conv1d (k=3) + split (768 -> 3x256) + gate (v_gated = v*x0),\n    fused into a single Triton kernel. Returns (v_gated, x0, x1).\n\n    Two code paths, split on the launch-bound / memory-bound boundary (B*S):\n      * B*S <  4096  -> straight-line fused kernel (launch-bound, near-ceiling).\n      * B*S >= 4096  -> 2D persistent kernel: grid-strides over (B,C) pairs,\n                        inner loop over time tiles. CTA affinity keeps lookback\n                        loads in L1 cache, eliminating the 3\u00d7 redundant HBM\n                        reads of the 1D grid-stride frontier.\n    \"\"\"\n    batch_size, inner_width, seq_len = u.shape\n    d_model = inner_width // 3  # (order+1) = 3 components\n\n    # CPU / non-CUDA safety fallback: match the reference exactly.\n    if not u.is_cuda:\n        import torch.nn.functional as F\n        uc = F.conv1d(u, short_filter_weight, bias=short_filter_bias,\n                      padding=2, groups=inner_width)[..., :seq_len]\n        x0 = uc[:, :d_model, :]\n        x1 = uc[:, d_model:2 * d_model, :]\n        v = uc[:, 2 * d_model:3 * d_model, :]\n        return v * x0, x0, x1\n\n    u = u.contiguous()\n    w = short_filter_weight.contiguous()\n    b = short_filter_bias.contiguous()\n\n    # Contiguous outputs => time-axis stride == 1 (exploited by the kernel: the\n    # kernel drops the runtime time-stride multiply so contiguity is a compile\n    # constant and vector loads/stores can be emitted).\n    x0 = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n    x1 = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n    vg = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n\n    strides = (\n        u.stride(0), u.stride(1),   # stride_ub, stride_uc   (time stride == 1)\n        w.stride(0), w.stride(2),   # stride_wc, stride_wk\n        x0.stride(0), x0.stride(1),  # stride_ob, stride_oc   (time stride == 1)\n    )\n\n    if batch_size * seq_len >= 4096:\n        # Memory-bound: 2D persistent grid \u2014 CTA pinned to (B,C) pair, inner\n        # time-tile loop keeps lookback loads in L1.\n        def grid(meta):\n            n_bc = batch_size * d_model\n            return (min(n_bc, NUM_SM * meta[\"PROG_MULT\"]),)\n\n        _hyena_persistent_kernel[grid](\n            u, w, b,\n            x0, x1, vg,\n            batch_size, seq_len,\n            *strides,\n            d_model,\n        )\n    else:\n        # Launch-bound: proven straight-line fused launch (3D grid).\n        def grid(meta):\n            return (batch_size, d_model, triton.cdiv(seq_len, meta[\"BLOCK_T\"]))\n\n        _hyena_simple_kernel[grid](\n            u, w, b,\n            x0, x1, vg,\n            batch_size, seq_len,\n            *strides,\n            d_model,\n        )\n\n    return vg, x0, x1"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t6_47d36b18e3d2",
+    "definition": "006_hyena_depthwise_conv1d_split_gate",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n# ---------------------------------------------------------------------------\n# Fused Hyena short-filter: depthwise causal conv1d (k=3, causal lookback 2)\n# + channel split (768 -> 3x256) + first gate (v_gated = v * x0).\n#\n# Semantics (from reference): F.conv1d(padding=2) then truncate to seq_len is a\n# CAUSAL conv with lookback 2:\n#     uc[c, t] = bias[c] + w[c,0]*u[c,t-2] + w[c,1]*u[c,t-1] + w[c,2]*u[c,t]\n# (u<0 -> 0). For output channel c in [0, d_model):\n#     x0[c] = conv(row c),  x1[c] = conv(row c+d),  v[c] = conv(row c+2d)\n#     v_gated[c] = v[c] * x0[c]\n# Each output element for channel c reads exactly the 3 input rows {c,c+d,c+2d}.\n# HBM traffic floor = read u once + write 3 outputs once (= 2x u bytes).\n# All fp32 (tolerance atol=rtol=1e-5 -> no TF32/bf16 downcast anywhere).\n#\n# THIS ROUND \u2014 2D PERSISTENT GRID (COACH-DIRECTED FIX):\n#   The 0.730 frontier's 1D grid-stride jumps across different (B,C) pairs each\n#   iteration, so each element of `u` is read from HBM up to 3\u00d7 \u2014 once as center,\n#   twice as lookback by other CTAs. Effective HBM traffic ~3\u00d7 the byte floor.\n#\n#   Fix: 2D persistent grid over (B, C) pairs with an inner time-tile loop.\n#   Each CTA stays on the same (B,C) pair for all time tiles, so the previous\n#   tile's center load stays in L1 and lookback loads become L1 hits (~21 TB/s)\n#   not HBM reads. The center load and all 3 stores stay vectorized (contiguous,\n#   aligned). The mask on lookback loads is cheap (predicated on a single L1\n#   cache line).\n#\n#   Grid: (min(B * DM, NUM_SM * PROG_MULT),) \u2014 bounded by PROG_MULT to avoid\n#   too many waves for the large-B shapes. Each CTA grid-strides over (B,C)\n#   pairs, and for each pair runs an inner sequential loop over time tiles.\n# ---------------------------------------------------------------------------\n\nNUM_SM = 148  # B200\n\n\n@triton.jit\ndef _hyena_body(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    pid_b, pid_c, tb, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n):\n    \"\"\"Compute one (batch, channel, time-tile) tile.\n\n    Time stride is a compile-time 1 (u + all outputs are contiguous), so the\n    center load a_t and all 3 stores are contiguous & 16-B aligned -> vectorized\n    (LDG/STG.E.128) whenever the tile is fully in-bounds (S % BLOCK_T == 0).\n    \"\"\"\n    offs_t = tb * BLOCK_T + tl.arange(0, BLOCK_T)\n    offs_t = tl.max_contiguous(tl.multiple_of(offs_t, BLOCK_T), BLOCK_T)\n\n    c0 = pid_c\n    c1 = pid_c + DM\n    c2 = pid_c + 2 * DM\n    ub = pid_b * stride_ub\n    base0 = ub + c0 * stride_uc\n    base1 = ub + c1 * stride_uc\n    base2 = ub + c2 * stride_uc\n\n    # Per-channel filter taps + bias (3 scalars each; L1-resident).\n    w00 = tl.load(w_ptr + c0 * stride_wc + 0 * stride_wk)\n    w01 = tl.load(w_ptr + c0 * stride_wc + 1 * stride_wk)\n    w02 = tl.load(w_ptr + c0 * stride_wc + 2 * stride_wk)\n    b0 = tl.load(b_ptr + c0)\n    w10 = tl.load(w_ptr + c1 * stride_wc + 0 * stride_wk)\n    w11 = tl.load(w_ptr + c1 * stride_wc + 1 * stride_wk)\n    w12 = tl.load(w_ptr + c1 * stride_wc + 2 * stride_wk)\n    b1 = tl.load(b_ptr + c1)\n    w20 = tl.load(w_ptr + c2 * stride_wc + 0 * stride_wk)\n    w21 = tl.load(w_ptr + c2 * stride_wc + 1 * stride_wk)\n    w22 = tl.load(w_ptr + c2 * stride_wc + 2 * stride_wk)\n    b2 = tl.load(b_ptr + c2)\n\n    out_row = pid_b * stride_ob + pid_c * stride_oc\n\n    if (S % BLOCK_T) == 0:\n        # EXACT: every tile fully in-bounds (offs_t in [0, S)). The center load\n        # a_t and the 3 stores -- the whole unique HBM stream -- are unmasked\n        # and contiguous -> vectorized.\n        #\n        # Lookback loads (a_{t-1}, a_{t-2}) split on the causal-boundary tile:\n        #   * tb == 0: offs_t-1/-2 go negative for the first 1-2 lanes -> keep\n        #     the cheap `>=0` mask (this tile is rare -- one per (batch,\n        #     channel), the rest of the grid is interior).\n        #   * tb > 0: tm1 = tb*BLOCK_T-1 >= BLOCK_T-1 >= 127 >= 0 and\n        #     tm2 = tb*BLOCK_T-2 >= BLOCK_T-2 >= 126 >= 0 for every BLOCK_T in\n        #     the autotune space (>=128) -> ALWAYS in-bounds. A mask that is\n        #     true for all-but-a-few lanes is still non-uniform, which forces\n        #     Triton to fall back to per-lane predicated scalar loads for the\n        #     WHOLE tile; dropping the mask entirely on interior tiles lets\n        #     these loads vectorize (LDG.E.128) exactly like the center load.\n        #     `tb` is a uniform (CTA-wide) scalar, so this is a uniform branch\n        #     (no warp divergence), the same pattern already used above for\n        #     the `(S % BLOCK_T) == 0` compile-time/runtime split.\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n\n        a_t = tl.load(u_ptr + base0 + offs_t)\n        e_t = tl.load(u_ptr + base1 + offs_t)\n        g_t = tl.load(u_ptr + base2 + offs_t)\n\n        if tb == 0:\n            m1 = tm1 >= 0\n            m2 = tm2 >= 0\n            a_1 = tl.load(u_ptr + base0 + tm1, mask=m1, other=0.0)\n            a_2 = tl.load(u_ptr + base0 + tm2, mask=m2, other=0.0)\n            e_1 = tl.load(u_ptr + base1 + tm1, mask=m1, other=0.0)\n            e_2 = tl.load(u_ptr + base1 + tm2, mask=m2, other=0.0)\n            g_1 = tl.load(u_ptr + base2 + tm1, mask=m1, other=0.0)\n            g_2 = tl.load(u_ptr + base2 + tm2, mask=m2, other=0.0)\n        else:\n            a_1 = tl.load(u_ptr + base0 + tm1)\n            a_2 = tl.load(u_ptr + base0 + tm2)\n            e_1 = tl.load(u_ptr + base1 + tm1)\n            e_2 = tl.load(u_ptr + base1 + tm2)\n            g_1 = tl.load(u_ptr + base2 + tm1)\n            g_2 = tl.load(u_ptr + base2 + tm2)\n\n        x0 = b0 + w00 * a_2 + w01 * a_1 + w02 * a_t\n        x1 = b1 + w10 * e_2 + w11 * e_1 + w12 * e_t\n        v = b2 + w20 * g_2 + w21 * g_1 + w22 * g_t\n\n        vg = v * x0\n\n        op = out_row + offs_t\n        tl.store(x0_ptr + op, x0)\n        tl.store(x1_ptr + op, x1)\n        tl.store(vg_ptr + op, vg)\n    else:\n        # GENERAL (S % BLOCK_T != 0, e.g. S=293): fully masked, always correct.\n        mask0 = offs_t < S\n        tm1 = offs_t - 1\n        tm2 = offs_t - 2\n        m1 = (tm1 >= 0) & (tm1 < S)\n        m2 = (tm2 >= 0) & (tm2 < S)\n\n        a_t = tl.load(u_ptr + base0 + offs_t, mask=mask0, other=0.0)\n        a_1 = tl.load(u_ptr + base0 + tm1, mask=m1, other=0.0)\n        a_2 = tl.load(u_ptr + base0 + tm2, mask=m2, other=0.0)\n        x0 = b0 + w00 * a_2 + w01 * a_1 + w02 * a_t\n\n        e_t = tl.load(u_ptr + base1 + offs_t, mask=mask0, other=0.0)\n        e_1 = tl.load(u_ptr + base1 + tm1, mask=m1, other=0.0)\n        e_2 = tl.load(u_ptr + base1 + tm2, mask=m2, other=0.0)\n        x1 = b1 + w10 * e_2 + w11 * e_1 + w12 * e_t\n\n        g_t = tl.load(u_ptr + base2 + offs_t, mask=mask0, other=0.0)\n        g_1 = tl.load(u_ptr + base2 + tm1, mask=m1, other=0.0)\n        g_2 = tl.load(u_ptr + base2 + tm2, mask=m2, other=0.0)\n        v = b2 + w20 * g_2 + w21 * g_1 + w22 * g_t\n\n        vg = v * x0\n\n        op = out_row + offs_t\n        tl.store(x0_ptr + op, x0, mask=mask0)\n        tl.store(x1_ptr + op, x1, mask=mask0)\n        tl.store(vg_ptr + op, vg, mask=mask0)\n\n\n# ------------------------- simple kernel (launch-bound) --------------------\ndef _simple_configs():\n    # (BLOCK_T, num_warps); elements/thread = BLOCK_T / (32 * num_warps).\n    space = [\n        (128, 1), (128, 2),\n        (256, 1), (256, 2), (256, 4),\n        (512, 1), (512, 2), (512, 4),\n        (1024, 2), (1024, 4), (1024, 8),\n        (2048, 4),\n    ]\n    return [triton.Config({\"BLOCK_T\": bt}, num_warps=nw) for (bt, nw) in space]\n\n\n@triton.autotune(configs=_simple_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_simple_kernel(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    B, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n):\n    pid_b = tl.program_id(0)\n    pid_c = tl.program_id(1)\n    pid_t = tl.program_id(2)\n    _hyena_body(\n        u_ptr, w_ptr, b_ptr,\n        x0_ptr, x1_ptr, vg_ptr,\n        pid_b, pid_c, pid_t, S,\n        stride_ub, stride_uc,\n        stride_wc, stride_wk,\n        stride_ob, stride_oc,\n        DM, BLOCK_T,\n    )\n\n\n# --------------------- persistent kernel (memory-bound) --------------------\ndef _persistent_configs():\n    # (BLOCK_T, PROG_MULT, num_warps, num_stages).\n    #   2D grid = min(B * DM, NUM_SM * PROG_MULT) \u2014 each CTA grid-strides over\n    #   (B, C) pairs and runs an inner sequential loop over all time tiles for\n    #   that pair. With CTA affinity, the previous tile's center load stays in\n    #   L1, so lookback loads (tm1, tm2) become L1 cache hits.\n    #   Larger PROG_MULT = more CTAs, shorter inner loop (less L1 reuse per CTA\n    #   but better wave-fill for large-B shapes). Smaller PROG_MULT = fewer CTAs,\n    #   longer inner loop (more L1 reuse). The autotuner picks the sweet spot.\n    space = [\n        (256, 64, 2, 2),   # near-degenerate safety (~simple 256/2)\n        (512, 64, 2, 2),   # near-degenerate safety (~simple 512/2)\n        (128, 64, 1, 2),   # near-degenerate safety, short-S\n        (256, 32, 2, 3),   # persistent, high MLP, pipelined\n        (256, 16, 4, 3),   # persistent, high occupancy\n        (512, 32, 2, 3),   # persistent, high MLP, pipelined\n        (512, 16, 4, 3),   # persistent\n        (512, 8, 2, 4),    # persistent, few waves, deep prefetch\n        (1024, 8, 4, 3),   # big tile, pipelined (favors wide vector stores)\n        (1024, 16, 4, 2),  # big tile\n        (1024, 8, 2, 4),   # big tile, deep prefetch, 2 warps -> more elems/thread\n        (128, 32, 1, 3),   # short-S persistent, pipelined\n        (256, 8, 4, 4),    # deep prefetch, high occupancy\n        (2048, 8, 8, 2),   # very big tile, wide MLP\n        (2048, 4, 4, 4),   # very big tile, few waves, deep prefetch\n        (1024, 4, 4, 5),   # deepest prefetch, few waves\n    ]\n    return [\n        triton.Config({\"BLOCK_T\": bt, \"PROG_MULT\": pm}, num_warps=nw, num_stages=ns)\n        for (bt, pm, nw, ns) in space\n    ]\n\n\n@triton.autotune(configs=_persistent_configs(), key=[\"B\", \"S\"])\n@triton.jit\ndef _hyena_persistent_kernel(\n    u_ptr, w_ptr, b_ptr,\n    x0_ptr, x1_ptr, vg_ptr,\n    B, S,\n    stride_ub, stride_uc,\n    stride_wc, stride_wk,\n    stride_ob, stride_oc,\n    DM: tl.constexpr,\n    BLOCK_T: tl.constexpr,\n    PROG_MULT: tl.constexpr,  # used only by the grid lambda; unused inside.\n):\n    \"\"\"2D persistent grid: grid-strides over (B, C) pairs, inner loop over time\n    tiles. Each CTA stays on the same (B,C) pair for all time tiles, so the\n    previous tile's center load is L1-resident -> lookback loads hit L1 cache\n    (was 3\u00d7 HBM reads in the 1D grid-stride).\"\"\"\n    pid = tl.program_id(0)\n    n_prog = tl.num_programs(0)\n\n    n_bc = B * DM                     # total (batch, channel) pairs\n    tiles_per_bc = tl.cdiv(S, BLOCK_T)  # time tiles per (batch, channel) pair\n\n    # Outer: grid-stride over (B, C) pairs.\n    for bc in range(pid, n_bc, n_prog):\n        pid_c = bc % DM\n        pid_b = bc // DM\n        # Inner: sequential time-tile loop \u2014 L1 cache is warm across iterations.\n        for tb in range(tiles_per_bc):\n            _hyena_body(\n                u_ptr, w_ptr, b_ptr,\n                x0_ptr, x1_ptr, vg_ptr,\n                pid_b, pid_c, tb, S,\n                stride_ub, stride_uc,\n                stride_wc, stride_wk,\n                stride_ob, stride_oc,\n                DM, BLOCK_T,\n            )\n\n\n@torch.no_grad()\ndef run(u: torch.Tensor, short_filter_weight: torch.Tensor, short_filter_bias: torch.Tensor):\n    \"\"\"\n    Depthwise causal conv1d (k=3) + split (768 -> 3x256) + gate (v_gated = v*x0),\n    fused into a single Triton kernel. Returns (v_gated, x0, x1).\n\n    Two code paths, split on the launch-bound / memory-bound boundary (B*S):\n      * B*S <  4096  -> straight-line fused kernel (launch-bound, near-ceiling).\n      * B*S >= 4096  -> 2D persistent kernel: grid-strides over (B,C) pairs,\n                        inner loop over time tiles. CTA affinity keeps lookback\n                        loads in L1 cache, eliminating the 3\u00d7 redundant HBM\n                        reads of the 1D grid-stride frontier.\n    \"\"\"\n    batch_size, inner_width, seq_len = u.shape\n    d_model = inner_width // 3  # (order+1) = 3 components\n\n    # CPU / non-CUDA safety fallback: match the reference exactly.\n    if not u.is_cuda:\n        import torch.nn.functional as F\n        uc = F.conv1d(u, short_filter_weight, bias=short_filter_bias,\n                      padding=2, groups=inner_width)[..., :seq_len]\n        x0 = uc[:, :d_model, :]\n        x1 = uc[:, d_model:2 * d_model, :]\n        v = uc[:, 2 * d_model:3 * d_model, :]\n        return v * x0, x0, x1\n\n    u = u.contiguous()\n    w = short_filter_weight.contiguous()\n    b = short_filter_bias.contiguous()\n\n    # Contiguous outputs => time-axis stride == 1 (exploited by the kernel: the\n    # kernel drops the runtime time-stride multiply so contiguity is a compile\n    # constant and vector loads/stores can be emitted).\n    x0 = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n    x1 = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n    vg = torch.empty((batch_size, d_model, seq_len), device=u.device, dtype=u.dtype)\n\n    strides = (\n        u.stride(0), u.stride(1),   # stride_ub, stride_uc   (time stride == 1)\n        w.stride(0), w.stride(2),   # stride_wc, stride_wk\n        x0.stride(0), x0.stride(1),  # stride_ob, stride_oc   (time stride == 1)\n    )\n\n    if batch_size * seq_len >= 4096:\n        # Memory-bound: 2D persistent grid \u2014 CTA pinned to (B,C) pair, inner\n        # time-tile loop keeps lookback loads in L1.\n        def grid(meta):\n            n_bc = batch_size * d_model\n            return (min(n_bc, NUM_SM * meta[\"PROG_MULT\"]),)\n\n        _hyena_persistent_kernel[grid](\n            u, w, b,\n            x0, x1, vg,\n            batch_size, seq_len,\n            *strides,\n            d_model,\n        )\n    else:\n        # Launch-bound: proven straight-line fused launch (3D grid).\n        def grid(meta):\n            return (batch_size, d_model, triton.cdiv(seq_len, meta[\"BLOCK_T\"]))\n\n        _hyena_simple_kernel[grid](\n            u, w, b,\n            x0, x1, vg,\n            batch_size, seq_len,\n            *strides,\n            d_model,\n        )\n\n    return vg, x0, x1"
+      }
+    ]
+  }
+}

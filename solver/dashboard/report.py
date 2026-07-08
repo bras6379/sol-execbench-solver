@@ -17,6 +17,7 @@ import html
 import json
 import os
 import re
+import time
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -958,12 +959,19 @@ _STATUS_CHIP = {
     # exec_started/current_phase handling).
     "gpu_queued": "o-duplicate", "gpu_running": "o-running",
     "reviewing": "o-revised", "repairing": "o-revised",
+    # already has a real score (from exec_done) but isn't accepted yet — queued
+    # for / actively running a re-verification pass on the SAME single-flight
+    # GPU lock every other problem shares (see loop.py's verify_enqueued). Kept
+    # visually distinct from gpu_queued/gpu_running (which mean "no score yet")
+    # so two problems both mid-verify don't look like two GPUs are busy at once.
+    "verify_queued": "o-duplicate", "verifying": "o-running",
     # the owning problem isn't live anymore — nothing will ever finish this one
     "interrupted": "o-dominated",
 }
 _STATUS_LABEL = {
     "gpu_queued": "gpu: queued", "gpu_running": "gpu: running",
     "reviewing": "under review", "repairing": "repairing",
+    "verify_queued": "verify: queued", "verifying": "verifying (re-run)",
     "interrupted": "interrupted (fleet stopped)",
 }
 
@@ -1056,6 +1064,67 @@ def _progression_table(p: dict, has_traj: set | None = None,
             "<th>agent</th><th>strategy</th><th>status</th><th>expected SOL</th>"
             "<th>best after</th><th>inspect</th></tr></thead><tbody>"
             + "".join(rows) + "</tbody></table>")
+
+
+def _find_live_trajectory(task_id, runs_dir: Path, started_iso: str | None) -> Path | None:
+    """Locate the trajectory file a currently-in-flight call is writing to.
+    solve_problem's loop is sequential (at most one agent call per problem at a
+    time), so the most-recently-modified trajectory*.jsonl anywhere under this
+    problem's work/ tree IS the live one — no need to know its exact workdir
+    name (a fresh "cand{seq}" the dashboard has no other way to predict, or
+    which "review-{cand}-{seq}"/"trajectory.repair-N" round it's on).
+    Sanity-guards against a stale/racy read: if that file is OLDER than when
+    the phase reportedly started, something doesn't add up — show nothing
+    rather than a wrong transcript."""
+    wroot = Path(runs_dir) / str(task_id) / "work"
+    if not wroot.is_dir():
+        return None
+    candidates = list(wroot.glob("**/trajectory*.jsonl"))
+    if not candidates:
+        return None
+    newest = max(candidates, key=lambda f: f.stat().st_mtime)
+    if started_iso:
+        started_s = _age_s_local(started_iso)
+        if started_s is not None and newest.stat().st_mtime < time.time() - started_s - 30:
+            return None   # older than the phase's own start (minus slack) — don't trust it
+    return newest
+
+
+def _age_s_local(iso: str) -> float | None:
+    try:
+        d = dt.datetime.fromisoformat(iso.replace("Z", "+00:00"))
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=dt.timezone.utc)
+        return (dt.datetime.now(dt.timezone.utc) - d).total_seconds()
+    except (ValueError, TypeError):
+        return None
+
+
+def _live_transcript_block(p: dict, runs_dir: Path) -> tuple[str, bool]:
+    """A template for the CURRENTLY-RUNNING agent call's transcript, rendered
+    the same way a finished one is — but read live, mid-flight, from a
+    trajectory file that's still growing (see CliAgent._run's incremental
+    write + cli_agent.render_stream, which tolerates a cut-off trailing line).
+    Returns (html, available)."""
+    ph = p.get("current_phase")
+    if not ph:
+        return "", False
+    traj = _find_live_trajectory(p["task"], runs_dir, ph.get("started"))
+    if traj is None:
+        return "", False
+    raw = traj.read_text(errors="replace")
+    if not raw.strip():
+        return "", False
+    from solver.engine.cli_agent import AGENT_STREAM, render_stream
+    schema = AGENT_STREAM.get(ph.get("agent"), "claude")
+    txt = render_stream(schema, raw) or raw
+    if len(txt) > 80000:
+        txt = "…(truncated to last 80k chars)…\n" + txt[-80000:]
+    who = " ".join(x for x in (ph.get("agent"), ph.get("model")) if x) or "?"
+    title = f'#{p["task"]} — LIVE {_esc(ph.get("phase") or "")} · {_esc(who)}'
+    html = (f'<template data-code="live:{p["task"]}" data-title="{title}">'
+            f'<div class="md">{_md_to_html(txt)}</div></template>')
+    return html, True
 
 
 def _traj_blocks(p: dict, runs_dir: Path) -> tuple[str, set]:
@@ -1210,6 +1279,7 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
         x_label="GPU evals", right=120) if p["convergence"] else '<p class="muted">no evals yet</p>'
     order = {p["task"]: slot_i}
     ph = p.get("current_phase")
+    live_traj_html, live_traj_available = _live_transcript_block(p, runs_dir) if runs_dir else ("", False)
     if ph:
         who = " ".join(x for x in (ph.get("agent"), ph.get("model")) if x) or "?"
         status_val = _PHASE_LABEL.get(ph.get("phase"), ph.get("phase") or "?")
@@ -1217,6 +1287,9 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
     else:
         status_val = p.get("live_state") or p["terminated"] or "running"
         status_sub = ""
+    live_traj_btn = (f'<p><button class="link" data-code="live:{p["task"]}">'
+                     f'🔴 open live transcript ({_esc(ph.get("phase") or "")})</button></p>'
+                     if live_traj_available and ph else "")
     stats = "".join([
         _tile("expected SOL (best)", "–" if p.get("best_cal") is None else f"{p['best_cal']:.3f}",
               "leaderboard estimate"),
@@ -1236,13 +1309,14 @@ def build_detail(p: dict, slot_i: int, runs_dir: Path | None = None) -> str:
              '<div id="modal-body"></div></div></div>')
     body = f"""
 <div class="tiles">{stats}</div>
+{live_traj_btn}
 {coach_panel}
 <div class="panel"><h2>Solution progression — timeline · inspect any candidate's context · kernel · trajectory</h2>
 {_progression_table(p, has_traj, avail)}</div>
 {subs}
 <div class="panel"><h2>Convergence</h2>{conv}</div>
 <div class="panel"><h2>Iteration outcomes</h2>{_outcomes_svg([p], order)}</div>
-{_code_blocks(p)}{traj_html}{art_html}{coach_tmpls}{modal}
+{_code_blocks(p)}{traj_html}{art_html}{coach_tmpls}{live_traj_html}{modal}
 """
     sub = f'{_esc(p["family"])} · <a href="../index.html">← back to fleet dashboard</a>'
     return _shell(f"#{p['task']} {p['name']}", sub, body, None)

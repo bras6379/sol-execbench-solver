@@ -188,6 +188,39 @@ def test_context_md_silent_once_a_real_candidate_is_accepted():
     assert "Nothing real has been accepted yet" not in md
 
 
+def test_run_writes_the_trajectory_incrementally_not_just_at_the_end(tmp_path):
+    """The dashboard's live-transcript view needs real content to show WHILE a
+    call is still running (see report.py's live-transcript lookup) — trajectory
+    .jsonl must grow as output arrives, not appear all at once at process exit."""
+    fake = tmp_path / "slow_streamer.py"
+    fake.write_text(
+        "import sys, json, time, pathlib\n"
+        "print(json.dumps({'type': 'thread.started', 'thread_id': 't1'}), flush=True)\n"
+        "time.sleep(0.3)\n"
+        "pathlib.Path('kernel.py').write_text('def run(*t): return t[-1]\\n')\n"
+        "pathlib.Path('strategy.txt').write_text('s')\n"
+        "print(json.dumps({'type': 'turn.completed', 'usage': {}}), flush=True)\n"
+    )
+    spec = CliSpec("slow", cmd=[sys.executable, str(fake), "{model}", "{prompt}"], stream="codex")
+    agent = CliAgent(spec, "m", runs_dir=tmp_path / "runs", problems_dir=tmp_path / "none", timeout=5)
+
+    async def _check():
+        task = asyncio.create_task(agent.plan(parent=None, ctx=_fake_ctx()))
+        wd = tmp_path / "runs" / "7" / "work" / "cand1"
+        traj = wd / "trajectory.jsonl"
+        for _ in range(100):
+            if traj.exists() and traj.read_text().strip():
+                break
+            await asyncio.sleep(0.02)
+        mid_content = traj.read_text() if traj.exists() else ""
+        assert not task.done()                        # still running when we captured this
+        assert "thread.started" in mid_content
+        assert "turn.completed" not in mid_content    # second line hasn't landed yet
+        await task
+
+    run(_check())
+
+
 def test_timeout_raises(tmp_path):
     slow = tmp_path / "slow.py"
     slow.write_text("import time\ntime.sleep(5)\n")
@@ -339,6 +372,22 @@ def test_extract_session_id_none_when_absent():
     from solver.engine.cli_agent import _extract_session_id
     assert _extract_session_id("claude", "") is None
     assert _extract_session_id("codex", '{"type": "turn.started"}') is None
+
+
+def test_render_stream_handles_a_partial_trailing_line():
+    """render_stream backs the dashboard's LIVE transcript view, which reads
+    whatever has landed so far — including a cut-off, not-yet-complete final
+    line. It must render the complete lines and not blow up on the partial one
+    (the vendored jq helper wraps each line in try/catch for exactly this)."""
+    import json as _json
+
+    from solver.engine.cli_agent import render_stream
+
+    complete = _json.dumps({"type": "thread.started", "thread_id": "t1"})
+    raw = complete + "\n" + '{"type": "item.completed", "item": {"type": "agent_mess'  # cut off mid-line
+    text = render_stream("codex", raw)
+    assert text != ""                 # didn't blow up / return nothing useful
+    assert "unparsed" in text or "thread" in text.lower()
 
 
 def test_plan_captures_session_id_for_later_resume(tmp_path):

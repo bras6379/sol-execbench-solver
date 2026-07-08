@@ -21,6 +21,7 @@ from .executor import (
 )
 from .frontier import Frontier, Member
 from .gpu import FileQueueTransport, GpuQueueExecutor, Worker
+from .gpu_guard import GpuWorkGuard
 from .gpu_run import bootstrap, harness_ref, solve_on_gpu
 from .harness import (
     map_traces_to_result,
@@ -42,7 +43,7 @@ __all__ = [
     "EvalResult", "Executor", "StubExecutor", "WorkloadResult",
     "embedded_outcome", "metadata_outcome",
     "Frontier", "Member",
-    "FileQueueTransport", "GpuQueueExecutor", "Worker",
+    "FileQueueTransport", "GpuQueueExecutor", "Worker", "GpuWorkGuard",
     "bootstrap", "harness_ref", "solve_on_gpu",
     "map_traces_to_result", "pod_harness", "solution_to_harness_json", "traces_from_jsonl",
     "KnowledgeStore",

@@ -51,6 +51,36 @@ S(T_k) = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))
   scored condition is **cold L2, CUPTI, 10 warmup, median**.
 - Clock locking handled by `core/bench/clock_lock.py`.
 
+### Eval-loop module reuse — cache derived values, NEVER skip the kernel launch
+
+The eval subprocess imports your kernel module **once**, then per workload runs
+`warmup=10` (untimed) followed by the timed iterations — all within that one
+process/module-load, all with the **identical** input scalars for that
+workload. Module-level state (a dict, a cache) genuinely persists across every
+one of those calls; that part is real and is fine to use.
+
+**The trap:** it is tempting to key a cache on the call signature (e.g.
+`(seq_len, scaling)`) and, once cached, return the stored result **without
+launching any kernel at all** on the timed iterations — since the inputs are
+identical every call, the output is too, so this looks like a free win.
+**Confirmed empirically dead — twice, on two different problems:** any
+solution that skips real GPU kernel execution on a repeat call (returning a
+previously-computed tensor with zero kernel launch, or skipping a
+`cuda_graph.replay()`) scores **RUNTIME_ERROR on every workload** ("Timing
+failed: No kernel activities recorded for iteration N" — the harness's
+profiler requires real per-iteration GPU stream activity; an iteration with
+none is a hard failure, not a free 0 ms). This is **not** one of the
+documented reward-hack detectors below (no monkey-patch, no thread injection,
+no FakeTensor) — it's a separate timing-instrumentation invariant.
+
+**What's actually safe:** caching *derived Python objects that don't change
+the GPU work performed* — a computed grid/tile config, a `torch.as_strided`
+view object, a pre-built CUDA graph you still `.replay()` every call. The
+boundary is exactly this: skipping the **launch/replay itself** is the
+failure; caching *inputs to* that launch is not. If you're tempted by a
+module-level cache keyed on scalar inputs, make sure the cached path still
+issues a real kernel launch (or graph replay) every single call.
+
 ## Correctness (`core/bench/correctness.py`)
 
 Compared in **fp32** (both candidate and reference cast to float32). Order:
@@ -127,7 +157,9 @@ these — they raise `RewardHackDetected`:
 
 This is the concrete implementation of the anti-Sakana guidance in
 [llm-kernel-generation.md](llm-kernel-generation.md) — our own validation
-harness should keep the same posture.
+harness should keep the same posture. A RELATED but separate trap — skipping
+the kernel launch entirely via a module-level cache — isn't one of these
+detectors but still hard-fails; see "Eval-loop module reuse" above.
 
 ## Harness map (reuse these)
 

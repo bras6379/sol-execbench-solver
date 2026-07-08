@@ -28,7 +28,8 @@ OUTCOMES = ("accepted", "dominated", "incorrect", "rejected", "duplicate", "no_o
 # in the gap between a GPU eval finishing and its accept/frontier decision
 # being journaled, permanently orphaning the candidate at whatever it was
 # mid-transition to. Left alone, it looks identical to a live, healthy call.
-_INFLIGHT_STATUSES = {"planned", "gpu_queued", "gpu_running", "reviewing", "repairing", "revised"}
+_INFLIGHT_STATUSES = {"planned", "gpu_queued", "gpu_running", "reviewing", "repairing", "revised",
+                      "verify_queued", "verifying"}
 
 
 def _t(ts: str) -> float:
@@ -341,8 +342,22 @@ def problem_metrics(task_id: int, events: list[dict]) -> dict[str, Any]:
             if c:
                 c["best_after"] = best
             frontier = e.get("frontier", frontier)
+        elif ev == "verify_enqueued":
+            # This candidate already has a real score (from exec_done) but isn't
+            # accepted yet — re-verification competes for the SAME single-flight
+            # GPU lock as every other problem, so it can sit queued for a while.
+            # Without this, the row keeps showing the stale "gpu: running" from
+            # the eval that already finished — confirmed live (2026-07-08) this
+            # made two DIFFERENT problems look like they were both "running" on
+            # the GPU at once, when only one actually held the lock.
+            c = candidates.get(e.get("cand"))
+            if c and c["status"] in ("planned", "gpu_running"):
+                c["status"] = "verify_queued"
         elif ev == "verify_started":
             jobs.setdefault(e["job"], {"task": task_id})["start"] = _t(ts)
+            c = candidates.get(e.get("cand"))
+            if c and c["status"] in ("planned", "gpu_running", "verify_queued"):
+                c["status"] = "verifying"
         elif ev == "verify_done":                     # re-verification of a would-be frontier entry
             j = jobs.setdefault(e["job"], {"task": task_id})
             j["done"] = _t(ts)

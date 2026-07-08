@@ -3,7 +3,7 @@
   "family": "reduction",
   "name": "reduction_18",
   "epsilon": 0.02,
-  "size": 3,
+  "size": 5,
   "best_cand": "b2a6470d77ba",
   "best_score": 0.8972319226722276,
   "best_score_cal": 0.8653910473699644,
@@ -13,7 +13,7 @@
       "sol_score": 0.8972319226722276,
       "sol_score_cal": 0.8653910473699644,
       "all_passed": true,
-      "shapes_won": 10,
+      "shapes_won": 8,
       "vector": [
         0.9821882951653943,
         0.8720986460348163,
@@ -85,6 +85,58 @@
       "agent": "codex",
       "model": "gpt-5.5",
       "candidate": "candidates/4847a63aa925.json"
+    },
+    {
+      "cand_id": "d78ff5298c30",
+      "sol_score": 0.8953514395856877,
+      "sol_score_cal": 0.8633312963145132,
+      "all_passed": true,
+      "shapes_won": 2,
+      "vector": [
+        0.9828755189340621,
+        0.8720986460348163,
+        0.9801016452752174,
+        0.8710302091402014,
+        0.8818207322205077,
+        0.8691703485517919,
+        0.8762735519888345,
+        0.8969693662344833,
+        0.8828295702840495,
+        0.8628426685052234,
+        0.8985472694972737,
+        0.9094339622641509,
+        0.8555752256833276
+      ],
+      "strategy": "Same single-launch fused Triton kernel (RMSNorm+RoPE+KV-cache scatter, unit-stride vectorized LDG/STG) as the 0.865 fron",
+      "agent": "claude",
+      "model": "sonnet",
+      "candidate": "candidates/d78ff5298c30.json"
+    },
+    {
+      "cand_id": "bf010c0bd837",
+      "sol_score": 0.8949752270371955,
+      "sol_score_cal": 0.8629296550272793,
+      "all_passed": true,
+      "shapes_won": 1,
+      "vector": [
+        0.9823606845107504,
+        0.8704150579150579,
+        0.9825561312607946,
+        0.8705806451612903,
+        0.8828114028928521,
+        0.8683178028445316,
+        0.8753038765498794,
+        0.8976148026791306,
+        0.8825081907535494,
+        0.8611775969363331,
+        0.898340009687762,
+        0.9088532107785213,
+        0.8538385395130875
+      ],
+      "strategy": "Single-launch vectorized Triton fusion for RMSNorm+RoPE+KV-cache update, preserving HEAD_BLOCK=16 for prefill and using ",
+      "agent": "codex",
+      "model": "gpt-5.5",
+      "candidate": "candidates/bf010c0bd837.json"
     }
   ]
 }

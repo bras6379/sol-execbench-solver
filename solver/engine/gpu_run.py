@@ -15,12 +15,14 @@ install `run_eval.sh` + config, and rsync only the problems this run needs.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime
 import json
 import re
 import time
 from pathlib import Path
 
+from .gpu_guard import GpuWorkGuard
 from .loop import run_fleet
 from .pod import PodHandle, PodProvider, PodSession, PodSpec
 from .ssh_exec import RUN_EVAL_SH, PodConn, SshExecutor
@@ -118,6 +120,7 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
                        max_lifetime_min: float | None = None, shuffle: bool = False,
                        reflect_first: bool = False, reflect_every_min: float = 0,
                        reflect_model: str | list[str] = "", reuse_pod: bool = False,
+                       shutdown_grace_s: float = 180.0,
                        log=print) -> None:
     """Provision → bootstrap → run the fleet on the pod → guaranteed teardown.
 
@@ -134,10 +137,19 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
     clone/apt-install all no-op when already satisfied) so the freshest run_eval.sh
     /config/problem set is always pushed. The cap is anchored to the POD's own
     RunPod-reported rental start time (`rented_at`), not this process's launch
-    time, so a string of quick restarts never resets/extends the safety clock."""
+    time, so a string of quick restarts never resets/extends the safety clock.
+
+    `shutdown_grace_s` bounds how long EITHER a manual SIGINT/SIGTERM restart or
+    this cap firing will wait for an in-flight GPU eval-to-accept sequence to
+    finish before actually tearing anything down (see GpuWorkGuard) — a result
+    that already spent real GPU time must not get silently orphaned by an abrupt
+    stop, and a restart already costs several minutes for new agent calls to
+    spin back up regardless, so this grace period is free."""
     spec = spec or PodSpec()
     t_start = time.monotonic()
-    session = PodSession(provider, spec, reuse=reuse_pod, terminate_on_signal=not reuse_pod)
+    gpu_guard = GpuWorkGuard()
+    session = PodSession(provider, spec, reuse=reuse_pod, terminate_on_signal=not reuse_pod,
+                         gpu_guard=gpu_guard, shutdown_grace_s=shutdown_grace_s)
     async with session as pod:
         if session.adopted:
             log(f"[gpu] adopted existing pod {pod.id} (--gpu-reuse-pod) — skipping create/reap")
@@ -150,23 +162,35 @@ async def solve_on_gpu(ids, agents, cfg, *, runs_dir, seeds_fn, knowledge, famil
         await bootstrap(conn, problems_dir=problems_dir, ids=ids, config=config, log=log)
         executor = SshExecutor(conn, problems_dir=problems_dir)
         log(f"[gpu] running fleet over {len(ids)} problem(s) on the B200 ...")
-        fleet = run_fleet(ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
-                          knowledge=knowledge, families=families, names=names,
-                          max_concurrency=max_concurrency, shuffle=shuffle,
-                          reflect_first=reflect_first, reflect_every_min=reflect_every_min,
-                          reflect_model=reflect_model)
+        fleet_task = asyncio.ensure_future(run_fleet(
+            ids, executor, agents, cfg, runs_dir=runs_dir, seeds_fn=seeds_fn,
+            knowledge=knowledge, families=families, names=names,
+            max_concurrency=max_concurrency, shuffle=shuffle,
+            reflect_first=reflect_first, reflect_every_min=reflect_every_min,
+            reflect_model=reflect_model, gpu_guard=gpu_guard))
         if max_lifetime_min:
             elapsed = _pod_age_s(h, t_start)
             remaining = max(1.0, max_lifetime_min * 60 - elapsed)
             log(f"[gpu] hard {max_lifetime_min:.0f}-min pod cap ({'pod age' if h.rented_at else 'this launch'}"
                 f" = {elapsed/60:.0f} min so far) — fleet has ~{remaining/60:.0f} min before forced teardown")
-            try:
-                await asyncio.wait_for(fleet, timeout=remaining)
+            done, pending = await asyncio.wait({fleet_task}, timeout=remaining)
+            if fleet_task in pending:
+                # Don't cancel yet — asyncio.wait_for's usual behavior would
+                # cancel immediately here, which is exactly the abrupt-stop
+                # pattern that orphaned a scored-but-unaccepted candidate live
+                # (2026-07-08). Wait (bounded) for any in-flight GPU work first.
+                log(f"[gpu] {max_lifetime_min:.0f}-min cap reached — waiting up to "
+                    f"{shutdown_grace_s:.0f}s for any in-flight GPU work before teardown")
+                await gpu_guard.wait_idle(shutdown_grace_s)
+                log("[gpu] cancelling fleet + terminating pod")
+                fleet_task.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await fleet_task
+            else:
                 log("[gpu] fleet done — terminating pod")
-            except asyncio.TimeoutError:
-                log(f"[gpu] {max_lifetime_min:.0f}-min cap reached — cancelling fleet + terminating pod")
+                await fleet_task                       # re-raise if the fleet itself errored
         else:
-            await fleet
+            await fleet_task
             log("[gpu] fleet done — terminating pod")
 
 

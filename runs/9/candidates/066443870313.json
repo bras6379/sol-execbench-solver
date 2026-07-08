@@ -1,0 +1,245 @@
+{
+  "cand_id": "066443870313",
+  "task_id": 9,
+  "verdict": "dominated",
+  "sol_score": 0.7182857769737017,
+  "sol_score_calibrated": 0.678623411476797,
+  "correct": true,
+  "vector": [
+    0.5605239550881709,
+    0.6638274880371501,
+    0.7441815412198542,
+    0.7121914170509969,
+    0.6623366152572463,
+    0.7713450043642568,
+    0.7456264928420632,
+    0.8986739348702818,
+    0.5597198678980595,
+    0.7449784952745984,
+    0.8211824091874788,
+    0.7227508163355837,
+    0.7450930320940291,
+    0.8176434149036041,
+    0.5600341523713667,
+    0.7624637947844869
+  ],
+  "strategy": "FP16 the precision-critical GEMMs only (G2/G3/G5), keep G1/G4/G6 in bf16/fp32-accum, wrap the non-wgrad work in a live-p",
+  "agent": "openrouter",
+  "model": "moonshotai/kimi-k2.7-code",
+  "parent": "3afa044f788e",
+  "trajectory": "runs/9/work/066443870313/trajectory.jsonl",
+  "gpu_s": 22.6,
+  "job_id": "9-066443870313",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 40.0,
+      "power_w_max": 459.94,
+      "samples": 74,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.816238,
+      "sol_ms": 0.0951,
+      "baseline_latency_ms": 1.014866,
+      "sol_score": 0.5605239550881709,
+      "sol_score_cal": 0.5121222275487823,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.8574855,
+      "sol_ms": 0.0978,
+      "baseline_latency_ms": 1.5979230000000002,
+      "sol_score": 0.6638274880371501,
+      "sol_score_cal": 0.6191868424074505,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.929278,
+      "sol_ms": 0.1,
+      "baseline_latency_ms": 2.512388,
+      "sol_score": 0.7441815412198542,
+      "sol_score_cal": 0.7057421041813111,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.9417735,
+      "sol_ms": 0.1009,
+      "baseline_latency_ms": 2.181668,
+      "sol_score": 0.7121914170509969,
+      "sol_score_cal": 0.6710902573465433,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.8622215,
+      "sol_ms": 0.0979,
+      "baseline_latency_ms": 1.597139,
+      "sol_score": 0.6623366152572463,
+      "sol_score_cal": 0.6176360534447849,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 1.015357,
+      "sol_ms": 0.1311,
+      "baseline_latency_ms": 3.1140535,
+      "sol_score": 0.7713450043642568,
+      "sol_score_cal": 0.7346943883421536,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.935453,
+      "sol_ms": 0.1101,
+      "baseline_latency_ms": 2.529397,
+      "sol_score": 0.7456264928420632,
+      "sol_score_cal": 0.7069035902194402,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 2.4379935,
+      "sol_ms": 0.7971,
+      "baseline_latency_ms": 15.350396,
+      "sol_score": 0.8986739348702818,
+      "sol_score_cal": 0.8736830945411184,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.818302,
+      "sol_ms": 0.0952,
+      "baseline_latency_ms": 1.014466,
+      "sol_score": 0.5597198678980595,
+      "sol_score_cal": 0.5113153835286993,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.931278,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5216365,
+      "sol_score": 0.7449784952745984,
+      "sol_score_cal": 0.7064672213681404,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 1.105837,
+      "sol_ms": 0.1996,
+      "baseline_latency_ms": 4.3613040000000005,
+      "sol_score": 0.8211824091874788,
+      "sol_score_cal": 0.7884927153674594,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 0.942318,
+      "sol_ms": 0.1017,
+      "baseline_latency_ms": 2.2930765,
+      "sol_score": 0.7227508163355837,
+      "sol_score_cal": 0.68245178099776,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.931518,
+      "sol_ms": 0.1035,
+      "baseline_latency_ms": 2.5237965,
+      "sol_score": 0.7450930320940291,
+      "sol_score_cal": 0.7065934186048572,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 1.1014054999999998,
+      "sol_ms": 0.1934,
+      "baseline_latency_ms": 4.26468,
+      "sol_score": 0.8176434149036041,
+      "sol_score_cal": 0.7846658513506487,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.814686,
+      "sol_ms": 0.0943,
+      "baseline_latency_ms": 1.011282,
+      "sol_score": 0.5600341523713667,
+      "sol_score_cal": 0.5116634950905063,
+      "error": null
+    },
+    {
+      "index": 15,
+      "correct": true,
+      "latency_ms": 0.9630540000000001,
+      "sol_ms": 0.1156,
+      "baseline_latency_ms": 2.8358295,
+      "sol_score": 0.7624637947844869,
+      "sol_score_cal": 0.725266159289096,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 -- expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nNumerics:\n  * G2 (dgrad K=H) and the two K=N wgrads G3/G5 run in FP16 tensor-core GEMMs\n    (fp32 accumulation) -- same 10-bit mantissa precision as the proven TF32\n    path, but FP16 TC throughput is 2.25 PFLOP/s vs TF32's 1.1 PFLOP/s, and\n    FP16 operands halve the DRAM traffic of w2_weight, grad_up, and grad_w1o.\n  * G1 (wgrad K=N) and the final dgrads G4/G6 stay in bf16/fp32-accum; they\n    were already safe and re-casting them only adds traffic.\n  * Elementwise gating + SiLU' stay in fp32 to match the reference evaluation\n    order and avoid the bf16 grad_gated rounding wall.\n\nLaunch overhead:\n  * The graph is built once per (B, N, H, F) shape on live input pointers.\n  * Everything except the three big weight-grad outputs (G1, G3, G5) is\n    captured; those GEMMs stay eager so their outputs are fresh allocations\n    (no 350 MB clone on each call).\n  * The graph also folds gst_w1 + gst_w3 into a cuBLAS addmm (G6) save one full\n    (N, H) round-trip vs a separate addition.\n  * If pointers ever change or capture fails we fall back to the exact eager\n    computation, so this cannot silently regress correctness.\n\"\"\"\n\nimport torch\n\n# TF32 is intentionally enabled for the bf16/fp32-accum matmuls (G1, G4, G6);\n# FP16 inputs dispatch to FP16 tensor cores and are unaffected.\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n_graph_cache = {}\n\n\ndef _capture_forward(\n    grad_output,\n    token_indices,\n    selected_tokens,\n    w1_output,\n    gate_output,\n    up_output,\n    gated_output,\n    expert_output,\n    selected_weights,\n    w1_weight,\n    w2_weight,\n    w3_weight,\n):\n    \"\"\"Everything except the three big wgrad GEMMs (G1/G3/G5). Safe inside a\n    CUDA graph capture because it only touches the 12 stable external inputs\n    plus tensors it allocates itself.\"\"\"\n    B, H = grad_output.shape\n    device = grad_output.device\n\n    # Gather the N rows of grad_output that correspond to this expert.\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # grad_routing_weights: row dot of gwo and expert_output, scattered.\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)  # (N,) fp32\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights.index_copy_(\n        0, token_indices, grad_sel_w.to(torch.bfloat16)\n    )\n\n    # geo is the seed for both G1 (bf16) and G2 (fp16).\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # G2 precision path: FP16 operands, fp32 accum.  Same mantissa as TF32,\n    # 2x tensor-core throughput, and half the memory traffic vs the fp32 cast.\n    geo_f16 = gwo.to(torch.float16) * selected_weights.to(\n        torch.float16\n    ).unsqueeze(-1)  # (N, H) fp16\n    w2_f16 = w2_weight.to(torch.float16)\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)  # (N, F) fp16@fp16 -> fp32 accum\n\n    # Gating backward + SiLU' in fp32 to match the reference order.\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1o_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1o_f32)\n    silu_grad = sig * (1.0 + w1o_f32 * (1.0 - sig))\n\n    gg_f32 = grad_gated_f16.float()\n    grad_up_f32 = gg_f32 * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = gg_f32 * up_f32 * silu_grad\n\n    # G4/G6 -- bf16/fp32-accum is safe for the per-token outputs.\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n\n    # Fold G6 and the gst_w1 + gst_w3 add into one cuBLAS call.\n    grad_selected_tokens = torch.addmm(gst_w3, grad_w1o, w1_weight)  # (N, H)\n\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states.index_copy_(0, token_indices, grad_selected_tokens)\n\n    return geo_bf16, grad_up_f32, grad_w1o_f32, grad_routing_weights, grad_hidden_states\n\n\ndef _finish(geo_bf16, grad_up_f32, grad_w1o_f32, gated_output, selected_tokens):\n    \"\"\"The three big-output weight-grad GEMMs. Always eager so every call gets\n    a fresh, non-aliased output buffer.\"\"\"\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # Use FP16 inputs for the precision-critical K=N wgrads G3/G5.\n    selected_f16 = selected_tokens.to(torch.float16)\n    grad_up_f16 = grad_up_f32.to(torch.float16)\n    grad_w1o_f16 = grad_w1o_f32.to(torch.float16)\n\n    grad_w3_weight = torch.matmul(\n        grad_up_f16.transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f16.transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    return grad_w1_weight, grad_w2_weight, grad_w3_weight\n\n\ndef _build_graph(key, args):\n    side_stream = torch.cuda.Stream()\n    side_stream.wait_stream(torch.cuda.current_stream())\n    with torch.cuda.stream(side_stream):\n        for _ in range(3):\n            _capture_forward(*args)\n    torch.cuda.current_stream().wait_stream(side_stream)\n\n    graph = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(graph):\n        outputs = _capture_forward(*args)\n\n    _graph_cache[key] = {\n        \"graph\": graph,\n        \"ptrs\": tuple(t.data_ptr() for t in args),\n        \"outputs\": outputs,\n    }\n\n\ndef _try_capture(key, args):\n    try:\n        _build_graph(key, args)\n    except Exception:\n        _graph_cache[key] = None\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    key = (B, N, H, F)\n\n    args = (\n        grad_output,\n        token_indices,\n        selected_tokens,\n        w1_output,\n        gate_output,\n        up_output,\n        gated_output,\n        expert_output,\n        selected_weights,\n        w1_weight,\n        w2_weight,\n        w3_weight,\n    )\n    ptrs = tuple(t.data_ptr() for t in args)\n\n    if key not in _graph_cache and grad_output.is_cuda:\n        _try_capture(key, args)\n\n    entry = _graph_cache.get(key)\n\n    if entry is not None and entry[\"ptrs\"] == ptrs:\n        entry[\"graph\"].replay()\n        (\n            geo_bf16,\n            grad_up_f32,\n            grad_w1o_f32,\n            static_routing,\n            static_hidden,\n        ) = entry[\"outputs\"]\n        grad_routing_weights = static_routing.clone()\n        grad_hidden_states = static_hidden.clone()\n    else:\n        (\n            geo_bf16,\n            grad_up_f32,\n            grad_w1o_f32,\n            grad_routing_weights,\n            grad_hidden_states,\n        ) = _capture_forward(*args)\n\n    grad_w1_weight, grad_w2_weight, grad_w3_weight = _finish(\n        geo_bf16, grad_up_f32, grad_w1o_f32, gated_output, selected_tokens\n    )\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t9_066443870313",
+    "definition": "009_expert_token_scatter_with_weighted_forward_backward",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "\"\"\"\nProblem 009 -- expert_token_scatter_with_weighted_forward (BACKWARD), B200.\n\nNumerics:\n  * G2 (dgrad K=H) and the two K=N wgrads G3/G5 run in FP16 tensor-core GEMMs\n    (fp32 accumulation) -- same 10-bit mantissa precision as the proven TF32\n    path, but FP16 TC throughput is 2.25 PFLOP/s vs TF32's 1.1 PFLOP/s, and\n    FP16 operands halve the DRAM traffic of w2_weight, grad_up, and grad_w1o.\n  * G1 (wgrad K=N) and the final dgrads G4/G6 stay in bf16/fp32-accum; they\n    were already safe and re-casting them only adds traffic.\n  * Elementwise gating + SiLU' stay in fp32 to match the reference evaluation\n    order and avoid the bf16 grad_gated rounding wall.\n\nLaunch overhead:\n  * The graph is built once per (B, N, H, F) shape on live input pointers.\n  * Everything except the three big weight-grad outputs (G1, G3, G5) is\n    captured; those GEMMs stay eager so their outputs are fresh allocations\n    (no 350 MB clone on each call).\n  * The graph also folds gst_w1 + gst_w3 into a cuBLAS addmm (G6) save one full\n    (N, H) round-trip vs a separate addition.\n  * If pointers ever change or capture fails we fall back to the exact eager\n    computation, so this cannot silently regress correctness.\n\"\"\"\n\nimport torch\n\n# TF32 is intentionally enabled for the bf16/fp32-accum matmuls (G1, G4, G6);\n# FP16 inputs dispatch to FP16 tensor cores and are unaffected.\ntorch.backends.cuda.matmul.allow_tf32 = True\n\n_graph_cache = {}\n\n\ndef _capture_forward(\n    grad_output,\n    token_indices,\n    selected_tokens,\n    w1_output,\n    gate_output,\n    up_output,\n    gated_output,\n    expert_output,\n    selected_weights,\n    w1_weight,\n    w2_weight,\n    w3_weight,\n):\n    \"\"\"Everything except the three big wgrad GEMMs (G1/G3/G5). Safe inside a\n    CUDA graph capture because it only touches the 12 stable external inputs\n    plus tensors it allocates itself.\"\"\"\n    B, H = grad_output.shape\n    device = grad_output.device\n\n    # Gather the N rows of grad_output that correspond to this expert.\n    gwo = grad_output.index_select(0, token_indices)  # (N, H) bf16\n\n    # grad_routing_weights: row dot of gwo and expert_output, scattered.\n    grad_sel_w = (gwo.float() * expert_output.float()).sum(dim=-1)  # (N,) fp32\n    grad_routing_weights = torch.zeros(B, dtype=torch.bfloat16, device=device)\n    grad_routing_weights.index_copy_(\n        0, token_indices, grad_sel_w.to(torch.bfloat16)\n    )\n\n    # geo is the seed for both G1 (bf16) and G2 (fp16).\n    geo_bf16 = gwo * selected_weights.unsqueeze(-1)  # (N, H) bf16\n\n    # G2 precision path: FP16 operands, fp32 accum.  Same mantissa as TF32,\n    # 2x tensor-core throughput, and half the memory traffic vs the fp32 cast.\n    geo_f16 = gwo.to(torch.float16) * selected_weights.to(\n        torch.float16\n    ).unsqueeze(-1)  # (N, H) fp16\n    w2_f16 = w2_weight.to(torch.float16)\n    grad_gated_f16 = torch.matmul(geo_f16, w2_f16)  # (N, F) fp16@fp16 -> fp32 accum\n\n    # Gating backward + SiLU' in fp32 to match the reference order.\n    up_f32 = up_output.float()\n    gate_f32 = gate_output.float()\n    w1o_f32 = w1_output.float()\n\n    sig = torch.sigmoid(w1o_f32)\n    silu_grad = sig * (1.0 + w1o_f32 * (1.0 - sig))\n\n    gg_f32 = grad_gated_f16.float()\n    grad_up_f32 = gg_f32 * gate_f32\n    # Match reference evaluation order: (grad_gated * up_output) * silu_grad.\n    grad_w1o_f32 = gg_f32 * up_f32 * silu_grad\n\n    # G4/G6 -- bf16/fp32-accum is safe for the per-token outputs.\n    grad_up = grad_up_f32.to(torch.bfloat16)\n    grad_w1o = grad_w1o_f32.to(torch.bfloat16)\n    gst_w3 = torch.matmul(grad_up, w3_weight)\n\n    # Fold G6 and the gst_w1 + gst_w3 add into one cuBLAS call.\n    grad_selected_tokens = torch.addmm(gst_w3, grad_w1o, w1_weight)  # (N, H)\n\n    grad_hidden_states = torch.zeros(B, H, dtype=torch.bfloat16, device=device)\n    grad_hidden_states.index_copy_(0, token_indices, grad_selected_tokens)\n\n    return geo_bf16, grad_up_f32, grad_w1o_f32, grad_routing_weights, grad_hidden_states\n\n\ndef _finish(geo_bf16, grad_up_f32, grad_w1o_f32, gated_output, selected_tokens):\n    \"\"\"The three big-output weight-grad GEMMs. Always eager so every call gets\n    a fresh, non-aliased output buffer.\"\"\"\n    grad_w2_weight = torch.matmul(\n        geo_bf16.transpose(0, 1), gated_output\n    ).to(torch.bfloat16)\n\n    # Use FP16 inputs for the precision-critical K=N wgrads G3/G5.\n    selected_f16 = selected_tokens.to(torch.float16)\n    grad_up_f16 = grad_up_f32.to(torch.float16)\n    grad_w1o_f16 = grad_w1o_f32.to(torch.float16)\n\n    grad_w3_weight = torch.matmul(\n        grad_up_f16.transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n    grad_w1_weight = torch.matmul(\n        grad_w1o_f16.transpose(0, 1), selected_f16\n    ).to(torch.bfloat16)\n\n    return grad_w1_weight, grad_w2_weight, grad_w3_weight\n\n\ndef _build_graph(key, args):\n    side_stream = torch.cuda.Stream()\n    side_stream.wait_stream(torch.cuda.current_stream())\n    with torch.cuda.stream(side_stream):\n        for _ in range(3):\n            _capture_forward(*args)\n    torch.cuda.current_stream().wait_stream(side_stream)\n\n    graph = torch.cuda.CUDAGraph()\n    with torch.cuda.graph(graph):\n        outputs = _capture_forward(*args)\n\n    _graph_cache[key] = {\n        \"graph\": graph,\n        \"ptrs\": tuple(t.data_ptr() for t in args),\n        \"outputs\": outputs,\n    }\n\n\ndef _try_capture(key, args):\n    try:\n        _build_graph(key, args)\n    except Exception:\n        _graph_cache[key] = None\n\n\n@torch.no_grad()\ndef run(\n    grad_output: torch.Tensor,\n    token_indices: torch.Tensor,\n    selected_tokens: torch.Tensor,\n    w1_output: torch.Tensor,\n    gate_output: torch.Tensor,\n    up_output: torch.Tensor,\n    gated_output: torch.Tensor,\n    expert_output: torch.Tensor,\n    selected_weights: torch.Tensor,\n    w1_weight: torch.Tensor,\n    w2_weight: torch.Tensor,\n    w3_weight: torch.Tensor,\n):\n    \"\"\"\n    Backward pass for expert token scatter with weighted forward.\n\n    Returns (all bfloat16):\n      grad_hidden_states (B, H)\n      grad_routing_weights (B,)\n      grad_w1_weight (F, H)\n      grad_w2_weight (H, F)\n      grad_w3_weight (F, H)\n    \"\"\"\n    B, H = grad_output.shape\n    N = token_indices.shape[0]\n    F = w1_weight.shape[0]\n    key = (B, N, H, F)\n\n    args = (\n        grad_output,\n        token_indices,\n        selected_tokens,\n        w1_output,\n        gate_output,\n        up_output,\n        gated_output,\n        expert_output,\n        selected_weights,\n        w1_weight,\n        w2_weight,\n        w3_weight,\n    )\n    ptrs = tuple(t.data_ptr() for t in args)\n\n    if key not in _graph_cache and grad_output.is_cuda:\n        _try_capture(key, args)\n\n    entry = _graph_cache.get(key)\n\n    if entry is not None and entry[\"ptrs\"] == ptrs:\n        entry[\"graph\"].replay()\n        (\n            geo_bf16,\n            grad_up_f32,\n            grad_w1o_f32,\n            static_routing,\n            static_hidden,\n        ) = entry[\"outputs\"]\n        grad_routing_weights = static_routing.clone()\n        grad_hidden_states = static_hidden.clone()\n    else:\n        (\n            geo_bf16,\n            grad_up_f32,\n            grad_w1o_f32,\n            grad_routing_weights,\n            grad_hidden_states,\n        ) = _capture_forward(*args)\n\n    grad_w1_weight, grad_w2_weight, grad_w3_weight = _finish(\n        geo_bf16, grad_up_f32, grad_w1o_f32, gated_output, selected_tokens\n    )\n\n    return (\n        grad_hidden_states,\n        grad_routing_weights,\n        grad_w1_weight,\n        grad_w2_weight,\n        grad_w3_weight,\n    )\n"
+      }
+    ]
+  }
+}

@@ -43,3 +43,6 @@ Cross-call memoization (skip GPU work / return a cached tensor object on repeat 
 
 If this round's tile-config restore + `.cs` store hint + num_warps tuning only ties or regresses from ~0.835, the remaining bottleneck is almo
 
+## 10. from `626502b2` — Per-shape CUDA-graph-cached Triton kernel with simplified store and improved tile-size thresholds; removed .cs cache mod
+If score ties or regresses from 0.837: next lever is explicit per-shape Triton `@triton.autotune` with a wider grid of tile configs (BLOCK_M ∈ [16, 32, 64, 128], BLOCK_N ∈ [128, 256, 512]) to search beyond the heuristic's fixed breakpoints, especially for shapes 2/5 (small mem-bound) which might benefit from different BLOCK_N/BLOCK_M ratios than current 32×256 or 64×256. Trigger: if this simpler version doesn't improve, autotuning is the most robust way to find per-shape optima without additional infrastructure.
+

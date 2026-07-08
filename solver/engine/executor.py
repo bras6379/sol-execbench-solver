@@ -36,6 +36,16 @@ class WorkloadResult:
     baseline_latency_ms: float | None = None
     matched_ratio: float | None = None
     error: str | None = None
+    detail: str | None = None           # the harness's actual diagnostic for a failure — a
+                                         # Triton/CUDA traceback snippet or the measured error
+                                         # magnitude, not just the bare status code in `error`.
+                                         # Confirmed live (2026-07-08): the real harness already
+                                         # reports this (trace.jsonl's `log` field, or
+                                         # correctness.max_absolute_error/max_relative_error) —
+                                         # it was being parsed then silently discarded, so a
+                                         # failed candidate's feedback was never more specific
+                                         # than "RUNTIME_ERROR", giving the next agent nothing
+                                         # to actually act on.
     score: float | None = None          # explicit score (stub); else derived from latencies
 
     @property

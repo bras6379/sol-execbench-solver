@@ -13,7 +13,7 @@
       "sol_score": 0.7547019562770894,
       "sol_score_cal": 0.7160101396658634,
       "all_passed": true,
-      "shapes_won": 6,
+      "shapes_won": 5,
       "vector": [
         0.7151721914790738,
         0.714933614040436,
@@ -38,11 +38,40 @@
       "candidate": "candidates/8fe2822c5e85.json"
     },
     {
+      "cand_id": "fb3bcd6b11ae",
+      "sol_score": 0.7484236804901515,
+      "sol_score_cal": 0.7079302148507816,
+      "all_passed": true,
+      "shapes_won": 8,
+      "vector": [
+        0.7190352725112082,
+        0.7262706373169477,
+        0.6948448363574699,
+        0.8702024302640813,
+        0.6433823937179047,
+        0.7197613268608414,
+        0.7244989396338002,
+        0.852175711337796,
+        0.8862269446672012,
+        0.7705000457080172,
+        0.7544034816412235,
+        0.7336152722709904,
+        0.7104143416300289,
+        0.7324047489288548,
+        0.6843610934520026,
+        0.7526814115440559
+      ],
+      "strategy": "Fused two-kernel Triton: single-pass dx+gw-partial (BLOCK_M=1..64, loop-based) + reduce; pre-allocated partial buffer ca",
+      "agent": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+      "candidate": "candidates/fb3bcd6b11ae.json"
+    },
+    {
       "cand_id": "24f62c4d7ab8",
       "sol_score": 0.7187518078560557,
       "sol_score_cal": 0.6785806869412535,
       "all_passed": true,
-      "shapes_won": 3,
+      "shapes_won": 2,
       "vector": [
         0.5977592168485337,
         0.7297508514736358,
@@ -71,7 +100,7 @@
       "sol_score": 0.693103668455554,
       "sol_score_cal": 0.6532232250635391,
       "all_passed": true,
-      "shapes_won": 0,
+      "shapes_won": 1,
       "vector": [
         0.6588220737441228,
         0.6331927231000617,
@@ -94,35 +123,6 @@
       "agent": "codex",
       "model": "gpt-5.5",
       "candidate": "candidates/3b40d0a8e488.json"
-    },
-    {
-      "cand_id": "ca52c317c36d",
-      "sol_score": 0.5369876207408639,
-      "sol_score_cal": null,
-      "all_passed": false,
-      "shapes_won": 7,
-      "vector": [
-        0.7105174490173773,
-        0.7218290503558507,
-        0.6955451584497702,
-        0.0,
-        0.6545405307817295,
-        0.7174395161290323,
-        0.7251934500729701,
-        0.0,
-        0.0,
-        0.7665371229604175,
-        0.7507531586777821,
-        0.7289901285574305,
-        0.7104143416300289,
-        0.7282814172416994,
-        0.681760607979734,
-        0.0
-      ],
-      "strategy": "Single-CTA exact 5x512 fast path for \u2264512 rows eliminates the second launch and partial buffer, while the large path use",
-      "agent": "openrouter",
-      "model": "moonshotai/kimi-k2.7-code",
-      "candidate": "candidates/ca52c317c36d.json"
     }
   ]
 }

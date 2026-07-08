@@ -647,15 +647,53 @@ class CliAgent:
             *cmd, cwd=str(wd), env=self.env,
             stdin=(asyncio.subprocess.PIPE if stdin_data is not None else asyncio.subprocess.DEVNULL),
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+        traj = wd / f"{traj_name}.jsonl"
+        traj.write_text("")   # exists immediately — a live-transcript viewer has
+                               # something to tail before the call finishes
+        out_chunks: list[bytes] = []
+
+        async def _feed_stdin() -> None:
+            if stdin_data is None:
+                return
+            proc.stdin.write(stdin_data)
+            await proc.stdin.drain()
+            proc.stdin.close()
+
+        async def _drain_stdout() -> None:
+            # Written INCREMENTALLY (as chunks arrive, flushed) rather than
+            # buffered to the end — the dashboard's live-transcript view reads
+            # whatever has landed so far while the call is still running.
+            # Reads fixed-size CHUNKS, not lines: StreamReader.readline() has a
+            # default 64KB-per-line buffer limit and raises ValueError
+            # ("Separator is found, but chunk is longer than limit") on
+            # anything longer — confirmed live (2026-07-08): a single event
+            # line over 64KB (e.g. a large kernel embedded in one JSON message)
+            # killed the whole plan/review call as a bare exception, a real
+            # regression from the very first version of this change. A torn
+            # line at a chunk boundary is harmless — render_stream's per-line
+            # try/catch already tolerates a cut-off trailing line.
+            with open(traj, "a", encoding="utf-8") as f:
+                while True:
+                    chunk = await proc.stdout.read(65536)
+                    if not chunk:
+                        break
+                    out_chunks.append(chunk)
+                    f.write(chunk.decode("utf-8", "replace"))
+                    f.flush()
+
+        async def _drain_stderr() -> bytes:
+            return await proc.stderr.read()
+
         try:
-            out, err = await asyncio.wait_for(proc.communicate(input=stdin_data), timeout=self.timeout)
+            _, _, err = await asyncio.wait_for(
+                asyncio.gather(_feed_stdin(), _drain_stdout(), _drain_stderr()),
+                timeout=self.timeout)
+            await proc.wait()
         except asyncio.TimeoutError:
             proc.kill()
             await proc.wait()
             raise RuntimeError(f"{self.spec.name} timed out after {self.timeout}s")
-        raw = out.decode("utf-8", "replace")
-        traj = wd / f"{traj_name}.jsonl"
-        traj.write_text(raw)                        # the trajectory: the raw agent event stream
+        raw = b"".join(out_chunks).decode("utf-8", "replace")
         await asyncio.to_thread(self._render, raw, wd / f"{traj_name}.txt")   # readable render (best-effort)
         return _Run(err.decode("utf-8", "replace"), proc.returncode or 0,
                     _parse_tokens(self.spec.stream, raw), traj,
@@ -665,16 +703,33 @@ class CliAgent:
 
     def _render(self, raw: str, out_path: Path) -> None:
         """Render the raw stream to readable text via the vendored jq wrapper."""
-        helper = _HELPERS / f"{self.spec.stream}_stream.sh"
-        if not raw.strip() or not helper.exists() or not shutil.which("jq") or not shutil.which("bash"):
-            return
-        try:
-            r = subprocess.run(["bash", str(helper)], input=raw, capture_output=True,
-                               text=True, timeout=30)
-            if r.stdout:
-                out_path.write_text(r.stdout)
-        except Exception:
-            pass
+        text = render_stream(self.spec.stream, raw)
+        if text:
+            out_path.write_text(text)
+
+
+# Schema each spec's event stream follows — used by the dashboard to render a
+# LIVE (still-growing) trajectory the same way a finished one is rendered,
+# without needing a CliAgent instance (see render_stream / solver/dashboard).
+AGENT_STREAM: dict[str, str] = {name: spec.stream for name, spec in SPECS.items()}
+
+
+def render_stream(schema: str, raw: str) -> str:
+    """Render a raw agent event stream to readable text via the vendored jq
+    wrapper. Safe to call on a PARTIAL stream (e.g. a call still in progress):
+    each helper script wraps its per-line parse in try/catch, so one incomplete
+    trailing line renders as '[unparsed] ...' instead of failing the whole
+    render. Returns "" (never raises) if jq/bash aren't available or the
+    render fails outright."""
+    helper = _HELPERS / f"{schema}_stream.sh"
+    if not raw.strip() or not helper.exists() or not shutil.which("jq") or not shutil.which("bash"):
+        return ""
+    try:
+        r = subprocess.run(["bash", str(helper)], input=raw, capture_output=True,
+                           text=True, timeout=30)
+        return r.stdout or ""
+    except Exception:
+        return ""
 
 
 def _member_cal(m):

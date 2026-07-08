@@ -74,6 +74,48 @@ def test_pick_reviewer_falls_back_to_writer_when_sole_perspective():
     assert pick_reviewer([A], A, key="x") == A
 
 
+SONNET = Perspective("claude", "sonnet")
+GPT55 = Perspective("codex", "gpt-5.5")
+GLM = Perspective("openrouter", "z-ai/glm-4.7-flash")
+DEEPSEEK = Perspective("openrouter", "deepseek/deepseek-v4-pro")
+
+
+def test_pick_reviewer_prefers_sonnet_when_available():
+    """Direct user feedback (2026-07-08): sonnet reviews noticeably better than
+    the cheaper pool — always pick it over gpt-5.5/openrouter when it's not the
+    writer, regardless of key (no randomness needed with only one candidate)."""
+    pool = [A, SONNET, GPT55, GLM, DEEPSEEK]
+    for i in range(10):
+        assert pick_reviewer(pool, A, key=f"k{i}") == SONNET
+
+
+def test_pick_reviewer_falls_back_to_gpt55_when_sonnet_is_the_writer():
+    pool = [SONNET, GPT55, GLM, DEEPSEEK]
+    for i in range(10):
+        assert pick_reviewer(pool, SONNET, key=f"k{i}") == GPT55
+
+
+def test_pick_reviewer_falls_back_to_gpt55_when_sonnet_is_absent():
+    pool = [A, GPT55, GLM, DEEPSEEK]
+    for i in range(10):
+        assert pick_reviewer(pool, A, key=f"k{i}") == GPT55
+
+
+def test_pick_reviewer_falls_back_to_a_chinese_oss_model_when_sonnet_and_gpt_unavailable():
+    pool = [A, GLM, DEEPSEEK]
+    for i in range(10):
+        r = pick_reviewer(pool, A, key=f"k{i}")
+        assert r in (GLM, DEEPSEEK)
+
+
+def test_pick_reviewer_falls_back_to_gpt55_when_sonnet_is_the_only_other_option_but_is_writer():
+    """Sonnet is the writer this round and nothing else preferred is in the
+    pool — must not just grab sonnet anyway (that would mean reviewing your
+    own code) or silently do nothing; falls through to whatever's left."""
+    pool = [SONNET, A]
+    assert pick_reviewer(pool, SONNET, key="x") == A
+
+
 # --------------------------------------------------------------------------- #
 # the review/repair cycle inside solve_problem — both A and B get the SAME
 # scripted reviewer so the test doesn't care which one round-robin picks as the

@@ -202,6 +202,15 @@ solver solve --gpu 1-10 \
   the pod's own real rental time, so a chain of quick restarts can't reset the
   safety cap. Normal completion or the cap being hit still tears the pod down —
   this only changes what a *deliberate* restart does.
+- **Graceful shutdown** — a SIGINT/SIGTERM (or `--gpu-max-hours` firing) waits up
+  to `shutdown_grace_s` (default 180s) for any in-flight GPU eval-to-accept
+  sequence to finish before tearing anything down, instead of interrupting it
+  mid-way (`GpuWorkGuard`, shared fleet-wide). Without this, a candidate whose
+  GPU eval had already finished — real, billed GPU time spent — could get
+  permanently stuck with no outcome ever recorded, because a resumed run just
+  starts a fresh iteration rather than revisiting it. A restart already costs
+  several minutes for new agent calls to spin back up regardless, so the wait
+  is free; it's bounded so a shutdown never hangs forever.
 - **`--tier NAME=agent/model[,agent/model]`** (repeatable) — one tier shuffles its
   models per problem; multiple tiers escalate cheap→strong on plateau.
 - **Cheap models, one CLI.** Claude/GPT are pricey, so any provider with an

@@ -74,8 +74,16 @@ real safety cap. Steps:
    deliberately left RUNNING (confirm via `list_tagged` — should show
    `count: 1`, not 0). Without that flag, the old default behavior applies:
    `PodSession`'s SIGINT/SIGTERM handler (`_arm_last_resort`) + `atexit` hook
-   tear the pod down even on a hard kill — confirmed live (2026-07-08): SIGTERM
-   → pod gone within ~3s.
+   tear the pod down even on a hard kill.
+   **Graceful shutdown (added 2026-07-08):** the signal handler no longer
+   interrupts immediately — it waits up to `shutdown_grace_s` (default 180s)
+   for any GPU eval currently in flight to reach a safe stopping point
+   (`GpuWorkGuard`), so a candidate that already spent real GPU time doesn't
+   get silently orphaned mid `exec_done`→`accept`. If nothing is running on
+   the GPU at the moment of the signal (the common case), shutdown is
+   effectively immediate, same as before; if something IS running, expect the
+   process to take up to ~3 minutes to actually exit — this is expected, not
+   a hang. `--gpu-max-hours` firing respects the same guard.
 3. **Verify pod state** via `list_tagged` before relaunching:
    `--gpu-reuse-pod` → expect `count: 1` (the pod you're about to adopt);
    no reuse → expect `count: 0`. Either way, an unexpected count means

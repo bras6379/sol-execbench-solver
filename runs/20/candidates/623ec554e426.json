@@ -1,0 +1,234 @@
+{
+  "cand_id": "623ec554e426",
+  "task_id": 20,
+  "verdict": "entered",
+  "sol_score": 0.7314331562444881,
+  "sol_score_calibrated": 0.6506158361959014,
+  "correct": true,
+  "vector": [
+    0.7417653669923057,
+    0.7193091231178032,
+    0.7087006748951177,
+    0.7664549905811714,
+    0.7346166685211972,
+    0.7408034408730173,
+    0.7925355842436279,
+    0.7196165180855669,
+    0.7571645154810035,
+    0.7391577826231122,
+    0.7563203997090725,
+    0.6249400251381442,
+    0.7131311213892245,
+    0.738264810618323,
+    0.718716321398635
+  ],
+  "strategy": "Fused LN+shuffle Triton kernel (3\u00d7512 unmasked loads) + cuBLAS FC1/FC2, optimized with memory hierarchy hints (evict_fir",
+  "agent": "claude",
+  "model": "haiku",
+  "parent": "ed3d1f81d1df",
+  "trajectory": "runs/20/work/623ec554e426/trajectory.jsonl",
+  "gpu_s": 10.076,
+  "job_id": "20-623ec554e426",
+  "asi": {
+    "stage": "harness",
+    "gpu": {
+      "sm_mhz_median": 1965.0,
+      "sm_mhz_max": 1965.0,
+      "mem_mhz_median": 3996.0,
+      "temp_c_max": 38.0,
+      "power_w_max": 462.13,
+      "samples": 32,
+      "harness_lock_preset_mhz": 1500
+    }
+  },
+  "per_workload": [
+    {
+      "index": 0,
+      "correct": true,
+      "latency_ms": 0.115792,
+      "sol_ms": 0.068,
+      "baseline_latency_ms": 0.20528,
+      "sol_score": 0.7417653669923057,
+      "sol_score_cal": 0.6629562750202249,
+      "error": null
+    },
+    {
+      "index": 1,
+      "correct": true,
+      "latency_ms": 0.055328,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1147519999999999,
+      "sol_score": 0.7193091231178032,
+      "sol_score_cal": 0.6675145651497283,
+      "error": null
+    },
+    {
+      "index": 2,
+      "correct": true,
+      "latency_ms": 0.0506235,
+      "sol_ms": 0.0099,
+      "baseline_latency_ms": 0.108976,
+      "sol_score": 0.7087006748951177,
+      "sol_score_cal": 0.663079570117288,
+      "error": null
+    },
+    {
+      "index": 3,
+      "correct": true,
+      "latency_ms": 0.084512,
+      "sol_ms": 0.0511,
+      "baseline_latency_ms": 0.1607525,
+      "sol_score": 0.7664549905811714,
+      "sol_score_cal": 0.6891105667621366,
+      "error": null
+    },
+    {
+      "index": 4,
+      "correct": true,
+      "latency_ms": 0.06496,
+      "sol_ms": 0.0268,
+      "baseline_latency_ms": 0.132432,
+      "sol_score": 0.7346166685211972,
+      "sol_score_cal": 0.676545335300869,
+      "error": null
+    },
+    {
+      "index": 5,
+      "correct": true,
+      "latency_ms": 0.205264,
+      "sol_ms": 0.1356,
+      "baseline_latency_ms": 0.334705,
+      "sol_score": 0.7408034408730173,
+      "sol_score_cal": 0.646929666377229,
+      "error": null
+    },
+    {
+      "index": 6,
+      "correct": true,
+      "latency_ms": 0.146112,
+      "sol_ms": 0.106,
+      "baseline_latency_ms": 0.259232,
+      "sol_score": 0.7925355842436279,
+      "sol_score_cal": 0.6930273216451457,
+      "error": null
+    },
+    {
+      "index": 7,
+      "correct": true,
+      "latency_ms": 0.7689585,
+      "sol_ms": 0.541,
+      "baseline_latency_ms": 1.1260655,
+      "sol_score": 0.7196165180855669,
+      "sol_score_cal": 0.6099985089030758,
+      "error": null
+    },
+    {
+      "index": 8,
+      "correct": true,
+      "latency_ms": 0.2804635,
+      "sol_ms": 0.2031,
+      "baseline_latency_ms": 0.4443205,
+      "sol_score": 0.7571645154810035,
+      "sol_score_cal": 0.6486652876171272,
+      "error": null
+    },
+    {
+      "index": 9,
+      "correct": true,
+      "latency_ms": 0.1835995,
+      "sol_ms": 0.1187,
+      "baseline_latency_ms": 0.302608,
+      "sol_score": 0.7391577826231122,
+      "sol_score_cal": 0.648267789431266,
+      "error": null
+    },
+    {
+      "index": 10,
+      "correct": true,
+      "latency_ms": 0.3670235,
+      "sol_ms": 0.2707,
+      "baseline_latency_ms": 0.569664,
+      "sol_score": 0.7563203997090725,
+      "sol_score_cal": 0.642902964809415,
+      "error": null
+    },
+    {
+      "index": 11,
+      "correct": true,
+      "latency_ms": 1.5112455,
+      "sol_ms": 1.0817,
+      "baseline_latency_ms": 1.797426,
+      "sol_score": 0.6249400251381442,
+      "sol_score_cal": 0.4996662456146534,
+      "error": null
+    },
+    {
+      "index": 12,
+      "correct": true,
+      "latency_ms": 0.056592,
+      "sol_ms": 0.0173,
+      "baseline_latency_ms": 0.1149765,
+      "sol_score": 0.7131311213892245,
+      "sol_score_cal": 0.6612229352932806,
+      "error": null
+    },
+    {
+      "index": 13,
+      "correct": true,
+      "latency_ms": 0.073008,
+      "sol_ms": 0.0342,
+      "baseline_latency_ms": 0.143664,
+      "sol_score": 0.738264810618323,
+      "sol_score_cal": 0.6751056101409417,
+      "error": null
+    },
+    {
+      "index": 14,
+      "correct": true,
+      "latency_ms": 0.046383999999999995,
+      "sol_ms": 0.0088,
+      "baseline_latency_ms": 0.104832,
+      "sol_score": 0.718716321398635,
+      "sol_score_cal": 0.6742449007561384,
+      "error": null
+    }
+  ],
+  "solution": {
+    "spec": {
+      "languages": [
+        "pytorch"
+      ]
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _ln_shuffle_kernel(\n    hidden_ptr, grid_thw_ptr, w_ptr, b_ptr, out_ptr,\n    eps,\n    NGRIDS: tl.constexpr,\n    H: tl.constexpr,\n    CHUNK: tl.constexpr,\n):\n    \"\"\"\n    Fused LayerNorm + spatial-shuffle kernel (single launch, zero host syncs).\n\n    Each program handles one output slot (4 per merged row) and computes:\n    1. The shuffle index (which source hidden row feeds this slot)\n    2. LayerNorm of the source row (fp32-precise)\n    3. Stores the result to the correct output slot\n\n    Uses 3 unmasked CHUNK-wide (512) loads to cover H=1536 with no predication.\n    Optimized with cache eviction hints for better memory hierarchy utilization.\n    \"\"\"\n    pid = tl.program_id(0).to(tl.int64)\n    merged_row = pid // 4\n    block = pid % 4\n    di = block // 2\n    dj = block % 2\n\n    # Locate the grid that owns this merged_row via inline scan over grid_thw\n    zero = merged_row - merged_row\n    m_off = zero\n    s_off = zero\n    sel_h = zero\n    sel_w = zero\n    sel_soff = zero\n    sel_moff = zero\n    found = zero\n    for g in tl.static_range(NGRIDS):\n        tg = tl.load(grid_thw_ptr + g * 3 + 0)\n        hg = tl.load(grid_thw_ptr + g * 3 + 1)\n        wg = tl.load(grid_thw_ptr + g * 3 + 2)\n        mcount = tg * (hg // 2) * (wg // 2)\n        scount = tg * hg * wg\n        in_this = (found == 0) & (merged_row < m_off + mcount)\n        sel_h = tl.where(in_this, hg, sel_h)\n        sel_w = tl.where(in_this, wg, sel_w)\n        sel_soff = tl.where(in_this, s_off, sel_soff)\n        sel_moff = tl.where(in_this, m_off, sel_moff)\n        found = tl.where(in_this, 1, found)\n        m_off += mcount\n        s_off += scount\n\n    # Compute source row index from shuffle logic\n    local_m = merged_row - sel_moff\n    wm = sel_w // 2\n    hwm = (sel_h // 2) * wm\n    ti = local_m // hwm\n    rem = local_m % hwm\n    hmi = rem // wm\n    wmi = rem % wm\n    base = sel_soff + ti * (sel_h * sel_w)\n    src_row = base + (2 * hmi + di) * sel_w + (2 * wmi + dj)\n\n    # LayerNorm (fp32-precise, reference-exact)\n    # 3 unmasked CHUNK-wide (512) loads span H=1536 exactly\n    row_base = hidden_ptr + src_row * H\n    c = tl.arange(0, CHUNK)\n    x0 = tl.load(row_base + c, eviction_policy='evict_first').to(tl.float32)\n    x1 = tl.load(row_base + CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n    x2 = tl.load(row_base + 2 * CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n\n    n = H\n    mean = (tl.sum(x0, axis=0) + tl.sum(x1, axis=0) + tl.sum(x2, axis=0)) / n\n    xc0 = x0 - mean\n    xc1 = x1 - mean\n    xc2 = x2 - mean\n    var = (tl.sum(xc0 * xc0, axis=0) + tl.sum(xc1 * xc1, axis=0)\n           + tl.sum(xc2 * xc2, axis=0)) / n\n    rstd = 1.0 / tl.sqrt(var + eps)\n\n    w0 = tl.load(w_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    w1 = tl.load(w_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    w2 = tl.load(w_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b0 = tl.load(b_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    b1 = tl.load(b_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b2 = tl.load(b_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n\n    y0 = xc0 * rstd * w0 + b0\n    y1 = xc1 * rstd * w1 + b1\n    y2 = xc2 * rstd * w2 + b2\n\n    out_base = out_ptr + pid * H\n    tl.store(out_base + c, y0.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + CHUNK + c, y1.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + 2 * CHUNK + c, y2.to(tl.bfloat16), eviction_policy='evict_last')\n\n\ndef _fc_layers(shuffled, fc1_weight, fc1_bias, fc2_weight, fc2_bias):\n    \"\"\"Fused FC1 \u2192 GELU \u2192 FC2 sequence for potential compiler optimization.\"\"\"\n    x = torch.nn.functional.linear(shuffled, fc1_weight, fc1_bias)\n    x = torch.nn.functional.gelu(x)\n    output = torch.nn.functional.linear(x, fc2_weight, fc2_bias)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger: LayerNorm \u2192 spatial shuffle \u2192 2-layer MLP with GELU.\n\n    Pipeline:\n    1. Fused LN+shuffle Triton kernel (single launch, zero-sync)\n    2. cuBLAS FC1 with bias\n    3. GELU activation\n    4. cuBLAS FC2 with bias\n    \"\"\"\n    H = 1536\n    HE = 6144\n    device = hidden.device\n\n    N = hidden.shape[0]\n    M = N // 4\n    ngrids = grid_thw.shape[0]\n\n    shuffled = torch.empty((M, HE), dtype=torch.bfloat16, device=device)\n    grid = (4 * M,)\n    _ln_shuffle_kernel[grid](\n        hidden, grid_thw, ln_weight, ln_bias, shuffled,\n        float(eps),\n        NGRIDS=ngrids,\n        H=H,\n        CHUNK=512,\n        num_warps=4,\n    )\n\n    # MLP layers: FC1 \u2192 GELU \u2192 FC2 via extracted function for clarity\n    output = _fc_layers(shuffled, fc1_weight, fc1_bias, fc2_weight, fc2_bias)\n    return output\n"
+      }
+    ]
+  },
+  "submit": {
+    "name": "t20_623ec554e426",
+    "definition": "020_vision_patch_merger_spatial_shuffle_mlp",
+    "author": "sol-solver",
+    "spec": {
+      "languages": [
+        "pytorch"
+      ],
+      "target_hardware": [
+        "B200",
+        "LOCAL"
+      ],
+      "entry_point": "kernel.py::run",
+      "dependencies": [
+        "torch"
+      ],
+      "destination_passing_style": false
+    },
+    "sources": [
+      {
+        "path": "kernel.py",
+        "content": "import torch\nimport triton\nimport triton.language as tl\n\n\n@triton.jit\ndef _ln_shuffle_kernel(\n    hidden_ptr, grid_thw_ptr, w_ptr, b_ptr, out_ptr,\n    eps,\n    NGRIDS: tl.constexpr,\n    H: tl.constexpr,\n    CHUNK: tl.constexpr,\n):\n    \"\"\"\n    Fused LayerNorm + spatial-shuffle kernel (single launch, zero host syncs).\n\n    Each program handles one output slot (4 per merged row) and computes:\n    1. The shuffle index (which source hidden row feeds this slot)\n    2. LayerNorm of the source row (fp32-precise)\n    3. Stores the result to the correct output slot\n\n    Uses 3 unmasked CHUNK-wide (512) loads to cover H=1536 with no predication.\n    Optimized with cache eviction hints for better memory hierarchy utilization.\n    \"\"\"\n    pid = tl.program_id(0).to(tl.int64)\n    merged_row = pid // 4\n    block = pid % 4\n    di = block // 2\n    dj = block % 2\n\n    # Locate the grid that owns this merged_row via inline scan over grid_thw\n    zero = merged_row - merged_row\n    m_off = zero\n    s_off = zero\n    sel_h = zero\n    sel_w = zero\n    sel_soff = zero\n    sel_moff = zero\n    found = zero\n    for g in tl.static_range(NGRIDS):\n        tg = tl.load(grid_thw_ptr + g * 3 + 0)\n        hg = tl.load(grid_thw_ptr + g * 3 + 1)\n        wg = tl.load(grid_thw_ptr + g * 3 + 2)\n        mcount = tg * (hg // 2) * (wg // 2)\n        scount = tg * hg * wg\n        in_this = (found == 0) & (merged_row < m_off + mcount)\n        sel_h = tl.where(in_this, hg, sel_h)\n        sel_w = tl.where(in_this, wg, sel_w)\n        sel_soff = tl.where(in_this, s_off, sel_soff)\n        sel_moff = tl.where(in_this, m_off, sel_moff)\n        found = tl.where(in_this, 1, found)\n        m_off += mcount\n        s_off += scount\n\n    # Compute source row index from shuffle logic\n    local_m = merged_row - sel_moff\n    wm = sel_w // 2\n    hwm = (sel_h // 2) * wm\n    ti = local_m // hwm\n    rem = local_m % hwm\n    hmi = rem // wm\n    wmi = rem % wm\n    base = sel_soff + ti * (sel_h * sel_w)\n    src_row = base + (2 * hmi + di) * sel_w + (2 * wmi + dj)\n\n    # LayerNorm (fp32-precise, reference-exact)\n    # 3 unmasked CHUNK-wide (512) loads span H=1536 exactly\n    row_base = hidden_ptr + src_row * H\n    c = tl.arange(0, CHUNK)\n    x0 = tl.load(row_base + c, eviction_policy='evict_first').to(tl.float32)\n    x1 = tl.load(row_base + CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n    x2 = tl.load(row_base + 2 * CHUNK + c, eviction_policy='evict_first').to(tl.float32)\n\n    n = H\n    mean = (tl.sum(x0, axis=0) + tl.sum(x1, axis=0) + tl.sum(x2, axis=0)) / n\n    xc0 = x0 - mean\n    xc1 = x1 - mean\n    xc2 = x2 - mean\n    var = (tl.sum(xc0 * xc0, axis=0) + tl.sum(xc1 * xc1, axis=0)\n           + tl.sum(xc2 * xc2, axis=0)) / n\n    rstd = 1.0 / tl.sqrt(var + eps)\n\n    w0 = tl.load(w_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    w1 = tl.load(w_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    w2 = tl.load(w_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b0 = tl.load(b_ptr + c, eviction_policy='evict_last').to(tl.float32)\n    b1 = tl.load(b_ptr + CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n    b2 = tl.load(b_ptr + 2 * CHUNK + c, eviction_policy='evict_last').to(tl.float32)\n\n    y0 = xc0 * rstd * w0 + b0\n    y1 = xc1 * rstd * w1 + b1\n    y2 = xc2 * rstd * w2 + b2\n\n    out_base = out_ptr + pid * H\n    tl.store(out_base + c, y0.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + CHUNK + c, y1.to(tl.bfloat16), eviction_policy='evict_last')\n    tl.store(out_base + 2 * CHUNK + c, y2.to(tl.bfloat16), eviction_policy='evict_last')\n\n\ndef _fc_layers(shuffled, fc1_weight, fc1_bias, fc2_weight, fc2_bias):\n    \"\"\"Fused FC1 \u2192 GELU \u2192 FC2 sequence for potential compiler optimization.\"\"\"\n    x = torch.nn.functional.linear(shuffled, fc1_weight, fc1_bias)\n    x = torch.nn.functional.gelu(x)\n    output = torch.nn.functional.linear(x, fc2_weight, fc2_bias)\n    return output\n\n\n@torch.no_grad()\ndef run(\n    hidden: torch.Tensor,\n    grid_thw: torch.Tensor,\n    ln_weight: torch.Tensor,\n    ln_bias: torch.Tensor,\n    fc1_weight: torch.Tensor,\n    fc1_bias: torch.Tensor,\n    fc2_weight: torch.Tensor,\n    fc2_bias: torch.Tensor,\n    eps: float,\n):\n    \"\"\"\n    Vision patch merger: LayerNorm \u2192 spatial shuffle \u2192 2-layer MLP with GELU.\n\n    Pipeline:\n    1. Fused LN+shuffle Triton kernel (single launch, zero-sync)\n    2. cuBLAS FC1 with bias\n    3. GELU activation\n    4. cuBLAS FC2 with bias\n    \"\"\"\n    H = 1536\n    HE = 6144\n    device = hidden.device\n\n    N = hidden.shape[0]\n    M = N // 4\n    ngrids = grid_thw.shape[0]\n\n    shuffled = torch.empty((M, HE), dtype=torch.bfloat16, device=device)\n    grid = (4 * M,)\n    _ln_shuffle_kernel[grid](\n        hidden, grid_thw, ln_weight, ln_bias, shuffled,\n        float(eps),\n        NGRIDS=ngrids,\n        H=H,\n        CHUNK=512,\n        num_warps=4,\n    )\n\n    # MLP layers: FC1 \u2192 GELU \u2192 FC2 via extracted function for clarity\n    output = _fc_layers(shuffled, fc1_weight, fc1_bias, fc2_weight, fc2_bias)\n    return output\n"
+      }
+    ]
+  }
+}

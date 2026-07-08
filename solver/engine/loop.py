@@ -25,6 +25,7 @@ from .agent import Agent, solution_hash
 from .config import Config, Perspective
 from .context import RunContext
 from .executor import EvalResult, Executor
+from .gpu_guard import GpuWorkGuard
 from .knowledge import op_key_of
 
 SeedsFn = Callable[[int], list[dict]]
@@ -132,9 +133,13 @@ def _fmt_idxs(idxs: list[int]) -> str:
 
 def _failure_detail(result: EvalResult) -> str:
     """An ACTIONABLE per-workload failure breakdown fed back to the agent so it can
-    fix an incorrect kernel: which workloads failed, with what error, and which
-    passed. E.g. '12/15 workloads FAILED — RUNTIME_ERROR on #0-11; TOLERANCE on
-    #12,13. PASSED: #14'. Empty string if there's no per-workload detail."""
+    fix an incorrect kernel: which workloads failed, with what error, a snippet of
+    the harness's ACTUAL diagnostic for one example (a Triton/CUDA traceback line
+    or the measured error magnitude — see WorkloadResult.detail — not just the
+    bare status code), and which workloads passed. E.g. '12/15 workloads FAILED —
+    RUNTIME_ERROR on #0-11 (e.g. "User function failed: at 22:11: ..."); TOLERANCE
+    on #12,13 (e.g. "max_abs_error=0.4, max_rel_error=0.23"). PASSED: #14'.
+    Empty string if there's no per-workload detail."""
     from collections import defaultdict
     pw = result.per_workload or []
     if not pw:
@@ -144,21 +149,51 @@ def _failure_detail(result: EvalResult) -> str:
         return ""
     passed = [w.index for w in pw if w.correct]
     by_err: dict[str, list[int]] = defaultdict(list)
+    example_detail: dict[str, str] = {}
     for w in failed:
-        by_err[w.error or "INCORRECT_OUTPUT"].append(w.index)
-    parts = [f"{err} on #{_fmt_idxs(idxs)}"
-             for err, idxs in sorted(by_err.items(), key=lambda kv: -len(kv[1]))]
+        key = w.error or "INCORRECT_OUTPUT"
+        by_err[key].append(w.index)
+        if w.detail and key not in example_detail:
+            example_detail[key] = w.detail
+    # COMPILE_ERROR fails before any workload runs, so no per-workload trace
+    # exists — the harness's SSH-captured stderr (asi.error) is the only
+    # diagnostic available for it.
+    compile_err = (result.asi or {}).get("error")
+    if compile_err and "COMPILE_ERROR" in by_err and "COMPILE_ERROR" not in example_detail:
+        example_detail["COMPILE_ERROR"] = compile_err[:500]
+    parts = []
+    for err, idxs in sorted(by_err.items(), key=lambda kv: -len(kv[1])):
+        piece = f"{err} on #{_fmt_idxs(idxs)}"
+        if err in example_detail:
+            piece += f" (e.g. {example_detail[err]!r})"
+        parts.append(piece)
     tail = f". PASSED: #{_fmt_idxs(passed)}" if passed else " (ALL workloads failed)"
     return f"{len(failed)}/{len(pw)} workloads FAILED — " + "; ".join(parts) + tail
 
 
+_CHINESE_OSS_VENDORS = ("deepseek", "kimi", "moonshot", "glm", "z-ai", "qwen")
+
+
 def pick_reviewer(perspectives: list[Perspective], writer: Perspective, key: str) -> Perspective:
     """Pick a reviewer DIFFERENT from the writer — cross-model review catches blind
-    spots a model has about its own code. Deterministic on `key` (e.g. a per-round
-    seed) so a resumed run reproduces the same reviewer for the same round; falls
-    back to the writer itself only when it's the sole perspective in the pool."""
+    spots a model has about its own code. Preference order (2026-07-08, direct
+    user feedback: sonnet reviews noticeably better than the cheaper pool):
+    claude/sonnet > codex/gpt-5.5 > a Chinese OSS model (deepseek/kimi/glm/qwen,
+    typically via openrouter) > whatever's left. Falls back to the writer itself
+    only when it's the sole perspective in the pool. Deterministic on `key` (e.g.
+    a per-round seed) so a resumed run reproduces the same reviewer for the same
+    round — the priority tiers are picked directly (no randomness needed since
+    there's normally only one sonnet/gpt-5.5 perspective); `key` only breaks ties
+    within a tier that has more than one candidate."""
     others = [p for p in perspectives if p != writer]
     pool = others or [writer]
+    for agent, model in (("claude", "sonnet"), ("codex", "gpt-5.5")):
+        tier = [p for p in pool if p.agent == agent and p.model == model]
+        if tier:
+            return random.Random(key).choice(tier)
+    chinese = [p for p in pool if any(v in p.model.lower() for v in _CHINESE_OSS_VENDORS)]
+    if chinese:
+        return random.Random(key).choice(chinese)
     return random.Random(key).choice(pool)
 
 
@@ -213,7 +248,9 @@ async def solve_problem(
     family: str = "",
     name: str = "",
     on_phase: Callable[[str | None, dict | None], None] | None = None,
+    gpu_guard: GpuWorkGuard | None = None,
 ) -> RunContext:
+    guard = gpu_guard if gpu_guard is not None else GpuWorkGuard()
     ctx = RunContext.load(task_id, cfg, runs_dir, seed=seed)
     ctx.reopen_if_capped()             # a cap-terminated run continues if the caps now allow it
     if cfg.time_limit_s:               # wall-clock budget for THIS run (resume gets a fresh one)
@@ -259,16 +296,17 @@ async def solve_problem(
         seeds = seeds_fn(task_id)
         for sol in seeds:
             cid = solution_hash(sol)[:12]
-            ctx.record("exec_enqueued", job=cid, cand=cid)
-            result = await executor.evaluate(sol, task_id)
-            ctx.record("exec_started", job=cid, ts=result.raw.get("started"))
-            ctx.record("exec_done", job=cid, cand=cid, ts=result.raw.get("ended"),
-                       gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
-                       sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
-                       scores=result.vector(), statuses=_statuses(result))
-            verdict = ctx.accept_candidate(cid)
-            _persist(ctx, task_id, cid, sol, result, runs_dir=runs_dir, problems_dir=problems_dir,
-                     family=family, name=name, strategy="seed", verdict=verdict)
+            with guard:      # a real GPU eval is about to run — see GpuWorkGuard
+                ctx.record("exec_enqueued", job=cid, cand=cid)
+                result = await executor.evaluate(sol, task_id)
+                ctx.record("exec_started", job=cid, ts=result.raw.get("started"))
+                ctx.record("exec_done", job=cid, cand=cid, ts=result.raw.get("ended"),
+                           gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
+                           sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
+                           scores=result.vector(), statuses=_statuses(result))
+                verdict = ctx.accept_candidate(cid)
+                _persist(ctx, task_id, cid, sol, result, runs_dir=runs_dir, problems_dir=problems_dir,
+                         family=family, name=name, strategy="seed", verdict=verdict)
         ctx.record("bootstrapped")
 
     # ---- the loop ----
@@ -404,37 +442,54 @@ async def solve_problem(
                     break
                 cand = repaired
 
-        ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
-        result = await executor.evaluate(cand.solution, task_id)
-        ctx.record("exec_started", job=cand.cand_id, ts=result.raw.get("started"))
-        ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, ts=result.raw.get("ended"),
-                   gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
-                   sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
-                   scores=result.vector(), statuses=_statuses(result))
-        if not result.correct:                              # feed the mistake back to future agents
-            ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id,
-                             detail=_failure_detail(result))
-            verdict = ctx.accept_candidate(cand.cand_id)
-        else:
-            # A candidate that PASSED and would improve the frontier gets re-verified
-            # (10 more correctness rounds per re-run) to catch flaky/racy kernels that
-            # pass once but fail the leaderboard's single run. Cheap: only frontier-
-            # entering candidates pay, and we can't lean on the leaderboard (throttled).
-            flaky_at = None
-            if cfg.verify_runs > 1 and ctx.frontier.would_enter(tuple(result.vector())):
-                flaky_at = await _reverify(ctx, executor, task_id, cand.cand_id,
-                                           cand.solution, cfg.verify_runs)
-            if flaky_at is not None:
-                ctx.record("flaky", cand=cand.cand_id, attempt=flaky_at)
-                ctx.note_failure(cand.strategy, "FLAKY_NONDETERMINISTIC", cand.cand_id)
-                verdict = "flaky"                           # rejected: never enters the frontier
-            else:
+        with guard:          # a real GPU eval is about to run — see GpuWorkGuard: a
+                             # shutdown waits (bounded) for this whole span, not just
+                             # the eval itself, so a scored candidate never gets stuck
+                             # without ever reaching accept+persist (confirmed live,
+                             # 2026-07-08: exactly this happened to a SIGTERM landing
+                             # right after exec_done).
+            ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
+            result = await executor.evaluate(cand.solution, task_id)
+            ctx.record("exec_started", job=cand.cand_id, ts=result.raw.get("started"))
+            ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, ts=result.raw.get("ended"),
+                       gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
+                       sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
+                       scores=result.vector(), statuses=_statuses(result))
+            if not result.correct:                          # feed the mistake back to future agents
+                ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id,
+                                 detail=_failure_detail(result))
                 verdict = ctx.accept_candidate(cand.cand_id)
-        _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
-                 problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
-                 agent=persp.agent, model=persp.model, parent=cand.parent,
-                 verdict=verdict, trajectory=cand.trajectory)
-        ctx.record("iter", n=ctx.iters, outcome=verdict)
+            else:
+                # A candidate that PASSED and would improve the frontier gets re-verified
+                # (10 more correctness rounds per re-run) to catch flaky/racy kernels that
+                # pass once but fail the leaderboard's single run. Cheap: only frontier-
+                # entering candidates pay, and we can't lean on the leaderboard (throttled).
+                flaky_at = None
+                if cfg.verify_runs > 1 and ctx.frontier.would_enter(tuple(result.vector())):
+                    # This candidate already has a real score (from exec_done above) but
+                    # isn't accepted yet — re-verification competes for the SAME
+                    # single-flight GPU lock as every other problem's eval, so it can sit
+                    # queued for a while behind someone else's turn. Journaled distinctly
+                    # (mirrors exec_enqueued/exec_started) so the dashboard can show
+                    # "verifying"/"verify: queued" instead of leaving the stale
+                    # "gpu: running" label from the eval that already finished — which is
+                    # what made it look like two problems were "running" on the GPU at
+                    # once (confirmed live, 2026-07-08: only one holds the lock at a time,
+                    # the other was actually waiting its turn for re-verify).
+                    ctx.record("verify_enqueued", job=cand.cand_id, cand=cand.cand_id)
+                    flaky_at = await _reverify(ctx, executor, task_id, cand.cand_id,
+                                               cand.solution, cfg.verify_runs)
+                if flaky_at is not None:
+                    ctx.record("flaky", cand=cand.cand_id, attempt=flaky_at)
+                    ctx.note_failure(cand.strategy, "FLAKY_NONDETERMINISTIC", cand.cand_id)
+                    verdict = "flaky"                       # rejected: never enters the frontier
+                else:
+                    verdict = ctx.accept_candidate(cand.cand_id)
+            _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
+                     problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
+                     agent=persp.agent, model=persp.model, parent=cand.parent,
+                     verdict=verdict, trajectory=cand.trajectory)
+            ctx.record("iter", n=ctx.iters, outcome=verdict)
 
     if ctx.terminated_reason is None:
         if ctx.done():
@@ -480,9 +535,17 @@ async def run_fleet(
     reflect_first: bool = False,
     reflect_every_min: float = 0,
     reflect_model: str | list[str] = "",
+    gpu_guard: GpuWorkGuard | None = None,
 ) -> None:
     families = families or {}
     names = names or {}
+    # Shared across every concurrently-running problem so a caller (e.g.
+    # solve_on_gpu's shutdown handling) can wait for ANY in-flight GPU
+    # eval-to-accept sequence, fleet-wide, before doing anything destructive —
+    # see GpuWorkGuard. Callers that care (gpu_run.py) pass their own instance
+    # in so they can observe it directly; direct engine tests get a private
+    # one that's equivalent to no guard at all (nothing outside ever awaits it).
+    gpu_guard = gpu_guard if gpu_guard is not None else GpuWorkGuard()
     # A pool rotates across the stuck list in diagnose_stuck (see there); the
     # dashboard just needs a readable label, not the raw list.
     reflect_label = (reflect_model if isinstance(reflect_model, str)
@@ -565,7 +628,7 @@ async def run_fleet(
                                     seeds_fn=seeds_fn, check_fn=check_fn, knowledge=knowledge,
                                     problems_dir=problems_dir,
                                     family=families.get(t, ""), name=names.get(t, f"task-{t}"),
-                                    on_phase=_on_phase)
+                                    on_phase=_on_phase, gpu_guard=gpu_guard)
             finally:
                 active.discard(t)
                 task_phase.pop(t, None)
