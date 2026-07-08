@@ -66,6 +66,13 @@ class Config:
                                                   # 0 disables. Lowered from 3->2: ~50% of all plan turns
                                                   # measured live were no-ops, so 3 was letting stuck
                                                   # problems burn a 3rd wasted turn before catching it.
+    cross_op_patterns: bool = True                # render KnowledgeStore's cross-operator technique
+                                                  # notes (docs/context-architecture-plan.md Part B) into
+                                                  # PATTERNS.md/CONTEXT.md. The write side (corpus
+                                                  # accumulation in knowledge/patterns.json) always runs
+                                                  # regardless of this flag; this only gates rendering,
+                                                  # so it can be toggled off for an A/B comparison without
+                                                  # losing corpus growth.
 
     def __post_init__(self) -> None:
         if not self.tiers:

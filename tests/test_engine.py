@@ -15,10 +15,12 @@ from solver.engine import (
     Config,
     Frontier,
     GpuWorkGuard,
+    KnowledgeStore,
     Member,
     Perspective,
     StubExecutor,
     Tier,
+    op_key_of,
     solve_problem,
     stub_agents,
     run_fleet,
@@ -238,6 +240,59 @@ def test_handoff_accumulates_into_playbook(tmp_path):
     ctx2 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
                              c, runs_dir=tmp_path))
     assert [p["handoff"] for p in ctx2.playbook] == [p["handoff"] for p in ctx.playbook]
+
+
+def test_knowledge_curate_writes_cross_op_patterns(tmp_path):
+    """solve_problem's real curate() call site (loop.py, once per finished
+    problem) must actually thread reflection.from_runs_dir() through to
+    KnowledgeStore, end to end — not just the unit-level knowledge.py/
+    reflection.py behavior tested in isolation elsewhere."""
+    script = {"claude:haiku": [{"scores": [0.6], "strategy": "triton split-k fused epilogue"}]}
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    ks = KnowledgeStore(tmp_path / "knowledge")
+    run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                      c, runs_dir=tmp_path / "runs", knowledge=ks))
+
+    assert (tmp_path / "knowledge" / "patterns.json").is_file()
+    notes = ks.pattern_notes(["split_k"], exclude_task=999)
+    assert notes["split_k"]["confirmed"][0]["op"] == op_key_of(1, "problems")
+    assert notes["split_k"]["confirmed"][0]["task"] == 1
+
+
+def test_recent_failures_survives_resume(tmp_path):
+    """note_failure() is a plain in-memory call in loop.py, not journaled on its
+    own — apply() must reconstruct the SAME effect from exec_done's journaled
+    statuses/detail on replay, or a resumed run silently starts with empty
+    failure-avoidance context right when a restart just happened (confirmed
+    live, 2026-07-08)."""
+    script = {"claude:haiku": [
+        {"scores": [None]},              # fails correctness
+        {"scores": [0.6]},               # then a real, passing candidate
+    ]}
+    c = one_tier(max_iterations=2, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    ctx1 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                             c, runs_dir=tmp_path))
+    assert len(ctx1.recent_failures) == 1
+    assert ctx1.recent_failures[0]["reason"]                 # a real reason, not blank
+
+    # Resume: a fresh RunContext replays the SAME journal from scratch — nothing
+    # NEW happens live (the run already terminated), so this is a pure test of
+    # apply()'s reconstruction.
+    ctx2 = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                             c, runs_dir=tmp_path))
+    assert ctx2.recent_failures == ctx1.recent_failures
+
+
+def test_note_failure_is_not_double_counted_on_live_execution(tmp_path):
+    """Regression: exec_done's apply() now calls note_failure as a side effect
+    of ctx.record(...) itself — the explicit call that used to follow it in
+    loop.py must be gone, or a LIVE (non-replay) failure would be recorded
+    twice."""
+    script = {"claude:haiku": [{"scores": [None]}]}
+    c = one_tier(max_iterations=1, plateau_cycles=999, escalate_ceiling=1.1, review_enabled=False)
+    ctx = run(solve_problem(1, StubExecutor(), stub_agents(c.perspectives, scripted(script)),
+                            c, runs_dir=tmp_path))
+    assert len(ctx.recent_failures) == 1                     # not 2
 
 
 def test_verify_runs_resume_is_identical(tmp_path):

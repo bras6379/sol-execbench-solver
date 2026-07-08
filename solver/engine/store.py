@@ -50,7 +50,8 @@ def _submit_form(solution: dict, task_id: int, problems_dir, cid: str) -> dict |
 def record_candidate(runs_dir, task_id: int, cid: str, solution: dict | None,
                      result: EvalResult, *, strategy: str = "", agent: str = "",
                      model: str = "", parent: str | None = None, verdict: str = "",
-                     trajectory=None, problems_dir="problems") -> None:
+                     trajectory=None, problems_dir="problems",
+                     cross_op_patterns_shown: list[str] | None = None) -> None:
     """Persist one evaluated candidate (idempotent: overwrites <cid>.json,
     indexes it once)."""
     cdir = Path(runs_dir) / str(task_id) / "candidates"
@@ -60,7 +61,7 @@ def record_candidate(runs_dir, task_id: int, cid: str, solution: dict | None,
     per = [{"index": w.index, "correct": w.correct, "latency_ms": w.latency_ms,
             "sol_ms": w.sol_ms, "baseline_latency_ms": w.baseline_latency_ms,
             "sol_score": w.sol_score, "sol_score_cal": w.calibrated_sol_score(),
-            "error": w.error} for w in result.per_workload]
+            "error": w.error, "detail": w.detail} for w in result.per_workload]
     rec = {
         "cand_id": cid, "task_id": task_id, "verdict": verdict,
         "sol_score": result.sol_score, "sol_score_calibrated": result.calibrated_sol_score(),
@@ -69,6 +70,10 @@ def record_candidate(runs_dir, task_id: int, cid: str, solution: dict | None,
         "trajectory": str(trajectory) if trajectory else None,
         "gpu_s": result.raw.get("gpu_s"), "job_id": result.raw.get("job_id"),
         "asi": result.asi, "per_workload": per,
+        # technique tags whose cross-op notes were shown for THIS attempt (docs/
+        # context-architecture-plan.md Part B) — lets a later pass compare
+        # first-attempt correctness/error rates with vs without notes shown.
+        "cross_op_patterns_shown": cross_op_patterns_shown,
         "solution": solution,                                       # raw engine candidate
         "submit": _submit_form(solution, task_id, problems_dir, cid),  # ready-to-submit
     }

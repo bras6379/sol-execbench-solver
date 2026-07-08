@@ -81,6 +81,22 @@ Which authoring path for which op class. Tags per kb/README.md.
   kernel-quality tool on Blackwell today.
 - Useful as the *baseline to beat* per problem and for quick fusion of
   bandwidth-bound chains.
+- **Pitfall, measured on this benchmark**: `torch.compile(fn, mode=
+  'reduce-overhead', dynamic=True)` around `flex_attention` (or any pipeline
+  containing it) scored numerically correct but **10–50× SLOWER** than the
+  naive PyTorch baseline (two independent candidates, both with otherwise-
+  correct `flex_attention`/`create_block_mask` usage). Likely cause (not
+  profiled, but matches the failure shape): `reduce-overhead` captures a CUDA
+  graph that needs stable input addresses across replays, while `dynamic=True`
+  adds shape-guard overhead and can prevent one specialized graph from being
+  reused — the combination plausibly forces a full graph re-capture on every
+  call instead of a cheap replay, and capture is far more expensive than eager
+  execution. This benchmark's problems are graded on a small **fixed** set of
+  shapes (~16 workloads per problem), so `dynamic=True` buys nothing anyway —
+  use `torch.compile(flex_attention, dynamic=False)` (no `reduce-overhead`) and
+  compile only the `flex_attention` call itself, not the surrounding pipeline;
+  one compile per distinct shape is paid once during the untimed warmup and
+  reused for the rest of that shape's calls.
 
 ## ThunderKittens
 

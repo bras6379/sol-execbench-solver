@@ -27,6 +27,8 @@ from pathlib import Path
 
 from .agent import Candidate, ReviewVerdict, solution_hash
 from .config import Config, Perspective
+from .knowledge import KnowledgeStore, op_key_of
+from .reflection import relevant_techniques
 
 _HELPERS = Path(__file__).resolve().parent.parent / "agent_helpers"
 _EXT_LANG = {"py": "pytorch", "cu": "cuda_cpp", "cuh": "cuda_cpp",
@@ -377,13 +379,20 @@ class CliAgent:
 
     def __init__(self, spec: CliSpec, model: str, *, runs_dir: str | Path = "runs",
                  problems_dir: str | Path = "problems", timeout: float = 1800.0,
-                 kb_dir: str | Path = "kb", env: dict | None = None) -> None:
+                 kb_dir: str | Path = "kb", knowledge_dir: str | Path = "knowledge",
+                 cross_op_patterns: bool = True, env: dict | None = None) -> None:
         self.spec = spec
         self.model = model
         self.perspective = Perspective(spec.name, model)
         self.runs_dir = Path(runs_dir)
         self.problems_dir = Path(problems_dir)
         self.kb_dir = Path(kb_dir)
+        # A plain path, not a live KnowledgeStore instance — read fresh off disk
+        # every call (mirrors how reflection.md is read directly off disk below,
+        # never memoized), so a long-running fleet always sees the latest
+        # cross-op corpus without needing a shared object across agents/processes.
+        self.knowledge_dir = Path(knowledge_dir)
+        self.cross_op_patterns = cross_op_patterns
         self.timeout = timeout
         self.env = {**os.environ, **(env or {}), **self._provider_env()}
         self._seq = 0
@@ -404,6 +413,14 @@ class CliAgent:
         wd = self._workdir(task_id, "design")
         self._write_problem(wd, task_id)
         self._write_kb(wd)
+        if self.cross_op_patterns:
+            # Cross-op notes at design()-time — BEFORE any candidate exists — are
+            # the highest-leverage injection point: this is where the ranked
+            # approach that determines which technique gets tried FIRST is
+            # decided (design() never calls _context_md(), unlike plan()/
+            # review(), so without this the corpus is unreachable until the
+            # strategic ranking is already locked in).
+            self._write_patterns(wd, op_key_of(task_id, self.problems_dir), task_id)
         res = await self._run(wd, _DESIGN)
         f = wd / F_DESIGN
         text = f.read_text().strip() if f.exists() else "(no design produced)"
@@ -412,7 +429,7 @@ class CliAgent:
     async def plan(self, parent, ctx) -> Candidate:
         self._seq += 1
         wd = self._workdir(ctx.task_id, f"cand{self._seq}")
-        self._seed_workdir(wd, parent, ctx)
+        shown_tags = self._seed_workdir(wd, parent, ctx)
         res = await self._run(wd, _PLAN)
         solution = self._collect(wd)
         if not solution["sources"]:                    # loud, not a silent baseline candidate
@@ -433,7 +450,8 @@ class CliAgent:
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
                          trajectory=str(traj_path), context_read=res.context_read or [],
-                         session_id=res.session_id)
+                         session_id=res.session_id,
+                         cross_op_patterns_shown=shown_tags or None)
 
     async def review(self, cand: Candidate, ctx) -> ReviewVerdict:
         """Pre-GPU code review: an INDEPENDENT (agent,model) — never the one that
@@ -441,7 +459,8 @@ class CliAgent:
         judges ship/revise before a single GPU eval is spent."""
         wd = self._workdir(getattr(ctx, "task_id", ""), f"review-{cand.cand_id}-{self._seq}")
         self._seq += 1
-        (wd / "CONTEXT.md").write_text(_context_md(cand, ctx))
+        text, _shown_tags = _context_md(cand, ctx, self)   # reviewer's own shown-tags not tracked —
+        (wd / "CONTEXT.md").write_text(text)               # cand's are already recorded from plan()
         self._write_problem(wd, getattr(ctx, "task_id", ""))
         self._write_kb(wd)                     # same knowledge base the writer consulted
         for s in (cand.solution or {}).get("sources", []):
@@ -496,6 +515,8 @@ class CliAgent:
                          agent=self.spec.name, model=self.model, strategy=strategy,
                          handoff=handoff, tokens=res.tokens or None,
                          trajectory=str(res.trajectory), context_read=res.context_read or [],
+                         cross_op_patterns_shown=cand.cross_op_patterns_shown,   # resumed session,
+                                              # no fresh CONTEXT.md — inherit what plan() showed it
                          session_id=cand.session_id)
 
     # ---- helpers ----
@@ -546,9 +567,10 @@ class CliAgent:
         wd.rename(dest)
         return dest, dest / "trajectory.jsonl"
 
-    def _seed_workdir(self, wd: Path, parent, ctx) -> None:
+    def _seed_workdir(self, wd: Path, parent, ctx) -> list[str]:
         (wd / "DESIGN.md").write_text(getattr(ctx, "design", "") or "")
-        (wd / "CONTEXT.md").write_text(_context_md(parent, ctx))
+        text, shown_tags = _context_md(parent, ctx, self)
+        (wd / "CONTEXT.md").write_text(text)
         self._write_problem(wd, getattr(ctx, "task_id", ""))
         self._write_kb(wd)
         psol = getattr(parent, "solution", None)
@@ -556,6 +578,7 @@ class CliAgent:
             (wd / s["path"]).write_text(s.get("content", ""))
         for s in (getattr(ctx, "sibling_hint", None) or {}).get("sources", []):   # cross-op warm start
             (wd / f"sibling_{s['path']}").write_text(s.get("content", ""))
+        return shown_tags
 
     def _write_problem(self, wd: Path, task_id) -> None:
         pdir = self.problems_dir / str(task_id)
@@ -614,6 +637,19 @@ class CliAgent:
         if self.kb_dir.is_dir() and not (wd / "kb").exists():
             shutil.copytree(self.kb_dir, wd / "kb",
                             ignore=shutil.ignore_patterns("__pycache__", ".*"))
+
+    def _write_patterns(self, wd: Path, family: str, task_id=None) -> list[str]:
+        """PATTERNS.md: cross-OPERATOR technique notes relevant to this op's
+        compute-bound class (docs/context-architecture-plan.md Part B). Needs
+        ZERO run history — usable from design() before any candidate exists,
+        unlike the coach card. Returns the tags that had non-empty notes (for
+        Candidate.cross_op_patterns_shown's later measurement), writing nothing
+        if there's nothing to show."""
+        tags = relevant_techniques(family)
+        notes = KnowledgeStore(self.knowledge_dir).pattern_notes(tags, exclude_task=task_id)
+        if notes:
+            (wd / "PATTERNS.md").write_text(_render_patterns_md(notes))
+        return sorted(notes)
 
     def _collect(self, wd: Path, *, resolve_conflict: bool = False) -> dict:
         """Gather the kernel file(s) a call wrote. `resolve_conflict` is for
@@ -743,7 +779,55 @@ def _score_note(m) -> str:
     return f"{cal:.3f} (raw {m.mean:.3f})" if cal is not None else f"{m.mean:.3f} (raw)"
 
 
-def _context_md(parent, ctx) -> str:
+def _render_patterns_md(notes: dict[str, dict]) -> str:
+    """Shared renderer for PATTERNS.md (design()-time) and CONTEXT.md's cross-op
+    section (plan()/review()-time) — same content, different filenames. Pitfalls
+    render as traps to AVOID while re-deriving the technique, never as a reason
+    to avoid the technique itself (docs/context-architecture-plan.md Part B) —
+    a COMPILE_ERROR/RUNTIME_ERROR is overwhelmingly an implementation bug, not a
+    verdict on the underlying idea."""
+    lines = ["## Cross-op technique notes", "",
+             "Patterns confirmed or flagged on OTHER, unrelated operators — NOT this",
+             "problem's kernel. A technique that worked elsewhere can still fail here on",
+             "IMPLEMENTATION details even when the algorithmic idea is sound — re-derive",
+             "and re-validate for THIS op's shapes/dtypes, do not copy verbatim.", ""]
+    for tag in sorted(notes):
+        entry = notes[tag]
+        lines.append(f"### `{tag}`")
+        for e in entry.get("confirmed", []):
+            lines.append(f"- confirmed on `{e['op']}` (task {e['task']}, score {e['score']:.3f}): "
+                         f"{e['note']} — see `runs/{e['task']}/candidates/{e['cand']}.json`")
+        for p in entry.get("pitfalls", []):
+            ops = ", ".join(sorted(set(p.get("ops", []))))
+            lines.append(f"- **pitfall** ({p['error_family']}, seen on {ops}): {p['note']} "
+                         f"— avoid THIS bug, the technique itself isn't the problem")
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _cross_op_section(ctx, agent) -> tuple[str, list[str]]:
+    """Fresh `pattern_notes()` lookup every call — NEVER memoized on `ctx` (same
+    reasoning as the `ctx.reflection` dead-code fallthrough a few lines below:
+    a long fleet run or a resume must always see the LATEST cross-op corpus, and
+    unlike `ctx.sibling_hint` this isn't meant to be bootstrap-only). Returns
+    (markdown, tags_shown) — the tags feed Candidate.cross_op_patterns_shown for
+    later measurement. `agent` is the calling CliAgent instance (holds
+    knowledge_dir/problems_dir/cross_op_patterns; module-level so tests can call
+    `_context_md` without one — see cli_agent.py's own docstring convention)."""
+    if agent is None or not getattr(agent, "cross_op_patterns", True):
+        return "", []
+    task_id = getattr(ctx, "task_id", None)
+    if task_id is None:
+        return "", []
+    family = op_key_of(task_id, agent.problems_dir)
+    tags = relevant_techniques(family)
+    notes = KnowledgeStore(agent.knowledge_dir).pattern_notes(tags, exclude_task=task_id)
+    if not notes:
+        return "", []
+    return _render_patterns_md(notes), sorted(notes)
+
+
+def _context_md(parent, ctx, agent=None) -> tuple[str, list[str]]:
     lines = ["# Context", "",
              "Scores are the **leaderboard estimate** (0.5 = optimized-PyTorch baseline,",
              "1.0 = speed-of-light). Beat 0.5 to score on the board; the raw local measure",
@@ -777,6 +861,9 @@ def _context_md(parent, ctx) -> str:
             card = cf.read_text() if cf.is_file() else ""
     if card:
         lines += ["", card.strip()]
+    patterns_md, shown_tags = _cross_op_section(ctx, agent)
+    if patterns_md:
+        lines += ["", patterns_md.strip()]
     prior = getattr(ctx, "runs_dir", None)
     if prior is not None and getattr(ctx, "task_id", None) is not None and \
             (Path(prior) / str(ctx.task_id) / "prior").is_dir():
@@ -815,7 +902,7 @@ def _context_md(parent, ctx) -> str:
             lines.append(f"- [{f['reason']}] {f['strategy']}")
             if detail:
                 lines.append(f"    → {detail}")
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines) + "\n", shown_tags
 
 
 def _parse_review(text: str, *, reviewer: str) -> ReviewVerdict:

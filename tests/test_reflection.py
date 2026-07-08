@@ -156,3 +156,42 @@ def test_reflect_all_survives_a_bad_problem(tmp_path):
     # must not raise — best-effort per problem
     refls = R.reflect_all(tmp_path, [5])
     assert 5 in refls
+
+
+def test_relevant_techniques_is_family_substring_matched():
+    # a real op_key_of() key is a compound string, not a bare "attention" —
+    # exact-set membership (the old bug) would never match this.
+    compute = R.relevant_techniques("attention_output_projection_with_reshape_backward")
+    assert "split_k" in compute and "fp8" in compute and "nvfp4" in compute
+
+    memory_bound = R.relevant_techniques("rotary_position_embedding")
+    assert "split_k" not in memory_bound and "fp8" not in memory_bound
+    assert "fusion" in memory_bound                 # non-GEMM-only rungs still surface
+
+
+def test_relevant_techniques_needs_no_run_history():
+    # usable at design()-time before any candidate/attempt exists
+    assert R.relevant_techniques("") == tuple(t for t in R._LADDER if t not in R._GEMM_ONLY_RUNGS)
+
+
+def test_tech_events_confirmed_requires_entered_verdict():
+    ev, cands = _events([0.6, 0.65], ["split-k triton gemm", "split-k triton gemm"])
+    cands["cand000"]["verdict"] = "dominated"       # correct, but didn't ship
+    cands["cand001"]["verdict"] = "entered"         # this one shipped
+    r = R.analyze(ev, cands, task_id=10)
+    confirmed = [e for e in r.tech_events if e["kind"] == "confirmed" and e["tag"] == "split_k"]
+    assert len(confirmed) == 1 and confirmed[0]["cand"] == "cand001"[:8]
+
+
+def test_tech_events_pitfalls_carry_raw_error_code():
+    ev, cands = _events([0.6], ["triton fused"])
+    cands["cand000"]["correct"] = False
+    cands["cand000"].pop("sol_score_calibrated", None)
+    cands["cand000"]["per_workload"] = [
+        {"index": 0, "correct": False, "error": "RUNTIME_ERROR"},
+        {"index": 1, "correct": False, "error": "RUNTIME_ERROR"},
+    ]
+    r = R.analyze(ev, cands, task_id=11)
+    pitfalls = [e for e in r.tech_events if e["kind"] == "pitfall"]
+    assert pitfalls and pitfalls[0]["error"] == "RUNTIME_ERROR"   # raw code, no "(×2)" suffix
+    assert pitfalls[0]["score"] is None

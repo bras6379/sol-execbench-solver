@@ -17,6 +17,7 @@ import json
 import os
 import random
 import time
+from collections import Counter
 from pathlib import Path
 
 from .. import journal as journal_mod
@@ -214,6 +215,16 @@ class RunContext:
                     "agent": "", "model": "", "parent": None,
                     "sol_score_cal": e.get("sol_score_cal"),
                 }
+                p = self._pending[cid]
+            # note_failure() itself is a plain in-memory call (loop.py calls it
+            # directly, live-only) — reconstruct the SAME effect here so a
+            # resumed run doesn't silently start recent_failures empty, throwing
+            # away "don't repeat X" context right when a restart just happened
+            # (confirmed live, 2026-07-08).
+            if cid and p is not None and not e.get("all_passed"):
+                statuses = [s for s in (e.get("statuses") or []) if s and s != "PASSED"]
+                reason = Counter(statuses).most_common(1)[0][0] if statuses else "INCORRECT"
+                self.note_failure(p.get("strategy", ""), reason, cid, detail=e.get("detail", ""))
         elif ev == "verify_done":
             self.evals += 1                           # a re-verification consumed a GPU eval;
             # deliberately does NOT touch _pending/seen/frontier — it re-runs an

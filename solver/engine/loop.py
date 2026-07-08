@@ -107,15 +107,6 @@ def _statuses(result: EvalResult) -> list[str]:
     return [("PASSED" if w.correct else (w.error or "FAILED")) for w in result.per_workload]
 
 
-def _dominant_failure(result: EvalResult) -> str:
-    """The most common failure kind across a candidate's workloads (for feedback)."""
-    from collections import Counter
-    if (result.asi or {}).get("solution_status"):
-        return result.asi["solution_status"]                  # COMPILE_ERROR / REWARD_HACK
-    errs = [w.error for w in result.per_workload if not w.correct and w.error]
-    return Counter(errs).most_common(1)[0][0] if errs else "INCORRECT"
-
-
 def _fmt_idxs(idxs: list[int]) -> str:
     """Compress a workload-index list to ranges: [0,1,2,3,7] -> '0-3,7'."""
     if not idxs:
@@ -451,13 +442,23 @@ async def solve_problem(
             ctx.record("exec_enqueued", job=cand.cand_id, cand=cand.cand_id)
             result = await executor.evaluate(cand.solution, task_id)
             ctx.record("exec_started", job=cand.cand_id, ts=result.raw.get("started"))
+            # `detail` (the harness's actual diagnostic, not just the status code —
+            # see _failure_detail) is journaled here too, not just passed to
+            # note_failure live, so a RESUMED run can reconstruct recent_failures
+            # from the journal instead of starting empty — note_failure itself is
+            # a plain in-memory call, never journaled on its own, so without this
+            # every restart silently threw away the "don't repeat X" context for
+            # the next agent (confirmed live, 2026-07-08).
             ctx.record("exec_done", job=cand.cand_id, cand=cand.cand_id, ts=result.raw.get("ended"),
                        gpu_s=result.raw.get("gpu_s", 0.0), all_passed=result.correct,
                        sol_score=result.sol_score, sol_score_cal=result.calibrated_sol_score(),
-                       scores=result.vector(), statuses=_statuses(result))
-            if not result.correct:                          # feed the mistake back to future agents
-                ctx.note_failure(cand.strategy, _dominant_failure(result), cand.cand_id,
-                                 detail=_failure_detail(result))
+                       scores=result.vector(), statuses=_statuses(result),
+                       detail=(_failure_detail(result) if not result.correct else ""))
+            if not result.correct:
+                # note_failure() itself already ran as a side effect of the
+                # ctx.record("exec_done", ...) call above (apply() reconstructs
+                # it from the journaled statuses/detail — see there — so it's
+                # identical live and on replay); nothing to do here.
                 verdict = ctx.accept_candidate(cand.cand_id)
             else:
                 # A candidate that PASSED and would improve the frontier gets re-verified
@@ -488,7 +489,8 @@ async def solve_problem(
             _persist(ctx, task_id, cand.cand_id, cand.solution, result, runs_dir=runs_dir,
                      problems_dir=problems_dir, family=family, name=name, strategy=cand.strategy,
                      agent=persp.agent, model=persp.model, parent=cand.parent,
-                     verdict=verdict, trajectory=cand.trajectory)
+                     verdict=verdict, trajectory=cand.trajectory,
+                     cross_op_patterns_shown=cand.cross_op_patterns_shown)
             ctx.record("iter", n=ctx.iters, outcome=verdict)
 
     if ctx.terminated_reason is None:
@@ -507,7 +509,13 @@ async def solve_problem(
         pass
 
     if knowledge is not None:                              # serialized curator (§8)
-        await knowledge.curate(ctx, op_key_of(task_id, problems_dir), name)
+        refl = None
+        try:                                                # best-effort — never blocks curate()
+            from . import reflection
+            refl = reflection.from_runs_dir(runs_dir, task_id, name=name, family=family)
+        except Exception:                                  # pragma: no cover - defensive
+            pass
+        await knowledge.curate(ctx, op_key_of(task_id, problems_dir), name, refl=refl)
     return ctx
 
 

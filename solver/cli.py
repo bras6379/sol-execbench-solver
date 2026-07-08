@@ -154,15 +154,27 @@ def _cmd_solve(args) -> None:
     from . import journal as J
     from .dashboard import metrics
     from .engine import (Config, KnowledgeStore, Perspective, StubExecutor, Tier,
-                         make_agents, reference_seed, run_fleet, sim, stub_agents)
+                         make_agents, op_key_of, reference_seed, run_fleet, sim,
+                         stub_agents)
 
     ids = _resolve_ids(args)
     runs_dir = Path(args.runs_dir)
     knowledge = KnowledgeStore(args.knowledge_dir)
-    families = {t: sim.family_of(t) for t in ids}
-    names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
+    is_sim = args.agent == "sim" and not args.tier
+    if is_sim:
+        # the sim agent has no real definition.json to key off — keep the
+        # synthetic round-robin labels for its own synthetic ids.
+        families = {t: sim.family_of(t) for t in ids}
+        names = {t: f"{sim.family_of(t)}_{t}" for t in ids}
+    else:
+        # op_key_of() reads the REAL operator out of definition.json — using
+        # sim.family_of()'s task_id % 10 round-robin here (as this used to do,
+        # unconditionally) silently mislabels every real run's family/knowledge
+        # entries (e.g. an RMSNorm problem filed under "gemm" by coincidence).
+        families = {t: op_key_of(t) for t in ids}
+        names = {t: op_key_of(t) for t in ids}
 
-    if args.agent == "sim" and not args.tier:
+    if is_sim:
         if args.gpu:
             raise SystemExit("--gpu needs a real --agent (codex/claude), not the sim agent")
         cfg = Config(
@@ -192,8 +204,11 @@ def _cmd_solve(args) -> None:
             verify_runs=args.verify_runs, agent_fail_limit=args.agent_fail_limit,
             review_enabled=args.review, review_max_rounds=args.review_max_rounds,
             ceiling_consensus=args.ceiling_consensus,
+            cross_op_patterns=args.cross_op_patterns,
         )
-        agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout)
+        agents = make_agents(cfg, runs_dir=runs_dir, timeout=args.timeout,
+                             knowledge_dir=args.knowledge_dir,
+                             cross_op_patterns=cfg.cross_op_patterns)
         seeds_fn = reference_seed()   # seed the frontier with the real reference impl
         ladder = " → ".join(t.name + "(" + ",".join(str(p) for p in t.pool) + ")" for t in cfg.tiers)
         print(f"ladder: {ladder}  ·  design: {cfg.design_model}")
@@ -600,6 +615,16 @@ def main(argv: list[str] | None = None) -> None:
                               "--no-review). Repair resumes the writer's own CLI session (real memory of "
                               "what it wrote), so 2 focused attempts is plenty — more rounds mostly burn "
                               "reviewer-model cost without converging")
+    p_solve.add_argument("--cross-op-patterns", dest="cross_op_patterns", action="store_true",
+                         default=True,
+                         help="(default on) render KnowledgeStore's cross-OPERATOR technique notes "
+                              "(confirmed wins + known implementation pitfalls, tagged by technique, "
+                              "e.g. split-K/CUDA-graph/fp8 — see docs/context-architecture-plan.md) "
+                              "into PATTERNS.md/CONTEXT.md. The write side (corpus accumulation into "
+                              "knowledge/patterns.json) always runs regardless of this flag")
+    p_solve.add_argument("--no-cross-op-patterns", dest="cross_op_patterns", action="store_false",
+                         help="don't render cross-op notes into prompts (corpus still accumulates "
+                              "dark) — for an A/B comparison against --cross-op-patterns")
     p_solve.add_argument("--ceiling-consensus", type=int, default=2,
                          help="N consecutive no-op iterations (agent left the kernel byte-identical to its "
                               "parent) before a problem auto-terminates as at-ceiling, rather than keep "

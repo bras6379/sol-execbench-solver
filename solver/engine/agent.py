@@ -33,6 +33,10 @@ class Candidate:
                                          # not assumed (see cli_agent._extract_context_read)
     session_id: str | None = None       # this call's CLI session/thread id, so a repair() can
                                          # RESUME it (same model memory) instead of cold-starting
+    cross_op_patterns_shown: list[str] | None = None   # technique tags whose cross-op notes were
+                                         # non-empty in THIS call's CONTEXT.md (docs/context-
+                                         # architecture-plan.md Part B) — lets a later analysis
+                                         # compare outcomes with vs without cross-op notes shown
 
 
 @dataclass

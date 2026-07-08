@@ -51,6 +51,25 @@ S(T_k) = 1 / (1 + (T_k − T_SOL) / (T_b − T_SOL))
   scored condition is **cold L2, CUPTI, 10 warmup, median**.
 - Clock locking handled by `core/bench/clock_lock.py`.
 
+**Why memory-bound kernels cap well below 1.0 — cold-L2 vs. an L2-BW-based
+`T_SOL`.** For a bandwidth-bound problem, `metadata.json`'s stated `sol_ms` can
+be derived from L2 bandwidth (~21 TB/s on B200) even though the scored
+condition is cold-L2, i.e. every real measured iteration can only achieve HBM
+bandwidth (~7.7 TB/s) — a candidate physically cannot reach `T_SOL` no matter
+how optimal, because `T_SOL` assumes a cache tier the cold-L2 protocol
+deliberately denies it. Measured on a memory-bound depthwise-conv problem: the
+perfect-achieved-HBM-bandwidth ceiling on the large (bandwidth-bound) shapes is
+S≈0.76, not 1.0; whole-problem ceiling (mixing in the smaller, launch-bound
+shapes that DO have headroom) lands around ≈0.87. **Don't chase S→1.0 as a
+correctness-of-approach signal on a memory-bound op** — check whether the
+per-workload achieved bandwidth is already near HBM peak before assuming a
+kernel is under-optimized; if it is, the remaining gap is the grading
+methodology, not something more fusion/tuning can close. On the same problem,
+CUPTI's device-only timing also means CPU launch overhead is mostly uncounted,
+so CUDA-graph capture buys little on the large shapes — the lever that
+actually moves the number is achieved HBM bandwidth % (elements/thread,
+block-size tuning), not fancier fusion or graph capture.
+
 ### Eval-loop module reuse — cache derived values, NEVER skip the kernel launch
 
 The eval subprocess imports your kernel module **once**, then per workload runs
@@ -117,6 +136,30 @@ problems carry no tolerance** — the rmsnorm/gemm/moe ones (ids 210–220,
 229–235); the 8 paged/ragged GQA/MLA attention problems (221–228) do have
 tolerance. Every L1/L2/Quant problem has tolerance on every workload.
 
+### bf16 reference rounding — match it, don't out-precision it
+
+For a bf16 op chain, the reference materializes **each intermediate as a bf16
+tensor** before the next op reads it — not one fp32 computation cast to bf16 at
+the end. A fused kernel that keeps an intermediate in fp32 through steps the
+reference rounds to bf16 will *diverge* from the reference, not converge to it,
+even though the fp32 path is "more accurate": each skipped bf16 rounding shifts
+the value by ~1 ulp, and propagated through a downstream reduction (e.g. a
+several-thousand-channel GEMM) that's enough to push a meaningful fraction of
+elements outside the tolerance band. Measured on a short-conv fusion problem:
+keeping the middle activations in fp32 → matched_ratio ~0.83 (FAIL against the
+0.99 default); rounding each intermediate to bf16 at exactly the points the
+reference does (elementwise mul → bf16, conv → bf16, elementwise mul → bf16,
+fp32 accumulation only *within* each step) → matched_ratio 1.0000.
+
+**How to apply:** find every point in the reference PyTorch implementation
+where an op's output is a bf16 tensor (i.e. every op boundary, if the model is
+bf16 end-to-end), and insert `.to(bf16).to(fp32)` at the equivalent point in
+your fused kernel — accumulate in fp32 *inside* a step, round to bf16 *between*
+steps. When validating on CPU before a GPU run, don't trust plain CPU bf16
+matmul (`F.linear` on bf16 tensors accumulates in bf16 on CPU, which is noisy —
+~3% spurious error); simulate the real GPU path explicitly with
+`(a.float() @ b.float().T).to(bf16)` (fp32 accumulate, bf16 round) instead.
+
 ## Input generation (`core/bench/io.py`)
 
 Inputs are **seeded** (`set_seed`, `core/bench/correctness.py`) so the
@@ -160,6 +203,22 @@ This is the concrete implementation of the anti-Sakana guidance in
 harness should keep the same posture. A RELATED but separate trap — skipping
 the kernel launch entirely via a module-level cache — isn't one of these
 detectors but still hard-fails; see "Eval-loop module reuse" above.
+
+### Correctness dominates marginal latency tricks — two concrete traps
+
+- **Never return a CUDA graph's static output buffer directly.** The harness
+  reuses inputs and re-invokes `run()` across many timed iterations; if your
+  kernel captures a graph once and returns its static output tensor by
+  reference, a *later* `graph.replay()` overwrites the memory the grader is
+  still holding from an *earlier* call, corrupting a result the caller assumed
+  was final. Clone the output before returning it (ideally one fused clone of
+  a stacked/concatenated output buffer, not N separate clones, to keep the
+  extra HBM traffic small).
+- **Don't rely on `try/except` or `threading` inside the entry `run` function.**
+  This repo's own pre-flight lint additionally flags `try/except` **inside the
+  entry point itself** and any `threading` usage, independent of the harness's
+  own reward-hack detectors above — keep any fallback/dispatch logic in a
+  helper function `run` calls, not inline in `run`.
 
 ## Harness map (reuse these)
 

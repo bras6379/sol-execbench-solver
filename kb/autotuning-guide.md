@@ -61,6 +61,18 @@ the kernel ⚠️.
 
 ## Tuning discipline
 
+- **`@triton.autotune`'s `key=` must include every axis that varies across
+  this problem's workloads, not just the one that changes the compiled
+  kernel's shape.** Measured bug: a kernel keyed `key=["S"]` alone silently
+  let workloads that share an `S` but differ in `B` (e.g. S=256 used by
+  B∈{1,8,16,32}) reuse ONE tuned config — forcing a small, launch-bound shape
+  and a large, bandwidth-bound shape sharing that `S` to share a config tuned
+  for only one of them. Fixing the key to `["B","S"]` (all axes present in
+  `workload.jsonl`) let every workload tune independently; the win was
+  substantial on the previously-mistuned shapes. Autotune candidates run
+  during the grader's untimed warmup, so widening the key/config space is
+  free at scoring time — there's no reason not to key on every axis that can
+  plausibly matter.
 - Tune AFTER the structure is right (right algorithm/fusion/pipeline), not
   before — retune after any structural change.
 - One benchmark job at a time on the pod (contention wrecks measurements —

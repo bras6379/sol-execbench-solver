@@ -29,7 +29,7 @@ from .harness import (
     solution_to_harness_json,
     traces_from_jsonl,
 )
-from .knowledge import KnowledgeStore
+from .knowledge import KnowledgeStore, op_key_of
 from .loop import exemplar_first, pick_reviewer, reference_seed, run_fleet, solve_problem
 from .pod import MockProvider, PodHandle, PodSession, PodSpec, RunPodProvider
 from .ssh_exec import PodConn, SshExecutor
@@ -46,7 +46,7 @@ __all__ = [
     "FileQueueTransport", "GpuQueueExecutor", "Worker", "GpuWorkGuard",
     "bootstrap", "harness_ref", "solve_on_gpu",
     "map_traces_to_result", "pod_harness", "solution_to_harness_json", "traces_from_jsonl",
-    "KnowledgeStore",
+    "KnowledgeStore", "op_key_of",
     "exemplar_first", "pick_reviewer", "reference_seed", "run_fleet", "solve_problem",
     "MockProvider", "PodHandle", "PodSession", "PodSpec", "RunPodProvider",
     "PodConn", "SshExecutor",

@@ -126,6 +126,59 @@ def test_design_reads_file(tmp_path):
     assert tokens["in"] == 100 and tokens["out"] == 50         # cost/tokens must not be discarded
 
 
+def _seed_knowledge(knowledge_dir, tag="fusion"):
+    """Seed a cross-op pattern for `tag` on a DIFFERENT task/op than the one
+    under test (docs/context-architecture-plan.md Part B), via the real
+    curate()/tech_events path — not by hand-writing patterns.json."""
+    import asyncio as _asyncio
+
+    from solver.engine.frontier import Frontier, Member
+    from solver.engine.knowledge import KnowledgeStore
+    from solver.engine.reflection import ProblemReflection
+
+    class _Ctx:
+        task_id, tier_idx, terminated_reason = 999, 0, "budget:time"
+        frontier = Frontier(0.02)
+
+    ev = [{"tag": tag, "kind": "confirmed", "score": 0.8, "error": None,
+          "cand": "deadbeef", "strategy": f"{tag} fused epilogue"}]
+    refl = ProblemReflection(task_id=999, family="other_op", tech_events=ev)
+    ks = KnowledgeStore(knowledge_dir)
+    _asyncio.run(ks.curate(_Ctx(), "other_op", "other_op_999", refl=refl))
+
+
+def test_design_writes_patterns_md_when_notes_exist(tmp_path):
+    _seed_knowledge(tmp_path / "knowledge")
+    agent = _agent(_fake_spec(tmp_path), tmp_path, knowledge_dir=tmp_path / "knowledge")
+    run(agent.design(7))
+    wd = tmp_path / "runs" / "7" / "work" / "design"
+    assert (wd / "PATTERNS.md").is_file()
+    assert "fusion" in (wd / "PATTERNS.md").read_text()
+    assert "other_op" in (wd / "PATTERNS.md").read_text()
+
+
+def test_plan_records_cross_op_patterns_shown_on_candidate(tmp_path):
+    _seed_knowledge(tmp_path / "knowledge")
+    agent = _agent(_fake_spec(tmp_path), tmp_path, knowledge_dir=tmp_path / "knowledge")
+    cand = run(agent.plan(parent=None, ctx=_fake_ctx(task_id=7)))
+    assert cand.cross_op_patterns_shown == ["fusion"]
+    wd = tmp_path / "runs" / "7" / "work" / cand.cand_id
+    assert "Cross-op technique notes" in (wd / "CONTEXT.md").read_text()
+
+
+def test_cross_op_patterns_flag_disables_rendering(tmp_path):
+    _seed_knowledge(tmp_path / "knowledge")
+    agent = _agent(_fake_spec(tmp_path), tmp_path, knowledge_dir=tmp_path / "knowledge",
+                   cross_op_patterns=False)
+    run(agent.design(7))
+    assert not (tmp_path / "runs" / "7" / "work" / "design" / "PATTERNS.md").exists()
+
+    cand = run(agent.plan(parent=None, ctx=_fake_ctx(task_id=8)))
+    assert not cand.cross_op_patterns_shown
+    wd = tmp_path / "runs" / "8" / "work" / cand.cand_id
+    assert "Cross-op technique notes" not in (wd / "CONTEXT.md").read_text()
+
+
 def test_provider_routing_injects_anthropic_endpoint(monkeypatch, tmp_path):
     # A cheap provider (OpenRouter/GLM/DeepSeek/Kimi) runs the SAME claude CLI but
     # routed at its Anthropic-compatible endpoint via env; the real claude spec is
@@ -154,7 +207,7 @@ def test_context_md_renders_reserve_plays():
                           frontier=SimpleNamespace(members=[]),
                           playbook=[{"cand": "abc12345", "strategy": "atomic scatter",
                                      "handoff": "radix-sort + atomic-free segmented reduction"}])
-    md = _context_md(parent=None, ctx=ctx)
+    md, _shown = _context_md(parent=None, ctx=ctx)
     assert "Reserve plays" in md
     assert "radix-sort + atomic-free segmented reduction" in md
     assert "atomic scatter" in md                             # the strategy that flagged it
@@ -171,7 +224,7 @@ def test_context_md_flags_seed_only_frontier_for_risk_sequencing():
                                   cand_id="seed0000")
     ctx = SimpleNamespace(design="", sibling_hint=None, recent_failures=[],
                           frontier=SimpleNamespace(members=[seed_member]), playbook=[])
-    md = _context_md(parent=None, ctx=ctx)
+    md, _shown = _context_md(parent=None, ctx=ctx)
     assert "Nothing real has been accepted yet" in md
     assert "SAFEST" in md
 
@@ -184,7 +237,7 @@ def test_context_md_silent_once_a_real_candidate_is_accepted():
                                   sol_score_cal=0.55, cand_id="real0001")
     ctx = SimpleNamespace(design="", sibling_hint=None, recent_failures=[],
                           frontier=SimpleNamespace(members=[seed_member, real_member]), playbook=[])
-    md = _context_md(parent=None, ctx=ctx)
+    md, _shown = _context_md(parent=None, ctx=ctx)
     assert "Nothing real has been accepted yet" not in md
 
 

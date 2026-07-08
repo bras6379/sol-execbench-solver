@@ -55,7 +55,23 @@ _LADDER = ("fusion", "cuda_graph", "split_k", "fp16", "fp8", "nvfp4",
 # Rungs that only make sense on tensor-core / GEMM-bound ops — hidden for memory-bound
 # elementwise/reduction ops (RoPE, norms, softmax), where they're dead ends.
 _GEMM_ONLY_RUNGS = {"split_k", "fp8", "nvfp4"}
-_COMPUTE_FAMILIES = {"gemm", "attention", "moe", "conv", "linear", "matmul"}
+# Substring match, not exact-set membership: a real op key from op_key_of() is a
+# compound string (e.g. "attention_output_projection_with_reshape_backward"), not
+# a bare "attention" — exact membership would silently never match a real run.
+_COMPUTE_KEYWORDS = ("gemm", "matmul", "attention", "moe", "conv", "linear",
+                     "projection", "expert", "mlp", "swiglu", "geglu")
+
+
+def _compute_bound(family: str) -> bool:
+    return any(k in (family or "").lower() for k in _COMPUTE_KEYWORDS)
+
+
+def relevant_techniques(family: str) -> tuple[str, ...]:
+    """Ladder rungs applicable to this op's compute-bound class — a pure function
+    of the op family alone, needing no run history (usable at design()-time,
+    before any candidate exists, unlike ProblemReflection.techniques_untried)."""
+    compute_bound = _compute_bound(family)
+    return tuple(t for t in _LADDER if compute_bound or t not in _GEMM_ONLY_RUNGS)
 
 
 def _clip(s: str, n: int) -> str:
@@ -119,7 +135,22 @@ class ProblemReflection:
     dominant_family: tuple[str, ...] = ()
     dominant_share: float = 0.0
     failed: list[dict] = field(default_factory=list)  # approaches that FAILED correctness (don't retry)
+    # Every (technique-tag, verdict) pair this run produced, for the cross-op
+    # KnowledgeStore curator (knowledge.py) — same underlying attempts as
+    # .ledger/.failed, flattened to single tags instead of family signatures.
+    # {tag, kind: "confirmed"|"pitfall", score, error, cand, strategy}
+    tech_events: list[dict] = field(default_factory=list)
     headline: str = ""             # one-line directive for the agent
+
+
+def _dominant_error(candidates: dict, cand_id: str) -> str | None:
+    """The raw dominant per-workload error code of a failed candidate
+    (RUNTIME_ERROR / TOLERANCE / COMPILE_ERROR / …), or None if unknown."""
+    from collections import Counter
+    c = candidates.get(cand_id) or {}
+    pw = c.get("per_workload") or []
+    errs = [w.get("error") for w in pw if isinstance(w, dict) and w.get("correct") is False and w.get("error")]
+    return Counter(errs).most_common(1)[0][0] if errs else None
 
 
 def _cand_error(candidates: dict, cand_id: str) -> str:
@@ -151,6 +182,33 @@ def _failed_ledger(bad: list, candidates: dict | None = None) -> list[dict]:
             "error": _cand_error(candidates, rec["cand"])}
            for sig, rec in fam.items()]
     out.sort(key=lambda d: -d["n"])
+    return out
+
+
+def _tech_events(ok: list, bad: list, candidates: dict) -> list[dict]:
+    """Flatten this run's attempts to single-technique-tag events for the
+    cross-op KnowledgeStore curator (knowledge.py) — same underlying attempts
+    as .ledger/.failed, but tagged at the single-tag granularity Part B indexes
+    by, not the multi-tag family signature .ledger/.failed group by.
+
+    'confirmed' is gated on the candidate having actually ENTERED the frontier
+    (verdict == 'entered', the same gate store.record_playbook() uses) — a
+    correct-but-dominated attempt is not durable cross-op evidence. 'pitfall'
+    events carry the RAW error code (not the formatted '(×N)' string) so the
+    curator can group/replicate by error_family itself."""
+    out: list[dict] = []
+    for a in ok:
+        c = candidates.get(a.cand_id) or {}
+        if c.get("verdict") != "entered":
+            continue
+        for tag in _techniques(a.strategy):
+            out.append({"tag": tag, "kind": "confirmed", "score": a.score,
+                       "error": None, "cand": a.cand_id[:8], "strategy": a.strategy})
+    for a in bad:
+        err = _dominant_error(candidates, a.cand_id)
+        for tag in _techniques(a.strategy):
+            out.append({"tag": tag, "kind": "pitfall", "score": None,
+                       "error": err, "cand": a.cand_id[:8], "strategy": a.strategy})
     return out
 
 
@@ -208,6 +266,7 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
         r.headline = ("No correct kernel yet — the whole score is gated on producing "
                       "ONE that passes all workloads. Prioritize correctness over speed.")
         r.failed = _failed_ledger(bad, candidates)
+        r.tech_events = _tech_events(ok, bad, candidates)
         return r
 
     best_a = max(ok, key=lambda a: a.score)
@@ -215,6 +274,7 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
     r.best_strategy, r.best_cand = best_a.strategy, best_a.cand_id
     r.stale_evals = r.n_evals - best_a.order
     r.failed = _failed_ledger(bad, candidates)
+    r.tech_events = _tech_events(ok, bad, candidates)
 
     # --- attempt ledger: distinct families, their ceiling, how many times tried ---
     # (correct attempts only — failures are in r.failed, not the "best score each" list)
@@ -248,11 +308,12 @@ def analyze(events: list[dict], candidates: dict[str, dict], *,
     for a in attempts:
         tried |= _techniques(a.strategy)
     r.techniques_tried = sorted(tried)
-    compute_bound = (r.family or "").lower() in _COMPUTE_FAMILIES or "cublas" in tried
-    untried = [t for t in _LADDER if t not in tried]
-    if not compute_bound:
-        untried = [t for t in untried if t not in _GEMM_ONLY_RUNGS]
-    r.techniques_untried = untried[:6]
+    # "cublas" in tried is a runtime signal independent of (and stronger than) the
+    # family label — if an attempt already used cublas, this op is compute-bound
+    # regardless of what op_key_of() named it.
+    compute_bound = _compute_bound(r.family) or "cublas" in tried
+    allowed = _LADDER if compute_bound else tuple(t for t in _LADDER if t not in _GEMM_ONLY_RUNGS)
+    r.techniques_untried = [t for t in allowed if t not in tried][:6]
 
     # --- per-workload bottleneck: the shapes dragging the mean, from the best cand ---
     cand = candidates.get(best_a.cand_id) or {}

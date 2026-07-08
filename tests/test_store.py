@@ -40,6 +40,22 @@ def test_record_candidate_writes_record_index_and_submit(tmp_path):
     assert len(lines) == 1 and json.loads(lines[0])["cand_id"] == "abc123def456"
 
 
+def test_record_candidate_persists_the_per_workload_detail(tmp_path):
+    """The harness's actual diagnostic (a Triton/CUDA traceback line, or the
+    measured error magnitude — see WorkloadResult.detail) must survive into the
+    archived candidate record, not just the bare status code — otherwise a
+    later investigation into "why did this fail" has nothing to read (confirmed
+    live, 2026-07-08: this field existed on WorkloadResult but store.py's
+    explicit field list silently dropped it when persisting)."""
+    per = [WorkloadResult(index=0, correct=False, error="RUNTIME_ERROR",
+                          detail="User function failed: at 22:11: BLOCK_H undefined")]
+    r = EvalResult(task_id=230, correct=False, sol_score=None, per_workload=per)
+    store.record_candidate(tmp_path, 230, "failcid", TRITON, r,
+                           strategy="fused", verdict="dominated", problems_dir="problems")
+    rec = json.loads((tmp_path / "230/candidates/failcid.json").read_text())
+    assert rec["per_workload"][0]["detail"] == "User function failed: at 22:11: BLOCK_H undefined"
+
+
 def test_record_candidate_index_is_idempotent(tmp_path):
     r = _real_result()
     for _ in range(3):                                            # e.g. a resume re-persists
